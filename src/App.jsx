@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import LoginPage from '/src/pages/LoginPage.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import './index.css'; 
 
 function App() {
   return (

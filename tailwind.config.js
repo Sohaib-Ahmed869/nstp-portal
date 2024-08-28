@@ -1,12 +1,12 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
     content: [
-      "./src/**/*.{js,jsx,ts,tsx}",
+      "./index.html",
+      "./src/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
       extend: {
-        // Define custom screen sizes
-        screens: {
+        screens: { 
           'xs': '480px',  // Extra small devices
           'sm': '640px',  // Small devices (default)
           'md': '768px',  // Medium devices (default)
@@ -27,8 +27,8 @@ module.exports = {
           light: {
             background: '#ffffff',  // Light background color
             text: '#333333',        // Light text color
-            primary: '#1a73e8',     // Light primary color
-            secondary: '#ff5722',   // Light secondary color
+            primary: '#9ce37d',     // Light primary color
+            secondary: '#4c6663',   // Light secondary color
           },
           // Dark mode colors
           dark: {
@@ -43,6 +43,23 @@ module.exports = {
   
     // Enable dark mode with class strategy
     darkMode: 'class', // Use 'media' or 'class' to toggle dark mode
-    plugins: [],
+    plugins: [
+      require('daisyui'),
+    ],
+    daisyui: {
+      themes: [
+        {
+          nstp: { //nstp color pallette
+            'primary': '#9ce37d',     //bright green
+            'secondary': '#4c6663',  //bluish gray 
+            'accent': '#2a1e5c',      //dark purple
+            'neutral': '#fbf5f3',    //dark brown
+            'base-100': '#ffffff',    //white
+            'info': '#87b37a',        //sage green     
+            'warning': '#ff5722',     //default (not part of nstp color pallette)
+            'fontFamily': 'Lato, sans-serif', 
+          },
+        },
+      ],
+    },
   }
-  
