@@ -103,57 +103,39 @@ const LoginPage = () => {
     setPassword("");
   };
 
-  const submitLogin = () => {
+  const submitLogin = async () => {
     try {
       const lowerCaseUsername = username.toLowerCase();
       setError("");
       setLoading(true);
       // Simulate API call
-      setTimeout(() => {
+
+      setTimeout(async () => {
         setLoading(false);
         console.log(lowerCaseUsername, password, role);
         // Handle successful login here
+
+        var response = {};
         if (role === "Reception") {
-          AuthService.receptionistLogin(lowerCaseUsername, password).then(
-            (response) => {
-              if (response.error) {
-                setError(response.error);
-              } else {
-                console.log(response);
-              }
-            }
+          response = await AuthService.receptionistLogin(
+            lowerCaseUsername,
+            password
           );
         } else if (role === "Admin") {
-          AuthService.adminLogin(lowerCaseUsername, password).then(
-            (response) => {
-              if (response.error) {
-                setError(response.error);
-                console.log(response.error);
-              } else {
-                console.log(response);
-              }
-            }
-          );
+          response = await AuthService.adminLogin(lowerCaseUsername, password);
         } else if (role === "Supervisor") {
-          AuthService.supervisorLogin(lowerCaseUsername, password).then(
-            (response) => {
-              if (response.error) {
-                setError(response.error);
-              } else {
-                console.log(response);
-              }
-            }
+          response = await AuthService.supervisorLogin(
+            lowerCaseUsername,
+            password
           );
         } else if (role === "Tenant") {
-          AuthService.tenantLogin(lowerCaseUsername, password).then(
-            (response) => {
-              if (response.error) {
-                setError(response.error);
-              } else {
-                console.log(response);
-              }
-            }
-          );
+          response = await AuthService.tenantLogin(lowerCaseUsername, password);
+        }
+
+        if (response.error) {
+          setError(response.error.message);
+        } else {
+          console.log(response.message);
         }
       }, 2000);
     } catch (error) {
@@ -186,8 +168,8 @@ const LoginPage = () => {
             Welcome to {role} login{" "}
           </p>
           <input
-            type="email"
-            placeholder="Email"
+            type="text"
+            placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="mt-5 input input-bordered rounded-full w-96 max-sm:w-full"
