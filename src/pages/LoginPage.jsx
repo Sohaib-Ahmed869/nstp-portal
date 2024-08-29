@@ -49,8 +49,8 @@ const LoginPage = () => {
     ]
 
 
+    // Function to submit login
     const submitLogin = () => {
-        
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             setError("Invalid email format");
@@ -69,7 +69,7 @@ const LoginPage = () => {
     return (
         <div className="flex flex-row max-sm:flex-col h-screen ">
             {/** Left sidebar including all the role options */}
-            <div className="bg-info gap-5 max-sm:gap-6 h-full max-sm:h-auto max-sm: p-4 flex items-center justify-center flex-col max-sm:flex-row  shadow-lg">
+            <div className="bg-primary gap-5 max-sm:gap-6 h-full max-sm:h-auto max-sm: p-4 flex items-center justify-center flex-col max-sm:flex-row  shadow-lg">
                 {
                     sidebarElements.map((element, index) => (
                         <SidebarElement
@@ -106,7 +106,7 @@ const LoginPage = () => {
                     />
                     {error && <p className="text-red-500 mt-2">{error}</p>}
                     <button
-                        className={`btn btn-info mt-5 w-96 max-sm:w-full text-white rounded-full ${loading ? "cursor-not-allowed btn-disabled" : ""}`}
+                        className={`btn btn-primary mt-5 w-96 max-sm:w-full text-white rounded-full ${loading ? "cursor-not-allowed btn-disabled" : ""}`}
                         onClick={submitLogin}
                     >
                         {loading && <span className="loading loading-spinner"></span>}
