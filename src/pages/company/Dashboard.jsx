@@ -57,10 +57,10 @@ const Dashboard = () => {
     setLoading(true);
     //Add api call here to fetch data from backend and populate the states.
     //Simulate api call with timer to show loader.
-    // setTimeout(() => {
-    //   setLoading(false);
-    // }, 2000);
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+    // setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ const Dashboard = () => {
 
   return (
     <Sidebar>
-      {/* {loading && <NSTPLoader /> } */}
+      {loading && <NSTPLoader /> }
       <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && 'hidden'}`}>
       
         {/* Header (Title, toggles etc) */}
