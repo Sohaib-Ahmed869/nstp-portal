@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import ApexCharts from 'apexcharts';
 import Sidebar from '../../components/Sidebar';
-import { getChartOptions } from '../util/charts';
+import { getChartOptions, getPieChartOptions } from '../util/charts';
 import { EyeIcon, SunIcon, MoonIcon } from '@heroicons/react/20/solid';
 import { Link } from 'react-router-dom';
 import ThemeControl from '../../components/ThemeControl';
-import { BellAlertIcon,  InformationCircleIcon, QuestionMarkCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { ArrowTrendingUpIcon, BellAlertIcon,  CheckBadgeIcon,  InformationCircleIcon, QuestionMarkCircleIcon, TicketIcon, UserGroupIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import ComparativeChart from '../../components/ComparativeChart';
+import NSTPLoader from '../../components/NSTPLoader';
+import ReactApexChart from 'react-apexcharts';
 
 
 
@@ -14,7 +16,6 @@ import ComparativeChart from '../../components/ComparativeChart';
 const CATEGORIES = ['Direct', 'Sponsor', 'Affiliate', 'Email marketing'];
 const chartIds = ["resolved-chart", "unresolved-chart", "received-chart"];
 const chartKeys = ["resolved", "unresolved", "received"];
-
 
 
 const Dashboard = () => {
@@ -48,12 +49,17 @@ const Dashboard = () => {
   const [gatePasses, setGatePasses] = useState({ issued: 28, pending: 3 }); //total = pending + approved
 
   const [employeeStats, setEmployeeStats] = useState({total: 100, active: 80, issued: 10, unissued: 70});
+  const [internStats, setInternStats] = useState({total: 12, nustian: 3, nonNustian: 9});
 
   // **** end of data to be populated from backend ****
 
   useEffect(() => {
     setLoading(true);
     //Add api call here to fetch data from backend and populate the states.
+    //Simulate api call with timer to show loader.
+    // setTimeout(() => {
+    //   setLoading(false);
+    // }, 2000);
     setLoading(false);
   }, []);
 
@@ -78,8 +84,9 @@ const Dashboard = () => {
 
   return (
     <Sidebar>
-      <div className='bg-base-100 ring-1 ring-gray-200 p-5 rounded-lg'>
-
+      {/* {loading && <NSTPLoader /> } */}
+      <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && 'hidden'}`}>
+      
         {/* Header (Title, toggles etc) */}
         <div className="flex items-center justify-between">
           <h1 className='text-2xl font-semibold mb-5'>Main Dashboard</h1>
@@ -118,7 +125,7 @@ const Dashboard = () => {
 
           {/* Table of employees info */}
           <div className="md:col-span-4 ">
-            <div className=" bg-base-100 min-h-full rounded-md p-3 shadow-md  border-t border-t-gray-200 ">
+            <div className=" bg-base-100 min-h-full rounded-md p-5 shadow-md  border-t border-t-gray-200 ">
               <p className="mb-3 font-bold"> Employees</p>
 
            { employeeTableData.length == 0 ? <p className="text-gray-500">No data to show for now.</p> :
@@ -163,7 +170,7 @@ const Dashboard = () => {
           
           {/* Meeting room schedule table */}
           <div className="col-span-4 my-3">
-            <div className=" bg-base-100 min-h-full  rounded-md shadow-md border-t border-t-gray-200 p-3">
+            <div className=" bg-base-100 min-h-full   p-5 rounded-md shadow-md border-t border-t-gray-200 ">
               <p className="mb-3 font-bold"> Meeting Room Schedule</p>
 
               <div className="max-h-80 overflow-y-auto bg-base-100">
@@ -213,11 +220,11 @@ const Dashboard = () => {
 
           {/* Charts of e-tags and gate passes */}
           <div className="col-span-3 my-3 flex flex-col gap-4">
-            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-3">
+            <div className="bg-base-100 rounded-md shadow-md border-t  border-t-gray-200 p-5">
              <ComparativeChart title="Parking E-tags" comparisonData={eTags} />
             </div>
 
-            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-3">
+            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-5">
              <ComparativeChart title="Gate Passes" comparisonData={gatePasses} />
             </div>
           </div>
@@ -226,17 +233,59 @@ const Dashboard = () => {
 
         {/* Third row */}
         <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
-  
-        <div className="col-span-3 my-3">
-        <div className=" bg-base-100 min-h-full rounded-md shadow-md border-t border-t-gray-200 p-3"> 
-        <p className="mb-3 font-bold"> Employee Stats </p>
-         </div> 
-        </div>
-        <div className="col-span-4 my-3">
-        <div className=" bg-base-100 min-h-full  rounded-md shadow-md border-t border-t-gray-200 p-3"> 
-           <p className="mb-3 font-bold"> Employee Stats </p>
-          </div> 
-        </div>
+          <div className=" bg-base-100 min-h-full rounded-md shadow-md border-t border-t-gray-200 p-5 col-span-3 my-3 flex flex-col ">
+              <div className="flex flex-row justify-between">
+                <div>
+                <span className="font-bold text-4xl flex flex-row items-center gap-2"> 
+                <UserGroupIcon className="size-7" /> {employeeStats.total}
+              </span>
+              <p className="mb-3 mt-1 font-bold"> Total Employees </p>
+                </div>
+
+                <div className="flex flex-col items-end">
+                <span className="font-bold text-4xl flex flex-row items-center gap-2"> 
+                {employeeStats.active}
+                <ArrowTrendingUpIcon className="size-7" /> 
+              </span>
+              <p className="mb-3 mt-1 font-bold"> Active Employees </p>
+                </div>
+              </div>
+
+              <div className="flex rounded-2xl overflow-clip" >
+                <div className="bg-red-100 p-5 flex flex-row justify-between w-1/2 text-red-900">
+                 <div className="flex flex-col items-start">
+                  <p className="font-bold text-2xl">{employeeStats.issued}</p>
+                  <p className="text-sm">Cards not issued</p>
+                  </div>
+                  <TicketIcon className="h-10 w-10 text-red-900" />
+                </div>
+                <div className="bg-lime-100 p-5 flex flex-row justify-between w-1/2 text-green-900">
+                <CheckBadgeIcon className="h-10 w-10 text-green-900" />
+                <div className="flex flex-col items-end">
+                  <p className="font-bold text-2xl">{employeeStats.issued}</p>
+                  <p className="text-sm"> Cards Issued</p>
+                  </div>
+
+                </div>
+              </div>
+         
+          </div>
+
+          <div className="lg:col-span-4 col-span-1 my-3 bg-base-100 min-h-full  rounded-md shadow-md border-t border-t-gray-200 p-5 flex flex-row justify-between items-start">
+          <div> 
+                <span className="font-bold text-4xl flex flex-row items-center gap-2"> 
+                <UserGroupIcon className="size-7" /> {internStats.total}
+              </span>
+              <p className="mb-3 mt-1 font-bold"> Internees </p>
+
+              <div className="mb-2 p-2 rounded-md bg-accent text-white">{internStats.nustian + " NUSTians"}</div>
+              <div className="p-2 rounded-md bg-primary text-white">{internStats.nonNustian + " Non NUSTians"}</div>
+                </div>
+            <div id="pie-chart">
+              <ReactApexChart options={getPieChartOptions(internStats)} series={getPieChartOptions(internStats).series} type="pie" height={220} />
+            </div>
+
+          </div>
         </div>
       </div>
     </Sidebar>
