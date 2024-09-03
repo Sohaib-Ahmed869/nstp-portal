@@ -50,16 +50,18 @@ export default {
       themes: [
         {
           nstp: { //nstp color pallette
-            'primary': '#9ce37d',     //bright green
+            'primary': '#87b37a',     //sage green
             'secondary': '#4c6663',  //bluish gray 
             'accent': '#2a1e5c',      //dark purple
             'neutral': '#fbf5f3',    //dark brown
             'base-100': '#ffffff',    //white
-            'info': '#87b37a',        //sage green     
+            'info': '#9ce37d',        //bright light green     
             'warning': '#ff5722',     //default (not part of nstp color pallette)
             'fontFamily': 'Lato, sans-serif', 
           },
+          
         },
+        //more themes can be added here.
       ],
     },
   }
