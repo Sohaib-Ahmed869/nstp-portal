@@ -2,8 +2,9 @@ import { useState } from 'react'
 import LoginPage from '/src/pages/LoginPage.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './index.css'; 
-import AdminHome from '/src/pages/AdminHome.jsx';
-import CompanyAddition from '/src/pages/CompanyAddition.jsx';
+import AdminHome from '/src/pages/admin/AdminHome.jsx';
+import CompanyAddition from '/src/pages/admin/CompanyAddition.jsx';
+import Dashboard from './pages/company/Dashboard.jsx';
 
 function App() {
   return (
@@ -14,6 +15,10 @@ function App() {
         <Route path="admin">
           <Route index element={<AdminHome />} />
           <Route path="add-company" element={<CompanyAddition />} />
+        </Route>
+
+        <Route path="company">
+          <Route index element={<Dashboard />} />
         </Route>
       
         {/* <Route path="*" element={<ErrorPage />} /> */}

@@ -45,7 +45,11 @@ export default {
     darkMode: 'class', // Use 'media' or 'class' to toggle dark mode
     plugins: [
       require('daisyui'),
+      require('flowbite/plugin')({
+        charts: true,
+    }),
     ],
+    
     daisyui: {
       themes: [
         {
@@ -55,6 +59,19 @@ export default {
             'accent': '#2a1e5c',      //dark purple
             'neutral': '#fbf5f3',    //dark brown
             'base-100': '#ffffff',    //white
+            'info': '#9ce37d',        //bright light green     
+            'warning': '#ff5722',     //default (not part of nstp color pallette)
+            'fontFamily': 'Lato, sans-serif', 
+          },
+          nstpDark: { //nstp color pallette
+            'primary': '#87b37a',     //sage green
+            'secondary': '#4c6663',  //bluish gray 
+            'accent': '#2a1e5c',      //dark purple
+            'neutral': '#fbf5f3',    //dark brown
+            'base-100': '#283324',    //black
+            'base-200': '#1c241a',
+            'base-300': '#191f18',
+            'base-content': '#ffffff',    //white
             'info': '#9ce37d',        //bright light green     
             'warning': '#ff5722',     //default (not part of nstp color pallette)
             'fontFamily': 'Lato, sans-serif', 
