@@ -40,15 +40,18 @@ export const getChartOptions = (data) => {
               },
               value: {
                 show: true,
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "Lato",
+                fontSize: '24px',
                 offsetY: -20,
-                
+              
                 formatter: function (value) {
                   return value;
                 },
+                className: 'custom-value-label' // Add a custom class
+
               },
             },
-            size: "80%",
+            size: "70%",
           },
         },
       },
@@ -64,6 +67,7 @@ export const getChartOptions = (data) => {
       legend: {
         position: "bottom",
         fontFamily: "Inter, sans-serif",
+        show: false,
       },
       yaxis: {
         labels: {
