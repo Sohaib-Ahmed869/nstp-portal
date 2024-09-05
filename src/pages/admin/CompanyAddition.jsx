@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Sidebar from '../components/Sidebar'
+import Sidebar from '../../components/Sidebar'
 import { UserPlusIcon } from '@heroicons/react/24/outline';
-import FloatingLabelInput from '../components/FloatingLabelInput';
+import FloatingLabelInput from '../../components/FloatingLabelInput';
 
 const CATEGORIES = "AgriTech, AutoTech, DefTech, EdTech, EnergyTech, FinTech, HealthTech, Other - SmartTech"
 
@@ -223,6 +223,7 @@ const CompanyAddition = () => {
 
     return (
         <Sidebar>
+            {/* Modal showed while loading */}
             <dialog id="loading-modal" className="modal">
                 <div className="modal-box">
                     <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -231,6 +232,8 @@ const CompanyAddition = () => {
                 </div>
             </dialog>
 
+
+            {/* Modal showed after form submission (error or success depending on scenario) */}
             <dialog id="submit-modal" className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg">{submitModalTitle}</h3>
@@ -243,6 +246,7 @@ const CompanyAddition = () => {
                 </div>
             </dialog>
             
+            {/* page content on a card */}
             <div className="bg-base-100 rounded-lg ring-1 ring-base-200 lg:m-10 md:m-5 max-sm:m-5 max-sm:mx-2 max-sm:p-3 p-10">
                 <div className="grid gap-5 max-sm:grid-cols-1 md:grid-cols-2">
                     {/** Registration Section */}
