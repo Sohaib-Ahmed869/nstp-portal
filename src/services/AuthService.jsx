@@ -33,7 +33,7 @@ const AuthService = {
       console.log("🚀 ~ AuthService ~ response", response);
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return { error: error.response.data.message };
     }
   },
   adminLogin: async (username, password) => {
@@ -53,7 +53,7 @@ const AuthService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return { error: error.response.data.message };
     }
   },
   supervisorLogin: async (username, password) => {
@@ -73,7 +73,7 @@ const AuthService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return { error: error.response.data.message };
     }
   },
   tenantLogin: async (username, password) => {
@@ -93,7 +93,7 @@ const AuthService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return { error: error.response.data.message };
     }
   },
 };

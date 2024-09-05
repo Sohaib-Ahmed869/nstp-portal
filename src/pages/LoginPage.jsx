@@ -101,6 +101,7 @@ const LoginPage = () => {
     setRole(text);
     setUsername("");
     setPassword("");
+    setError("");
   };
 
   const submitLogin = async () => {
@@ -114,6 +115,7 @@ const LoginPage = () => {
         setLoading(false);
         console.log(lowerCaseUsername, password, role);
         // Handle successful login here
+        console.log("🚀 ~ setTimeout ~ role:", role);
 
         var response = {};
         if (role === "Reception") {
@@ -133,7 +135,7 @@ const LoginPage = () => {
         }
 
         if (response.error) {
-          setError(response.error.message);
+          setError(response.error);
         } else {
           console.log(response.message);
         }
