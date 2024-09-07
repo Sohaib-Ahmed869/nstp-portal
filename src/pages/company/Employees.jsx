@@ -155,6 +155,19 @@ const Employees = () => {
     // Handle form submission
     //API call here
     console.log(formData);
+
+    setFormData({
+      name: '',
+      photo: '',
+      email: '',
+      cnic: '',
+      dob: '',
+      doj: '',
+      empType: '',
+      contractDuration: '',
+      internType: '',
+      address: '',
+    })
   };
 
 
@@ -217,51 +230,51 @@ const Employees = () => {
           <form onSubmit={handleSubmit} className="py-4">
 
             <div className="w-full grid grid-cols-2 gap-3">
-            {employeeFields.map((field) => {
-              if (field.conditional && formData[field.conditional.field] !== field.conditional.value) {
-                return null;
-              }
-              if (field.type === 'select') {
+              {employeeFields.map((field) => {
+                if (field.conditional && formData[field.conditional.field] !== field.conditional.value) {
+                  return null;
+                }
+                if (field.type === 'select') {
+                  return (
+                    <div key={field.name} className="relative z-0 w-full mb-5 group">
+                      <select
+                        name={field.name}
+                        id={field.name}
+                        className="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-black dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer"
+                        value={formData[field.name]}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value="" disabled>Select {field.label}</option>
+                        {field.options.map((option) => (
+                          <option key={option} value={option}>{option}</option>
+                        ))}
+                      </select>
+                      <label
+                        htmlFor={field.name}
+                        className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                      >
+                        {field.label}
+                      </label>
+                    </div>
+                  );
+                }
+
+                if (field.name == "photo")
+                  return;
+
                 return (
-                  <div key={field.name} className="relative z-0 w-full mb-5 group">
-                    <select
-                      name={field.name}
-                      id={field.name}
-                      className="block py-2.5 px-2 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-black dark:border-gray-600 dark:focus:border-primary focus:outline-none focus:ring-0 focus:border-primary peer"
-                      value={formData[field.name]}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="" disabled>Select {field.label}</option>
-                      {field.options.map((option) => (
-                        <option key={option} value={option}>{option}</option>
-                      ))}
-                    </select>
-                    <label
-                      htmlFor={field.name}
-                      className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-primary peer-focus:dark:text-primary peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
-                    >
-                      {field.label}
-                    </label>
-                  </div>
+                  <FloatingLabelInput
+                    key={field.name}
+                    name={field.name}
+                    type={field.type}
+                    id={field.name}
+                    label={field.label}
+                    value={formData[field.name]}
+                    onChange={handleChange}
+                  />
                 );
-              }
-
-              if (field.name == "photo")
-                return;
-
-              return (
-                <FloatingLabelInput
-                  key={field.name}
-                  name={field.name}
-                  type={field.type}
-                  id={field.name}
-                  label={field.label}
-                  value={formData[field.name]}
-                  onChange={handleChange}
-                />
-              );
-            })}
+              })}
             </div>
 
             {/* photo */}
@@ -278,7 +291,21 @@ const Employees = () => {
             </div>
 
             <div className="modal-action">
-              <button type="button" className="btn mr-1" onClick={() => document.getElementById('employee_form').close()}>Cancel</button>
+              <button type="button" className="btn mr-1" onClick={() => {
+                document.getElementById('employee_form').close(); 
+                setFormData({
+                  name: '',
+                  photo: '',
+                  email: '',
+                  cnic: '',
+                  dob: '',
+                  doj: '',
+                  empType: '',
+                  contractDuration: '',
+                  internType: '',
+                  address: '',
+                })
+              }}>Cancel</button>
               <button type="submit" className="btn btn-primary text-base-100">Submit</button>
             </div>
           </form>
@@ -312,12 +339,12 @@ const Employees = () => {
           <div className=" w-4/12 flex items-center justify-end">
             <AdjustmentsHorizontalIcon className="size-8 text-gray-400 mr-3" />
             <select value={filter} onChange={handleFilterChange} className="select select-bordered w-full max-w-xs">
-            <option value="All">All</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-          </select>
+              <option value="All">All</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
           </div>
-          
+
         </div>
 
         {/* Table */}
