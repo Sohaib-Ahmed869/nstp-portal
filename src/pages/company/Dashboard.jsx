@@ -5,13 +5,11 @@ import { getChartOptions, getPieChartOptions } from '../util/charts';
 import { EyeIcon, SunIcon, MoonIcon } from '@heroicons/react/20/solid';
 import { Link } from 'react-router-dom';
 import ThemeControl from '../../components/ThemeControl';
-import { ArrowTrendingUpIcon, BellAlertIcon, CheckBadgeIcon, InformationCircleIcon, QuestionMarkCircleIcon, TicketIcon, UserGroupIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { ArrowTrendingUpIcon, BellAlertIcon, CheckBadgeIcon, InformationCircleIcon, QuestionMarkCircleIcon, TableCellsIcon, TicketIcon, UserGroupIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import ComparativeChart from '../../components/ComparativeChart';
 import NSTPLoader from '../../components/NSTPLoader';
 import ReactApexChart from 'react-apexcharts';
 import NewsFeed from '../../components/NewsFeed';
-
-
 
 //Categories of types of complaints
 const CATEGORIES = ['Direct', 'Sponsor', 'Affiliate', 'Email marketing'];
@@ -122,7 +120,6 @@ const Dashboard = () => {
                   ))
                 }
               </div>
-
             </div>
 
             {/* Charts */}
@@ -144,7 +141,15 @@ const Dashboard = () => {
           {/* Table of employees info */}
           <div className="md:col-span-4 ">
             <div className=" bg-base-100 min-h-full rounded-md p-5 shadow-md  border-t border-t-gray-200 ">
-              <p className="mb-3 font-bold"> Employees</p>
+              <div className="w-full flex justify-between mb-3">
+                <p className="mb-3 font-bold"> Employees</p>
+                <Link to="/company/employees">
+                  <button className="btn btn-primary text-white btn-md">
+                    <TableCellsIcon className="h-5 w-5" />
+                    View All
+                  </button>
+                </Link>
+              </div>
 
               {employeeTableData.length == 0 ? <p className="text-gray-500">No data to show for now.</p> :
                 <div className="h-full max-h-80 overflow-y-auto">
@@ -181,7 +186,6 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-
 
         {/* Second row */}
         <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
@@ -248,7 +252,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-
         {/* Third row */}
         <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
 
@@ -314,11 +317,7 @@ const Dashboard = () => {
           <div className="col-span-1 lg:col-span-4">
             <NewsFeed />
           </div>
-
-
         </div>
-
-
       </div>
     </Sidebar>
   );
