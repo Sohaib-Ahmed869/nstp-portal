@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Sidebar from '../../components/Sidebar'
-import { UserPlusIcon } from '@heroicons/react/24/outline';
+import { TrashIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
 
 const CATEGORIES = "AgriTech, AutoTech, DefTech, EdTech, EnergyTech, FinTech, HealthTech, Other - SmartTech"
@@ -302,7 +302,24 @@ const CompanyAddition = () => {
                     {/** Map over stakeholders array and render fields for each */}
                     {formData.stakeholders.map((stakeholder, index) => (
                         <div key={index} className="col-span-2 max-sm:col-span-1 ring-1 rounded-lg p-5 ring-gray-400" id={"stakeholder-" + index}>
+                            <div className="flex justify-between items-center">
                             <p className="text-primary font-bold mb-5"> {"Stakeholder " + (index + 1)}</p>
+                            <div>
+                            {index > 0 && <button onClick={() => {
+                                setFormData(prevState => {
+                                    const updatedArray = [...prevState.stakeholders];
+                                    updatedArray.splice(index, 1);
+                                    return {
+                                        ...prevState,
+                                        stakeholders: updatedArray
+                                    };
+                                })
+                            }} className="btn btn-primary text-white">
+                                <TrashIcon className="size-5" />
+                                Remove
+                            </button>}</div>
+                            
+                            </div>
                             <div className="grid gap-5 max-sm:grid-cols-1 md:grid-cols-2">
                                 {renderFields('stakeholders', [
                                     { name: 'name', type: 'text' },
