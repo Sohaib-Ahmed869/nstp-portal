@@ -147,8 +147,9 @@ const Employees = () => {
           console.log("🚀 ~ count:", count);
           return {
             ...emp,
-            card_num: card ? card.card_num : null,
             etags: count,
+            card_num: card ? card.card_number : null,
+            card,
           };
         });
 
@@ -268,7 +269,7 @@ const Employees = () => {
     { key: "email", label: "Email" },
     { key: "designation", label: "Designation" },
     { key: "cnic", label: "CNIC" },
-    { key: "contract_type", label: "Contract Type" },
+    { key: "employee_type", label: "Employee Type" },
     { key: "status_employment", label: "Status Employment" },
     { key: "card_num", label: "Card Num" },
     { key: "actions", label: "Actions", sortable: false },
@@ -492,8 +493,10 @@ const Employees = () => {
               </p>
               <p className="text-md mb-2">
                 <strong>Card Number:</strong>{" "}
-                {employeeProfileSelected?.card_num
+                {employeeProfileSelected?.card_num !== undefined
                   ? employeeProfileSelected?.card_num
+                  : employeeProfileSelected?.card.is_requested
+                  ? "Awaiting Approval"
                   : "Not Assigned"}
               </p>
               <p className="text-md mb-2">
@@ -606,12 +609,16 @@ const Employees = () => {
                     <td>{row.status_employment ? "Active" : "Inactive"}</td>
                     <td
                       className={`${
-                        row.card_num && row.card_num === "Awaiting Approval"
+                        row.card.is_requested
                           ? "bg-yellow-100 text-yellow-900"
                           : ""
                       }`}
                     >
-                      {row.card_num ? row.card_num : "Not Assigned"}
+                      {row.card_num !== undefined
+                        ? row.card_num
+                        : row.card.is_requested
+                        ? "Awaiting Approval"
+                        : "Not Assigned"}
                     </td>
                     <td className="relative">
                       <button
@@ -645,7 +652,7 @@ const Employees = () => {
                                 View Profile
                               </button>
                             </li>
-                            {!row.card_num && (
+                            {row.card_num == undefined && (
                               <li>
                                 <button className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
                                   <IdentificationIcon className="h-5 w-5 mr-2" />
