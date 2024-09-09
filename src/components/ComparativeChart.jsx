@@ -47,9 +47,11 @@ const ComparativeChart = ({ title, comparisonData }) => {
       </div>
 
       <div className="flex justify-between mt-2 text-sm">
-        <span>{formatKey(keys[0])}: {percentages[0]}%</span>
-        <span>{formatKey(keys[1])}: {percentages[1]}%</span>
+        <span className="text-primary font-semibold"> {percentages[0]}%</span>
+        <span className="text-secondary font-semibold"> {percentages[1]}%</span>
       </div>
+
+      <hr className="mt-2"/>
 
       <div className="mt-2 text-lg font-semibold">
         Total: {isNaN(total) ? 0 : total}

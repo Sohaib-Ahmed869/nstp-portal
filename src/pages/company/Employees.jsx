@@ -7,12 +7,16 @@ import {
   ChevronDownIcon,
   MagnifyingGlassIcon,
   AdjustmentsHorizontalIcon,
+  XCircleIcon,
+  UserIcon,
+  IdentificationIcon,
 } from "@heroicons/react/24/outline";
 import FloatingLabelInput from "../../components/FloatingLabelInput";
 import TenantService from "../../services/TenantService";
 
 const Employees = () => {
   const dropdownRefs = useRef({});
+  const buttonRefs = useRef({});
 
   // *** States ***
   const [loading, setLoading] = useState(true);
@@ -144,7 +148,7 @@ const Employees = () => {
           return {
             ...emp,
             card_num: card ? card.card_num : null,
-            e_tags: count,
+            etags: count,
           };
         });
 
@@ -161,25 +165,28 @@ const Employees = () => {
   }, []);
 
   useEffect(() => {
-    // Handle Close dropdown when clicked outside
-    const handleClickOutside = (event) => {
-      Object.keys(dropdownRefs.current).forEach((id) => {
-        if (
-          dropdownRefs.current[id] &&
-          !dropdownRefs.current[id].contains(event.target)
-        ) {
-          setDropdownOpen((prevState) => ({
-            ...prevState,
-            [id]: false,
-          }));
-        }
-      });
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    // close dropdown when clicking outside. however, its not working perfectly so commented for now
+    // const handleClickOutside = (event) => {
+    //   Object.keys(dropdownRefs.current).forEach((id) => {
+    //     if (
+    //       dropdownRefs.current[id] &&
+    //       !dropdownRefs.current[id].contains(event.target) &&
+    //       buttonRefs.current[id] &&
+    //       !buttonRefs.current[id].contains(event.target)
+    //     ) {
+    //       setTimeout(() => {
+    //         setDropdownOpen((prevState) => ({
+    //           ...prevState,
+    //           [id]: false,
+    //         }));
+    //       }, 10);
+    //     }
+    //   });
+    // };
+    // document.addEventListener('mousedown', handleClickOutside);
+    // return () => {
+    //   document.removeEventListener('mousedown', handleClickOutside);
+    // };
   }, []);
 
   useEffect(() => {
@@ -261,13 +268,8 @@ const Employees = () => {
     { key: "email", label: "Email" },
     { key: "designation", label: "Designation" },
     { key: "cnic", label: "CNIC" },
-    { key: "dob", label: "DOB" },
-    { key: "date_joining", label: "Date Joining" },
     { key: "contract_type", label: "Contract Type" },
-    { key: "contract_duration", label: "Contract Duration" },
     { key: "status_employment", label: "Status Employment" },
-    { key: "is_nustian", label: "Is Nustian" },
-    { key: "e_tags", label: "E tags" },
     { key: "card_num", label: "Card Num" },
     { key: "actions", label: "Actions", sortable: false },
   ];
@@ -302,6 +304,8 @@ const Employees = () => {
     { name: "photo", type: "text", label: "Photo URL" },
   ];
 
+  const [employeeProfileSelected, setEmployeeProfileSelected] = useState(null);
+
   const filteredData = employeeTableData
     .filter((row) => {
       if (filter === "All") return true;
@@ -323,6 +327,25 @@ const Employees = () => {
   return (
     <Sidebar>
       {loading && <NSTPLoader />}
+
+      {/* Layoff employee confirmation modal */}
+      <dialog id="layoff_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">
+            Are you sure you want to layoff this employee?
+          </h3>
+          <p className="text-sm text-gray-500">This action cannot be undone.</p>
+          <div className="modal-action">
+            <button
+              className="btn mr-1"
+              onClick={() => document.getElementById("layoff_modal").close()}
+            >
+              Cancel
+            </button>
+            <button className="btn btn-primary text-base-100">Layoff</button>
+          </div>
+        </div>
+      </dialog>
 
       {/* Add new employee popup form */}
       <dialog id="employee_form" className="modal">
@@ -429,6 +452,68 @@ const Employees = () => {
         </div>
       </dialog>
 
+      {/* Employee Profile modal */}
+      <dialog id="employee_profile" className="modal">
+        <div className="modal-box w-10/12 max-w-5xl">
+          <div className="grid ring-1 rounded-md p-10 ring-primary  grid-cols-3 gap-3">
+            <div className="border-r-2 border-primary">
+              <div className="avatar">
+                <div className="w-44 rounded-full">
+                  <img src={employeeProfileSelected?.photo} />
+                </div>
+              </div>
+              <h4 className="text-2xl font-bold">
+                {employeeProfileSelected?.name}
+              </h4>
+              <p className="text-md text-gray-500">
+                {employeeProfileSelected?.designation}
+              </p>
+            </div>
+            <div className="col-span-2 pl-4 grid grid-cols-2 gap-2 ">
+              <p className="text-md mb-2">
+                <strong>CNIC:</strong> {employeeProfileSelected?.cnic}
+              </p>
+              <p className="text-md mb-2">
+                <strong>Date of Birth:</strong> {employeeProfileSelected?.dob}
+              </p>
+              <p className="text-md mb-2">
+                <strong>Date of Joining:</strong>{" "}
+                {employeeProfileSelected?.date_joining}
+              </p>
+              <p className="text-md mb-2">
+                <strong>Contract Type:</strong>{" "}
+                {employeeProfileSelected?.employee_type}
+              </p>
+              <p className="text-md mb-2">
+                <strong>Status Employment:</strong>{" "}
+                {employeeProfileSelected?.status_employment
+                  ? "Active"
+                  : "Inactive"}
+              </p>
+              <p className="text-md mb-2">
+                <strong>Card Number:</strong>{" "}
+                {employeeProfileSelected?.card_num
+                  ? employeeProfileSelected?.card_num
+                  : "Not Assigned"}
+              </p>
+              <p className="text-md mb-2">
+                <strong>Etags</strong> {employeeProfileSelected?.etags}
+              </p>
+            </div>
+          </div>
+          <div className="modal-action">
+            <button
+              className="btn btn-primary text-base-100"
+              onClick={() =>
+                document.getElementById("employee_profile").close()
+              }
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </dialog>
+
       {/* Employee Table */}
       <div
         className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${
@@ -481,7 +566,7 @@ const Employees = () => {
             <p className="my-2 text-gray-500 text-sm">
               Click on any column header to sort data
             </p>
-            <table className="table mt-5 min-h-full rounded-lg overflow-clip">
+            <table className="table mt-5 min-h-full rounded-lg  mb-9">
               <thead>
                 <tr className="bg-base-200 cursor-pointer">
                   <th></th>
@@ -503,7 +588,7 @@ const Employees = () => {
                   ))}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="mb-9">
                 {filteredData.map((row, index) => (
                   <tr key={row.id} className="relative group">
                     <td>
@@ -517,15 +602,8 @@ const Employees = () => {
                     <td>{row.email}</td>
                     <td>{row.designation}</td>
                     <td>{row.cnic}</td>
-                    <td>{new Date(row.dob).toLocaleDateString()}</td>
-                    <td>{new Date(row.date_joining).toLocaleDateString()}</td>
                     <td>{row.employee_type}</td>
-                    <td>
-                      {row.contract_duration ? row.contact_duration : "-"}{" "}
-                    </td>
                     <td>{row.status_employment ? "Active" : "Inactive"}</td>
-                    <td>{row.is_nustian ? "Yes" : "No"}</td>
-                    <td>{row.e_tags}</td>
                     <td
                       className={`${
                         row.card_num && row.card_num === "Awaiting Approval"
@@ -533,10 +611,11 @@ const Employees = () => {
                           : ""
                       }`}
                     >
-                      {row.card_num ? row.card_num : "-"}
+                      {row.card_num ? row.card_num : "Not Assigned"}
                     </td>
                     <td className="relative">
                       <button
+                        ref={(el) => (buttonRefs.current[row.id] = el)}
                         className="btn btn-outline btn-primary btn-sm"
                         onClick={() => toggleDropdown(row.id)}
                       >
@@ -552,18 +631,44 @@ const Employees = () => {
                           className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
                         >
                           <ul className="py-1">
+                            <li>
+                              <button
+                                className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                onClick={() => {
+                                  setEmployeeProfileSelected(row);
+                                  document
+                                    .getElementById("employee_profile")
+                                    .showModal();
+                                }}
+                              >
+                                <UserIcon className="h-5 w-5 mr-2" />
+                                View Profile
+                              </button>
+                            </li>
                             {!row.card_num && (
                               <li>
-                                <button className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                                <button className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                                  <IdentificationIcon className="h-5 w-5 mr-2" />
                                   Request card
                                 </button>
                               </li>
                             )}
-                            <li>
-                              <button className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
-                                Layoff
-                              </button>
-                            </li>
+                            {row.status_employment && (
+                              <li>
+                                <button
+                                  className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    document
+                                      .getElementById("layoff_modal")
+                                      .showModal();
+                                  }}
+                                >
+                                  <XCircleIcon className="h-5 w-5 mr-2" />
+                                  Layoff
+                                </button>
+                              </li>
+                            )}
                           </ul>
                         </div>
                       )}

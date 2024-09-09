@@ -2,7 +2,3 @@
 @tailwind components;
 @tailwind utilities;
 
-.custom-value-label {
-    font-size: 24px !important; /* Adjust the font size as needed */
-  }
-
