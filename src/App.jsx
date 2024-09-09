@@ -7,6 +7,7 @@ import CompanyAddition from '/src/pages/admin/CompanyAddition.jsx';
 import Dashboard from './pages/company/Dashboard.jsx';
 import Employees from './pages/company/Employees.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
+import Companies from './pages/admin/Companies.jsx';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="admin">
           <Route index element={<AdminHome />} />
           <Route path="add-company" element={<CompanyAddition />} />
+          <Route path="companies" element={<Companies />} />
         </Route>
 
         <Route path="company">
