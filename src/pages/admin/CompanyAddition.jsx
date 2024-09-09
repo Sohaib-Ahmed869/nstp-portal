@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/Sidebar";
-import { UserPlusIcon } from "@heroicons/react/24/outline";
-import FloatingLabelInput from "../../components/FloatingLabelInput";
-import SignupService from "../../services/SignupService";
+import React, { useEffect, useState } from 'react'
+import Sidebar from '../../components/Sidebar'
+import { TrashIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import FloatingLabelInput from '../../components/FloatingLabelInput';
 
 const CATEGORIES =
   "AgriTech, AutoTech, DefTech, EdTech, EnergyTech, FinTech, HealthTech, Other - SmartTech";
@@ -376,99 +375,68 @@ const CompanyAddition = () => {
             { name: "applicantLandline", type: "text" },
           ])}
 
-          {/** Stakeholders Section */}
-          <div className="col-span-2 max-sm:col-span-1">
-            <div className="w-full flex justify-between items-center mt-5">
-              <h1 className="font-bold text-xl">Stakeholders Profiles</h1>
-              <button
-                onClick={() => {
-                  setFormData((prevState) => ({
-                    ...prevState,
-                    stakeholders: [
-                      ...prevState.stakeholders,
-                      {
-                        name: "",
-                        designation: "",
-                        email: "",
-                        presentAddress: "",
-                        nationality: "",
-                        dualNationality: "",
-                        profile: "",
-                        isNustAlumni: false,
-                        isNustEmployee: false,
-                      },
-                    ],
-                  }));
-                  document
-                    .getElementById(
-                      "stakeholder-" + (formData.stakeholders.length - 1)
-                    )
-                    .scrollIntoView({
-                      behavior: "smooth",
-                      block: "start",
-                      inline: "nearest",
-                    });
-                }}
-                className="btn btn-primary text-white"
-              >
-                <UserPlusIcon className="size-5" />
-                Add
-              </button>
-            </div>
-            <p className="text-gray-400 text-sm max-md:mt-5">
-              {
-                "(Note: Details of all Director(s) / Stakeholder(s) are mandatory)"
-              }
-            </p>
-            <hr className="my-4"></hr>
-          </div>
-          {/** Map over stakeholders array and render fields for each */}
-          {formData.stakeholders.map((stakeholder, index) => (
-            <div
-              key={index}
-              className="col-span-2 max-sm:col-span-1 ring-1 rounded-lg p-5 ring-gray-400"
-              id={"stakeholder-" + index}
-            >
-              <p className="text-primary font-bold mb-5">
-                {" "}
-                {"Stakeholder " + (index + 1)}
-              </p>
-              <div className="grid gap-5 max-sm:grid-cols-1 md:grid-cols-2">
-                {renderFields(
-                  "stakeholders",
-                  [
-                    { name: "name", type: "text" },
-                    { name: "designation", type: "text" },
-                    { name: "email", type: "email" },
-                    { name: "presentAddress", type: "text" },
-                    { name: "nationality", type: "text" },
-                    {
-                      name: "dualNationality",
-                      type: "text",
-                      labelName: "If dual national, enter other nationality",
-                    },
-                    {
-                      name: "profile",
-                      type: "text",
-                      labelName: "Brief profile of individual/LinkedIn Profile",
-                      longText: true,
-                    },
-                    {
-                      name: "isNustAlumni",
-                      type: "boolean",
-                      labelName: "The individual is a NUST Alumni",
-                    },
-                    {
-                      name: "isNustEmployee",
-                      type: "boolean",
-                      labelName: "The individual is a NUST Employee",
-                    },
-                  ],
-                  index
-                )}
-              </div>
-            </div>
-          ))}
+                    {/** Stakeholders Section */}
+                    <div className="col-span-2 max-sm:col-span-1">
+                        <div className="w-full flex justify-between items-center mt-5">
+                            <h1 className="font-bold text-xl">Stakeholders Profiles</h1>
+                            <button onClick={() => {
+                                setFormData(prevState => ({
+                                    ...prevState, stakeholders: [...prevState.stakeholders, {
+                                        name: '',
+                                        designation: '',
+                                        email: '',
+                                        presentAddress: '',
+                                        nationality: '',
+                                        dualNationality: '',
+                                        profile: '',
+                                        isNustAlumni: false,
+                                        isNustEmployee: false,
+                                    }]
+                                }))
+                                document.getElementById("stakeholder-" + (formData.stakeholders.length - 1)).scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
+                            }} className="btn btn-primary text-white">
+                                <UserPlusIcon className="size-5" />Add
+                            </button>
+                        </div>
+                        <p className="text-gray-400 text-sm max-md:mt-5">{"(Note: Details of all Director(s) / Stakeholder(s) are mandatory)"}</p>
+                        <hr className="my-4" ></hr>
+                    </div>
+                    {/** Map over stakeholders array and render fields for each */}
+                    {formData.stakeholders.map((stakeholder, index) => (
+                        <div key={index} className="col-span-2 max-sm:col-span-1 ring-1 rounded-lg p-5 ring-gray-400" id={"stakeholder-" + index}>
+                            <div className="flex justify-between items-center">
+                            <p className="text-primary font-bold mb-5"> {"Stakeholder " + (index + 1)}</p>
+                            <div>
+                            {index > 0 && <button onClick={() => {
+                                setFormData(prevState => {
+                                    const updatedArray = [...prevState.stakeholders];
+                                    updatedArray.splice(index, 1);
+                                    return {
+                                        ...prevState,
+                                        stakeholders: updatedArray
+                                    };
+                                })
+                            }} className="btn btn-primary text-white">
+                                <TrashIcon className="size-5" />
+                                Remove
+                            </button>}</div>
+                            
+                            </div>
+                            <div className="grid gap-5 max-sm:grid-cols-1 md:grid-cols-2">
+                                {renderFields('stakeholders', [
+                                    { name: 'name', type: 'text' },
+                                    { name: 'designation', type: 'text' },
+                                    { name: 'email', type: 'email' },
+                                    { name: 'presentAddress', type: 'text' },
+                                    { name: 'nationality', type: 'text' },
+                                    { name: 'dualNationality', type: 'text', labelName: 'If dual national, enter other nationality' },
+                                    { name: 'profile', type: 'text', labelName: 'Brief profile of individual/LinkedIn Profile', longText: true },
+                                    { name: 'isNustAlumni', type: 'boolean', labelName: 'The individual is a NUST Alumni' },
+                                    { name: 'isNustEmployee', type: 'boolean', labelName: 'The individual is a NUST Employee' }
+                                ], index)}
+                            </div>
+                        </div>
+                    ))}
 
           {/** Company Profile Section */}
           <div className="col-span-2 max-sm:col-span-1 mt-5">
