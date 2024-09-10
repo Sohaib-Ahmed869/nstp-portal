@@ -38,18 +38,20 @@ const Dashboard = () => {
 
   ]);
   const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([
-    { roomNo: 'MT-234', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
-    { roomNo: 'MS-234', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-    { roomNo: 'MT-214', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
-    { roomNo: 'MS-334', status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+    { bookingId: "abc", roomNo: 'MT-234', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
+    { bookingId: "awc", roomNo: 'MS-234', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+    { bookingId: "ahc", roomNo: 'MT-214', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
+    { bookingId: "abh", roomNo: 'MS-334', status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
   ]);
+
+  const [meetingToCancel, setMeetingToCancel] = useState();
 
   const [eTags, setETags] = useState({ issued: 10, pending: 20 }); //total = pending + approved
   const [gatePasses, setGatePasses] = useState({ issued: 28, pending: 3 }); //total = pending + approved
-
   const [employeeStats, setEmployeeStats] = useState({ total: 100, active: 80, issued: 10, unissued: 70 });
   const [internStats, setInternStats] = useState({ total: 12, nustian: 3, nonNustian: 9 });
 
+  const [meetingCancellationReason, setMeetingCancellationReason] = useState("The meeting was not approved because the room was already booked for the same time slot.");
   // **** end of data to be populated from backend ****
 
   useEffect(() => {
@@ -81,9 +83,58 @@ const Dashboard = () => {
     };
   }, [chartData]);
 
+  const cancelMeeting = (bookingId) => {
+    // Add api call here to cancel the meeting
+    // Simulate api call with timer
+    setTimeout(() => {
+      console.log("Meeting cancelled for booking id: ", bookingId);
+      setMeetingToCancel(null);
+    }, 1000);
+  }
+
+  const fetchReasonForCancellation = (bookingId) => {
+    // Add api call here to fetch the reason for meeting cancellation
+    // Simulate api call with timer
+    setTimeout(() => {
+      console.log("Fetching reason for meeting cancellation for room: ", roomNo);
+      setMeetingCancellationReason("The meeting was not approved because the room was already booked for the same time slot.");
+      document.getElementById('meeting_unapproved_reason').showModal();
+    }, 1000);
+  }
+
+
+
   return (
     <Sidebar>
       {loading && <NSTPLoader />}
+
+      {/* modal with confirmation for meeting room cancellation */}
+      <dialog id="meeting_cancellation" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Are you sure you want to cancel this booking?</h3>
+          <p className="py-4">Please click "Yes" if you wish to cancel it.</p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn mr-2" onClick={() => setMeetingToCancel(null)}>Close</button>
+              <button className="btn btn-primary" onClick={() => { cancelMeeting(meetingToCancel); }}>Yes, Cancel</button>
+            </form>
+          </div>
+        </div>
+</dialog>
+
+<dialog id="meeting_unapproved_reason" className="modal modal-bottom sm:modal-middle">
+  <div className="modal-box">
+    <h3 className="font-bold text-lg">This meeting was not approved.</h3>
+    <p className="py-4">{meetingCancellationReason}</p>
+    <div className="modal-action">
+      <form method="dialog">
+        <button className="btn mr-2">Close</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+      {/* Main page content */}
       <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && 'hidden'}`}>
 
         {/* Header (Title, toggles etc) */}
@@ -218,13 +269,20 @@ const Dashboard = () => {
                           <td>{row.time}</td>
                           <td>
                             {row.status == "Pending" ?
-                              <button className="btn btn-sm btn-outline btn-error">
+                              <button className="btn btn-sm btn-outline btn-error" onClick={() => {
+                                cancelMeeting(row.bookingId);
+                                document.getElementById('meeting_cancellation').showModal();
+                              }}>
                                 <XCircleIcon className="h-5 w-5" />
                                 Cancel
                               </button>
                               :
                               row.status == "Unapproved" ?
-                                <button className="btn btn-sm btn-outline btn-neutral">
+                                <button className="btn btn-sm btn-outline btn-neutral" onClick={() => {
+                                  fetchReasonForCancellation(row.bookingId);
+                                  document.getElementById('meeting_unapproved_reason').showModal();
+
+                                }}>
                                   <InformationCircleIcon className="h-5 w-5" />
                                   Reason
                                 </button>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Sidebar from '../../components/Sidebar'
+import NSTPLoader from '../../components/NSTPLoader';
 import { Link } from 'react-router-dom';
 import { MagnifyingGlassIcon, ChevronUpIcon, ChevronDownIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { EyeIcon } from '@heroicons/react/20/solid';
@@ -38,6 +39,7 @@ const Companies = () => {
   const [paginatedData, setPaginatedData] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10)
+  const [loading, setLoading] = useState(true)
 
   // Handle search change
   const handleSearch = (e) => {
@@ -62,7 +64,12 @@ const Companies = () => {
   useEffect(() => {
     //api call here
     //setCompaniesTableData(data)
-  }, []);
+
+    setTimeout(() => {
+      setLoading(false)
+    }, 2000)
+
+    }, []);
 
 
   // re render when table data is updated or search/fitler is applied
@@ -89,13 +96,16 @@ const Companies = () => {
 
   return (
     <Sidebar>
-      <div className="bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg">
+
+      {loading && <NSTPLoader />}
+      <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"}`}>
         <div className="flex flex-row items-center justify-between">
           <h1 className="text-2xl font-bold">Companies</h1>
         </div>
 
-        <div className="flex flex-row items-center justify-between mt-4">
-          <div className="relative w-full max-w-xs">
+        {/* Search & filter */}
+        <div className="flex flex-row max-sm:flex-col items-center justify-between mt-4">
+          <div className="relative w-full md:max-w-xs">
             <input
               type="text"
               placeholder="Search..."
@@ -105,9 +115,9 @@ const Companies = () => {
             />
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
           </div>
-          <div className="w-4/12 flex items-center justify-end">
+          <div className="w-full md:w-4/12 flex items-center justify-end">
             <AdjustmentsHorizontalIcon className="size-8 text-gray-400 mr-3" />
-            <select value={filter} onChange={handleFilterChange} className="select select-bordered w-full max-w-xs">
+            <select value={filter} onChange={handleFilterChange} className="select select-bordered w-full md:max-w-xs max-sm:mt-2">
               <option value="All">All</option>
               {COMPANY_CATEGORIES.map((option) => (
                 <option key={option} value={option}>{option}</option>

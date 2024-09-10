@@ -93,6 +93,20 @@ export const getChartOptions = (data) => {
   };
 
  export const getPieChartOptions = (internStats) => {
+
+  if (!internStats || typeof internStats.nustian === 'undefined' || typeof internStats.nonNustian === 'undefined') {
+    console.log("got intern stats")
+    console.log(internStats)
+    return {
+      series: [],
+      chart: {
+        height: 420,
+        width: "100%",
+        type: "pie",
+      },
+      labels: ["Nustian", "Non-Nustian"],
+    };
+  }
     return {
       series: [internStats.nustian, internStats.nonNustian],
       colors: ["#2a1e5c", "#87b37a"],

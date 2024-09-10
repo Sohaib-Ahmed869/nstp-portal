@@ -24,65 +24,67 @@ const Employees = () => {
   const [cardAllocations, setCardAllocations] = useState([]);
   const [etagAllocations, setEtagAllocations] = useState([]);
   const [employeeTableData, setEmployeeTableData] = useState([
-    // {
-    //   id: 1,
-    //   tenant_id: "123",
-    //   tenant_name: "Tenant A",
-    //   email: "hart@example.com",
-    //   name: "Hart Hagerty",
-    //   photo:
-    //     "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
-    //   designation: "Engineer",
-    //   cnic: "12345-6789012-3",
-    //   dob: "1990-01-01",
-    //   date_joining: "2020-01-01",
-    //   contract_type: "Permanent",
-    //   contract_end: "2025-01-01",
-    //   status_employment: true,
-    //   is_nustian: true,
-    //   e_tags: "21",
-    //   card_num: "1234567890",
-    // },
-    // {
-    //   id: 2,
-    //   tenant_id: "124",
-    //   tenant_name: "Tenant B",
-    //   email: "brice@example.com",
-    //   name: "Brice Swyre",
-    //   photo:
-    //     "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
-    //   designation: "Tax Accountant",
-    //   cnic: "12345-6789012-4",
-    //   dob: "1985-05-05",
-    //   date_joining: "2019-05-05",
-    //   contract_type: "Contract",
-    //   contract_end: "2023-05-05",
-    //   status_employment: true,
-    //   is_nustian: false,
-    //   work_permit: "Purple",
-    //   card_num: null,
-    // },
-    // {
-    //   id: 3,
-    //   tenant_id: "124",
-    //   tenant_name: "Tenant B",
-    //   email: "brice@example.com",
-    //   name: "Brice Swyre",
-    //   photo:
-    //     "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
-    //   designation: "Tax Accountant",
-    //   cnic: "12345-6789012-4",
-    //   dob: "1985-05-05",
-    //   date_joining: "2019-05-05",
-    //   contract_type: "Contract",
-    //   contract_end: "2023-05-05",
-    //   status_employment: false,
-    //   is_nustian: false,
-    //   e_tags: "Tax Accountant",
-    //   card_num: "Awaiting Approval",
-    // },
-    // // Add more dummy data as needed
-  ]);
+    {
+        "_id": "66df197161c2c1ed67fe5c27",
+        "tenant_id": "66d97748124403bf36e695e8",
+        "tenant_name": "Hexlertech",
+        "email": "musa@gmail.com",
+        "name": "Musa Haroon Satti",
+        "photo": "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
+        "designation": "Full Stack Developer",
+        "cnic": "6110166894529",
+        "dob": "2024-09-06T00:00:00.000Z",
+        "address": "F/10-1 Street 11 House 29",
+        "date_joining": "2024-10-11T00:00:00.000Z",
+        "employee_type": "Intern",
+        "contract_duration": "",
+        "status_employment": true,
+        "is_nustian": true,
+        "__v": 0,
+        "etags": 1,
+        "card_num": 0,
+        "card": {
+            "_id": "66df197161c2c1ed67fe5c28",
+            "tenant_id": "66d97748124403bf36e695e8",
+            "employee_id": "66df197161c2c1ed67fe5c27",
+            "is_issued": true,
+            "is_requested": false,
+            "is_returned": false,
+            "__v": 0,
+            "card_number": 0,
+            "date_issued": "2024-09-09T16:48:50.533Z"
+        }
+    },
+    {
+        "_id": "66df2a84c84208453e73701a",
+        "tenant_id": "66d97748124403bf36e695e8",
+        "tenant_name": "Hexlertech",
+        "email": "musaharoon.2003@gmail.com",
+        "name": "Musa Haroon Satti",
+        "photo": "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
+        "designation": "Full Stack Developer",
+        "cnic": "6110166894528",
+        "dob": "2024-09-05T00:00:00.000Z",
+        "address": "F/10-1 Street 11 House 29",
+        "date_joining": "2024-10-04T00:00:00.000Z",
+        "employee_type": "Contract",
+        "contract_duration": "6 Months",
+        "status_employment": true,
+        "is_nustian": false,
+        "__v": 0,
+        "etags": 1,
+        "card": {
+            "_id": "66df2a84c84208453e73701b",
+            "tenant_id": "66d97748124403bf36e695e8",
+            "employee_id": "66df2a84c84208453e73701a",
+            "is_issued": false,
+            "is_requested": true,
+            "is_returned": false,
+            "__v": 0,
+            "date_requested": "2024-09-09T17:06:10.755Z"
+        }
+    }
+]);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("All");
@@ -104,65 +106,68 @@ const Employees = () => {
 
   // *** Effects ***
   useEffect(() => {
-    async function fetchData() {
-      // Simulate API call to fetch table data
-      try {
-        const employeeResponse = await TenantService.getEmployees();
-        console.log("🚀 ~ Employees response:", employeeResponse);
-        if (employeeResponse.error) {
-          console.error("Error fetching employees:", employeeResponse.error);
-          return;
-        }
-        setEmployees(employeeResponse.data);
+    // async function fetchData() {
+    //   try {
+    //     const employeeResponse = await TenantService.getEmployees();
+    //     console.log("🚀 ~ Employees response:", employeeResponse);
+    //     if (employeeResponse.error) {
+    //       console.error("Error fetching employees:", employeeResponse.error);
+    //       return;
+    //     }
+    //     setEmployees(employeeResponse.data);
 
-        const cardResponse = await TenantService.getCardAllocations();
-        console.log("🚀 ~ Cards response:", cardResponse);
-        if (cardResponse.error) {
-          console.error("Error fetching card allocations:", cardResponse.error);
-          return;
-        }
-        setCardAllocations(cardResponse.data);
+    //     const cardResponse = await TenantService.getCardAllocations();
+    //     console.log("🚀 ~ Cards response:", cardResponse);
+    //     if (cardResponse.error) {
+    //       console.error("Error fetching card allocations:", cardResponse.error);
+    //       return;
+    //     }
+    //     setCardAllocations(cardResponse.data);
 
-        const etagResponse = await TenantService.getEtagAllocations();
-        console.log("🚀 ~ Etags response:", etagResponse);
-        if (etagResponse.error) {
-          console.error("Error fetching etag allocations:", etagResponse.error);
-          return;
-        }
-        setEtagAllocations(etagResponse.data);
+    //     const etagResponse = await TenantService.getEtagAllocations();
+    //     console.log("🚀 ~ Etags response:", etagResponse);
+    //     if (etagResponse.error) {
+    //       console.error("Error fetching etag allocations:", etagResponse.error);
+    //       return;
+    //     }
+    //     setEtagAllocations(etagResponse.data);
 
-        console.log("🚀 ~ Employees:", employeeResponse);
-        console.log("🚀 ~ Card Allocations:", cardResponse);
-        console.log("🚀 ~ Etag Allocations:", etagResponse);
+    //     console.log("🚀 ~ Employees:", employeeResponse);
+    //     console.log("🚀 ~ Card Allocations:", cardResponse);
+    //     console.log("🚀 ~ Etag Allocations:", etagResponse);
 
-        const combinedData = employeeResponse.data.map((emp) => {
-          const card = cardResponse.data.find(
-            (card) => card.employee_id === emp._id
-          );
-          const etags = etagResponse.data.filter(
-            (etag) => etag.employee_id === emp._id
-          );
-          // length of e_tags
-          const count = etags.length;
-          console.log("🚀 ~ count:", count);
-          return {
-            ...emp,
-            etags: count,
-            card_num: card ? card.card_number : null,
-            card,
-          };
-        });
+    //     const combinedData = employeeResponse.data.map((emp) => {
+    //       const card = cardResponse.data.find(
+    //         (card) => card.employee_id === emp._id
+    //       );
+    //       const etags = etagResponse.data.filter(
+    //         (etag) => etag.employee_id === emp._id
+    //       );
+    //       // length of e_tags
+    //       const count = etags.length;
+    //       console.log("🚀 ~ count:", count);
+    //       return {
+    //         ...emp,
+    //         etags: count,
+    //         card_num: card ? card.card_number : null,
+    //         card,
+    //       };
+    //     });
 
-        console.log("🚀 ~ combinedData:", combinedData);
-        setEmployeeTableData(combinedData);
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
+    //     console.log("🚀 ~ combinedData:", combinedData);
+    //     setEmployeeTableData(combinedData);
+    //   } catch (error) {
+    //     console.error("Error fetching employees:", error);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // }
 
-    fetchData();
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    // fetchData();
   }, []);
 
   useEffect(() => {
@@ -197,10 +202,10 @@ const Employees = () => {
   }, []);
 
   // *** Functions ***
-  const toggleDropdown = (id) => {
+  const toggleDropdown = (_id) => {
     setDropdownOpen((prevState) => ({
       ...prevState,
-      [id]: !prevState[id],
+      [_id]: !prevState[_id],
     }));
   };
 
@@ -349,7 +354,7 @@ const Employees = () => {
       </dialog>
 
       {/* Add new employee popup form */}
-      <dialog id="employee_form" className="modal">
+      <dialog id="employee_form" className="modal ">
         <div className="modal-box w-11/12 max-w-5xl">
           <h3 className="font-bold text-lg">Add new employee</h3>
           <form onSubmit={handleSubmit} className="py-4">
@@ -459,7 +464,7 @@ const Employees = () => {
           <div className="grid ring-1 rounded-md p-10 ring-primary  grid-cols-3 gap-3">
             <div className="border-r-2 border-primary">
               <div className="avatar">
-                <div className="w-44 rounded-full">
+                <div className="lg:w-44 max-md:w-20  rounded-full">
                   <img src={employeeProfileSelected?.photo} />
                 </div>
               </div>
@@ -470,7 +475,7 @@ const Employees = () => {
                 {employeeProfileSelected?.designation}
               </p>
             </div>
-            <div className="col-span-2 pl-4 grid grid-cols-2 gap-2 ">
+            <div className="col-span-2 pl-4 grid grid-cols-2 max-md:grid-cols-1 gap-2 ">
               <p className="text-md mb-2">
                 <strong>CNIC:</strong> {employeeProfileSelected?.cnic}
               </p>
@@ -536,8 +541,8 @@ const Employees = () => {
         </div>
 
         {/* Search + Filter */}
-        <div className="flex flex-row items-center justify-between mt-4">
-          <div className="relative w-full max-w-xs">
+        <div className="flex max-md:flex-col lg:flex-row  lg:items-center lg:justify-between mt-4">
+          <div className="relative w-full lg:max-w-xs">
             <input
               type="text"
               placeholder="Search..."
@@ -547,7 +552,7 @@ const Employees = () => {
             />
             <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
           </div>
-          <div className=" w-4/12 flex items-center justify-end">
+          <div className="w-full lg:w-4/12 flex items-center lg:justify-end max-md:mt-2">
             <AdjustmentsHorizontalIcon className="size-8 text-gray-400 mr-3" />
             <select
               value={filter}
@@ -593,7 +598,7 @@ const Employees = () => {
               </thead>
               <tbody className="mb-9">
                 {filteredData.map((row, index) => (
-                  <tr key={row.id} className="relative group">
+                  <tr key={row._id} className="relative group">
                     <td>
                       <div className="avatar">
                         <div className="w-16 rounded-full">
@@ -622,19 +627,19 @@ const Employees = () => {
                     </td>
                     <td className="relative">
                       <button
-                        ref={(el) => (buttonRefs.current[row.id] = el)}
+                        ref={(el) => (buttonRefs.current[row._id] = el)}
                         className="btn btn-outline btn-primary btn-sm"
-                        onClick={() => toggleDropdown(row.id)}
+                        onClick={() => toggleDropdown(row._id)}
                       >
-                        {dropdownOpen[row.id] ? (
+                        {dropdownOpen[row._id] ? (
                           <ChevronUpIcon className="h-5 w-5" />
                         ) : (
                           <ChevronDownIcon className="h-5 w-5" />
                         )}
                       </button>
-                      {dropdownOpen[row.id] && (
+                      {dropdownOpen[row._id] && (
                         <div
-                          ref={(el) => (dropdownRefs.current[row.id] = el)}
+                          ref={(el) => (dropdownRefs.current[row._id] = el)}
                           className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
                         >
                           <ul className="py-1">
