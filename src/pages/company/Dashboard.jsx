@@ -10,6 +10,7 @@ import ComparativeChart from '../../components/ComparativeChart';
 import NSTPLoader from '../../components/NSTPLoader';
 import ReactApexChart from 'react-apexcharts';
 import NewsFeed from '../../components/NewsFeed';
+import EmployeeStats from '../../components/EmployeeStats';
 
 //Categories of types of complaints
 const CATEGORIES = ['Direct', 'Sponsor', 'Affiliate', 'Email marketing'];
@@ -120,19 +121,19 @@ const Dashboard = () => {
             </form>
           </div>
         </div>
-</dialog>
+      </dialog>
 
-<dialog id="meeting_unapproved_reason" className="modal modal-bottom sm:modal-middle">
-  <div className="modal-box">
-    <h3 className="font-bold text-lg">This meeting was not approved.</h3>
-    <p className="py-4">{meetingCancellationReason}</p>
-    <div className="modal-action">
-      <form method="dialog">
-        <button className="btn mr-2">Close</button>
-      </form>
-    </div>
-  </div>
-</dialog>
+      <dialog id="meeting_unapproved_reason" className="modal modal-bottom sm:modal-middle">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">This meeting was not approved.</h3>
+          <p className="py-4">{meetingCancellationReason}</p>
+          <div className="modal-action">
+            <form method="dialog">
+              <button className="btn mr-2">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
 
       {/* Main page content */}
       <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && 'hidden'}`}>
@@ -159,7 +160,7 @@ const Dashboard = () => {
           <div className="md:col-span-3 grid grid-cols-1 gap-4 md:grid-cols-3">
 
             {/* Complaint types legend */}
-            <div className="bg-base-100 md:col-span-3 h-content rounded-md shadow-md border-t flex flex-col justify-center border-t-gray-200 p-5">
+            <div className="bg-base-100 md:col-span-3 h-content rounded-md shadow-md border-t flex flex-col justify-center border-t-gray-200 dark:shadow-2xl dark:border-none p-5">
               <span className="font-bold">Complaint Types</span>
               <div className="flex flex-row gap-5">
                 {
@@ -174,15 +175,15 @@ const Dashboard = () => {
             </div>
 
             {/* Charts */}
-            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-3 flex flex-col items-center justify-center">
+            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none  p-3 flex flex-col items-center justify-center">
               <p className="font-semibold font-lg mb-3  text-center">Complaints Received</p>
               <div id="received-chart"></div>
             </div>
-            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
+            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none  p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
               <p className="font-semibold font-lg mb-3 text-center">Complaints Resolved</p>
               <div id="resolved-chart"></div>
             </div>
-            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
+            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none  p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
               <p className="font-semibold font-lg mb-3 text-center">Complaints Unresolved</p>
               <div id="unresolved-chart"></div>
             </div>
@@ -191,7 +192,7 @@ const Dashboard = () => {
 
           {/* Table of employees info */}
           <div className="md:col-span-4 ">
-            <div className=" bg-base-100 min-h-full rounded-md p-5 shadow-md  border-t border-t-gray-200 ">
+            <div className=" bg-base-100 min-h-full rounded-md p-5 shadow-md  border-t border-t-gray-200 dark:shadow-2xl dark:border-none  ">
               <div className="w-full flex justify-between mb-3">
                 <p className="mb-3 font-bold"> Employees</p>
                 <Link to="/company/employees">
@@ -243,7 +244,7 @@ const Dashboard = () => {
 
           {/* Meeting room schedule table */}
           <div className="col-span-4 my-3">
-            <div className=" bg-base-100 min-h-full   p-5 rounded-md shadow-md border-t border-t-gray-200 ">
+            <div className=" bg-base-100 min-h-full   p-5 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none  ">
               <p className="mb-3 font-bold"> Meeting Room Schedule</p>
 
               <div className="max-h-80 overflow-y-auto bg-base-100">
@@ -300,11 +301,11 @@ const Dashboard = () => {
 
           {/* Charts of e-tags and gate passes */}
           <div className="col-span-3 my-3 flex flex-col gap-4">
-            <div className="bg-base-100 rounded-md shadow-md border-t  border-t-gray-200 p-5">
+            <div className="bg-base-100 rounded-md shadow-md border-t  border-t-gray-200 dark:shadow-2xl dark:border-none  p-5">
               <ComparativeChart title="Parking E-tags" comparisonData={eTags} />
             </div>
 
-            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-5">
+            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200  dark:shadow-2xl dark:border-none  p-5">
               <ComparativeChart title="Gate Passes" comparisonData={gatePasses} />
             </div>
           </div>
@@ -316,46 +317,15 @@ const Dashboard = () => {
           {/* Stats section */}
           <div className="flex flex-col gap-4 col-span-1 lg:col-span-3 min-h-full">
             {/* Employee stats */}
-            <div className=" bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-5 flex flex-col ">
-              <div className="flex flex-row justify-between">
-                <div>
-                  <span className="font-bold text-4xl flex flex-row items-center gap-2">
-                    <UserGroupIcon className="size-7" /> {employeeStats.total}
-                  </span>
-                  <p className="mb-3 mt-1 font-bold"> Total Employees </p>
-                </div>
-
-                <div className="flex flex-col items-end">
-                  <span className="font-bold text-4xl flex flex-row items-center gap-2">
-                    {employeeStats.active}
-                    <ArrowTrendingUpIcon className="size-7" />
-                  </span>
-                  <p className="mb-3 mt-1 font-bold"> Active Employees </p>
-                </div>
-              </div>
-
-              <div className="flex rounded-2xl overflow-clip" >
-                <div className="bg-red-100 p-5 flex flex-row justify-between w-1/2 text-red-900">
-                  <div className="flex flex-col items-start">
-                    <p className="font-bold text-2xl">{employeeStats.issued}</p>
-                    <p className="text-sm">Cards not issued</p>
-                  </div>
-                  <TicketIcon className="h-10 w-10 text-red-900" />
-                </div>
-                <div className="bg-lime-100 p-5 flex flex-row justify-between w-1/2 text-green-900">
-                  <CheckBadgeIcon className="h-10 w-10 text-green-900" />
-                  <div className="flex flex-col items-end">
-                    <p className="font-bold text-2xl">{employeeStats.issued}</p>
-                    <p className="text-sm"> Cards Issued</p>
-                  </div>
-
-                </div>
-              </div>
-
-            </div>
+            <EmployeeStats
+              total={employeeStats.total}
+              active={employeeStats.active}
+              cardsNotIssued={employeeStats.unissued}
+              cardsIssued={employeeStats.issued}
+            />
 
             {/* Intern stats */}
-            <div className="mt-2 bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-5 flex flex-row justify-between items-start">
+            <div className="mt-2 bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none  p-5 flex flex-row justify-between items-start">
               <div>
                 <span className="font-bold text-4xl flex flex-row items-center gap-2">
                   <UserGroupIcon className="size-7" /> {internStats.total}
@@ -368,7 +338,6 @@ const Dashboard = () => {
               <div id="pie-chart">
                 <ReactApexChart options={getPieChartOptions(internStats)} series={getPieChartOptions(internStats).series} type="pie" height={220} />
               </div>
-
             </div>
           </div>
 

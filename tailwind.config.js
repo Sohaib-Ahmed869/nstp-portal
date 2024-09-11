@@ -81,5 +81,6 @@ export default {
       },
       //more themes can be added here.
     ],
+    darkTheme: 'nstpDark',
   },
 }

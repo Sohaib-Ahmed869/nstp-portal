@@ -5,9 +5,17 @@ import { UserGroupIcon, BriefcaseIcon, ArrowTrendingUpIcon, TicketIcon, Academic
 import sampleCompanyLogo from '../../assets/samplecompanylogo.png'
 import ReactApexChart from 'react-apexcharts';
 import { getPieChartOptions } from '../util/charts';
+import EmployeeStats from '../../components/EmployeeStats';
+import NSTPLoader from '../../components/NSTPLoader';
+import EmployeeProfileModal from '../../components/EmployeeProfileModal';
 
 const Company = () => {
   const { companyId } = useParams();
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const terminateEmployee = (employeeId) => {
+    // API CALL to terminate
+    console.log(`Terminating employee with ID: ${employeeId}`);
+  };
   const [companyData, setCompanyData] = useState({
     name: "Tech Innovators",
     type: "Startup",
@@ -33,14 +41,104 @@ const Company = () => {
     jobsInternships: 10,
     meetingRoomUsage: 120,
     violations: 5,
-    contractDuration: 75
+    contractDuration: 75,
+    employees: [
+      {
+        "_id": "66df197161c2c1ed67fe5c27",
+        "tenant_id": "66d97748124403bf36e695e8",
+        "tenant_name": "Hexlertech",
+        "email": "musa@gmail.com",
+        "name": "Musa Haroon Satti",
+        "photo": "https://randomuser.me/api/portraits/men/21.jpg",
+        "designation": "Full Stack Developer",
+        "cnic": "6110166894529",
+        "dob": "2024-09-06",
+        "address": "F/10-1 Street 11 House 29",
+        "date_joining": "2024-10-11",
+        "employee_type": "Intern",
+        "contract_duration": "",
+        "status_employment": true,
+        "is_nustian": true,
+        "__v": 0,
+        "etags": 1,
+        "card_num": 0,
+        "card": {
+            "_id": "66df197161c2c1ed67fe5c28",
+            "tenant_id": "66d97748124403bf36e695e8",
+            "employee_id": "66df197161c2c1ed67fe5c27",
+            "is_issued": true,
+            "is_requested": false,
+            "is_returned": false,
+            "__v": 0,
+            "card_number": 0,
+            "date_issued": "2024-09-09T16:48:50.533Z"
+        }
+    },
+    {
+        "_id": "66df2a84c84208453e73701a",
+        "tenant_id": "66d97748124403bf36e695e8",
+        "tenant_name": "Hexlertech",
+        "email": "musaharoon.2003@gmail.com",
+        "name": "Musa Haroon Satti",
+        "photo": "https://randomuser.me/api/portraits/men/25.jpg",
+        "designation": "Full Stack Developer",
+        "cnic": "6110166894528",
+        "dob": "2024-09-05",
+        "address": "F/10-1 Street 11 House 29",
+        "date_joining": "2024-10-04",
+        "employee_type": "Contract",
+        "contract_duration": "6 Months",
+        "status_employment": true,
+        "is_nustian": false,
+        "__v": 0,
+        "etags": 1,
+        "card": {
+            "_id": "66df2a84c84208453e73701b",
+            "tenant_id": "66d97748124403bf36e695e8",
+            "employee_id": "66df2a84c84208453e73701a",
+            "is_issued": false,
+            "is_requested": true,
+            "is_returned": false,
+            "__v": 0,
+            "date_requested": "2024-09-09T17:06:10.755Z"
+        }
+    },
+    {
+      "_id": "123f2a84c84208453e73701a",
+      "tenant_id": "66d91238124403bf36e695e8",
+      "tenant_name": "Hexlertech",
+      "email": "haadiya@gmail.com",
+      "name": "Haadiya Sajid",
+      "photo": "https://randomuser.me/api/portraits/women/25.jpg",
+      "designation": "Full Stack Developer",
+      "cnic": "6110112394528",
+      "dob": "2024-09-05",
+      "address": "F/10-1 Street 11 House 29",
+      "date_joining": "2024-10-04",
+      "employee_type": "Contract",
+      "contract_duration": "6 Months",
+      "status_employment": true,
+      "is_nustian": false,
+      "__v": 0,
+      "etags": 1,
+      "card": {
+          "_id": "66df2a84c84208453e73701b",
+          "tenant_id": "66d97748124403bf36e695e8",
+          "employee_id": "66df2a84c84208453e73701a",
+          "is_issued": false,
+          "is_requested": true,
+          "is_returned": false,
+          "__v": 0,
+          "date_requested": "2024-09-09T17:06:10.755Z"
+      }
+  }
+    ]
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch company data using the companyId
+    // API call here, Fetch company data using the companyId
     //simulate loading
-
     console.log(companyData)
 
     setTimeout(() => {
@@ -52,8 +150,31 @@ const Company = () => {
 
   return (
     <Sidebar>
+      {loading && <NSTPLoader />}
+      <div className={`bg-base-100 rounded-md shadow-md p-5 lg:p-10 mt-10 ${loading && "hidden"}`}>
 
-      <div className="bg-base-100 rounded-md shadow-md p-5 lg:p-10 mt-10">
+        {/* Terminate Confirmation Modal */}
+        <dialog id="terminate-modal" className="modal">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Confirm Termination</h3>
+            <p className="py-4">Are you sure you want to terminate {selectedEmployee?.name}?</p>
+            <div className="modal-action">
+              <button
+                className="btn btn-error"
+                onClick={() => {
+                  terminateEmployee(selectedEmployee._id);
+                  document.getElementById('terminate-modal').close();
+                }}
+              >
+                Yes
+              </button>
+              <button className="btn" onClick={() => document.getElementById('terminate-modal').close()}>No</button>
+            </div>
+          </div>
+        </dialog>
+
+        {/* View Profile Modal */}
+        <EmployeeProfileModal employeeProfileSelected={selectedEmployee} />
 
         {/* Header with company info, description, logo and join date */}
         <div className="flex max-sm:flex-col justify-start items-start gap-5">
@@ -65,11 +186,11 @@ const Company = () => {
             <div className='badge badge-secondary mt-2 mb-1'>{companyData.type}</div>
             <div className="flex flex-row gap-7 mt-3">
               <div className="flex">
-              <CalendarIcon className="h-6 w-6 text-secondary" />
-              <span className="text-secondary ml-2 font-semibold">{"Joined on " + companyData.joiningDate}</span>
+                <CalendarIcon className="h-6 w-6 text-secondary" />
+                <span className="text-secondary ml-2 font-semibold">{"Joined on " + companyData.joiningDate}</span>
               </div>
-              <div className="">Contract start: { companyData.contractStartDate}</div>
-              <div className="">Contract end: { companyData.contractEndDate}</div>
+              <div className="">Contract start: {companyData.contractStartDate}</div>
+              <div className="">Contract end: {companyData.contractEndDate}</div>
             </div>
           </div>
         </div>
@@ -78,43 +199,12 @@ const Company = () => {
 
         <div className="grid md:grid-cols-2 gap-5 mt-5 ">
           {/* Employee Stats */}
-          <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-5 flex flex-col ">
-            <div className="flex lg:flex-row flex-col justify-between">
-              <div>
-                <span className="font-bold text-4xl flex flex-row items-center gap-2">
-                  <UserGroupIcon className="size-7" /> {companyData.totalEmployees}
-                </span>
-                <p className="mb-3 mt-1 font-bold"> Total Employees </p>
-              </div>
-
-              <div className="flex flex-col lg:items-end">
-                <span className="font-bold text-4xl flex flex-row items-center gap-2">
-                  {companyData.activeEmployees}
-                  <ArrowTrendingUpIcon className="size-7" />
-                </span>
-                <p className="mb-3 mt-1 font-bold"> Active Employees </p>
-              </div>
-            </div>
-
-            <div className="flex lg:flex-row flex-col rounded-2xl overflow-clip" >
-              <div className="bg-red-100 p-5 flex flex-row justify-between lg:w-1/2 text-red-900">
-                <div className="flex flex-col items-start">
-                  <p className="font-bold text-2xl">{companyData.cardsNotIssued}</p>
-                  <p className="text-sm">Cards not issued</p>
-                </div>
-                <TicketIcon className="h-10 w-10 text-red-900" />
-              </div>
-              <div className="bg-lime-100 p-5 flex flex-row justify-between lg:w-1/2 text-green-900">
-                <CheckBadgeIcon className="h-10 w-10 text-green-900" />
-                <div className="flex flex-col items-end">
-                  <p className="font-bold text-2xl">{companyData.cardsIssued}</p>
-                  <p className="text-sm"> Cards Issued</p>
-                </div>
-
-              </div>
-            </div>
-
-          </div>
+          <EmployeeStats
+            total={companyData.totalEmployees}
+            active={companyData.activeEmployees}
+            cardsNotIssued={companyData.cardsNotIssued}
+            cardsIssued={companyData.cardsIssued}
+          />
 
           {/* Company Stats grid */}
           <div className="bg-base-100 p-5 shadow-md border-t border-t-gray-200  grid divide-y divide-x divide-gray-200 grid-cols-1 md:grid-cols-1 lg:grid-cols-3">
@@ -176,7 +266,7 @@ const Company = () => {
 
         {/* second row (4 col stats) */}
         <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-5 mt-5 ">
-          
+
           {/* internee stats and piechart */}
           <div className="mt-2 lg:col-span-1 md:col-span-2 sm:col-span-1 bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-5 flex flex-row justify-between items-start">
             <div>
@@ -202,14 +292,14 @@ const Company = () => {
               </span>
               <p className="mb-3 mt-1 font-bold"> Contract complete </p>
 
-              <span className="mt-2 block">Contract start: { companyData.contractStartDate}</span>
-              <span className="">Contract end: { companyData.contractEndDate}</span>
+              <span className="mt-2 block">Contract start: {companyData.contractStartDate}</span>
+              <span className="">Contract end: {companyData.contractEndDate}</span>
 
             </div>
             <div>
-            <div className="radial-progress bg-neutral text-primary" style={{ "--value": `${companyData.contractDuration}`, "--size": "7rem", "--thickness": "13px"  }} role="progressbar">
-  {companyData.contractDuration}%
-</div>
+              <div className="radial-progress bg-neutral text-primary" style={{ "--value": `${companyData.contractDuration}`, "--size": "7rem", "--thickness": "13px" }} role="progressbar">
+                {companyData.contractDuration}%
+              </div>
             </div>
           </div>
 
@@ -234,36 +324,76 @@ const Company = () => {
               <div className="stat-value text-secondary">{companyData.jobsInternships}</div>
               <div className="stat-desc">↗︎ Creating opportunities</div>
             </div>
-
-
             <div className="stat">
-    <div className="stat-figure text-secondary">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        className="inline-block h-8 w-8 stroke-current">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-      </svg>
-    </div>
-    <div className="stat-title">Meeting rooms</div>
-    <div className="stat-value">{companyData.meetingRoomUsage}</div>
-    <div className="stat-desc">↗︎ Hours utilized </div>
-  </div>
+              <div className="stat-figure text-secondary">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="inline-block h-8 w-8 stroke-current">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                </svg>
+              </div>
+              <div className="stat-title">Meeting rooms</div>
+              <div className="stat-value">{companyData.meetingRoomUsage}</div>
+              <div className="stat-desc">↗︎ Hours utilized </div>
+            </div>
           </div>
 
-         
-
         </div>
+
+        {/* Employees list */}
+        <div>
+          <h1 className="text-2xl font-semibold mt-5">Employees</h1>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
+            {companyData.employees.map((employee) => (
+              <div key={employee._id} className="relative bg-base-100 rounded-md shadow-md p-5 flex flex-col gap-5 items-start group">
+                <div className="flex gap-2">
+                  <div className="avatar">
+                    <div className="w-24 rounded-full">
+                      <img src={employee.photo} alt={employee.name} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <h2 className="text-lg font-semibold">{employee.name}</h2>
+                    <p className="text-sm text-gray-500">{employee.designation}</p>
+                    <p className="text-sm text-gray-500">{"Joined on " + employee.date_joining}</p>
+                  </div>
+                </div>
+                <div className="absolute inset-0 bg-base-100 rounded-md bg-opacity-50 backdrop-blur-sm flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="flex gap-2">
+                    <button
+                      className="btn btn-primary text-base-100"
+                      onClick={() => {
+                        setSelectedEmployee(employee);
+                        document.getElementById('employee_profile').showModal();
+                      }}
+                    >
+                      View Profile
+                    </button>
+                    <button
+                      className="btn btn-error text-base-100"
+                      onClick={() => {
+                        setSelectedEmployee(employee);
+                        document.getElementById('terminate-modal').showModal();
+                      }}
+                    >
+                      Terminate
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+
       </div>
-
-
-
-
     </Sidebar>
   );
 };

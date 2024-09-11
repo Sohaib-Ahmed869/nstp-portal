@@ -16,7 +16,12 @@ const ThemeControl = () => {
       useEffect(() => {
         const currentTheme = isDarkMode ? "nstpDark" : "nstp";
         document.documentElement.setAttribute("data-theme", currentTheme);
-      }, [isDarkMode]); // Depend on currentTheme state
+        if (isDarkMode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }, [isDarkMode]);
 
   return (
     <button

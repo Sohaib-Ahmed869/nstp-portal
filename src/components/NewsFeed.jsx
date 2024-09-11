@@ -15,7 +15,7 @@ const NewsFeed = () => {
     ])
 }, []);
   return (
-    <div className="bg-base-100 min-h-full max-h-full overflow-y-scroll rounded-md shadow-md border-t flex flex-col gap-5 border-t-gray-200 p-5">
+    <div className="bg-base-100 min-h-full max-h-full overflow-y-scroll rounded-md shadow-md border-t flex flex-col gap-5 border-t-gray-200 dark:shadow-2xl dark:border-none  p-5">
       <h1 className="text-2xl font-bold">News Feed</h1>
       {news.map((item, index) => ( 
         <div key={index} className="flex gap-3">

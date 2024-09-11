@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import NSTPLoader from "../../components/NSTPLoader";
+import EmployeeProfileModal from "../../components/EmployeeProfileModal";
 import {
   UserPlusIcon,
   ChevronUpIcon,
@@ -33,9 +34,9 @@ const Employees = () => {
         "photo": "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
         "designation": "Full Stack Developer",
         "cnic": "6110166894529",
-        "dob": "2024-09-06T00:00:00.000Z",
+        "dob": "2024-09-06",
         "address": "F/10-1 Street 11 House 29",
-        "date_joining": "2024-10-11T00:00:00.000Z",
+        "date_joining": "2024-10-11",
         "employee_type": "Intern",
         "contract_duration": "",
         "status_employment": true,
@@ -64,9 +65,9 @@ const Employees = () => {
         "photo": "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
         "designation": "Full Stack Developer",
         "cnic": "6110166894528",
-        "dob": "2024-09-05T00:00:00.000Z",
+        "dob": "2024-09-05",
         "address": "F/10-1 Street 11 House 29",
-        "date_joining": "2024-10-04T00:00:00.000Z",
+        "date_joining": "2024-10-04",
         "employee_type": "Contract",
         "contract_duration": "6 Months",
         "status_employment": true,
@@ -459,68 +460,7 @@ const Employees = () => {
       </dialog>
 
       {/* Employee Profile modal */}
-      <dialog id="employee_profile" className="modal">
-        <div className="modal-box w-10/12 max-w-5xl">
-          <div className="grid ring-1 rounded-md p-10 ring-primary  grid-cols-3 gap-3">
-            <div className="border-r-2 border-primary">
-              <div className="avatar">
-                <div className="lg:w-44 max-md:w-20  rounded-full">
-                  <img src={employeeProfileSelected?.photo} />
-                </div>
-              </div>
-              <h4 className="text-2xl font-bold">
-                {employeeProfileSelected?.name}
-              </h4>
-              <p className="text-md text-gray-500">
-                {employeeProfileSelected?.designation}
-              </p>
-            </div>
-            <div className="col-span-2 pl-4 grid grid-cols-2 max-md:grid-cols-1 gap-2 ">
-              <p className="text-md mb-2">
-                <strong>CNIC:</strong> {employeeProfileSelected?.cnic}
-              </p>
-              <p className="text-md mb-2">
-                <strong>Date of Birth:</strong> {employeeProfileSelected?.dob}
-              </p>
-              <p className="text-md mb-2">
-                <strong>Date of Joining:</strong>{" "}
-                {employeeProfileSelected?.date_joining}
-              </p>
-              <p className="text-md mb-2">
-                <strong>Contract Type:</strong>{" "}
-                {employeeProfileSelected?.employee_type}
-              </p>
-              <p className="text-md mb-2">
-                <strong>Status Employment:</strong>{" "}
-                {employeeProfileSelected?.status_employment
-                  ? "Active"
-                  : "Inactive"}
-              </p>
-              <p className="text-md mb-2">
-                <strong>Card Number:</strong>{" "}
-                {employeeProfileSelected?.card_num !== undefined
-                  ? employeeProfileSelected?.card_num
-                  : employeeProfileSelected?.card.is_requested
-                  ? "Awaiting Approval"
-                  : "Not Assigned"}
-              </p>
-              <p className="text-md mb-2">
-                <strong>Etags</strong> {employeeProfileSelected?.etags}
-              </p>
-            </div>
-          </div>
-          <div className="modal-action">
-            <button
-              className="btn btn-primary text-base-100"
-              onClick={() =>
-                document.getElementById("employee_profile").close()
-              }
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      </dialog>
+     <EmployeeProfileModal employeeProfileSelected={employeeProfileSelected} />
 
       {/* Employee Table */}
       <div
