@@ -296,7 +296,7 @@ const Dashboard = () => {
             {/* Charts */}
             <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none  p-3 flex flex-col items-center justify-center">
               <p className="font-semibold font-lg mb-3  text-center">
-                Complaints Received
+                Complaints Sent
               </p>
               <div id="received-chart"></div>
             </div>
