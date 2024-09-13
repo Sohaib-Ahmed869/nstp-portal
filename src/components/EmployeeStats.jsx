@@ -22,15 +22,15 @@ const EmployeeStats = ({ total, active, cardsNotIssued, cardsIssued }) => {
       </div>
 
       <div className="flex lg:flex-row flex-col rounded-2xl overflow-clip">
-        <div className="bg-red-100 p-5 flex flex-row justify-between lg:w-1/2 text-red-900">
+        <div className="bg-red-100 dark:bg-red-800 dark:bg-opacity-60 p-5 flex flex-row justify-between lg:w-1/2 text-red-900 dark:text-red-400">
           <div className="flex flex-col items-start">
             <p className="font-bold text-2xl">{cardsNotIssued}</p>
             <p className="text-sm">Cards not issued</p>
           </div>
-          <TicketIcon className="h-10 w-10 text-red-900" />
+          <TicketIcon className="h-10 w-10 text-red-900 dark:text-red-400" />
         </div>
-        <div className="bg-lime-100 p-5 flex flex-row justify-between lg:w-1/2 text-green-900">
-          <CheckBadgeIcon className="h-10 w-10 text-green-900" />
+        <div className="bg-lime-100 dark:bg-lime-900 dark:bg-opacity-30 p-5 flex flex-row justify-between lg:w-1/2 text-green-900 dark:text-green-400">
+          <CheckBadgeIcon className="h-10 w-10 text-green-900 dark:text-green-400" />
           <div className="flex flex-col items-end">
             <p className="font-bold text-2xl">{cardsIssued}</p>
             <p className="text-sm"> Cards Issued</p>

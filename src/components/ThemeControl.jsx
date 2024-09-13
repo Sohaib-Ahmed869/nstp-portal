@@ -10,11 +10,14 @@ const ThemeControl = () => {
         setTimeout(() => {
           setIsDarkMode(!isDarkMode);
           setIsSpinning(false);
-        }, 200); // Duration of the spin animation
+        }, 300); // Duration of the spin animation
       };
     
       useEffect(() => {
         const currentTheme = isDarkMode ? "nstpDark" : "nstp";
+        //set in localstorage
+        localStorage.setItem("data-theme", currentTheme);
+
         document.documentElement.setAttribute("data-theme", currentTheme);
         if (isDarkMode) {
           document.documentElement.classList.add('dark');
@@ -22,6 +25,24 @@ const ThemeControl = () => {
           document.documentElement.classList.remove('dark');
         }
       }, [isDarkMode]);
+
+      //when the component is loaded, check the local storage for the theme
+      useEffect(() => {
+        const theme = localStorage.getItem("data-theme");
+        //check classList
+        if (theme === "nstp") {
+          
+        } else{
+          if (document.documentElement.classList.contains('dark')) {
+            setIsDarkMode(true);
+          }
+
+        }
+        if (theme === "nstpDark") {
+          setIsDarkMode(true);
+        }
+      }, []);
+
 
   return (
     <button

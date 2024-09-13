@@ -1,6 +1,6 @@
 //Colours for chart
 //Sage green, dark green, dark purple, bright light green (according to colour scheme)
-const colors = ['#87b37a', '#4c6663', '#2a1e5c', '#9ce37d'];
+const colors = ['#87b37a', '#4c6663',];
 
 
 export const getChartOptions = (data) => {

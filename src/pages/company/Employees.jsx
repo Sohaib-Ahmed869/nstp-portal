@@ -312,6 +312,7 @@ const Employees = () => {
   ];
 
   const [employeeProfileSelected, setEmployeeProfileSelected] = useState(null);
+  const [modalLoading, setModalLoading] = useState(false);
 
   const filteredData = employeeTableData
     .filter((row) => {
@@ -330,6 +331,21 @@ const Employees = () => {
       if (a[sortField] > b[sortField]) return sortOrder === "asc" ? 1 : -1;
       return 0;
     });
+  
+  const requestCard = (employee_id) => {
+    console.log("Requesting card for employee:", employee_id);
+    setModalLoading(true);
+    //API call
+
+    setTimeout(() => {
+      setModalLoading(false);
+      document.getElementById('card_request_modal').close();
+    }, 2000);
+
+    
+  }
+
+  
 
   return (
     <Sidebar>
@@ -459,8 +475,23 @@ const Employees = () => {
         </div>
       </dialog>
 
+      {/* Card request modal */}
+      <dialog id="card_request_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Request card</h3>
+          <p className="text-sm text-gray-500">
+            Please confirm to request a card for this employee.
+          </p>
+          <div className="modal-action">
+            <button className={`btn mr-1 ${modalLoading && "btn-disabled"} `} onClick={() => { document.getElementById('card_request_modal').close() }}>Cancel</button>
+            <button className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"} `} onClick={() => { requestCard(employeeProfileSelected._id) }}> { modalLoading &&  <span className="loading loading-spinner"></span> } { modalLoading ? "Please wait..." : "Request"}</button>
+          </div>
+        </div>
+      </dialog>
+
+
       {/* Employee Profile modal */}
-     <EmployeeProfileModal employeeProfileSelected={employeeProfileSelected} />
+      <EmployeeProfileModal employeeProfileSelected={employeeProfileSelected} />
 
       {/* Employee Table */}
       <div
@@ -599,7 +630,12 @@ const Employees = () => {
                             </li>
                             {row.card_num == undefined && (
                               <li>
-                                <button className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left">
+                                <button className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                onClick ={() => {
+                                  document.getElementById("card_request_modal").showModal();
+                                  setEmployeeProfileSelected(row);
+                                }}
+                                >
                                   <IdentificationIcon className="h-5 w-5 mr-2" />
                                   Request card
                                 </button>

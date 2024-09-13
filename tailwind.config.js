@@ -65,7 +65,7 @@ export default {
           'fontFamily': 'Lato, sans-serif',
         },
         nstpDark: { //nstp color pallette
-          'primary': '#87b37a',     //sage green
+          'primary': '#647d5c',     //sage green
           'secondary': '#4c6663',  //bluish gray 
           'accent': '#2a1e5c',      //dark purple
           'neutral': '#fbf5f3',    //dark brown
