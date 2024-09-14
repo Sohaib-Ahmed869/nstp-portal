@@ -1,6 +1,6 @@
 import React from 'react';
-import { ArchiveBoxArrowDownIcon, ClockIcon } from '@heroicons/react/24/outline';
-
+import { ArchiveBoxArrowDownIcon, ClockIcon, TableCellsIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 /**
 |--------------------------------------------------
 | this assumes comparison data to be an object with two keys
@@ -9,7 +9,7 @@ import { ArchiveBoxArrowDownIcon, ClockIcon } from '@heroicons/react/24/outline'
 | e.g. { "Received": 20, "Pending": 10 }
 |--------------------------------------------------
 */
-const ComparativeChart = ({ title, comparisonData }) => {
+const ComparativeChart = ({ title, comparisonData, link }) => {
   const keys = Object.keys(comparisonData);
   const values = Object.values(comparisonData);
   const total = values.reduce((acc, value) => acc + value, 0);
@@ -22,8 +22,17 @@ const ComparativeChart = ({ title, comparisonData }) => {
 
   return (
     <>
-      <p className="my-2 font-bold">{title}</p>
-
+      <div className='flex items-center justify-between'>
+        <p className="my-2 font-bold">{title}</p>
+        {
+          link && (
+            <Link to={link} className="btn mb-4 btn-primary text-white btn-md">
+              <TableCellsIcon className="size-6"></TableCellsIcon>
+              View All
+            </Link>
+          )
+        }
+      </div>
       <div className="flex justify-between">
         <div className="flex items-center mb-2">
           <ArchiveBoxArrowDownIcon className="w-5 h-5 mr-2" />

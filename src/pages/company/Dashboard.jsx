@@ -462,6 +462,7 @@ const Dashboard = () => {
               <ComparativeChart
                 title="Gate Passes"
                 comparisonData={gatePasses}
+                link={"gate-passes"}
               />
             </div>
           </div>

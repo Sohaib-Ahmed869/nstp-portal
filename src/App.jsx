@@ -10,6 +10,7 @@ import ErrorPage from './pages/ErrorPage.jsx';
 import Companies from './pages/admin/Companies.jsx';
 import Company from './pages/admin/Company.jsx';
 import Complaints from './pages/company/Complaints.jsx';
+import GatePasses from './pages/company/GatePasses.jsx';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="employees" element={<Employees />} />
           <Route path="complaints" element={<Complaints />} />
+          <Route path="gate-passes" element={<GatePasses />} />
         </Route>
       
         <Route path="*" element={<ErrorPage />} />

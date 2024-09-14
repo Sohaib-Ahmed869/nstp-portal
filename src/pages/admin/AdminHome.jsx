@@ -1,7 +1,7 @@
 import React , { useEffect, useState } from 'react'
 import Sidebar from '../../components/Sidebar'
 import ThemeControl from '../../components/ThemeControl'
-import { QuestionMarkCircleIcon, BellAlertIcon, IdentificationIcon, ArchiveBoxArrowDownIcon, ArrowPathRoundedSquareIcon, UsersIcon, PlusCircleIcon, UserGroupIcon, RocketLaunchIcon } from '@heroicons/react/24/outline'
+import { QuestionMarkCircleIcon, BellAlertIcon, IdentificationIcon, ArchiveBoxArrowDownIcon, ArrowPathRoundedSquareIcon, UsersIcon, PlusCircleIcon, UserGroupIcon, RocketLaunchIcon, BuildingOffice2Icon } from '@heroicons/react/24/outline'
 import ComparativeChart from '../../components/ComparativeChart'
 import { Link } from 'react-router-dom'
 import hatch8icon from '../../assets/hatch8.png'
@@ -18,6 +18,8 @@ const AdminHome = () => {
     resolved: 233,
     recieved: 542
   })
+  const [tower, setTower] = useState("NSTP 1")
+  const [towerOptions, setTowerOptions] = useState(["NSTP 1", "NSTP 2", "NSTP 3", "NSTP 4"]) //tower options for the currently logged in admin
   const [companyTableData, setCompanyTableData] = useState([
     {name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333},
     {name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333},
@@ -36,19 +38,33 @@ const AdminHome = () => {
 
   // Simulate loading
   useEffect(() => {
-    //Api call here to fetch data and populate the above states
+    setLoading(true)
+    //Api call here to fetch data and populate the above states,based on tower state
     setTimeout(() => {
       setLoading(false)
     }, 2000)
   }
-  , [])
+  , [tower])
 
 
   return (
     <Sidebar>
       {/* Loading spinner */}
       {loading && <NSTPLoader />}
-      <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && 'hidden'}`}>
+        {/* Select the tower with a dropdown*/}
+        <div className="flex items-center justify-center bg-primary py-5 rounded-lg  gap-2 my-5">
+          <BuildingOffice2Icon className="size-9 text-white" />
+          <p className="font-semibold text-white">Tower: </p>
+          <select className="select select-bordered max-w-xs" value={tower} onChange={(e) => setTower(e.target.value)}>
+            {towerOptions.map((tower, index) => (
+              <option key={index} value={tower}>{tower}</option>
+            ))}
+          </select>
+        </div>
+
+      <div className={`bg-base-100 mt-5  ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && 'hidden'}`}>
+
+      
 
         {/* Header (Title, toggles etc) */}
         <div className="flex items-center justify-between">
@@ -179,7 +195,7 @@ const AdminHome = () => {
             </div>
 
             <div className="md:col-span-3 card p-5">
-              <ComparativeChart title={"E-Tags"} comparisonData={eTags} />
+              <ComparativeChart title={"E-Tags"} comparisonData={eTags}  />
             </div>
 
           </div>
