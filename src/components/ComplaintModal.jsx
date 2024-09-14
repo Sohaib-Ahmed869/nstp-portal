@@ -110,8 +110,8 @@ const ComplaintModal = () => {
                   {tabActive === "General" ? 
                       <div>
                           <h1 className="text-lg font-bold mb-5">General Complaint</h1>
-                          <FloatingLabelInput label="Subject" value={complaintSubject} onChange={(e) => setComplaintSubject(e.target.value)} />
-                          <FloatingLabelInput label="Description" value={complaintDesc} onChange={(e) => setComplaintDesc(e.target.value)} type="textarea" />
+                          <FloatingLabelInput label="Subject" value={complaintSubject || ""} onChange={(e) => setComplaintSubject(e.target.value)} />
+                          <FloatingLabelInput label="Description" value={complaintDesc || ""} onChange={(e) => setComplaintDesc(e.target.value)} type="textarea" />
                       </div> 
                       : 
                       <div>
@@ -130,7 +130,7 @@ const ComplaintModal = () => {
                               <p className="text-sm">{getServiceDesc(complaintServiceType)}</p>
                           </div>}
                           
-                          <FloatingLabelInput label="Describe your issue... (optional)" value={complaintDesc} onChange={(e) => setComplaintDesc(e.target.value)} type="textarea" required={false} />
+                          <FloatingLabelInput label="Describe your issue... (optional)" value={complaintDesc || ""} onChange={(e) => setComplaintDesc(e.target.value)} type="textarea" required={false} />
                           
                           {/** radio buttons for urgnecy (low/medium/high) with a line in between for a slider look */}
                           <div className="mb-5">

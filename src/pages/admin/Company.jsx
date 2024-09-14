@@ -207,7 +207,7 @@ const Company = () => {
           />
 
           {/* Company Stats grid */}
-          <div className="bg-base-100 p-5 shadow-md border-t border-t-gray-200  grid divide-y divide-x divide-gray-200 grid-cols-1 md:grid-cols-1 lg:grid-cols-3">
+          <div className="card p-5 grid divide-y divide-x divide-gray-200 grid-cols-1 md:grid-cols-1 lg:grid-cols-3">
 
             <div className="stat">
               <div className="stat-figure text-secondary">
@@ -268,7 +268,7 @@ const Company = () => {
         <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-5 mt-5 ">
 
           {/* internee stats and piechart */}
-          <div className="mt-2 lg:col-span-1 md:col-span-2 sm:col-span-1 bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-5 flex flex-row justify-between items-start">
+          <div className="mt-2 lg:col-span-1 md:col-span-2 sm:col-span-1 card p-5 flex flex-row justify-between items-start">
             <div>
               <span className="font-bold text-4xl flex flex-row items-center gap-2">
                 <UserGroupIcon className="size-7" /> {companyData.interns.total}
@@ -285,7 +285,7 @@ const Company = () => {
           </div>
 
           {/* Contract duration stats and radial progress */}
-          <div className="mt-2 bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-5 flex flex-row justify-between items-center">
+          <div className="mt-2 card p-5 flex flex-row justify-between items-center">
             <div>
               <span className="font-bold text-4xl flex flex-row items-center gap-2">
                 <CalendarDateRangeIcon className="size-7" /> {companyData.contractDuration + "%"}
@@ -305,7 +305,7 @@ const Company = () => {
 
 
           {/* No of jobs/internships stat */}
-          <div className=" mt-2 bg-base-100 rounded-md shadow-md border-t border-t-gray-200 p-5 ">
+          <div className=" mt-2 card p-5 ">
             <div className="stat border-b">
               <div className="stat-figure text-secondary">
                 <svg
@@ -351,7 +351,7 @@ const Company = () => {
           <h1 className="text-2xl font-semibold mt-5">Employees</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
             {companyData.employees.map((employee) => (
-              <div key={employee._id} className="relative bg-base-100 rounded-md shadow-md p-5 flex flex-col gap-5 items-start group">
+              <div key={employee._id} className="relative card p-5 flex flex-col gap-5 items-start group">
                 <div className="flex gap-2">
                   <div className="avatar">
                     <div className="w-24 rounded-full">

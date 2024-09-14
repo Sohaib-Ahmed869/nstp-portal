@@ -22,8 +22,6 @@ const Employees = () => {
   // *** States ***
   const [loading, setLoading] = useState(true);
   const [employees, setEmployees] = useState([]);
-  const [cardAllocations, setCardAllocations] = useState([]);
-  const [etagAllocations, setEtagAllocations] = useState([]);
   const [employeeTableData, setEmployeeTableData] = useState([
     {
         "_id": "66df197161c2c1ed67fe5c27",
@@ -493,7 +491,7 @@ const Employees = () => {
       {/* Employee Profile modal */}
       <EmployeeProfileModal employeeProfileSelected={employeeProfileSelected} />
 
-      {/* Employee Table */}
+      {/* Main Page Content */}
       <div
         className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${
           loading && "hidden"

@@ -3,7 +3,7 @@ import { UserGroupIcon, ArrowTrendingUpIcon, TicketIcon, CheckBadgeIcon } from '
 
 const EmployeeStats = ({ total, active, cardsNotIssued, cardsIssued }) => {
   return (
-    <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none p-5 flex flex-col">
+    <div className="card p-5 flex flex-col">
       <div className="flex lg:flex-row flex-col justify-between">
         <div>
           <span className="font-bold text-4xl flex flex-row items-center gap-2">

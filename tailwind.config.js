@@ -49,6 +49,15 @@ export default {
       charts: true,
     }),
     require('tailwindcss-animated'),
+    function ({ addUtilities }) {
+      const newUtilities = {
+        '.card': {
+          '@apply bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none': {},
+        },
+      };
+
+      addUtilities(newUtilities, ['responsive', 'hover']);
+    },
   ],
 
   daisyui: {

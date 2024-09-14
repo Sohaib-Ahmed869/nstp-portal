@@ -274,8 +274,8 @@ const Dashboard = () => {
           {/* Complaints section charts */}
           <div className="md:col-span-3 grid grid-cols-1 gap-4 md:grid-cols-3">
 
-            {/* Complaint types legend & button*/}
-            <div className="bg-base-100 md:col-span-3 h-content rounded-md shadow-md border-t flex  flex-col lg:flex-row  lg:items-center justify-start lg:justify-between border-t-gray-200 dark:shadow-2xl dark:border-none p-5">
+            {/* Complaint types legend & button*/}            
+            <div className="card p-5 md:col-span-3 h-content flex  flex-col lg:flex-row  lg:items-center justify-start lg:justify-between">
               <div className="flex flex-col justify-center">
                 <span className="font-bold">Complaint Types</span>
                 <div className="flex flex-row gap-5">
@@ -287,26 +287,34 @@ const Dashboard = () => {
                   ))}
                 </div>
               </div>
-              <button className='max-md:mt-3 btn btn-primary text-white btn-md' onClick={() => document.getElementById('complaint_modal').showModal()}> 
-                <PaperAirplaneIcon className="h-5 w-5" />
-                Submit Complaint
-              </button>
+              <div className="flex gap-2 mt-3 lg:mt-0">
+                <button className=' btn btn-primary btn-outline hover:text-white text-white btn-md' onClick={() => document.getElementById('complaint_modal').showModal()}> 
+                  <PaperAirplaneIcon className="h-5 w-5" />
+                 Send Complaint
+                </button>
+                <Link to="/company/complaints">
+                  <button className='btn btn-primary text-white btn-md' > 
+                    <TableCellsIcon className="h-5 w-5" />
+                    View All
+                  </button>
+                </Link>
+              </div>
             </div>
 
             {/* Charts */}
-            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none  p-3 flex flex-col items-center justify-center">
+            <div className="card p-3 flex flex-col items-center justify-center">
               <p className="font-semibold font-lg mb-3  text-center">
                 Complaints Sent
               </p>
               <div id="received-chart"></div>
             </div>
-            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none  p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
+            <div className="card p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
               <p className="font-semibold font-lg mb-3 text-center">
                 Complaints Resolved
               </p>
               <div id="resolved-chart"></div>
             </div>
-            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none  p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
+            <div className="card p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
               <p className="font-semibold font-lg mb-3 text-center">
                 Complaints Unresolved
               </p>
@@ -316,7 +324,7 @@ const Dashboard = () => {
 
           {/* Table of employees info */}
           <div className="md:col-span-4 ">
-            <div className=" bg-base-100 min-h-full rounded-md p-5 shadow-md  border-t border-t-gray-200 dark:shadow-2xl dark:border-none  ">
+            <div className=" card p-5 min-h-full ">
               <div className="w-full flex justify-between mb-3">
                 <p className="mb-3 font-bold"> Employees</p>
                 <Link to="/company/employees">
@@ -372,7 +380,7 @@ const Dashboard = () => {
         <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
           {/* Meeting room schedule table */}
           <div className="col-span-4 my-3">
-            <div className=" bg-base-100 min-h-full   p-5 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none  ">
+            <div className=" card p-5 min-h-full ">
               <p className="mb-3 font-bold"> Meeting Room Schedule</p>
 
               <div className="max-h-80 overflow-y-auto bg-base-100">
@@ -446,11 +454,11 @@ const Dashboard = () => {
 
           {/* Charts of e-tags and gate passes */}
           <div className="col-span-3 my-3 flex flex-col gap-4">
-            <div className="bg-base-100 rounded-md shadow-md border-t  border-t-gray-200 dark:shadow-2xl dark:border-none  p-5">
+            <div className="card p-5">
               <ComparativeChart title="Parking E-tags" comparisonData={eTags} />
             </div>
 
-            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200  dark:shadow-2xl dark:border-none  p-5">
+            <div className="card p-5">
               <ComparativeChart
                 title="Gate Passes"
                 comparisonData={gatePasses}
@@ -472,7 +480,7 @@ const Dashboard = () => {
             />
 
             {/* Intern stats */}
-            <div className="mt-2 bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none  p-5 flex flex-row justify-between items-start">
+            <div className="mt-2 card p-5 flex flex-row justify-between items-start">
               <div>
                 <span className="font-bold text-4xl flex flex-row items-center gap-2">
                   <UserGroupIcon className="size-7" /> {internStats.total}

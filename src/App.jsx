@@ -9,6 +9,7 @@ import Employees from './pages/company/Employees.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import Companies from './pages/admin/Companies.jsx';
 import Company from './pages/admin/Company.jsx';
+import Complaints from './pages/company/Complaints.jsx';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="company">
           <Route index element={<Dashboard />} />
           <Route path="employees" element={<Employees />} />
+          <Route path="complaints" element={<Complaints />} />
         </Route>
       
         <Route path="*" element={<ErrorPage />} />

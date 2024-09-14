@@ -72,23 +72,23 @@ const AdminHome = () => {
           <div className=" md:col-span-3">
             <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-3">
               {/* Card related stats */}
-            <div className="bg-base-100 h-full rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none p-5 flex flex-col justify-center  mb-4 md:mb-0">
+            <div className=" h-full card p-5 flex flex-col justify-center  mb-4 md:mb-0">
               <IdentificationIcon className="size-7 mb-1  text-primary" />
               <p className="font-semibold text-4xl mb-0">{cardsStats.cardsIssued}</p>
               <p className="font-semibold font-lg mb-0">Cards Issued</p>
             </div>
-            <div className="bg-base-100 h-full rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none p-5 flex flex-col justify-center mb-4 md:mb-0">
+            <div className="h-full card p-5 flex flex-col justify-center mb-4 md:mb-0">
               <ArrowPathRoundedSquareIcon className="size-7 mb-1 text-primary" />
               <p className="font-semibold text-4xl mb-0">{cardsStats.cardsReturned}</p>
               <p className="font-semibold font-lg mb-0">Cards Returned</p>
             </div>
-            <div className="bg-base-100 col-span-2 md:col-span-1 h-full rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none p-5 flex flex-col justify-center mb-4 md:mb-0">
+            <div className=" col-span-2 md:col-span-1 h-full  card p-5  flex flex-col justify-center mb-4 md:mb-0">
               <ArchiveBoxArrowDownIcon className="size-7  mb-1 text-primary" />
               <p className="font-semibold text-4xl mb-0">{cardsStats.cardsRequested}</p>
               <p className="font-semibold font-lg mb-0">Cards Requested</p>
             </div></div>
             
-            <div className="bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none p-5 col-span-3">
+            <div className="card p-5 col-span-3">
               <ComparativeChart title={"Complaints"} comparisonData={complaintStats} />
             </div>
             
@@ -97,7 +97,7 @@ const AdminHome = () => {
 
           {/* Table of companies info */}
           <div className=" md:col-span-4 ">
-            <div className=" bg-base-100 min-h-full rounded-md p-5 shadow-md  border-t border-t-gray-200 dark:shadow-2xl dark:border-none ">
+            <div className="card p-5 min-h-full ">
               <div className="w-full flex flex-col">
                 <div className="flex items-center justify-between mb-2">
                   <p className="mb-3 font-bold"> Companies</p>
@@ -142,12 +142,12 @@ const AdminHome = () => {
         </div>
 
         {/* Second row */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-7 my-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-7 my-6">
           <div className="md: col-span-4 lg:order-1 md:order-2 max-md:order-2">
             <NewsFeed />
           </div>
           <div className="md: col-span-3 lg:order-2 md:order-1 max-md:order-1">
-            <div className="md:col-span-3 mb-3 bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none p-5 flex flex-col">
+            <div className="md:col-span-3 mb-3 card p-5 flex flex-col">
               <div className="flex flex-row justify-between">
                 <div>
                   <span className="font-bold text-4xl flex flex-row items-center gap-2">
@@ -178,7 +178,7 @@ const AdminHome = () => {
 
             </div>
 
-            <div className="md:col-span-3 bg-base-100 rounded-md shadow-md border-t border-t-gray-200 dark:shadow-2xl dark:border-none p-5">
+            <div className="md:col-span-3 card p-5">
               <ComparativeChart title={"E-Tags"} comparisonData={eTags} />
             </div>
 
