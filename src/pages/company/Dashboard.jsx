@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ApexCharts from 'apexcharts';
 import Sidebar from '../../components/Sidebar';
-import { getChartOptions, getPieChartOptions } from '../util/charts';
+import { getChartOptions, getPieChartOptions } from '../../util/charts';
 import { EyeIcon, SunIcon, MoonIcon } from '@heroicons/react/20/solid';
 import { Link } from 'react-router-dom';
 import ThemeControl from '../../components/ThemeControl';

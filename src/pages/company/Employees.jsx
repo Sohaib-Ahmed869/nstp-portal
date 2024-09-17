@@ -11,9 +11,11 @@ import {
   XCircleIcon,
   UserIcon,
   IdentificationIcon,
+  PencilSquareIcon,
 } from "@heroicons/react/24/outline";
 import FloatingLabelInput from "../../components/FloatingLabelInput";
 import TenantService from "../../services/TenantService";
+import EditEmployeeProfileModal from "../../components/EditEmployeeProfileModal";
 
 const Employees = () => {
   const dropdownRefs = useRef({});
@@ -491,6 +493,9 @@ const Employees = () => {
       {/* Employee Profile modal */}
       <EmployeeProfileModal employeeProfileSelected={employeeProfileSelected} />
 
+      {/* Edit Employee Profile modal */}
+      <EditEmployeeProfileModal employeeProfileSelected={employeeProfileSelected} setEmployeeTableData={setEmployeeTableData} />
+
       {/* Main Page Content */}
       <div
         className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${
@@ -624,6 +629,20 @@ const Employees = () => {
                               >
                                 <UserIcon className="h-5 w-5 mr-2" />
                                 View Profile
+                              </button>
+                            </li>
+                            <li>
+                              <button
+                                className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                onClick={() => {
+                                  setEmployeeProfileSelected(row);
+                                  document
+                                    .getElementById("edit_employee_profile_modal")
+                                    .showModal();
+                                }}
+                              >
+                                <PencilSquareIcon className="h-5 w-5 mr-2" />
+                                Edit Profile
                               </button>
                             </li>
                             {row.card_num == undefined && (

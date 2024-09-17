@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { UserGroupIcon, BriefcaseIcon, ArrowTrendingUpIcon, TicketIcon, AcademicCapIcon, CheckBadgeIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon } from '@heroicons/react/24/outline';
 import sampleCompanyLogo from '../../assets/samplecompanylogo.png'
 import ReactApexChart from 'react-apexcharts';
-import { getPieChartOptions } from '../util/charts';
+import { getPieChartOptions } from '../../util/charts';
 import EmployeeStats from '../../components/EmployeeStats';
 import NSTPLoader from '../../components/NSTPLoader';
 import EmployeeProfileModal from '../../components/EmployeeProfileModal';

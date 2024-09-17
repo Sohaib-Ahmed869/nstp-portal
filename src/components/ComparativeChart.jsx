@@ -22,11 +22,11 @@ const ComparativeChart = ({ title, comparisonData, link }) => {
 
   return (
     <>
-      <div className='flex items-center justify-between'>
+      <div className='flex items-center mb-4 justify-between'>
         <p className="my-2 font-bold">{title}</p>
         {
           link && (
-            <Link to={link} className="btn mb-4 btn-primary text-white btn-md">
+            <Link to={link} className="btn btn-primary text-white btn-md">
               <TableCellsIcon className="size-6"></TableCellsIcon>
               View All
             </Link>
