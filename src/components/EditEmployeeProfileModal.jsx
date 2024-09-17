@@ -55,6 +55,13 @@ const EditEmployeeProfileModal = ({ employeeProfileSelected, setEmployeeTableDat
         }, 2000);
     };
 
+    const formFields = [
+        { name: 'name', type: 'text', label: 'Name' },
+        { name: 'email', type: 'email', label: 'Email' },
+        { name: 'designation', type: 'text', label: 'Designation' },
+        { name: 'address', type: 'text', label: 'Address' },
+    ];
+
     return (
         <dialog id="edit_employee_profile_modal" className="modal">
             <div className="modal-box w-10/12 max-w-5xl">
@@ -89,43 +96,20 @@ const EditEmployeeProfileModal = ({ employeeProfileSelected, setEmployeeTableDat
                         </div>
                     </div>
                     <div className="col-span-2 pl-4 grid grid-cols-2 max-md:grid-cols-1 gap-2">
-                        <FloatingLabelInput
-                            name="name"
-                            type="text"
-                            id="name"
-                            label="Name"
-                            value={editedProfile.name || ''}
-                            onChange={handleInputChange}
-                            required
-                        />
-                        <FloatingLabelInput
-                            name="email"
-                            type="email"
-                            id="email"
-                            label="Email"
-                            value={editedProfile.email || ''}
-                            onChange={handleInputChange}
-                            required
-                        />
-                        <FloatingLabelInput
-                            name="designation"
-                            type="text"
-                            id="designation"
-                            label="Designation"
-                            value={editedProfile.designation || ''}
-                            onChange={handleInputChange}
-                            required
-                        />
-                        <FloatingLabelInput
-                            name="address"
-                            type="text"
-                            id="address"
-                            label="Address"
-                            value={editedProfile.address || ''}
-                            onChange={handleInputChange}
-                            required
-                        />
-                        <div className="form-control">
+                        {formFields.map((field) => (
+                            <FloatingLabelInput
+                                key={field.name}
+                                name={field.name}
+                                type={field.type}
+                                id={field.name}
+                                label={field.label}
+                                value={editedProfile[field.name] || ''}
+                                onChange={handleInputChange}
+                                required
+                                className="mb-1"
+                            />
+                        ))}
+                        <div className="form-control mb-1">
                             <label className="label">
                                 <span className="label-text">Employee Type</span>
                             </label>
@@ -151,10 +135,11 @@ const EditEmployeeProfileModal = ({ employeeProfileSelected, setEmployeeTableDat
                                 value={editedProfile.contract_duration || ''}
                                 onChange={handleInputChange}
                                 required
+                                className="mb-1"
                             />
                         )}
                         {showInternType && (
-                            <div className="form-control">
+                            <div className="form-control mb-1">
                                 <label className="label">
                                     <span className="label-text">Intern Type</span>
                                 </label>

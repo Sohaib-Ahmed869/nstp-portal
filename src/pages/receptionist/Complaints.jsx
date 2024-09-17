@@ -6,7 +6,7 @@ import ComplaintsTable from '../../components/ComplaintsTable'
 import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, PencilSquareIcon, CogIcon, WrenchScrewdriverIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
 
-const Complaints = () => {
+export const Complaints = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
@@ -20,15 +20,23 @@ const Complaints = () => {
     const [cancelLoading, setCancelLoading] = useState(false);
 
     const [generalComplaintData, setGeneralComplaintData] = useState([
-        { id: "12345", date: "12-13-2024 21:32", type: "general", subject: "Too much noise", description: "Too much noise being caused please fix this issue", isResolved: false },
-        { id: "12346", date: "12-13-2024 12:32", type: "general", subject: "AC not working", description: "I like it to be working properly and not dirty", isResolved: true },
-        { id: "12347", date: "12-13-2024 15:30", type: "general", subject: "Noisy Neighbours", description: "Please tell them to be quiet", isResolved: false },
+        { id: "12345", date: "12-13-2024 21:32", tenantName: "HexlarTech", type: "general", subject: "Too much noise", description: "Too much noise being caused please fix this issue", isResolved: false },
+        { id: "12346", date: "12-13-2024 12:32", tenantName: "InnoSolutionz",  type: "general", subject: "AC not working", description: "I like it to be working properly and not dirty", isResolved: true },
+        { id: "12347", date: "12-13-2024 15:30",  tenantName: "Zanbeel", type: "general", subject: "Noisy Neighbours", description: "Please tell them to be quiet", isResolved: false },
     ]);
 
     const [servicesComplaintData, setServicesComplaintData] = useState([
-        { id: "12348", date: "12-13-2024 11:32", type: "services", serviceType: "Cleaning", description: "Too dirty please clean", urgency: 2, isResolved: true },
-        { id: "12349", date: "12-13-2024 11:32", type: "services", serviceType: "Electrician", description: "AC and switches not working!", urgency: 3, isResolved: true },
-        { id: "12339", date: "12-13-2024 11:32", type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
+        { id: "12348", date: "12-13-2024 11:32",  tenantName: "Cocoa Pallette",  type: "services", serviceType: "Cleaning", description: "Please clean the floor", urgency: 2, isResolved: false },
+        { id: "22348", date: "12-13-2024 11:32",  tenantName: "Cocoa Tech",  type: "services", serviceType: "Cleaning", description: "Please clean the fan", urgency: 3, isResolved: false },
+        { id: "32348", date: "12-13-2024 11:32",  tenantName: "Inno Palette",  type: "services", serviceType: "Cleaning", description: "Too dirty", urgency: 1, isResolved: false },
+        { id: "42348", date: "12-13-2024 11:32",  tenantName: "Cocoa Pallette",  type: "services", serviceType: "Cleaning", description: "I need cleaning", urgency: 2, isResolved: true },
+        { id: "52348", date: "12-13-2024 11:32",  tenantName: "Cocoa Pallette",  type: "services", serviceType: "Cleaning", description: "Too dirty please clean", urgency: 2, isResolved: true },
+        { id: "12349", date: "12-13-2024 11:32",  tenantName: "InnoSolutionz",  type: "services", serviceType: "Electrician", description: "AC and switches not working!", urgency: 3, isResolved: true },
+        { id: "12339", date: "12-13-2024 11:32",   tenantName: "InnoCafe",  type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
+        { id: "12331", date: "12-13-2024 11:32",   tenantName: "InnoCafe",  type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
+        { id: "12332", date: "12-13-2024 11:32",   tenantName: "InnoCafe",  type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
+        { id: "12333", date: "12-13-2024 11:32",   tenantName: "InnoCafe",  type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
+        { id: "12933", date: "12-13-2024 11:32",   tenantName: "InnoCafe",  type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
     ]);
 
     useEffect(() => {
@@ -68,9 +76,13 @@ const Complaints = () => {
     const sortData = (data, sortField, sortOrder) => {
         return data.sort((a, b) => {
             if (sortField === "date") {
-                return sortOrder === "asc" ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date);
-            } else if (sortField === "subject" || sortField === "serviceType") {
-                return sortOrder === "asc" ? a[sortField].localeCompare(b[sortField]) : b[sortField].localeCompare(a[sortField]);
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+            } else if (sortField === "subject" || sortField === "serviceType" || sortField === "tenantName") {
+                const fieldA = a[sortField].toLowerCase();
+                const fieldB = b[sortField].toLowerCase();
+                return sortOrder === "asc" ? fieldA.localeCompare(fieldB) : fieldB.localeCompare(fieldA);
             } else if (sortField === "urgency" || sortField === "isResolved") {
                 return sortOrder === "asc" ? a[sortField] - b[sortField] : b[sortField] - a[sortField];
             }
@@ -83,7 +95,8 @@ const Complaints = () => {
             (statusFilter === "All" || (statusFilter === "Resolved" && complaint.isResolved) || (statusFilter === "Unresolved" && !complaint.isResolved)) &&
             (complaint.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 complaint.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                complaint.date.includes(searchQuery))
+                complaint.date.includes(searchQuery)) ||
+            complaint.tenantName.toLowerCase().includes(searchQuery.toLowerCase()) // this line is only for receptionist
         ),
         generalSortField,
         generalSortOrder
@@ -183,8 +196,8 @@ const Complaints = () => {
                         sortField={generalSortField}
                         sortOrder={generalSortOrder}
                         handleSortChange={(field) => handleSortChange(field, "general")}
-                        setComplaintIdToDelete={setComplaintIdToDelete}
-                        setComplaintTypeToDelete={setComplaintTypeToDelete}
+                        isReceptionist={true}
+                        setComplaints={setGeneralComplaintData} // this prop is only passed for receptionist to update the data on frontend
                     />
                 )}
 
@@ -200,8 +213,8 @@ const Complaints = () => {
                         sortField={servicesSortField}
                         sortOrder={servicesSortOrder}
                         handleSortChange={(field) => handleSortChange(field, "services")}
-                       setComplaintIdToDelete={setComplaintIdToDelete}
-                        setComplaintTypeToDelete={setComplaintTypeToDelete}
+                        isReceptionist={true}
+                        setComplaints={setServicesComplaintData} //this prop is only passed for receptionist to update the data on frontend
 
                     />
                 )}
