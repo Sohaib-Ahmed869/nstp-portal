@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar'
 import NSTPLoader from '../../components/NSTPLoader'
-import ComplaintModal from '../../components/ComplaintModal'
 import ComplaintsTable from '../../components/ComplaintsTable'
-import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, PencilSquareIcon, CogIcon, WrenchScrewdriverIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon,CogIcon, WrenchScrewdriverIcon,  } from '@heroicons/react/24/outline'
 
 
 export const Complaints = () => {
@@ -15,9 +14,6 @@ export const Complaints = () => {
     const [generalSortOrder, setGeneralSortOrder] = useState("asc");
     const [servicesSortField, setServicesSortField] = useState("date");
     const [servicesSortOrder, setServicesSortOrder] = useState("asc");
-    const [complaintIdToDelete, setComplaintIdToDelete] = useState(null);
-    const [complaintTypeToDelete, setComplaintTypeToDelete] = useState(null);
-    const [cancelLoading, setCancelLoading] = useState(false);
 
     const [generalComplaintData, setGeneralComplaintData] = useState([
         { id: "12345", date: "12-13-2024 21:32", tenantName: "HexlarTech", type: "general", subject: "Too much noise", description: "Too much noise being caused please fix this issue", isResolved: false },
@@ -57,21 +53,6 @@ export const Complaints = () => {
         }
     };
 
-    const handleCancel = (id, type) => {
-        //api call here to cancel complaint
-        setCancelLoading(true);
-        setTimeout(() => {
-            setCancelLoading(false);
-            document.getElementById("cancel_complaint_modal").close();
-        }, 2000);
-
-        // below code will update the table on frontend by removing it from the data to display
-        // if (type === "general") {
-        //     setGeneralComplaintData(generalComplaintData.filter(complaint => complaint.id !== id));
-        // } else {
-        //     setServicesComplaintData(servicesComplaintData.filter(complaint => complaint.id !== id));
-        // }
-    };
 
     const sortData = (data, sortField, sortOrder) => {
         return data.sort((a, b) => {
@@ -116,32 +97,12 @@ export const Complaints = () => {
     return (
         <Sidebar>
             {loading && <NSTPLoader />}
-            <ComplaintModal />
-
-            {/* Modal to confirm cancellation of complaint */}
-            <dialog id="cancel_complaint_modal" className="modal">
-                <div className="modal-box">
-                    <h2 className="text-xl font-bold">Cancel Complaint</h2>
-                    <p className="text-gray-500 mt-2">Are you sure you want to cancel this complaint?</p>
-                    <div className="modal-action">
-                        <button className={`btn btn-danger mr-2 ${cancelLoading && "btn-disabled"}`} onClick={() => document.getElementById("cancel_complaint_modal").close()}>No</button>
-                        <button className={`btn  btn-primary ${cancelLoading && "btn-disabled"}`} onClick={() => { handleCancel(complaintIdToDelete, complaintTypeToDelete) }}> {cancelLoading && <span className="loading loading-spinner"></span>} { cancelLoading ? "Cancelling..." : "Yes"  }</button>
-                    </div>
-                </div>
-            </dialog>
-
 
             {/* Main Page Content */}
             <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"}`} >
                 {/* Header + add new emp btn */}
-                <div className="flex flex-row items-center justify-between">
+                <div className="flex flex-row items-center">
                     <h1 className="text-2xl font-bold">Complaints</h1>
-                    <button
-                        className="btn btn-primary text-white"
-                        onClick={() => document.getElementById('complaint_modal').showModal()} >
-                        <PencilSquareIcon className="size-6" />
-                        Register new complaint
-                    </button>
                 </div>
 
                 {/* Search + Filter */}
