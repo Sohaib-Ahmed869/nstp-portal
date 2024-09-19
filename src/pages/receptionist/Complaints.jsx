@@ -76,13 +76,13 @@ export const Complaints = () => {
             (statusFilter === "All" || (statusFilter === "Resolved" && complaint.isResolved) || (statusFilter === "Unresolved" && !complaint.isResolved)) &&
             (complaint.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 complaint.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                complaint.date.includes(searchQuery)) ||
-            complaint.tenantName.toLowerCase().includes(searchQuery.toLowerCase()) // this line is only for receptionist
+                complaint.date.includes(searchQuery) ||
+                complaint.tenantName.toLowerCase().includes(searchQuery.toLowerCase())) // this line is only for receptionist
         ),
         generalSortField,
         generalSortOrder
     );
-
+    
     const filteredServicesComplaints = sortData(
         servicesComplaintData.filter(complaint =>
             (statusFilter === "All" || (statusFilter === "Resolved" && complaint.isResolved) || (statusFilter === "Unresolved" && !complaint.isResolved)) &&

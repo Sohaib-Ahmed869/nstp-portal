@@ -63,9 +63,6 @@ const AdminHome = () => {
         </div>
 
       <div className={`bg-base-100 mt-5  ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && 'hidden'}`}>
-
-      
-
         {/* Header (Title, toggles etc) */}
         <div className="flex items-center justify-between">
           <h1 className='text-2xl font-semibold mb-5'>Main Dashboard</h1>

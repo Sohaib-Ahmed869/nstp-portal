@@ -60,6 +60,9 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                     <thead>
                         <tr className="bg-base-200 cursor-pointer">
                             <th onClick={() => handleSortChange("date")}>Date {sortField === "date" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
+                            {complaintType == "services" &&
+                                <th onClick={() => handleSortChange("urgency")}>Urgency {sortField === "urgency" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
+                            }
                             {isReceptionist && <th onClick={() => handleSortChange("tenantName")}>Tenant Name {sortField === "tenantName" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>}
                             {complaintType === "general" ? (
                                 <th onClick={() => handleSortChange("subject")}>
@@ -71,7 +74,9 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                 </th>
                             )}
                             <th>Description</th>
+
                             <th onClick={() => handleSortChange("isResolved")}>Resolved {sortField === "isResolved" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
+
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -82,8 +87,17 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                             </tr>
                         ) : (
                             rowsToDisplay.map((complaint) => (
-                                <tr key={complaint.id}> 
+                                <tr key={complaint.id}>
                                     <td>{complaint.date}</td>
+                                    {
+                                        complaintType == "services" && (
+                                            <td>
+                                                <div className={`badge ${complaint.urgency === 1 ? "badge-primary" : complaint.urgency === 2 ? "badge-secondary" : "badge-error"} flex items-center py-3 mt-3`} >
+                                                    {complaint.urgency === 1 ? "Low" : complaint.urgency === 2 ? "Medium" : "High"}
+                                                </div>
+                                            </td>
+                                        )
+                                    }
                                     {isReceptionist && <td>{complaint.tenantName}</td>}
                                     <td>{complaint.subject || complaint.serviceType}</td>
                                     <td>{complaint.description || " - "}</td>
@@ -91,6 +105,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                         {complaint.isResolved ? <CheckCircleIcon className="size-6" /> : <XCircleIcon className="size-6" />}
                                         {complaint.isResolved ? "Yes" : "No"}
                                     </td>
+
                                     <td>
                                         {!complaint.isResolved && (
                                             <>
@@ -125,22 +140,22 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                 </table>
                 {complaints.length > rowsPerPage && (
                     <div className="flex justify-between mt-4">
-                           
-                                    <button
-                                        className="btn btn-ghost"
-                                        onClick={() => handlePageChange(currentPage - 1)}
-                                        disabled={currentPage === 1}
-                                    >
-                                        Previous
-                                    </button>
-                             
-                                    <button
-                                        className="btn btn-ghost"
-                                        onClick={() => handlePageChange(currentPage + 1)}
-                                        disabled={currentPage === totalPages}
-                                    >
-                                        Next
-                                    </button>
+
+                        <button
+                            className="btn btn-ghost"
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            Previous
+                        </button>
+
+                        <button
+                            className="btn btn-ghost"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next
+                        </button>
                     </div>
                 )}
             </div>

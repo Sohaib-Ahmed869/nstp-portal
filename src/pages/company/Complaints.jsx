@@ -200,7 +200,7 @@ const Complaints = () => {
                         sortField={servicesSortField}
                         sortOrder={servicesSortOrder}
                         handleSortChange={(field) => handleSortChange(field, "services")}
-                       setComplaintIdToDelete={setComplaintIdToDelete}
+                        setComplaintIdToDelete={setComplaintIdToDelete}
                         setComplaintTypeToDelete={setComplaintTypeToDelete}
 
                     />

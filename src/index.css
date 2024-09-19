@@ -1,4 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.rbc-event {
+  background-color: #87b37a !important;
+  border-color: #87b37a !important;
+  color: white !important;
+}
 
+.rbc-event:hover {
+  background-color: #76a06b !important;
+  border-color: #76a06b !important;
+}

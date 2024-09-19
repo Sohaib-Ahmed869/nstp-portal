@@ -5,14 +5,16 @@ import { getChartOptions, getPieChartOptions } from '../../util/charts';
 import { EyeIcon, SunIcon, MoonIcon } from '@heroicons/react/20/solid';
 import { Link } from 'react-router-dom';
 import ThemeControl from '../../components/ThemeControl';
-import { ArrowTrendingUpIcon, BellAlertIcon, CheckBadgeIcon, InformationCircleIcon, PaperAirplaneIcon, QuestionMarkCircleIcon, TableCellsIcon, TicketIcon, UserGroupIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import {  BellAlertIcon,  PaperAirplaneIcon, QuestionMarkCircleIcon, TableCellsIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import ComparativeChart from '../../components/ComparativeChart';
+import MeetingRoomBookingTable from '../../components/MeetingRoomBookingTable';
 import NSTPLoader from '../../components/NSTPLoader';
 import ReactApexChart from 'react-apexcharts';
 import NewsFeed from '../../components/NewsFeed';
 import EmployeeStats from '../../components/EmployeeStats';
 import ComplaintModal from '../../components/ComplaintModal';
 import EmployeeProfileModal from '../../components/EmployeeProfileModal';
+
 //Categories of types of complaints
 const CATEGORIES = ['General', 'Service'];
 const chartIds = ["resolved-chart", "unresolved-chart", "received-chart"];
@@ -124,17 +126,16 @@ const Dashboard = () => {
     { bookingId: "awc", roomNo: 'MS-234', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
     { bookingId: "ahc", roomNo: 'MT-214', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
     { bookingId: "abh", roomNo: 'MS-334', status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+    { bookingId: "abh", roomNo: 'MS-334', status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
   ]);
 
-  const [meetingToCancel, setMeetingToCancel] = useState();
+
 
   const [eTags, setETags] = useState({ issued: 10, pending: 20 }); //total = pending + approved
   const [gatePasses, setGatePasses] = useState({ issued: 28, pending: 3 }); //total = pending + approved
   const [employeeStats, setEmployeeStats] = useState({ total: 100, active: 80, issued: 10, unissued: 70 });
   const [internStats, setInternStats] = useState({ total: 12, nustian: 3, nonNustian: 9 });
-  const [modalLoading, setModalLoading] = useState(false);
   const [employeeProfileSelected, setEmployeeProfileSelected] = useState(null);
-  const [meetingCancellationReason, setMeetingCancellationReason] = useState("The meeting was not approved because the room was already booked for the same time slot.");
   // **** end of data to be populated from backend ****
 
   useEffect(() => {
@@ -166,32 +167,6 @@ const Dashboard = () => {
     };
   }, [chartData]);
 
-  const cancelMeeting = (meetingId) => {
-    setModalLoading(true);
-    // Simulate API call with timer
-    setTimeout(() => {
-      console.log(`Cancelling meeting with ID: ${meetingId}`);
-      setModalLoading(false);
-      document.getElementById('meeting_cancellation').close();
-    }, 2000);
-  };
-
-  const fetchReasonForCancellation = (bookingId) => {
-    setMeetingCancellationReason("Fetching reason for meeting cancellation...");
-    document.getElementById('meeting_unapproved_reason').showModal();
-    // Simulate API call with timer
-    setTimeout(() => {
-      document.getElementById('meeting_unapproved_reason').close();
-      console.log("Fetching reason for meeting cancellation for booking ID: ", bookingId);
-      setMeetingCancellationReason("The meeting was not approved because the room was already booked for the same time slot.");
-      document.getElementById('meeting_unapproved_reason').showModal();
-    }, 1000);
-  };
-
-
-
-
-
   return (
     <Sidebar>
       {loading && <NSTPLoader />}
@@ -199,54 +174,7 @@ const Dashboard = () => {
       <ComplaintModal />
       <EmployeeProfileModal employeeProfileSelected={employeeProfileSelected} />
 
-      {/* modal with confirmation for meeting room cancellation */}
-      <dialog
-        id="meeting_cancellation"
-        className="modal modal-bottom sm:modal-middle"
-      >
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">
-            Are you sure you want to cancel this booking?
-          </h3>
-          <p className="py-4">Please click "Yes" if you wish to cancel it.</p>
-          <div className="modal-action">
-            <button
-              className={`btn mr-2 ${modalLoading && "btn-disabled"}`}
-              onClick={() => {
-                setMeetingToCancel(null);
-                document.getElementById("meeting_cancellation").close();
-              }}
-            >
-              Close
-            </button>
-            <button
-              className={`btn btn-primary ${modalLoading && "btn-disabled"}`}
-              onClick={() => cancelMeeting(meetingToCancel)}
-            >
-              {modalLoading && (
-                <span className="loading loading-spinner"></span>
-              )}
-              {modalLoading ? "Please wait..." : "Confirm"}
-            </button>
-          </div>
-        </div>
-      </dialog>
-
-      {/* modal with reason for unapproved meeting */}
-      <dialog
-        id="meeting_unapproved_reason"
-        className="modal modal-bottom sm:modal-middle"
-      >
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">This meeting was not approved.</h3>
-          <p className="py-4">{meetingCancellationReason}</p>
-          <div className="modal-action">
-            <form method="dialog">
-              <button className="btn mr-2">Close</button>
-            </form>
-          </div>
-        </div>
-      </dialog>
+  
 
       {/* Main page content */}
       <div
@@ -379,77 +307,11 @@ const Dashboard = () => {
         {/* Second row */}
         <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
           {/* Meeting room schedule table */}
-          <div className="col-span-4 my-3">
-            <div className=" card p-5 min-h-full ">
-              <p className="mb-3 font-bold"> Meeting Room Schedule</p>
-
-              <div className="max-h-80 overflow-y-auto bg-base-100">
-                {meetingRoomSchedule.length == 0 ? (
-                  <p className="text-gray-500">No data to show for now.</p>
-                ) : (
-                  <table className="table ">
-                    <tbody>
-                      {/* row 1 (header row) */}
-                      <tr className="bg-base-200">
-                        <th>Room</th>
-                        <td>Status</td>
-                        <td>Date</td>
-                        <td>Time</td>
-                        <td>Actions</td>
-                      </tr>
-                      {/* Render table rows dynamically */}
-                      {meetingRoomSchedule.map((row, index) => (
-                        <tr key={row.id} className="relative group">
-                          <th>{row.roomNo}</th>
-                          <td>
-                            <div
-                              className={` rounded-md text-center p-1 ${
-                                row.status == "Approved"
-                                  ? "bg-lime-200 text-lime-900"
-                                  : row.status == "Unapproved"
-                                  ? "bg-red-300 text-red-800"
-                                  : "bg-yellow-100 text-yellow-700"
-                              } `}
-                            >
-                              {row.status}
-                            </div>
-                          </td>
-                          <td>{row.date}</td>
-                          <td>{row.time}</td>
-                          <td>
-                            {row.status == "Pending" ? (
-                              <button
-                                className="btn btn-sm btn-outline btn-error"
-                                onClick={() => {
-                                  document
-                                    .getElementById("meeting_cancellation")
-                                    .showModal();
-                                }}
-                              >
-                                <XCircleIcon className="h-5 w-5" />
-                                Cancel
-                              </button>
-                            ) : row.status == "Unapproved" ? (
-                              <button
-                                className="btn btn-sm btn-outline btn-neutral"
-                                onClick={() => {
-                                  fetchReasonForCancellation(row.bookingId);
-                                }}
-                              >
-                                <InformationCircleIcon className="h-5 w-5" />
-                                Reason
-                              </button>
-                            ) : (
-                              <></>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            </div>
+          <div className="col-span-4 card p-5 my-3">
+            <MeetingRoomBookingTable 
+              meetingRoomSchedule={meetingRoomSchedule.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)} 
+              dashboardComponent={true}
+            />
           </div>
 
           {/* Charts of e-tags and gate passes */}

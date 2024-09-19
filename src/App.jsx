@@ -12,6 +12,8 @@ import Company from './pages/admin/Company.jsx';
 import Complaints from './pages/company/Complaints.jsx';
 import GatePasses from './pages/company/GatePasses.jsx';
 import { Complaints as ReceptionistComplaints } from './pages/receptionist/Complaints.jsx';
+import { Dashboard as ReceptionistDashboard } from './pages/receptionist/Dashboard.jsx';
+import MeetingRoomBooking from './pages/receptionist/MeetingRoomBooking.jsx';
 
 function App() {
   return (
@@ -34,8 +36,9 @@ function App() {
         </Route>
 
         <Route path="receptionist">
-          {/* <Route indexElement={<ReceptionistDashboard />} /> */}
+          <Route index element={<ReceptionistDashboard />} />
           <Route path="complaints" element={<ReceptionistComplaints />} />
+          <Route path="bookings" element={<MeetingRoomBooking />} />
         </Route>
       
         <Route path="*" element={<ErrorPage />} />
