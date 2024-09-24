@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
 import { PlusCircleIcon, PencilIcon, ChevronRightIcon, MagnifyingGlassIcon, TrashIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
+
+const DUMMY_PHOTO_URLS = [
+    "https://media.istockphoto.com/id/1363105039/photo/businesspeople-do-video-conference-call-with-big-wall-tv-in-office-meeting-room-diverse-team.jpg?s=612x612&w=0&k=20&c=o7UjhyG3YmLj7jTtSdMkN-K_tE4HSfAq9wWdhiRDFAA=",
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-8D4isLqFIao-pvIKzhUSgfZi3VPePVk07A&s",
+    "https://t4.ftcdn.net/jpg/00/80/91/11/360_F_80911186_RoBCsyLrNTrG7Y1EOyCsaCJO5DyHgTox.jpg",
+]
 
 const MeetingRooms = () => {
     const [loading, setLoading] = useState(true);
@@ -57,6 +64,7 @@ const MeetingRooms = () => {
                     id: (prevRooms.length + 1).toString(),
                     name: newRoom.name,
                     type: newRoom.type,
+                    photoUrl: getRandomPhotoUrl(),
                 },
             ]);
 
@@ -72,6 +80,7 @@ const MeetingRooms = () => {
         document.getElementById('add_room_form').close();
     };
 
+
     // Function to reset form fields
     const resetForm = () => {
         setNewRoom({
@@ -82,17 +91,6 @@ const MeetingRooms = () => {
         setCurrentRoomId(null);
     };
 
-    useEffect(() => {
-        // Api call here to fetch data and populate the above states
-        // Dummy data for meeting rooms
-        setMeetingRooms([
-            { id: "1", name: "Room A", type: "Seminar Room" },
-            { id: "2", name: "Room B", type: "Conference Room" },
-        ]);
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000);
-    }, []);
 
     // Function to handle edit button click
     const handleEdit = (roomId) => {
@@ -125,6 +123,23 @@ const MeetingRooms = () => {
         room.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         room.type.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const getRandomPhotoUrl = () => {
+        return DUMMY_PHOTO_URLS[Math.floor(Math.random() * DUMMY_PHOTO_URLS.length)];
+    };
+
+    
+    useEffect(() => {
+        // Api call here to fetch data and populate the above states
+        // Dummy data for meeting rooms with photo URLs
+        setMeetingRooms([
+            { id: "1", name: "Room A", type: "Seminar Room", photoUrl: getRandomPhotoUrl() },
+            { id: "2", name: "Room B", type: "Conference Room", photoUrl: getRandomPhotoUrl() },
+        ]);
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000);
+    }, []);
 
     return (
         <Sidebar>
@@ -175,9 +190,22 @@ const MeetingRooms = () => {
             {/** confirmation modal for deletion of room */}
             <dialog id="delete_room_modal" className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">Delete Room</h3>
+                    <h3 className="font-bold text-lg mb-3">Delete Room</h3>
                     <p>Are you sure you want to delete this room?</p>
-                    <div className="alert alert-warning">This action may result in unexpected consequences or behaviour.</div>
+                    <div role="alert" className="alert my-2">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-6 w-6 shrink-0 stroke-current"
+                            fill="none"
+                            viewBox="0 0 24 24">
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <span>Warning: This action may result in unexpected behaviour or consequences</span>
+                    </div>
                     <div className="modal-action">
                         <button className="btn btn-outline" onClick={() => document.getElementById('delete_room_modal').close()}>Cancel</button>
                         <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={() => { handleDelete(currentRoomId); }}>
@@ -216,52 +244,56 @@ const MeetingRooms = () => {
                     <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                 </div>
                 <div className="flex flex-col gap-5">
-                    {filteredRooms.map((room) => (
-                        <div
-                            key={room.id}
-                            className={`relative card p-5 rounded-lg transition-all duration-300 ${expandedRoomId === room.id ? 'transform scale-95' : ''}`}
-                        >
-                            <div className="absolute top-0 p-3 rounded-tr-md rounded-br-md right-0 h-full bg-primary flex items-center justify-center cursor-pointer" onClick={() => toggleExpand(room.id)}>
-                                <ChevronRightIcon className={`size-6 text-base-100 transition-transform duration-300 ${expandedRoomId === room.id ? 'rotate-180' : ''}`} />
-                            </div>
-                            <div className='flex items-center gap-3 mb-3'>
-                                <h1 className='text-xl font-semibold'>{room.name}</h1>
-                            </div>
-                            <p className='text-gray-500'>{room.type}</p>
-                            {expandedRoomId === room.id && (
-                                <div className="flex gap-2 mt-3">
-                                    <button className="btn btn-primary text-base-100">
-                                        <CalendarDaysIcon className='size-5' />
-                                        View Bookings
-                                    </button>
-                                    <button
-                                        className='btn btn-outline btn-secondary text-white'
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleEdit(room.id);
-                                        }}
-                                    >
-                                        <PencilIcon className='size-5' />
-                                        Edit
-                                    </button>
+    {filteredRooms.map((room) => (
+        <div
+            key={room.id}
+            className={`relative card p-5 rounded-lg transition-all duration-300 ${expandedRoomId === room.id ? 'transform scale-95' : ''}`}
+        >
+            <div className="absolute top-0 p-3 rounded-tr-md rounded-br-md right-0 h-full bg-primary flex items-center justify-center cursor-pointer" onClick={() => toggleExpand(room.id)}>
+                <ChevronRightIcon className={`size-6 text-base-100 transition-transform duration-300 ${expandedRoomId === room.id ? 'rotate-180' : ''}`} />
+            </div>
+            <div className='flex items-center gap-3 mb-3'>
+                <img
+                    src={room.photoUrl}
+                    alt="Meeting Room"
+                    className="size-20 rounded-full object-cover"
+                />
+                <h1 className='text-xl font-semibold border-r border-r-gray-200 pr-4 ml-3'>{room.name}</h1>
+                <p className='text-gray-500'>{room.type}</p>
+            </div>
+            {expandedRoomId === room.id && (
+                <div className="flex gap-2 mt-3">
+                    <Link  to="/admin/bookings" className="btn btn-primary text-base-100">
+                        <CalendarDaysIcon className='size-5' />
+                        View Bookings
+                    </Link>
+                    <button
+                        className='btn btn-outline btn-secondary text-white'
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(room.id);
+                        }}
+                    >
+                        <PencilIcon className='size-5' />
+                        Edit
+                    </button>
 
-                                    <button
-                                        className='btn btn-outline btn-error text-white'
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            document.getElementById('delete_room_modal').showModal();
-                                            setCurrentRoomId(room.id);
-                                        }}
-                                    >
-                                        <TrashIcon className='size-5' />
-                                        Delete
-                                    </button>
-
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                    <button
+                        className='btn btn-outline btn-error text-white'
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            document.getElementById('delete_room_modal').showModal();
+                            setCurrentRoomId(room.id);
+                        }}
+                    >
+                        <TrashIcon className='size-5' />
+                        Delete
+                    </button>
                 </div>
+            )}
+        </div>
+    ))}
+</div>
             </div>
         </Sidebar>
     );
