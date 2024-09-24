@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { useParams } from 'react-router-dom';
-import { UserGroupIcon, BriefcaseIcon, ArrowTrendingUpIcon, TicketIcon, AcademicCapIcon, CheckBadgeIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import sampleCompanyLogo from '../../assets/samplecompanylogo.png'
 import ReactApexChart from 'react-apexcharts';
 import { getPieChartOptions } from '../../util/charts';
@@ -63,18 +63,18 @@ const Company = () => {
         "etags": 1,
         "card_num": 0,
         "card": {
-            "_id": "66df197161c2c1ed67fe5c28",
-            "tenant_id": "66d97748124403bf36e695e8",
-            "employee_id": "66df197161c2c1ed67fe5c27",
-            "is_issued": true,
-            "is_requested": false,
-            "is_returned": false,
-            "__v": 0,
-            "card_number": 0,
-            "date_issued": "2024-09-09T16:48:50.533Z"
+          "_id": "66df197161c2c1ed67fe5c28",
+          "tenant_id": "66d97748124403bf36e695e8",
+          "employee_id": "66df197161c2c1ed67fe5c27",
+          "is_issued": true,
+          "is_requested": false,
+          "is_returned": false,
+          "__v": 0,
+          "card_number": 0,
+          "date_issued": "2024-09-09T16:48:50.533Z"
         }
-    },
-    {
+      },
+      {
         "_id": "66df2a84c84208453e73701a",
         "tenant_id": "66d97748124403bf36e695e8",
         "tenant_name": "Hexlertech",
@@ -93,35 +93,6 @@ const Company = () => {
         "__v": 0,
         "etags": 1,
         "card": {
-            "_id": "66df2a84c84208453e73701b",
-            "tenant_id": "66d97748124403bf36e695e8",
-            "employee_id": "66df2a84c84208453e73701a",
-            "is_issued": false,
-            "is_requested": true,
-            "is_returned": false,
-            "__v": 0,
-            "date_requested": "2024-09-09T17:06:10.755Z"
-        }
-    },
-    {
-      "_id": "123f2a84c84208453e73701a",
-      "tenant_id": "66d91238124403bf36e695e8",
-      "tenant_name": "Hexlertech",
-      "email": "haadiya@gmail.com",
-      "name": "Haadiya Sajid",
-      "photo": "https://randomuser.me/api/portraits/women/25.jpg",
-      "designation": "Full Stack Developer",
-      "cnic": "6110112394528",
-      "dob": "2024-09-05",
-      "address": "F/10-1 Street 11 House 29",
-      "date_joining": "2024-10-04",
-      "employee_type": "Contract",
-      "contract_duration": "6 Months",
-      "status_employment": true,
-      "is_nustian": false,
-      "__v": 0,
-      "etags": 1,
-      "card": {
           "_id": "66df2a84c84208453e73701b",
           "tenant_id": "66d97748124403bf36e695e8",
           "employee_id": "66df2a84c84208453e73701a",
@@ -130,11 +101,59 @@ const Company = () => {
           "is_returned": false,
           "__v": 0,
           "date_requested": "2024-09-09T17:06:10.755Z"
+        }
+      },
+      {
+        "_id": "123f2a84c84208453e73701a",
+        "tenant_id": "66d91238124403bf36e695e8",
+        "tenant_name": "Hexlertech",
+        "email": "haadiya@gmail.com",
+        "name": "Haadiya Sajid",
+        "photo": "https://randomuser.me/api/portraits/women/25.jpg",
+        "designation": "Full Stack Developer",
+        "cnic": "6110112394528",
+        "dob": "2024-09-05",
+        "address": "F/10-1 Street 11 House 29",
+        "date_joining": "2024-10-04",
+        "employee_type": "Contract",
+        "contract_duration": "6 Months",
+        "status_employment": true,
+        "is_nustian": false,
+        "__v": 0,
+        "etags": 1,
+        "card": {
+          "_id": "66df2a84c84208453e73701b",
+          "tenant_id": "66d97748124403bf36e695e8",
+          "employee_id": "66df2a84c84208453e73701a",
+          "is_issued": false,
+          "is_requested": true,
+          "is_returned": false,
+          "__v": 0,
+          "date_requested": "2024-09-09T17:06:10.755Z"
+        }
       }
-  }
     ]
   });
   const [loading, setLoading] = useState(true);
+  const [modalLoading, setModalLoading] = useState(false);
+
+  const actions = [
+    {
+      text: 'End Tenure',
+      icon: XCircleIcon,
+      onClick: () => {
+        document.getElementById('tenure-end-modal').showModal();
+      },
+    },
+  ];
+  const [dropdownOpen, setDropdownOpen] = useState({});
+
+  const toggleDropdown = (id) => {
+    setDropdownOpen((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   useEffect(() => {
     // API call here, Fetch company data using the companyId
@@ -147,6 +166,14 @@ const Company = () => {
 
   }, [companyId]);
 
+  const handleEndTenure = () => {
+    setModalLoading(true);
+    setTimeout(() => {
+      console.log(`Company ID: ${companyId}`);
+      setModalLoading(false);
+      document.getElementById('tenure-end-modal').close();
+    }, 2000);
+  }
 
   return (
     <Sidebar>
@@ -173,8 +200,64 @@ const Company = () => {
           </div>
         </dialog>
 
+        {/*end tenure confirmation modal */}
+        <dialog id="tenure-end-modal" className="modal">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Are you sure?</h3>
+            <p>Do you really want to end the tenure?</p>
+            <div className="modal-action">
+              <button className="btn" onClick={() => document.getElementById('tenure-end-modal').close()}>No</button>
+              <button
+                className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
+                onClick={() => {
+                  handleEndTenure();
+                }}
+              >
+                {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Yes"}
+              </button>
+            </div>
+          </div>
+        </dialog>
+
         {/* View Profile Modal */}
         <EmployeeProfileModal employeeProfileSelected={selectedEmployee} />
+
+        <div className='w-full flex justify-end'>
+          <div className="relative">
+            <button
+              className="btn text-base-100 btn-primary"
+              onClick={() => toggleDropdown('actions')}
+            >
+              Actions
+              {dropdownOpen['actions'] ? (
+                <ChevronUpIcon className="h-5 w-5" />
+              ) : (
+                <ChevronDownIcon className="h-5 w-5" />
+              )}
+            </button>
+            {dropdownOpen['actions'] && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                <ul className="py-1">
+                  {actions.map((action, index) => (
+                    <li key={index}>
+                      <button
+                        className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        onClick={() => {
+                          action.onClick();
+                          toggleDropdown('actions');
+                        }}
+                      >
+                        <action.icon className="h-5 w-5 mr-2" />
+                        {action.text}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+
 
         {/* Header with company info, description, logo and join date */}
         <div className="flex max-sm:flex-col justify-start items-start gap-5">

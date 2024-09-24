@@ -17,6 +17,7 @@ import MeetingRoomBooking from './pages/receptionist/MeetingRoomBooking.jsx';
 import Etags from './pages/admin/Etags.jsx';
 import CardRequests from './pages/admin/CardRequests.jsx';
 import Services from './pages/admin/Services.jsx';
+import MeetingRooms from './pages/admin/MeetingRooms.jsx';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="companies" element={<Companies />} />
           <Route path="etags" element={<Etags />} />          
           <Route path="services" element={<Services />} />          
+          <Route path="meeting-rooms" element={<MeetingRooms />} />          
           <Route path="cards" element={<CardRequests />} />
           <Route path="companies/:companyId" element={<Company />} />
         </Route>
