@@ -192,7 +192,7 @@ const AdminHome = () => {
             </div>
 
             <div className="md:col-span-3 card p-5">
-              <ComparativeChart title={"E-Tags"} comparisonData={eTags}  />
+              <ComparativeChart title={"E-Tags"} comparisonData={eTags} link={"etags"} />
             </div>
 
           </div>

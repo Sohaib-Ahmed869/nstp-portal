@@ -14,6 +14,7 @@ import GatePasses from './pages/company/GatePasses.jsx';
 import { Complaints as ReceptionistComplaints } from './pages/receptionist/Complaints.jsx';
 import { Dashboard as ReceptionistDashboard } from './pages/receptionist/Dashboard.jsx';
 import MeetingRoomBooking from './pages/receptionist/MeetingRoomBooking.jsx';
+import Etags from './pages/admin/Etags.jsx';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route index element={<AdminHome />} />
           <Route path="add-company" element={<CompanyAddition />} />
           <Route path="companies" element={<Companies />} />
+          <Route path="etags" element={<Etags />} />
           <Route path="companies/:companyId" element={<Company />} />
         </Route>
 

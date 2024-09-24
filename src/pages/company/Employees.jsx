@@ -12,6 +12,7 @@ import {
   UserIcon,
   IdentificationIcon,
   PencilSquareIcon,
+  TagIcon,
 } from "@heroicons/react/24/outline";
 import FloatingLabelInput from "../../components/FloatingLabelInput";
 import TenantService from "../../services/TenantService";
@@ -26,66 +27,66 @@ const Employees = () => {
   const [employees, setEmployees] = useState([]);
   const [employeeTableData, setEmployeeTableData] = useState([
     {
-        "_id": "66df197161c2c1ed67fe5c27",
+      "_id": "66df197161c2c1ed67fe5c27",
+      "tenant_id": "66d97748124403bf36e695e8",
+      "tenant_name": "Hexlertech",
+      "email": "musa@gmail.com",
+      "name": "Musa Haroon Satti",
+      "photo": "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
+      "designation": "Full Stack Developer",
+      "cnic": "6110166894529",
+      "dob": "2024-09-06",
+      "address": "F/10-1 Street 11 House 29",
+      "date_joining": "2024-10-11",
+      "employee_type": "Intern",
+      "contract_duration": "",
+      "status_employment": true,
+      "is_nustian": true,
+      "__v": 0,
+      "etags": 1,
+      "card_num": 0,
+      "card": {
+        "_id": "66df197161c2c1ed67fe5c28",
         "tenant_id": "66d97748124403bf36e695e8",
-        "tenant_name": "Hexlertech",
-        "email": "musa@gmail.com",
-        "name": "Musa Haroon Satti",
-        "photo": "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
-        "designation": "Full Stack Developer",
-        "cnic": "6110166894529",
-        "dob": "2024-09-06",
-        "address": "F/10-1 Street 11 House 29",
-        "date_joining": "2024-10-11",
-        "employee_type": "Intern",
-        "contract_duration": "",
-        "status_employment": true,
-        "is_nustian": true,
+        "employee_id": "66df197161c2c1ed67fe5c27",
+        "is_issued": true,
+        "is_requested": false,
+        "is_returned": false,
         "__v": 0,
-        "etags": 1,
-        "card_num": 0,
-        "card": {
-            "_id": "66df197161c2c1ed67fe5c28",
-            "tenant_id": "66d97748124403bf36e695e8",
-            "employee_id": "66df197161c2c1ed67fe5c27",
-            "is_issued": true,
-            "is_requested": false,
-            "is_returned": false,
-            "__v": 0,
-            "card_number": 0,
-            "date_issued": "2024-09-09T16:48:50.533Z"
-        }
+        "card_number": 0,
+        "date_issued": "2024-09-09T16:48:50.533Z"
+      }
     },
     {
-        "_id": "66df2a84c84208453e73701a",
+      "_id": "66df2a84c84208453e73701a",
+      "tenant_id": "66d97748124403bf36e695e8",
+      "tenant_name": "Hexlertech",
+      "email": "musaharoon.2003@gmail.com",
+      "name": "Musa Haroon Satti",
+      "photo": "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
+      "designation": "Full Stack Developer",
+      "cnic": "6110166894528",
+      "dob": "2024-09-05",
+      "address": "F/10-1 Street 11 House 29",
+      "date_joining": "2024-10-04",
+      "employee_type": "Contract",
+      "contract_duration": "6 Months",
+      "status_employment": true,
+      "is_nustian": false,
+      "__v": 0,
+      "etags": 1,
+      "card": {
+        "_id": "66df2a84c84208453e73701b",
         "tenant_id": "66d97748124403bf36e695e8",
-        "tenant_name": "Hexlertech",
-        "email": "musaharoon.2003@gmail.com",
-        "name": "Musa Haroon Satti",
-        "photo": "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
-        "designation": "Full Stack Developer",
-        "cnic": "6110166894528",
-        "dob": "2024-09-05",
-        "address": "F/10-1 Street 11 House 29",
-        "date_joining": "2024-10-04",
-        "employee_type": "Contract",
-        "contract_duration": "6 Months",
-        "status_employment": true,
-        "is_nustian": false,
+        "employee_id": "66df2a84c84208453e73701a",
+        "is_issued": false,
+        "is_requested": true,
+        "is_returned": false,
         "__v": 0,
-        "etags": 1,
-        "card": {
-            "_id": "66df2a84c84208453e73701b",
-            "tenant_id": "66d97748124403bf36e695e8",
-            "employee_id": "66df2a84c84208453e73701a",
-            "is_issued": false,
-            "is_requested": true,
-            "is_returned": false,
-            "__v": 0,
-            "date_requested": "2024-09-09T17:06:10.755Z"
-        }
+        "date_requested": "2024-09-09T17:06:10.755Z"
+      }
     }
-]);
+  ]);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("All");
@@ -104,6 +105,10 @@ const Employees = () => {
     internType: "",
     address: "",
   });
+  const [employeeProfileSelected, setEmployeeProfileSelected] = useState(null);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [carLicenseNumber, setCarLicenseNumber] = useState('');
+
 
   // *** Effects ***
   useEffect(() => {
@@ -224,6 +229,8 @@ const Employees = () => {
     setSortOrder(order);
   };
 
+
+
   //handle change in form data for adding new employee
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -268,6 +275,28 @@ const Employees = () => {
 
     // clearForm();
   };
+  const requestCard = (employee_id) => {
+    console.log("Requesting card for employee:", employee_id);
+    setModalLoading(true);
+    //API call
+
+    setTimeout(() => {
+      setModalLoading(false);
+      document.getElementById('card_request_modal').close();
+    }, 2000);
+  }
+
+  const requestEtag = (employeeId, carLicenseNumber) => {
+    console.log(`Employee ID: ${employeeId}, Car License Number: ${carLicenseNumber}`);
+    setModalLoading(true);
+
+    setTimeout(() => {
+      setModalLoading(false);
+      document.getElementById('etag_request_modal').close();
+      setCarLicenseNumber('');
+    }, 2000);
+  };
+
 
   // *** Constants ***
   const columns = [
@@ -310,10 +339,6 @@ const Employees = () => {
     },
     { name: "photo", type: "text", label: "Photo URL" },
   ];
-
-  const [employeeProfileSelected, setEmployeeProfileSelected] = useState(null);
-  const [modalLoading, setModalLoading] = useState(false);
-
   const filteredData = employeeTableData
     .filter((row) => {
       if (filter === "All") return true;
@@ -331,21 +356,8 @@ const Employees = () => {
       if (a[sortField] > b[sortField]) return sortOrder === "asc" ? 1 : -1;
       return 0;
     });
-  
-  const requestCard = (employee_id) => {
-    console.log("Requesting card for employee:", employee_id);
-    setModalLoading(true);
-    //API call
 
-    setTimeout(() => {
-      setModalLoading(false);
-      document.getElementById('card_request_modal').close();
-    }, 2000);
 
-    
-  }
-
-  
 
   return (
     <Sidebar>
@@ -484,11 +496,36 @@ const Employees = () => {
           </p>
           <div className="modal-action">
             <button className={`btn mr-1 ${modalLoading && "btn-disabled"} `} onClick={() => { document.getElementById('card_request_modal').close() }}>Cancel</button>
-            <button className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"} `} onClick={() => { requestCard(employeeProfileSelected._id) }}> { modalLoading &&  <span className="loading loading-spinner"></span> } { modalLoading ? "Please wait..." : "Request"}</button>
+            <button className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"} `} onClick={() => { requestCard(employeeProfileSelected._id) }}> {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Request"}</button>
           </div>
         </div>
       </dialog>
 
+      {/* E tag request modal containing a single field to enter car license number */}
+      <dialog id="etag_request_modal" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Request E-Tag</h3>
+          <p className="text-sm text-gray-500">
+            Please enter the car license number to request an E-Tag for this employee.
+          </p>
+          <div className="modal-action">
+            <input
+              type="text"
+              placeholder="Enter car license number"
+              className="input input-bordered w-full"
+              value={carLicenseNumber}
+              onChange={(e) => setCarLicenseNumber(e.target.value)}
+            />
+            <button className="btn mr-1" onClick={() => document.getElementById('etag_request_modal').close()}>Cancel</button>
+            <button
+              className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
+              onClick={() => requestEtag(employeeProfileSelected._id, carLicenseNumber)}
+            >
+              {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Request"}
+            </button>
+          </div>
+        </div>
+      </dialog>
 
       {/* Employee Profile modal */}
       <EmployeeProfileModal employeeProfileSelected={employeeProfileSelected} />
@@ -498,9 +535,8 @@ const Employees = () => {
 
       {/* Main Page Content */}
       <div
-        className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${
-          loading && "hidden"
-        }`}
+        className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"
+          }`}
       >
         {/* Header + add new emp btn */}
         <div className="flex flex-row items-center justify-between">
@@ -544,11 +580,11 @@ const Employees = () => {
         {employeeTableData.length === 0 ? (
           <p className="text-gray-500">No data to show for now.</p>
         ) : (
-          <div className="h-full min-h-content overflow-y-auto">
+          <div className="h-full min-h-screen overflow-y-auto">
             <p className="my-2 text-gray-500 text-sm">
               Click on any column header to sort data
             </p>
-            <table className="table mt-5 min-h-full rounded-lg  mb-9">
+            <table className="table mt-5 rounded-lg  mb-10">
               <thead>
                 <tr className="bg-base-200 cursor-pointer">
                   <th></th>
@@ -587,17 +623,16 @@ const Employees = () => {
                     <td>{row.employee_type}</td>
                     <td>{row.status_employment ? "Active" : "Inactive"}</td>
                     <td
-                      className={`${
-                        row.card.is_requested
+                      className={`${row.card.is_requested
                           ? "bg-yellow-100 text-yellow-900"
                           : ""
-                      }`}
+                        }`}
                     >
                       {row.card_num !== undefined
                         ? row.card_num
                         : row.card.is_requested
-                        ? "Awaiting Approval"
-                        : "Not Assigned"}
+                          ? "Awaiting Approval"
+                          : "Not Assigned"}
                     </td>
                     <td className="relative">
                       <button
@@ -625,10 +660,23 @@ const Employees = () => {
                                   document
                                     .getElementById("employee_profile")
                                     .showModal();
+                                  toggleDropdown(row._id);
                                 }}
                               >
                                 <UserIcon className="h-5 w-5 mr-2" />
                                 View Profile
+                              </button>
+                            </li>
+                            <li>
+                              <button className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                onClick={() => {
+                                  document.getElementById('etag_request_modal').showModal();
+                                  setEmployeeProfileSelected(row);
+                                  toggleDropdown(row._id);
+                                }}
+                              >
+                                <TagIcon className="h-5 w-5 mr-2" />
+                                Request E-Tag
                               </button>
                             </li>
                             <li>
@@ -639,6 +687,7 @@ const Employees = () => {
                                   document
                                     .getElementById("edit_employee_profile_modal")
                                     .showModal();
+                                    toggleDropdown(row._id);
                                 }}
                               >
                                 <PencilSquareIcon className="h-5 w-5 mr-2" />
@@ -648,10 +697,11 @@ const Employees = () => {
                             {row.card_num == undefined && (
                               <li>
                                 <button className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                                onClick ={() => {
-                                  document.getElementById("card_request_modal").showModal();
-                                  setEmployeeProfileSelected(row);
-                                }}
+                                  onClick={() => {
+                                    document.getElementById("card_request_modal").showModal();
+                                    setEmployeeProfileSelected(row);
+                                    toggleDropdown(row._id);
+                                  }}
                                 >
                                   <IdentificationIcon className="h-5 w-5 mr-2" />
                                   Request card
@@ -667,6 +717,7 @@ const Employees = () => {
                                     document
                                       .getElementById("layoff_modal")
                                       .showModal();
+                                      toggleDropdown(row._id);
                                   }}
                                 >
                                   <XCircleIcon className="h-5 w-5 mr-2" />

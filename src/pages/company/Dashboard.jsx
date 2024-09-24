@@ -317,7 +317,7 @@ const Dashboard = () => {
           {/* Charts of e-tags and gate passes */}
           <div className="col-span-3 my-3 flex flex-col gap-4">
             <div className="card p-5">
-              <ComparativeChart title="Parking E-tags" comparisonData={eTags} />
+              <ComparativeChart title="Parking E-tags" comparisonData={eTags}  />
             </div>
 
             <div className="card p-5">

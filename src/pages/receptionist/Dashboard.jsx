@@ -149,10 +149,10 @@ export const Dashboard = () => {
           </div>
           
           {/** Meeting room bookings */}
-          <div className=" lg:col-span-4 card p-5">
+          <div className=" lg:col-span-4 card p-5 overflow-x-auto">
             
             <MeetingRoomBookingTable 
-            meetingRoomSchedule={ meetingRoomSchedule.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 8)} 
+            meetingRoomSchedule={ meetingRoomSchedule.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)} 
             role={"receptionist"} 
             dashboardComponent={true}
             />
