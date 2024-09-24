@@ -16,6 +16,7 @@ import { Dashboard as ReceptionistDashboard } from './pages/receptionist/Dashboa
 import MeetingRoomBooking from './pages/receptionist/MeetingRoomBooking.jsx';
 import Etags from './pages/admin/Etags.jsx';
 import CardRequests from './pages/admin/CardRequests.jsx';
+import Services from './pages/admin/Services.jsx';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route path="add-company" element={<CompanyAddition />} />
           <Route path="companies" element={<Companies />} />
           <Route path="etags" element={<Etags />} />          
+          <Route path="services" element={<Services />} />          
           <Route path="cards" element={<CardRequests />} />
           <Route path="companies/:companyId" element={<Company />} />
         </Route>

@@ -20,16 +20,16 @@ import { SidebarItem } from "./SidebarItem";
 import nstpPng from '../assets/nstplogowhite.png'
 
 const sidebarItems = [
-  { icon: <HomeIcon />, text: "Home", url: "/home" },
-  { icon: <ChartBarIcon />, text: "Dashboard", url: "/dashboard" },
-  { icon: <UserPlusIcon />, text: "Registration", url: "/registration" },
-  { icon: <CircleStackIcon />, text: "Resources", url: "/resources" },
-  { icon: <TruckIcon />, text: "Parking", url: "/parking" },
-  { icon: <ClipboardDocumentCheckIcon />, text: "Assessment", url: "/assessment" },
-  { icon: <WrenchScrewdriverIcon />, text: "Services", url: "/services" },
-  { icon: <RocketLaunchIcon />, text: "Opportunities", url: "/opportunities" },
-  { icon: <DocumentIcon />, text: "Request", url: "/request" },
-  { icon: <TrophyIcon />, text: "Performance", url: "/performance" },
+  { icon: <HomeIcon />, text: "Home", url: "home" },
+  { icon: <ChartBarIcon />, text: "Dashboard", url: "dashboard" },
+  { icon: <UserPlusIcon />, text: "Registration", url: "registration" },
+  { icon: <CircleStackIcon />, text: "Resources", url: "resources" },
+  { icon: <TruckIcon />, text: "Parking", url: "parking" },
+  { icon: <ClipboardDocumentCheckIcon />, text: "Assessment", url: "assessment" },
+  { icon: <WrenchScrewdriverIcon />, text: "Services", url: "services" },
+  { icon: <RocketLaunchIcon />, text: "Opportunities", url: "opportunities" },
+  { icon: <DocumentIcon />, text: "Request", url: "request" },
+  { icon: <TrophyIcon />, text: "Performance", url: "performance" },
 ];
 
 const Sidebar = ({ children }) => {
