@@ -54,7 +54,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
     };
     const filteredData = dashboardComponent ? meetingRoomSchedule : meetingRoomSchedule.filter(row => {
         return (filterStatus === '' || row.status === filterStatus) &&
-            row.company.toLowerCase().includes(searchQuery.toLowerCase());
+            (role !== 'receptionist' || row.company?.toLowerCase().includes(searchQuery.toLowerCase()));
     });
     const sortedData = dashboardComponent ? filteredData : filteredData.sort((a, b) => {
         if (a[sortField] === null) return 1;

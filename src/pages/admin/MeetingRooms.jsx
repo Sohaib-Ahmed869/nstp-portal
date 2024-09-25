@@ -3,6 +3,7 @@ import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
 import { PlusCircleIcon, PencilIcon, ChevronRightIcon, MagnifyingGlassIcon, TrashIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
+import FloatingLabelInput from '../../components/FloatingLabelInput';
 
 const DUMMY_PHOTO_URLS = [
     "https://media.istockphoto.com/id/1363105039/photo/businesspeople-do-video-conference-call-with-big-wall-tv-in-office-meeting-room-diverse-team.jpg?s=612x612&w=0&k=20&c=o7UjhyG3YmLj7jTtSdMkN-K_tE4HSfAq9wWdhiRDFAA=",
@@ -18,21 +19,50 @@ const MeetingRooms = () => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [currentRoomId, setCurrentRoomId] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
+    const [errors, setErrors] = useState({});
 
     // State for form fields
     const [newRoom, setNewRoom] = useState({
         name: '',
-        type: 'Seminar Room',
+        floor: '',
+        startTime: '',
+        endTime: '',
+        seatingCapacity: '',
     });
 
-    // Function to handle form field changes
+    const validateTime = (time) => {
+        const regex = /^([01]?\d|2[0-3]?):?([0-5]?\d?)$/;
+        return regex.test(time);
+    };
+
+    const isCompleteTime = (time) => {
+        const completeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+        return completeRegex.test(time);
+    };
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+
+        if ((name === 'startTime' || name === 'endTime') && !validateTime(value)) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                [name]: 'Invalid time format',
+            }));
+            return;
+        }
+
+        if ((name === 'startTime' || name === 'endTime') && isCompleteTime(value)) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                [name]: '',
+            }));
+        }
+
         setNewRoom((prevRoom) => ({
             ...prevRoom,
             [name]: value,
         }));
     };
+
 
     // Function to handle form submission for editing a room
     const saveEditedRoom = () => {
@@ -64,6 +94,10 @@ const MeetingRooms = () => {
                     id: (prevRooms.length + 1).toString(),
                     name: newRoom.name,
                     type: newRoom.type,
+                    floor: newRoom.floor,
+                    startTime: newRoom.startTime,
+                    endTime: newRoom.endTime,
+                    seatingCapacity: newRoom.seatingCapacity,
                     photoUrl: getRandomPhotoUrl(),
                 },
             ]);
@@ -85,7 +119,10 @@ const MeetingRooms = () => {
     const resetForm = () => {
         setNewRoom({
             name: '',
-            type: 'Seminar Room',
+            floor: '',
+            startTime: '',
+            endTime: '',
+            seatingCapacity: '',
         });
         setIsEditMode(false);
         setCurrentRoomId(null);
@@ -98,6 +135,8 @@ const MeetingRooms = () => {
         setNewRoom({
             name: roomToEdit.name,
             type: roomToEdit.type,
+            floor: roomToEdit.floor,
+            timings: roomToEdit.timings,
         });
         setIsEditMode(true);
         setCurrentRoomId(roomId);
@@ -128,14 +167,15 @@ const MeetingRooms = () => {
         return DUMMY_PHOTO_URLS[Math.floor(Math.random() * DUMMY_PHOTO_URLS.length)];
     };
 
-    
+
     useEffect(() => {
         // Api call here to fetch data and populate the above states
         // Dummy data for meeting rooms with photo URLs
         setMeetingRooms([
-            { id: "1", name: "Room A", type: "Seminar Room", photoUrl: getRandomPhotoUrl() },
-            { id: "2", name: "Room B", type: "Conference Room", photoUrl: getRandomPhotoUrl() },
+            { id: "1", name: "Room A", floor: 1, startTime: "11 AM", endTime: "12 PM", seatingCapacity: 50, photoUrl: getRandomPhotoUrl() },
+            { id: "2", name: "Room B", floor: 4, startTime: "12 PM", endTime: "1 PM", seatingCapacity: 10, photoUrl: getRandomPhotoUrl() },
         ]);
+
         setTimeout(() => {
             setLoading(false);
         }, 2000);
@@ -148,33 +188,55 @@ const MeetingRooms = () => {
             {/* Add/Edit Room Modal */}
             <dialog id="add_room_form" className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">{isEditMode ? 'Edit Room' : 'Add New Room'}</h3>
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Room Name</span>
-                        </label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={newRoom.name}
-                            onChange={handleInputChange}
-                            className="input input-bordered"
-                        />
+                    <h3 className="font-bold text-lg mb-4">{isEditMode ? 'Edit Room' : 'Add New Room'}</h3>
+                    <FloatingLabelInput
+                        name="name"
+                        type="text"
+                        id="room_name"
+                        label="Room Name"
+                        value={newRoom.name}
+                        onChange={handleInputChange}
+                    />
+                    <FloatingLabelInput
+                        name="floor"
+                        type="number"
+                        id="room_floor"
+                        label="Floor"
+                        value={newRoom.floor}
+                        onChange={handleInputChange}
+                    />
+                    <div className="flex gap-4">
+                        <div className="flex w-1/2 flex-col">
+                            <FloatingLabelInput
+                                name="startTime"
+                                type="text"
+                                id="start_time"
+                                label="Start Time (HH:MM)"
+                                value={newRoom.startTime}
+                                onChange={handleInputChange}
+                            />
+                            {errors.startTime && <p className="text-red-500 -mt-5 text-sm">{errors.startTime}</p>}
+                        </div>
+                        <div className="flex flex-col w-1/2">
+                            <FloatingLabelInput
+                                name="endTime"
+                                type="text"
+                                id="end_time"
+                                label="End Time (HH:MM)"
+                                value={newRoom.endTime}
+                                onChange={handleInputChange}
+                            />
+                            {errors.endTime && <p className="text-red-500 -mt-5 text-sm">{errors.endTime}</p>}
+                        </div>
                     </div>
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Room Type</span>
-                        </label>
-                        <select
-                            name="type"
-                            value={newRoom.type}
-                            onChange={handleInputChange}
-                            className="select select-bordered"
-                        >
-                            <option value="Seminar Room">Seminar Room</option>
-                            <option value="Conference Room">Conference Room</option>
-                        </select>
-                    </div>
+                    <FloatingLabelInput
+                        name="seatingCapacity"
+                        type="number"
+                        id="seating_capacity"
+                        label="Seating Capacity"
+                        value={newRoom.seatingCapacity}
+                        onChange={handleInputChange}
+                    />
                     <div className="modal-action">
                         <button className="btn" onClick={handleCancel}>Cancel</button>
                         <button
@@ -244,56 +306,62 @@ const MeetingRooms = () => {
                     <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                 </div>
                 <div className="flex flex-col gap-5">
-    {filteredRooms.map((room) => (
-        <div
-            key={room.id}
-            className={`relative card p-5 rounded-lg transition-all duration-300 ${expandedRoomId === room.id ? 'transform scale-95' : ''}`}
-        >
-            <div className="absolute top-0 p-3 rounded-tr-md rounded-br-md right-0 h-full bg-primary flex items-center justify-center cursor-pointer" onClick={() => toggleExpand(room.id)}>
-                <ChevronRightIcon className={`size-6 text-base-100 transition-transform duration-300 ${expandedRoomId === room.id ? 'rotate-180' : ''}`} />
-            </div>
-            <div className='flex items-center gap-3 mb-3'>
-                <img
-                    src={room.photoUrl}
-                    alt="Meeting Room"
-                    className="size-20 rounded-full object-cover"
-                />
-                <h1 className='text-xl font-semibold border-r border-r-gray-200 pr-4 ml-3'>{room.name}</h1>
-                <p className='text-gray-500'>{room.type}</p>
-            </div>
-            {expandedRoomId === room.id && (
-                <div className="flex gap-2 mt-3">
-                    <Link  to="/admin/bookings" className="btn btn-primary text-base-100">
-                        <CalendarDaysIcon className='size-5' />
-                        View Bookings
-                    </Link>
-                    <button
-                        className='btn btn-outline btn-secondary text-white'
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleEdit(room.id);
-                        }}
-                    >
-                        <PencilIcon className='size-5' />
-                        Edit
-                    </button>
-
-                    <button
-                        className='btn btn-outline btn-error text-white'
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            document.getElementById('delete_room_modal').showModal();
-                            setCurrentRoomId(room.id);
-                        }}
-                    >
-                        <TrashIcon className='size-5' />
-                        Delete
-                    </button>
+                    {filteredRooms.map((room) => (
+                        <div
+                            key={room.id}
+                            className={`relative card p-5 rounded-lg transition-all duration-300 ${expandedRoomId === room.id ? 'transform scale-95' : ''}`}
+                        >
+                            <div className="absolute top-0 p-3 rounded-tr-md rounded-br-md right-0 h-full bg-primary flex items-center justify-center cursor-pointer" onClick={() => toggleExpand(room.id)}>
+                                <ChevronRightIcon className={`size-6 text-base-100 transition-transform duration-300 ${expandedRoomId === room.id ? 'rotate-180' : ''}`} />
+                            </div>
+                            <div className='flex items-center gap-3 mb-3'>
+                                <img
+                                    src={room.photoUrl}
+                                    alt="Meeting Room"
+                                    className="size-20 rounded-full object-cover"
+                                />
+                                <h1 className='text-xl font-semibold border-r border-r-gray-200 pr-4 ml-3'>{room.name}</h1>
+                                <p className='text-gray-500'>{"Floor " + room.floor}</p>
+                            </div>
+                            {expandedRoomId === room.id && (
+                             <div className="flex flex-col">
+                                    <div>
+                                        <p>Room timings: {room.startTime} - {room.endTime}</p>
+                                        <p>Seating capacity: {room.seatingCapacity}</p>
+                                    </div>
+                                   <div className="flex gap-2 mt-3">
+                                       <Link to="/admin/bookings" className="btn btn-primary text-base-100">
+                                           <CalendarDaysIcon className='size-5' />
+                                           View Bookings
+                                       </Link>
+                                       <button
+                                           className='btn btn-outline btn-secondary text-white'
+                                           onClick={(e) => {
+                                               e.stopPropagation();
+                                               handleEdit(room.id);
+                                           }}
+                                       >
+                                           <PencilIcon className='size-5' />
+                                           Edit
+                                       </button>
+                                
+                                       <button
+                                           className='btn btn-outline btn-error text-white'
+                                           onClick={(e) => {
+                                               e.stopPropagation();
+                                               document.getElementById('delete_room_modal').showModal();
+                                               setCurrentRoomId(room.id);
+                                           }}
+                                       >
+                                           <TrashIcon className='size-5' />
+                                           Delete
+                                       </button>
+                                   </div>
+                             </div>
+                            )}
+                        </div>
+                    ))}
                 </div>
-            )}
-        </div>
-    ))}
-</div>
             </div>
         </Sidebar>
     );

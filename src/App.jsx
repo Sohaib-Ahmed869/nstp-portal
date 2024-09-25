@@ -19,6 +19,7 @@ import CardRequests from './pages/admin/CardRequests.jsx';
 import Services from './pages/admin/Services.jsx';
 import MeetingRooms from './pages/admin/MeetingRooms.jsx';
 import {MeetingRoomBooking as AdminMeetingRoomBooking } from './pages/admin/MeetingRoomBooking.jsx';
+import {MeetingRoomBooking as CompanyMeetingRoomBooking } from './pages/company/MeetingRoomBooking.jsx';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           <Route path="employees" element={<Employees />} />
           <Route path="complaints" element={<Complaints />} />
           <Route path="gate-passes" element={<GatePasses />} />
+          <Route path="bookings" element={<CompanyMeetingRoomBooking />} />
         </Route>
 
         <Route path="receptionist">
