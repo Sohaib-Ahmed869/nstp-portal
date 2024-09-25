@@ -21,6 +21,7 @@ import Services from './pages/admin/Services.jsx';
 import MeetingRooms from './pages/admin/MeetingRooms.jsx';
 import {MeetingRoomBooking as AdminMeetingRoomBooking } from './pages/admin/MeetingRoomBooking.jsx';
 import {MeetingRoomBooking as CompanyMeetingRoomBooking } from './pages/company/MeetingRoomBooking.jsx';
+import Evaluations from './pages/company/Evaluations.jsx';
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
           <Route path="gate-passes" element={<GatePasses />} />
           <Route path="bookings" element={<CompanyMeetingRoomBooking />} />
           <Route path="profile" element={<Company role={"tenant"} />} />
+          <Route path="evaluations" element={<Evaluations />} />
         </Route>
 
         <Route path="receptionist">
