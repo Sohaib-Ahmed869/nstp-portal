@@ -11,7 +11,7 @@ import Companies from './pages/admin/Companies.jsx';
 import Company from './pages/CompanyProfile.jsx';
 import {Complaints as CompanyComplaints} from './pages/company/Complaints.jsx';
 import Complaints from './pages/Complaints.jsx';
-import GatePasses from './pages/company/GatePasses.jsx';
+import GatePasses from './pages/GatePasses.jsx';
 
 import { Dashboard as ReceptionistDashboard } from './pages/receptionist/Dashboard.jsx';
 import MeetingRoomBooking from './pages/receptionist/MeetingRoomBooking.jsx';
@@ -22,6 +22,7 @@ import MeetingRooms from './pages/admin/MeetingRooms.jsx';
 import {MeetingRoomBooking as AdminMeetingRoomBooking } from './pages/admin/MeetingRoomBooking.jsx';
 import {MeetingRoomBooking as CompanyMeetingRoomBooking } from './pages/company/MeetingRoomBooking.jsx';
 import Evaluations from './pages/company/Evaluations.jsx';
+import Parking from './pages/company/Parking.jsx';
 
 function App() {
   return (
@@ -46,16 +47,18 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="employees" element={<Employees />} />
           <Route path="complaints" element={<CompanyComplaints />} />
-          <Route path="gate-passes" element={<GatePasses />} />
+          <Route path="gate-passes" element={<GatePasses role={"tenant"} />} />
           <Route path="bookings" element={<CompanyMeetingRoomBooking />} />
           <Route path="profile" element={<Company role={"tenant"} />} />
           <Route path="evaluations" element={<Evaluations />} />
+          <Route path="parking" element={<Parking />} />
         </Route>
 
         <Route path="receptionist">
           <Route index element={<ReceptionistDashboard />} />
           <Route path="complaints" element={<Complaints role={"receptionist"} />} />
           <Route path="bookings" element={<MeetingRoomBooking />} />
+          <Route path="gate-passes" element={<GatePasses role={"receptionist"} />} />
         </Route>
       
         <Route path="*" element={<ErrorPage />} />
