@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import Sidebar from '../../components/Sidebar'
-import NSTPLoader from '../../components/NSTPLoader'
-import ComplaintsTable from '../../components/ComplaintsTable'
+import Sidebar from '../components/Sidebar'
+import NSTPLoader from '../components/NSTPLoader'
+import ComplaintsTable from '../components/ComplaintsTable'
 import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon,CogIcon, WrenchScrewdriverIcon,  } from '@heroicons/react/24/outline'
+import { setRole, getRole } from '../util/store'
 
+/**
+|--------------------------------------------------
+| generic page for both admins and receptionists
+| displays complaints based on role (general for admin, services for receptionist)
+|--------------------------------------------------
+*/
 
-export const Complaints = () => {
+export const Complaints = ({role}) => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
@@ -15,12 +22,16 @@ export const Complaints = () => {
     const [servicesSortField, setServicesSortField] = useState("date");
     const [servicesSortOrder, setServicesSortOrder] = useState("asc");
 
+
+    //BELOW IS THE SYNTAX FOR GENERAL COMPLAINT DATA VS SERVICES COMPLAINT DATA. 
+    //GENERAL FOR ADMIN
     const [generalComplaintData, setGeneralComplaintData] = useState([
         { id: "12345", date: "12-13-2024 21:32", tenantName: "HexlarTech", type: "general", subject: "Too much noise", description: "Too much noise being caused please fix this issue", isResolved: false },
         { id: "12346", date: "12-13-2024 12:32", tenantName: "InnoSolutionz",  type: "general", subject: "AC not working", description: "I like it to be working properly and not dirty", isResolved: true },
         { id: "12347", date: "12-13-2024 15:30",  tenantName: "Zanbeel", type: "general", subject: "Noisy Neighbours", description: "Please tell them to be quiet", isResolved: false },
     ]);
 
+    //SERVICES FOR RECEPTIONIST
     const [servicesComplaintData, setServicesComplaintData] = useState([
         { id: "12348", date: "12-13-2024 11:32",  tenantName: "Cocoa Pallette",  type: "services", serviceType: "Cleaning", description: "Please clean the floor", urgency: 2, isResolved: false },
         { id: "22348", date: "12-13-2024 11:32",  tenantName: "Cocoa Tech",  type: "services", serviceType: "Cleaning", description: "Please clean the fan", urgency: 3, isResolved: false },
@@ -37,6 +48,9 @@ export const Complaints = () => {
 
     useEffect(() => {
         setTimeout(() => {
+            //if role==receptionist servicescomplaintdata will be fetched and general will remain an empty array (not null)
+            //if role==admin generalcomplaintdata will be fetched and services will remain an empty array (not null)
+
             setLoading(false);
         }, 2000);
     }, []);
@@ -106,7 +120,7 @@ export const Complaints = () => {
                 </div>
 
                 {/* Search + Filter */}
-                <div className="flex flex-col  lg:flex-row items-start lg:justify-between mt-4">
+                <div className="flex flex-col  lg:flex-row items-start lg:justify-between my-4">
                     <div className="relative w-full lg:max-w-xs">
                         <input
                             type="text"
@@ -131,6 +145,10 @@ export const Complaints = () => {
                                 <option value="Unresolved">Unresolved</option>
                             </select>
                         </div>
+                        
+                        {/* 
+                        {/* This dropdown was for selecting the type of complaint, general or services
+                        but for now there is no role that views them both together so its commented out
                         <div className="flex w-full items-center lg:justify-end">
                             <AdjustmentsHorizontalIcon className="size-8 text-gray-400 mr-3" />
                             <p className="font-semibold mr-2">Type </p>
@@ -142,13 +160,13 @@ export const Complaints = () => {
                                 <option value="All">All</option>
                                 <option value="General">General</option>
                                 <option value="Services">Services</option>
-                            </select>
-                        </div>
+                            </select> 
+                        </div> */}
                     </div>
                 </div>
 
                {/* General Complaints Table */}
-               {(typeFilter === "All" || typeFilter === "General") && (
+               {(role=="admin") && (
                     <ComplaintsTable
                         title="General Complaints"
                         icon={CogIcon}
@@ -162,10 +180,10 @@ export const Complaints = () => {
                     />
                 )}
 
-                {typeFilter === "All" && <hr className="mb-6"></hr>}
+                {/* {typeFilter === "All" && <hr className="mb-6"></hr>} */}
 
                 {/* Services Complaints Table */}
-                {(typeFilter === "All" || typeFilter === "Services") && (
+                {(role=="receptionist") && (
                     <ComplaintsTable
                         title="Services Complaints"
                         icon={WrenchScrewdriverIcon}

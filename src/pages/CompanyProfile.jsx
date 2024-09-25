@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import Sidebar from '../../components/Sidebar';
+import Sidebar from '../components/Sidebar';
 import { useParams } from 'react-router-dom';
-import { UserGroupIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import sampleCompanyLogo from '../../assets/samplecompanylogo.png'
+import { UserGroupIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
+import sampleCompanyLogo from '../assets/samplecompanylogo.png'
 import ReactApexChart from 'react-apexcharts';
-import { getPieChartOptions } from '../../util/charts';
-import EmployeeStats from '../../components/EmployeeStats';
-import NSTPLoader from '../../components/NSTPLoader';
-import EmployeeProfileModal from '../../components/EmployeeProfileModal';
+import { getPieChartOptions } from '../util/charts';
+import EmployeeStats from '../components/EmployeeStats';
+import NSTPLoader from '../components/NSTPLoader';
+import EmployeeProfileModal from '../components/EmployeeProfileModal';
 
-const Company = () => {
+/**
+|--------------------------------------------------
+| Company profile - admin can view company details, actions: end tenure, terminate employees, give evaluation
+| company can view their own profile, actions: terminate employees, request clearance, 
+|--------------------------------------------------
+*/
+
+const Company = ({role}) => {
   const { companyId } = useParams();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [feedback, setFeedback] = useState("");
   const terminateEmployee = (employeeId) => {
     // API CALL to terminate
     console.log(`Terminating employee with ID: ${employeeId}`);
@@ -137,7 +145,7 @@ const Company = () => {
   const [loading, setLoading] = useState(true);
   const [modalLoading, setModalLoading] = useState(false);
 
-  const actions = [
+  const actions = role=="admin" ? [
     {
       text: 'End Tenure',
       icon: XCircleIcon,
@@ -145,7 +153,22 @@ const Company = () => {
         document.getElementById('tenure-end-modal').showModal();
       },
     },
-  ];
+    {
+      text: 'Send Evaluation/Feedback',
+      icon: ChatBubbleLeftRightIcon,
+      onClick: () => {
+        document.getElementById('evaluation-feedback-modal').showModal();
+      },
+    },
+  ] : [
+    {
+      text: 'Request Clearance',
+      icon: DocumentCheckIcon,
+      onClick: () => {
+        document.getElementById('tenure-end-modal').showModal();
+      },
+    },
+  ]
   const [dropdownOpen, setDropdownOpen] = useState({});
 
   const toggleDropdown = (id) => {
@@ -173,6 +196,17 @@ const Company = () => {
       setModalLoading(false);
       document.getElementById('tenure-end-modal').close();
     }, 2000);
+  }
+
+  const sendFeedback = () => {
+    setModalLoading(true);
+    setTimeout(() => {
+      //simulate api call here to send feedback
+      console.log(`Feedback: ${feedback}`);
+      console.log("company ID: ", companyId); //send feedback to this company
+      setModalLoading(false);
+      document.getElementById('evaluation-feedback-modal').close();
+    } , 2000);
   }
 
   return (
@@ -214,6 +248,20 @@ const Company = () => {
                 }}
               >
                 {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Yes"}
+              </button>
+            </div>
+          </div>
+        </dialog>
+
+        {/* Feedback modal (type in a text area and send/cancel buttons, with modalloading) */}
+        <dialog id="evaluation-feedback-modal" className="modal">
+          <div className="modal-box">
+            <h3 className="font-bold text-xl mb-5">Send Evaluation/Feedback</h3>
+            <textarea rows={10} className="w-full h-32 p-2 input input-bordered" placeholder="Type your feedback here..." value={feedback} onChange={(e) => setFeedback(e.target.value)}></textarea>
+            <div className="modal-action">
+              <button className="btn" onClick={() => document.getElementById('evaluation-feedback-modal').close()}>Cancel</button>
+              <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={sendFeedback}>
+                {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Sending..." : "Send"}
               </button>
             </div>
           </div>

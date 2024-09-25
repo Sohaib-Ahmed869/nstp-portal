@@ -6,7 +6,7 @@ import ComplaintsTable from '../../components/ComplaintsTable'
 import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, PencilSquareIcon, CogIcon, WrenchScrewdriverIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
 
 
-const Complaints = () => {
+export const Complaints = () => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
