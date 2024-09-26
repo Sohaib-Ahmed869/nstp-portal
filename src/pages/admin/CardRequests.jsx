@@ -251,7 +251,7 @@ const CardRequests = () => {
                                                     <PrinterIcon className="size-4 " /> Print
                                                 </button>
                                             </div>
-                                            
+
                                         </td>
                                     </tr>
                                 ))}

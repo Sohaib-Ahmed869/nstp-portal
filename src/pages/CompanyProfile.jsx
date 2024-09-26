@@ -16,7 +16,7 @@ import EmployeeProfileModal from '../components/EmployeeProfileModal';
 |--------------------------------------------------
 */
 
-const Company = ({role}) => {
+const Company = ({ role }) => {
   const { companyId } = useParams();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [feedback, setFeedback] = useState("");
@@ -145,7 +145,7 @@ const Company = ({role}) => {
   const [loading, setLoading] = useState(true);
   const [modalLoading, setModalLoading] = useState(false);
 
-  const actions = role=="admin" ? [
+  const actions = role == "admin" ? [
     {
       text: 'End Tenure',
       icon: XCircleIcon,
@@ -206,7 +206,7 @@ const Company = ({role}) => {
       console.log("company ID: ", companyId); //send feedback to this company
       setModalLoading(false);
       document.getElementById('evaluation-feedback-modal').close();
-    } , 2000);
+    }, 2000);
   }
 
   return (

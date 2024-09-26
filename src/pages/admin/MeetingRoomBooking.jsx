@@ -134,12 +134,10 @@ export const MeetingRoomBooking = () => {
                     />
                 )}
 
-               
+
 
             </div>
         </Sidebar>
-
-
     )
 }
 

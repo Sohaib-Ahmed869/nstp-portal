@@ -22,15 +22,15 @@ export const Dashboard = () => {
   });
 
   const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([
-    { bookingId: "abc", roomNo: 'MT-234', company: 'HexlerTech',status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
-    { bookingId: "awc", roomNo: 'MS-224', company: 'HexlerTech',status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-    { bookingId: "a4c", roomNo: 'MS-234', company: 'HexlerTech',status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-    { bookingId: "a1c", roomNo: 'MS-444', company: 'HexlerTech',status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-    { bookingId: "a3c", roomNo: 'MS-994', company: 'HexlerTech',status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-    { bookingId: "a9c", roomNo: 'MS-214', company: 'HexlerTech',status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-    { bookingId: "ahc", roomNo: 'MT-214', company: 'HexlerTech',status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
-    { bookingId: "abh", roomNo: 'MS-334', company: 'HexlerTech',status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-    { bookingId: "abh", roomNo: 'MS-334', company: 'HexlerTech',status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+    { bookingId: "abc", roomNo: 'MT-234', company: 'HexlerTech', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
+    { bookingId: "awc", roomNo: 'MS-224', company: 'HexlerTech', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+    { bookingId: "a4c", roomNo: 'MS-234', company: 'HexlerTech', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+    { bookingId: "a1c", roomNo: 'MS-444', company: 'HexlerTech', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+    { bookingId: "a3c", roomNo: 'MS-994', company: 'HexlerTech', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+    { bookingId: "a9c", roomNo: 'MS-214', company: 'HexlerTech', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+    { bookingId: "ahc", roomNo: 'MT-214', company: 'HexlerTech', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
+    { bookingId: "abh", roomNo: 'MS-334', company: 'HexlerTech', status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+    { bookingId: "abh", roomNo: 'MS-334', company: 'HexlerTech', status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
   ]);
 
   const [loading, setLoading] = useState(true)
@@ -101,7 +101,7 @@ export const Dashboard = () => {
 
             {/* Complaints section charts */}
             <div className="flex-1 md:col-span-3 grid grid-cols-1 gap-4 md:grid-cols-3">
-              
+
               {/* Complaint types legend & button*/}
               <div className="card p-5 md:col-span-3 h-contenet flex  flex-col lg:flex-row  lg:items-center justify-start lg:justify-between">
                 <div className="flex flex-col justify-center">
@@ -147,14 +147,14 @@ export const Dashboard = () => {
             </div>
 
           </div>
-          
+
           {/** Meeting room bookings */}
           <div className=" lg:col-span-4 card p-5 overflow-x-auto">
-            
-            <MeetingRoomBookingTable 
-            meetingRoomSchedule={ meetingRoomSchedule.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)} 
-            role={"receptionist"} 
-            dashboardComponent={true}
+
+            <MeetingRoomBookingTable
+              meetingRoomSchedule={meetingRoomSchedule.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)}
+              role={"receptionist"}
+              dashboardComponent={true}
             />
           </div>
         </div>

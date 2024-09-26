@@ -31,16 +31,16 @@ const MeetingRoomBooking = () => {
 
     //this is the overall schedule of all requests for rooms which may be pending or approved or unapproved
     const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([
-        { bookingId: "1", roomNo: 'MT-234', company: 'HexlerTech',status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
-        { bookingId: "2", roomNo: 'MS-224', company: 'HexlerTech',status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-        { bookingId: "3", roomNo: 'MS-234', company: 'HexlerTech',status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-        { bookingId: "5", roomNo: 'MS-444', company: 'InnoSolution',status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-        { bookingId: "6", roomNo: 'MS-994', company: 'HexlerTech',status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-        { bookingId: "7c", roomNo: 'MS-214', company: 'PinkFly',status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-        { bookingId: "8", roomNo: 'MT-214', company: 'Zambeel Tecch',status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
-        { bookingId: "9h", roomNo: 'MS-334', company: 'HexlerTech',status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-        { bookingId: "10", roomNo: 'MS-334', company: 'HexlerTech',status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-      
+        { bookingId: "1", roomNo: 'MT-234', company: 'HexlerTech', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
+        { bookingId: "2", roomNo: 'MS-224', company: 'HexlerTech', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+        { bookingId: "3", roomNo: 'MS-234', company: 'HexlerTech', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+        { bookingId: "5", roomNo: 'MS-444', company: 'InnoSolution', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+        { bookingId: "6", roomNo: 'MS-994', company: 'HexlerTech', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+        { bookingId: "7c", roomNo: 'MS-214', company: 'PinkFly', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+        { bookingId: "8", roomNo: 'MT-214', company: 'Zambeel Tecch', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
+        { bookingId: "9h", roomNo: 'MS-334', company: 'HexlerTech', status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+        { bookingId: "10", roomNo: 'MS-334', company: 'HexlerTech', status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
+
     ]);
 
     useEffect(() => {
@@ -126,16 +126,16 @@ const MeetingRoomBooking = () => {
                     />
                 )}
 
-<div className='bg-primary rounded-lg bg-opacity-35 p-5 mt-5  flex flex-col lg:flex-row lg:justify-between mb-3'>
-                    
-                    
+                <div className='bg-primary rounded-lg bg-opacity-35 p-5 mt-5  flex flex-col lg:flex-row lg:justify-between mb-3'>
+
+
                     <div className='flex gap-2 items-center max-sm:mb-6 '>
                         <CalendarDateRangeIcon className="size-11 text-secondary" />
                         <p className=" text-xl font-bold">Manage Booking Requests</p>
                     </div>
 
                 </div >
-                                    <MeetingRoomBookingTable  meetingRoomSchedule={meetingRoomSchedule} role={"receptionist"} />
+                <MeetingRoomBookingTable meetingRoomSchedule={meetingRoomSchedule} role={"receptionist"} />
 
             </div>
         </Sidebar>

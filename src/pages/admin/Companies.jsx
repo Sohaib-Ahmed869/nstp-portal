@@ -69,7 +69,7 @@ const Companies = () => {
       setLoading(false)
     }, 2000)
 
-    }, []);
+  }, []);
 
 
   // re render when table data is updated or search/fitler is applied
@@ -96,7 +96,6 @@ const Companies = () => {
 
   return (
     <Sidebar>
-
       {loading && <NSTPLoader />}
       <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"}`}>
         <div className="flex flex-row items-center justify-between">
@@ -152,11 +151,11 @@ const Companies = () => {
                     <td>{company.workPasses}</td>
                     <td>{company.gatePasses}</td>
                     <div className="absolute inset-0  flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Link to={`/admin/companies/${company.id}`} className="btn btn-ghost w-full backdrop-blur-sm ">
-                              <EyeIcon className="h-5 w-5" />
-                              <span>{"View " + company.name + " company page"}</span>
-                            </Link>
-                          </div>
+                      <Link to={`/admin/companies/${company.id}`} className="btn btn-ghost w-full backdrop-blur-sm ">
+                        <EyeIcon className="h-5 w-5" />
+                        <span>{"View " + company.name + " company page"}</span>
+                      </Link>
+                    </div>
                   </tr>
                 ))}
               </tbody>
@@ -176,7 +175,7 @@ const Companies = () => {
                 <span className="font-bold text-sm">
                   Showing {Math.min(itemsPerPage, filteredData.length - (currentPage - 1) * itemsPerPage)} of {filteredData.length} companies
                 </span>
-              
+
               </div>
               <button
                 className="btn btn-outline"

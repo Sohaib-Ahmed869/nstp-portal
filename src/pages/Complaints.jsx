@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
 import NSTPLoader from '../components/NSTPLoader'
 import ComplaintsTable from '../components/ComplaintsTable'
-import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon,CogIcon, WrenchScrewdriverIcon,  } from '@heroicons/react/24/outline'
+import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, CogIcon, WrenchScrewdriverIcon, } from '@heroicons/react/24/outline'
 import { setRole, getRole } from '../util/store'
 
 /**
@@ -12,7 +12,7 @@ import { setRole, getRole } from '../util/store'
 |--------------------------------------------------
 */
 
-export const Complaints = ({role}) => {
+export const Complaints = ({ role }) => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
@@ -27,23 +27,23 @@ export const Complaints = ({role}) => {
     //GENERAL FOR ADMIN
     const [generalComplaintData, setGeneralComplaintData] = useState([
         { id: "12345", date: "12-13-2024 21:32", tenantName: "HexlarTech", type: "general", subject: "Too much noise", description: "Too much noise being caused please fix this issue", isResolved: false },
-        { id: "12346", date: "12-13-2024 12:32", tenantName: "InnoSolutionz",  type: "general", subject: "AC not working", description: "I like it to be working properly and not dirty", isResolved: true },
-        { id: "12347", date: "12-13-2024 15:30",  tenantName: "Zanbeel", type: "general", subject: "Noisy Neighbours", description: "Please tell them to be quiet", isResolved: false },
+        { id: "12346", date: "12-13-2024 12:32", tenantName: "InnoSolutionz", type: "general", subject: "AC not working", description: "I like it to be working properly and not dirty", isResolved: true },
+        { id: "12347", date: "12-13-2024 15:30", tenantName: "Zanbeel", type: "general", subject: "Noisy Neighbours", description: "Please tell them to be quiet", isResolved: false },
     ]);
 
     //SERVICES FOR RECEPTIONIST
     const [servicesComplaintData, setServicesComplaintData] = useState([
-        { id: "12348", date: "12-13-2024 11:32",  tenantName: "Cocoa Pallette",  type: "services", serviceType: "Cleaning", description: "Please clean the floor", urgency: 2, isResolved: false },
-        { id: "22348", date: "12-13-2024 11:32",  tenantName: "Cocoa Tech",  type: "services", serviceType: "Cleaning", description: "Please clean the fan", urgency: 3, isResolved: false },
-        { id: "32348", date: "12-13-2024 11:32",  tenantName: "Inno Palette",  type: "services", serviceType: "Cleaning", description: "Too dirty", urgency: 1, isResolved: false },
-        { id: "42348", date: "12-13-2024 11:32",  tenantName: "Cocoa Pallette",  type: "services", serviceType: "Cleaning", description: "I need cleaning", urgency: 2, isResolved: true },
-        { id: "52348", date: "12-13-2024 11:32",  tenantName: "Cocoa Pallette",  type: "services", serviceType: "Cleaning", description: "Too dirty please clean", urgency: 2, isResolved: true },
-        { id: "12349", date: "12-13-2024 11:32",  tenantName: "InnoSolutionz",  type: "services", serviceType: "Electrician", description: "AC and switches not working!", urgency: 3, isResolved: true },
-        { id: "12339", date: "12-13-2024 11:32",   tenantName: "InnoCafe",  type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
-        { id: "12331", date: "12-13-2024 11:32",   tenantName: "InnoCafe",  type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
-        { id: "12332", date: "12-13-2024 11:32",   tenantName: "InnoCafe",  type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
-        { id: "12333", date: "12-13-2024 11:32",   tenantName: "InnoCafe",  type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
-        { id: "12933", date: "12-13-2024 11:32",   tenantName: "InnoCafe",  type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
+        { id: "12348", date: "12-13-2024 11:32", tenantName: "Cocoa Pallette", type: "services", serviceType: "Cleaning", description: "Please clean the floor", urgency: 2, isResolved: false },
+        { id: "22348", date: "12-13-2024 11:32", tenantName: "Cocoa Tech", type: "services", serviceType: "Cleaning", description: "Please clean the fan", urgency: 3, isResolved: false },
+        { id: "32348", date: "12-13-2024 11:32", tenantName: "Inno Palette", type: "services", serviceType: "Cleaning", description: "Too dirty", urgency: 1, isResolved: false },
+        { id: "42348", date: "12-13-2024 11:32", tenantName: "Cocoa Pallette", type: "services", serviceType: "Cleaning", description: "I need cleaning", urgency: 2, isResolved: true },
+        { id: "52348", date: "12-13-2024 11:32", tenantName: "Cocoa Pallette", type: "services", serviceType: "Cleaning", description: "Too dirty please clean", urgency: 2, isResolved: true },
+        { id: "12349", date: "12-13-2024 11:32", tenantName: "InnoSolutionz", type: "services", serviceType: "Electrician", description: "AC and switches not working!", urgency: 3, isResolved: true },
+        { id: "12339", date: "12-13-2024 11:32", tenantName: "InnoCafe", type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
+        { id: "12331", date: "12-13-2024 11:32", tenantName: "InnoCafe", type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
+        { id: "12332", date: "12-13-2024 11:32", tenantName: "InnoCafe", type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
+        { id: "12333", date: "12-13-2024 11:32", tenantName: "InnoCafe", type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
+        { id: "12933", date: "12-13-2024 11:32", tenantName: "InnoCafe", type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
     ]);
 
     useEffect(() => {
@@ -96,7 +96,7 @@ export const Complaints = ({role}) => {
         generalSortField,
         generalSortOrder
     );
-    
+
     const filteredServicesComplaints = sortData(
         servicesComplaintData.filter(complaint =>
             (statusFilter === "All" || (statusFilter === "Resolved" && complaint.isResolved) || (statusFilter === "Unresolved" && !complaint.isResolved)) &&
@@ -145,7 +145,7 @@ export const Complaints = ({role}) => {
                                 <option value="Unresolved">Unresolved</option>
                             </select>
                         </div>
-                        
+
                         {/* 
                         {/* This dropdown was for selecting the type of complaint, general or services
                         but for now there is no role that views them both together so its commented out
@@ -165,8 +165,8 @@ export const Complaints = ({role}) => {
                     </div>
                 </div>
 
-               {/* General Complaints Table */}
-               {(role=="admin") && (
+                {/* General Complaints Table */}
+                {(role == "admin") && (
                     <ComplaintsTable
                         title="General Complaints"
                         icon={CogIcon}
@@ -183,7 +183,7 @@ export const Complaints = ({role}) => {
                 {/* {typeFilter === "All" && <hr className="mb-6"></hr>} */}
 
                 {/* Services Complaints Table */}
-                {(role=="receptionist") && (
+                {(role == "receptionist") && (
                     <ComplaintsTable
                         title="Services Complaints"
                         icon={WrenchScrewdriverIcon}

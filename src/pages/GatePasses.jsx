@@ -186,6 +186,7 @@ const GatePasses = ({ role }) => {
                 </div>
             </dialog>
 
+            {/* main content */}
             <div className={`bg-base-100 rounded-md shadow-md p-5 lg:p-10 mt-10 ${loading && "hidden"}`}>
                 <div className="flex items-center justify-between">
                     <p className="text-2xl font-semibold">Gate Passes</p>

@@ -5,7 +5,7 @@ import { getChartOptions, getPieChartOptions } from '../../util/charts';
 import { EyeIcon, SunIcon, MoonIcon } from '@heroicons/react/20/solid';
 import { Link } from 'react-router-dom';
 import ThemeControl from '../../components/ThemeControl';
-import {  BellAlertIcon,  PaperAirplaneIcon, QuestionMarkCircleIcon, TableCellsIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { BellAlertIcon, PaperAirplaneIcon, QuestionMarkCircleIcon, TableCellsIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import ComparativeChart from '../../components/ComparativeChart';
 import MeetingRoomBookingTable from '../../components/MeetingRoomBookingTable';
 import NSTPLoader from '../../components/NSTPLoader';
@@ -50,18 +50,18 @@ const Dashboard = () => {
       "etags": 1,
       "card_num": 0,
       "card": {
-          "_id": "66df197161c2c1ed67fe5c28",
-          "tenant_id": "66d97748124403bf36e695e8",
-          "employee_id": "66df197161c2c1ed67fe5c27",
-          "is_issued": true,
-          "is_requested": false,
-          "is_returned": false,
-          "__v": 0,
-          "card_number": 0,
-          "date_issued": "2024-09-09T16:48:50.533Z"
+        "_id": "66df197161c2c1ed67fe5c28",
+        "tenant_id": "66d97748124403bf36e695e8",
+        "employee_id": "66df197161c2c1ed67fe5c27",
+        "is_issued": true,
+        "is_requested": false,
+        "is_returned": false,
+        "__v": 0,
+        "card_number": 0,
+        "date_issued": "2024-09-09T16:48:50.533Z"
       }
-  },
-  {
+    },
+    {
       "_id": "66df2a84c84208453e73701a",
       "tenant_id": "66d97748124403bf36e695e8",
       "tenant_name": "Hexlertech",
@@ -80,35 +80,6 @@ const Dashboard = () => {
       "__v": 0,
       "etags": 1,
       "card": {
-          "_id": "66df2a84c84208453e73701b",
-          "tenant_id": "66d97748124403bf36e695e8",
-          "employee_id": "66df2a84c84208453e73701a",
-          "is_issued": false,
-          "is_requested": true,
-          "is_returned": false,
-          "__v": 0,
-          "date_requested": "2024-09-09T17:06:10.755Z"
-      }
-  },
-  {
-    "_id": "123f2a84c84208453e73701a",
-    "tenant_id": "66d91238124403bf36e695e8",
-    "tenant_name": "Hexlertech",
-    "email": "haadiya@gmail.com",
-    "name": "Haadiya Sajid",
-    "photo": "https://randomuser.me/api/portraits/women/25.jpg",
-    "designation": "Full Stack Developer",
-    "cnic": "6110112394528",
-    "dob": "2024-09-05",
-    "address": "F/10-1 Street 11 House 29",
-    "date_joining": "2024-10-04",
-    "employee_type": "Contract",
-    "contract_duration": "6 Months",
-    "status_employment": true,
-    "is_nustian": false,
-    "__v": 0,
-    "etags": 1,
-    "card": {
         "_id": "66df2a84c84208453e73701b",
         "tenant_id": "66d97748124403bf36e695e8",
         "employee_id": "66df2a84c84208453e73701a",
@@ -117,8 +88,37 @@ const Dashboard = () => {
         "is_returned": false,
         "__v": 0,
         "date_requested": "2024-09-09T17:06:10.755Z"
+      }
+    },
+    {
+      "_id": "123f2a84c84208453e73701a",
+      "tenant_id": "66d91238124403bf36e695e8",
+      "tenant_name": "Hexlertech",
+      "email": "haadiya@gmail.com",
+      "name": "Haadiya Sajid",
+      "photo": "https://randomuser.me/api/portraits/women/25.jpg",
+      "designation": "Full Stack Developer",
+      "cnic": "6110112394528",
+      "dob": "2024-09-05",
+      "address": "F/10-1 Street 11 House 29",
+      "date_joining": "2024-10-04",
+      "employee_type": "Contract",
+      "contract_duration": "6 Months",
+      "status_employment": true,
+      "is_nustian": false,
+      "__v": 0,
+      "etags": 1,
+      "card": {
+        "_id": "66df2a84c84208453e73701b",
+        "tenant_id": "66d97748124403bf36e695e8",
+        "employee_id": "66df2a84c84208453e73701a",
+        "is_issued": false,
+        "is_requested": true,
+        "is_returned": false,
+        "__v": 0,
+        "date_requested": "2024-09-09T17:06:10.755Z"
+      }
     }
-}
 
   ]);
   const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([
@@ -170,17 +170,13 @@ const Dashboard = () => {
   return (
     <Sidebar>
       {loading && <NSTPLoader />}
-
       <ComplaintModal />
       <EmployeeProfileModal employeeProfileSelected={employeeProfileSelected} />
 
-  
-
       {/* Main page content */}
       <div
-        className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${
-          loading && "hidden"
-        }`}
+        className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"
+          }`}
       >
         {/* Header (Title, toggles etc) */}
         <div className="flex items-center justify-between">
@@ -202,7 +198,7 @@ const Dashboard = () => {
           {/* Complaints section charts */}
           <div className="md:col-span-3 grid grid-cols-1 gap-4 md:grid-cols-3">
 
-            {/* Complaint types legend & button*/}            
+            {/* Complaint types legend & button*/}
             <div className="card p-5 md:col-span-3 h-content flex  flex-col lg:flex-row  lg:items-center justify-start lg:justify-between">
               <div className="flex flex-col justify-center">
                 <span className="font-bold">Complaint Types</span>
@@ -216,12 +212,12 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="flex gap-2 mt-3 lg:mt-0">
-                <button className=' btn btn-primary btn-outline hover:text-white text-white btn-md' onClick={() => document.getElementById('complaint_modal').showModal()}> 
+                <button className=' btn btn-primary btn-outline hover:text-white text-white btn-md' onClick={() => document.getElementById('complaint_modal').showModal()}>
                   <PaperAirplaneIcon className="h-5 w-5" />
-                 Send Complaint
+                  Send Complaint
                 </button>
                 <Link to="/company/complaints">
-                  <button className='btn btn-primary text-white btn-md' > 
+                  <button className='btn btn-primary text-white btn-md' >
                     <TableCellsIcon className="h-5 w-5" />
                     View All
                   </button>
@@ -288,7 +284,7 @@ const Dashboard = () => {
                           <div className="absolute inset-0  flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                               className="btn btn-ghost w-full backdrop-blur-sm "
-                              onClick={() =>  {setEmployeeProfileSelected(row); document.getElementById('employee_profile').showModal()}}
+                              onClick={() => { setEmployeeProfileSelected(row); document.getElementById('employee_profile').showModal() }}
                             >
                               <EyeIcon className="h-5 w-5" />
                               <span>{"View " + row.name + "'s profile"}</span>
@@ -308,8 +304,8 @@ const Dashboard = () => {
         <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
           {/* Meeting room schedule table */}
           <div className="col-span-4 card p-5 my-3">
-            <MeetingRoomBookingTable 
-              meetingRoomSchedule={meetingRoomSchedule.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)} 
+            <MeetingRoomBookingTable
+              meetingRoomSchedule={meetingRoomSchedule.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)}
               dashboardComponent={true}
             />
           </div>
@@ -317,7 +313,7 @@ const Dashboard = () => {
           {/* Charts of e-tags and gate passes */}
           <div className="col-span-3 my-3 flex flex-col gap-4">
             <div className="card p-5">
-              <ComparativeChart title="Parking E-tags" comparisonData={eTags}  />
+              <ComparativeChart title="Parking E-tags" comparisonData={eTags} />
             </div>
 
             <div className="card p-5">
@@ -376,9 +372,5 @@ const Dashboard = () => {
     </Sidebar>
   );
 };
-
-
-
-
 
 export default Dashboard;

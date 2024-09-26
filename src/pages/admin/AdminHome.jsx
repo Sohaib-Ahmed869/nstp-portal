@@ -1,4 +1,4 @@
-import React , { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from '../../components/Sidebar'
 import ThemeControl from '../../components/ThemeControl'
 import { QuestionMarkCircleIcon, BellAlertIcon, IdentificationIcon, ArchiveBoxArrowDownIcon, ArrowPathRoundedSquareIcon, UsersIcon, PlusCircleIcon, UserGroupIcon, RocketLaunchIcon, BuildingOffice2Icon } from '@heroicons/react/24/outline'
@@ -21,12 +21,12 @@ const AdminHome = () => {
   const [tower, setTower] = useState("NSTP 1")
   const [towerOptions, setTowerOptions] = useState(["NSTP 1", "NSTP 2", "NSTP 3", "NSTP 4"]) //tower options for the currently logged in admin
   const [companyTableData, setCompanyTableData] = useState([
-    {name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333},
-    {name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333},
-    {name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333},
-    {name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333},
-    {name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333},
-   
+    { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
+    { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
+    { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
+    { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
+    { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
+
   ])
   const [companyStats, setCompanyStats] = useState({
     total: 233,
@@ -44,23 +44,24 @@ const AdminHome = () => {
       setLoading(false)
     }, 2000)
   }
-  , [tower])
+    , [tower])
 
 
   return (
     <Sidebar>
       {/* Loading spinner */}
       {loading && <NSTPLoader />}
-        {/* Select the tower with a dropdown*/}
-        <div className="flex items-center justify-center bg-primary py-5 rounded-lg  gap-2 my-5">
-          <BuildingOffice2Icon className="size-9 text-white" />
-          <p className="font-semibold text-white">Tower: </p>
-          <select className="select select-bordered max-w-xs" value={tower} onChange={(e) => setTower(e.target.value)}>
-            {towerOptions.map((tower, index) => (
-              <option key={index} value={tower}>{tower}</option>
-            ))}
-          </select>
-        </div>
+
+      {/* Select the tower with a dropdown*/}
+      <div className={`flex items-center justify-center bg-primary py-5 rounded-lg  gap-2 my-5 ${loading && 'hidden'}`}>
+        <BuildingOffice2Icon className="size-9 text-white" />
+        <p className="font-semibold text-white">Tower: </p>
+        <select className="select select-bordered max-w-xs" value={tower} onChange={(e) => setTower(e.target.value)}>
+          {towerOptions.map((tower, index) => (
+            <option key={index} value={tower}>{tower}</option>
+          ))}
+        </select>
+      </div>
 
       <div className={`bg-base-100 mt-5  ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && 'hidden'}`}>
         {/* Header (Title, toggles etc) */}
@@ -85,26 +86,26 @@ const AdminHome = () => {
           <div className=" md:col-span-3">
             <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-3">
               {/* Card related stats */}
-            <div className=" h-full card p-5 flex flex-col justify-center  mb-4 md:mb-0">
-              <IdentificationIcon className="size-7 mb-1  text-primary" />
-              <p className="font-semibold text-4xl mb-0">{cardsStats.cardsIssued}</p>
-              <p className="font-semibold font-lg mb-0">Cards Issued</p>
-            </div>
-            <div className="h-full card p-5 flex flex-col justify-center mb-4 md:mb-0">
-              <ArrowPathRoundedSquareIcon className="size-7 mb-1 text-primary" />
-              <p className="font-semibold text-4xl mb-0">{cardsStats.cardsReturned}</p>
-              <p className="font-semibold font-lg mb-0">Cards Returned</p>
-            </div>
-            <div className=" col-span-2 md:col-span-1 h-full  card p-5  flex flex-col justify-center mb-4 md:mb-0">
-              <ArchiveBoxArrowDownIcon className="size-7  mb-1 text-primary" />
-              <p className="font-semibold text-4xl mb-0">{cardsStats.cardsRequested}</p>
-              <p className="font-semibold font-lg mb-0">Cards Requested</p>
-            </div></div>
-            
+              <div className=" h-full card p-5 flex flex-col justify-center  mb-4 md:mb-0">
+                <IdentificationIcon className="size-7 mb-1  text-primary" />
+                <p className="font-semibold text-4xl mb-0">{cardsStats.cardsIssued}</p>
+                <p className="font-semibold font-lg mb-0">Cards Issued</p>
+              </div>
+              <div className="h-full card p-5 flex flex-col justify-center mb-4 md:mb-0">
+                <ArrowPathRoundedSquareIcon className="size-7 mb-1 text-primary" />
+                <p className="font-semibold text-4xl mb-0">{cardsStats.cardsReturned}</p>
+                <p className="font-semibold font-lg mb-0">Cards Returned</p>
+              </div>
+              <div className=" col-span-2 md:col-span-1 h-full  card p-5  flex flex-col justify-center mb-4 md:mb-0">
+                <ArchiveBoxArrowDownIcon className="size-7  mb-1 text-primary" />
+                <p className="font-semibold text-4xl mb-0">{cardsStats.cardsRequested}</p>
+                <p className="font-semibold font-lg mb-0">Cards Requested</p>
+              </div></div>
+
             <div className="card p-5 col-span-3">
               <ComparativeChart title={"Complaints"} comparisonData={complaintStats} />
             </div>
-            
+
 
           </div>
 
@@ -115,16 +116,16 @@ const AdminHome = () => {
                 <div className="flex items-center justify-between mb-2">
                   <p className="mb-3 font-bold"> Companies</p>
                   <div className="flex gap-1">
-                  <Link to="/admin/companies">
-                  <button className="btn btn-primary btn-outline btn-md text-white">
-                    <UsersIcon className="size-6"></UsersIcon> View All
-                  </button>
-                  </Link>
-                  <Link to="/admin/add-company">
-                  <button className="btn btn-primary btn-md text-white">
-                    <PlusCircleIcon className="size-6"></PlusCircleIcon> Add Company
-                  </button>
-                  </Link>
+                    <Link to="/admin/companies">
+                      <button className="btn btn-primary btn-outline btn-md text-white">
+                        <UsersIcon className="size-6"></UsersIcon> View All
+                      </button>
+                    </Link>
+                    <Link to="/admin/add-company">
+                      <button className="btn btn-primary btn-md text-white">
+                        <PlusCircleIcon className="size-6"></PlusCircleIcon> Add Company
+                      </button>
+                    </Link>
                   </div>
                 </div>
                 <div className="h-full max-h-60 overflow-scroll">

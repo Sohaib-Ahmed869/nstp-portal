@@ -131,7 +131,7 @@ const Services = () => {
             setModalLoading(false);
             document.getElementById('delete_service_modal').close()
         }, 2000);
-        
+
         console.log(`Delete service with id: ${serviceId}`);
     };
 
@@ -142,7 +142,6 @@ const Services = () => {
     return (
         <Sidebar>
             {loading && <NSTPLoader />}
-
 
             {/* Add/Edit Service Modal */}
             <dialog id="add_service_form" className="modal">
@@ -208,7 +207,7 @@ const Services = () => {
                     <div className="alert-warning">This action may result in unexpected consequences or behaviour.</div>
                     <div className="modal-action">
                         <button className="btn btn-outline" onClick={() => document.getElementById('delete_service_modal').close()}>Cancel</button>
-                        <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={() => { handleDelete(currentServiceId);  }}>
+                        <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={() => { handleDelete(currentServiceId); }}>
                             {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}
                         </button>
                     </div>

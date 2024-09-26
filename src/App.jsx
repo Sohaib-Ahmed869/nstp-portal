@@ -23,6 +23,7 @@ import {MeetingRoomBooking as AdminMeetingRoomBooking } from './pages/admin/Meet
 import {MeetingRoomBooking as CompanyMeetingRoomBooking } from './pages/company/MeetingRoomBooking.jsx';
 import Evaluations from './pages/company/Evaluations.jsx';
 import Parking from './pages/company/Parking.jsx';
+import WorkPermit from './pages/WorkPermit.jsx';
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
           <Route path="gate-passes" element={<GatePasses role={"tenant"} />} />
           <Route path="bookings" element={<CompanyMeetingRoomBooking />} />
           <Route path="profile" element={<Company role={"tenant"} />} />
+          <Route path="work-permits" element={<WorkPermit role={"tenant"} />} />
           <Route path="evaluations" element={<Evaluations />} />
           <Route path="parking" element={<Parking />} />
         </Route>
@@ -59,6 +61,7 @@ function App() {
           <Route path="complaints" element={<Complaints role={"receptionist"} />} />
           <Route path="bookings" element={<MeetingRoomBooking />} />
           <Route path="gate-passes" element={<GatePasses role={"receptionist"} />} />
+          <Route path="work-permits" element={<WorkPermit role={"receptionist"} />} />
         </Route>
       
         <Route path="*" element={<ErrorPage />} />

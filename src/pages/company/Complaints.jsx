@@ -112,7 +112,7 @@ export const Complaints = () => {
                     <p className="text-gray-500 mt-2">Are you sure you want to cancel this complaint?</p>
                     <div className="modal-action">
                         <button className={`btn btn-danger mr-2 ${cancelLoading && "btn-disabled"}`} onClick={() => document.getElementById("cancel_complaint_modal").close()}>No</button>
-                        <button className={`btn  btn-primary ${cancelLoading && "btn-disabled"}`} onClick={() => { handleCancel(complaintIdToDelete, complaintTypeToDelete) }}> {cancelLoading && <span className="loading loading-spinner"></span>} { cancelLoading ? "Cancelling..." : "Yes"  }</button>
+                        <button className={`btn  btn-primary ${cancelLoading && "btn-disabled"}`} onClick={() => { handleCancel(complaintIdToDelete, complaintTypeToDelete) }}> {cancelLoading && <span className="loading loading-spinner"></span>} {cancelLoading ? "Cancelling..." : "Yes"}</button>
                     </div>
                 </div>
             </dialog>
@@ -173,8 +173,8 @@ export const Complaints = () => {
                     </div>
                 </div>
 
-               {/* General Complaints Table */}
-               {(typeFilter === "All" || typeFilter === "General") && (
+                {/* General Complaints Table */}
+                {(typeFilter === "All" || typeFilter === "General") && (
                     <ComplaintsTable
                         title="General Complaints"
                         icon={CogIcon}

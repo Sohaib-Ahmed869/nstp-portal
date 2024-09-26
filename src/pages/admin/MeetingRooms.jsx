@@ -134,9 +134,10 @@ const MeetingRooms = () => {
         const roomToEdit = meetingRooms.find(room => room.id === roomId);
         setNewRoom({
             name: roomToEdit.name,
-            type: roomToEdit.type,
             floor: roomToEdit.floor,
-            timings: roomToEdit.timings,
+            startTime: roomToEdit.startTime,
+            endTime: roomToEdit.endTime,
+            seatingCapacity: roomToEdit.seatingCapacity,
         });
         setIsEditMode(true);
         setCurrentRoomId(roomId);
@@ -172,8 +173,8 @@ const MeetingRooms = () => {
         // Api call here to fetch data and populate the above states
         // Dummy data for meeting rooms with photo URLs
         setMeetingRooms([
-            { id: "1", name: "Room A", floor: 1, startTime: "11 AM", endTime: "12 PM", seatingCapacity: 50, photoUrl: getRandomPhotoUrl() },
-            { id: "2", name: "Room B", floor: 4, startTime: "12 PM", endTime: "1 PM", seatingCapacity: 10, photoUrl: getRandomPhotoUrl() },
+            { id: "1", name: "Room A", floor: 1, startTime: "11:20", endTime: "12:00", seatingCapacity: 50, photoUrl: getRandomPhotoUrl() },
+            { id: "2", name: "Room B", floor: 4, startTime: "09:00", endTime: "03:00", seatingCapacity: 10, photoUrl: getRandomPhotoUrl() },
         ]);
 
         setTimeout(() => {
@@ -211,7 +212,7 @@ const MeetingRooms = () => {
                                 name="startTime"
                                 type="text"
                                 id="start_time"
-                                label="Start Time (HH:MM)"
+                                label="Opening Time (HH:MM)"
                                 value={newRoom.startTime}
                                 onChange={handleInputChange}
                             />
@@ -222,7 +223,7 @@ const MeetingRooms = () => {
                                 name="endTime"
                                 type="text"
                                 id="end_time"
-                                label="End Time (HH:MM)"
+                                label="Closing Time (HH:MM)"
                                 value={newRoom.endTime}
                                 onChange={handleInputChange}
                             />
@@ -324,40 +325,40 @@ const MeetingRooms = () => {
                                 <p className='text-gray-500'>{"Floor " + room.floor}</p>
                             </div>
                             {expandedRoomId === room.id && (
-                             <div className="flex flex-col">
+                                <div className="flex flex-col">
                                     <div>
                                         <p>Room timings: {room.startTime} - {room.endTime}</p>
                                         <p>Seating capacity: {room.seatingCapacity}</p>
                                     </div>
-                                   <div className="flex gap-2 mt-3">
-                                       <Link to="/admin/bookings" className="btn btn-primary text-base-100">
-                                           <CalendarDaysIcon className='size-5' />
-                                           View Bookings
-                                       </Link>
-                                       <button
-                                           className='btn btn-outline btn-secondary text-white'
-                                           onClick={(e) => {
-                                               e.stopPropagation();
-                                               handleEdit(room.id);
-                                           }}
-                                       >
-                                           <PencilIcon className='size-5' />
-                                           Edit
-                                       </button>
-                                
-                                       <button
-                                           className='btn btn-outline btn-error text-white'
-                                           onClick={(e) => {
-                                               e.stopPropagation();
-                                               document.getElementById('delete_room_modal').showModal();
-                                               setCurrentRoomId(room.id);
-                                           }}
-                                       >
-                                           <TrashIcon className='size-5' />
-                                           Delete
-                                       </button>
-                                   </div>
-                             </div>
+                                    <div className="flex gap-2 mt-3">
+                                        <Link to="/admin/bookings" className="btn btn-primary text-base-100">
+                                            <CalendarDaysIcon className='size-5' />
+                                            View Bookings
+                                        </Link>
+                                        <button
+                                            className='btn btn-outline btn-secondary text-white'
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleEdit(room.id);
+                                            }}
+                                        >
+                                            <PencilIcon className='size-5' />
+                                            Edit
+                                        </button>
+
+                                        <button
+                                            className='btn btn-outline btn-error text-white'
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                document.getElementById('delete_room_modal').showModal();
+                                                setCurrentRoomId(room.id);
+                                            }}
+                                        >
+                                            <TrashIcon className='size-5' />
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
                             )}
                         </div>
                     ))}

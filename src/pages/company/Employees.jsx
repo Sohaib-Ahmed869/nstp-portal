@@ -624,8 +624,8 @@ const Employees = () => {
                     <td>{row.status_employment ? "Active" : "Inactive"}</td>
                     <td
                       className={`${row.card.is_requested
-                          ? "bg-yellow-100 text-yellow-900"
-                          : ""
+                        ? "bg-yellow-100 text-yellow-900"
+                        : ""
                         }`}
                     >
                       {row.card_num !== undefined
@@ -687,7 +687,7 @@ const Employees = () => {
                                   document
                                     .getElementById("edit_employee_profile_modal")
                                     .showModal();
-                                    toggleDropdown(row._id);
+                                  toggleDropdown(row._id);
                                 }}
                               >
                                 <PencilSquareIcon className="h-5 w-5 mr-2" />
@@ -717,7 +717,7 @@ const Employees = () => {
                                     document
                                       .getElementById("layoff_modal")
                                       .showModal();
-                                      toggleDropdown(row._id);
+                                    toggleDropdown(row._id);
                                   }}
                                 >
                                   <XCircleIcon className="h-5 w-5 mr-2" />
