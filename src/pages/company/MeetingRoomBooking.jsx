@@ -52,7 +52,7 @@ export const MeetingRoomBooking = () => {
         setCalendarLoading(true);
         setTimeout(() => {
             const fetchedEvents = [
-                { title: 'Booked', start: new Date(2024, 8, 1, 10, 0), end: new Date(2024, 8, 1, 12, 0) },
+                { title: 'Booked 1:00PM', start: new Date(2024, 8, 1, 10, 0), end: new Date(2024, 8, 1, 12, 0) },
                 { title: 'Booked', start: new Date(2024, 8, 5, 14, 0), end: new Date(2024, 8, 5, 15, 0) },
                 { title: 'Booked', start: new Date(2024, 9, 11, 14, 0), end: new Date(2024, 9, 11, 15, 0) },
                 { title: 'Booked', start: new Date(2024, 8, 7, 14, 0), end: new Date(2024, 8, 7, 15, 0) },

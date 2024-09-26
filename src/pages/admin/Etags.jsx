@@ -270,6 +270,7 @@ const Etags = () => {
                     </div>
                 </div>
             </dialog>
+            
             {/* Loading spinner */}
             {loading && <NSTPLoader />}
 

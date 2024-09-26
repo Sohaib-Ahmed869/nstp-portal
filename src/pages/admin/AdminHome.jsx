@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react';
+import { TowerContext } from '../../context/TowerContext';
 import Sidebar from '../../components/Sidebar'
 import ThemeControl from '../../components/ThemeControl'
 import { QuestionMarkCircleIcon, BellAlertIcon, IdentificationIcon, ArchiveBoxArrowDownIcon, ArrowPathRoundedSquareIcon, UsersIcon, PlusCircleIcon, UserGroupIcon, RocketLaunchIcon, BuildingOffice2Icon } from '@heroicons/react/24/outline'
@@ -7,6 +8,8 @@ import { Link } from 'react-router-dom'
 import hatch8icon from '../../assets/hatch8.png'
 import NewsFeed from '../../components/NewsFeed'
 import NSTPLoader from '../../components/NSTPLoader'
+
+
 const AdminHome = () => {
   const [loading, setLoading] = useState(true)
   const [cardsStats, setCardsStats] = useState({
@@ -18,8 +21,8 @@ const AdminHome = () => {
     resolved: 233,
     recieved: 542
   })
-  const [tower, setTower] = useState("NSTP 1")
-  const [towerOptions, setTowerOptions] = useState(["NSTP 1", "NSTP 2", "NSTP 3", "NSTP 4"]) //tower options for the currently logged in admin
+  const { tower, setTower } = useContext(TowerContext);
+  const [towerOptions, setTowerOptions] = useState([1,2,3,4]) //tower options for the currently logged in admin
   const [companyTableData, setCompanyTableData] = useState([
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
@@ -58,7 +61,7 @@ const AdminHome = () => {
         <p className="font-semibold text-white">Tower: </p>
         <select className="select select-bordered max-w-xs" value={tower} onChange={(e) => setTower(e.target.value)}>
           {towerOptions.map((tower, index) => (
-            <option key={index} value={tower}>{tower}</option>
+            <option key={index} value={tower}>{"NSTP "+tower}</option>
           ))}
         </select>
       </div>
@@ -85,6 +88,12 @@ const AdminHome = () => {
           {/* Stats section */}
           <div className=" md:col-span-3">
             <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-3">
+              <div className="md:col-span-3 col-span-2">
+                <Link to="cards" className="btn btn-primary btn-md text-white">
+                  <IdentificationIcon className="size-6"></IdentificationIcon> View Cards
+                </Link>
+
+              </div>
               {/* Card related stats */}
               <div className=" h-full card p-5 flex flex-col justify-center  mb-4 md:mb-0">
                 <IdentificationIcon className="size-7 mb-1  text-primary" />
@@ -103,7 +112,7 @@ const AdminHome = () => {
               </div></div>
 
             <div className="card p-5 col-span-3">
-              <ComparativeChart title={"Complaints"} comparisonData={complaintStats} />
+              <ComparativeChart title={"Complaints"} comparisonData={complaintStats} link={"complaints"} />
             </div>
 
 

@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { UserPlusIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon, EyeIcon, CheckIcon, ClockIcon, ArchiveBoxIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import NSTPLoader from '../../components/NSTPLoader';
+import { TowerContext } from '../../context/TowerContext';
+
 
 const CardRequests = () => {
     const [loading, setLoading] = useState(true);
@@ -13,7 +15,9 @@ const CardRequests = () => {
     const [currentRequest, setCurrentRequest] = useState(null);
     const [modalLoading, setModalLoading] = useState(false);
     const [loadingOldRequests, setLoadingOldRequests] = useState(false);
+    const { tower } = useContext(TowerContext);
 
+    
     const itemsPerPage = 10;
 
     const dummyData = [
@@ -130,6 +134,7 @@ const CardRequests = () => {
 
     return (
         <Sidebar>
+             <h1>Current Tower: {tower}</h1>
             {/* Modal */}
             <dialog id="confirmation_modal" className="modal">
                 <div className="modal-box">

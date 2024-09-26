@@ -40,6 +40,11 @@ export const Dashboard = () => {
     pending: 15,
   })
 
+  const [meetingRoomBookingStats, setMeetingRoomBookingStats] = useState({
+    completed: 53,
+    pending: 15,
+  })
+
 
   useEffect(() => {
     //Api call here to fetch data and populate the above states
@@ -149,14 +154,23 @@ export const Dashboard = () => {
           </div>
 
           {/** Meeting room bookings */}
-          <div className=" lg:col-span-4 card p-5 overflow-x-auto">
-
+          <div className=" lg:col-span-4 ">
+            <div className="card p-5 overflow-x-auto">
             <MeetingRoomBookingTable
               meetingRoomSchedule={meetingRoomSchedule.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)}
               role={"receptionist"}
               dashboardComponent={true}
             />
+            </div>
+            
+            <div className='card p-5 mt-5'>
+              <ComparativeChart title={"Meeting Room Booking"} comparisonData={meetingRoomBookingStats} link={"bookings"} />
+              
+            </div>
+           
           </div>
+          
+          
         </div>
       </div>
 

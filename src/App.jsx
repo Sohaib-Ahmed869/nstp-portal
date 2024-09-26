@@ -1,28 +1,38 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './index.css';
+
+// Pages
 import LoginPage from '/src/pages/LoginPage.jsx';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import './index.css'; 
+import ErrorPage from './pages/ErrorPage.jsx';
+
+// Admin Pages
 import AdminHome from '/src/pages/admin/AdminHome.jsx';
 import CompanyAddition from '/src/pages/admin/CompanyAddition.jsx';
-import Dashboard from './pages/company/Dashboard.jsx';
-import Employees from './pages/company/Employees.jsx';
-import ErrorPage from './pages/ErrorPage.jsx';
 import Companies from './pages/admin/Companies.jsx';
-import Company from './pages/CompanyProfile.jsx';
-import {Complaints as CompanyComplaints} from './pages/company/Complaints.jsx';
-import Complaints from './pages/Complaints.jsx';
-import GatePasses from './pages/GatePasses.jsx';
-
-import { Dashboard as ReceptionistDashboard } from './pages/receptionist/Dashboard.jsx';
-import MeetingRoomBooking from './pages/receptionist/MeetingRoomBooking.jsx';
 import Etags from './pages/admin/Etags.jsx';
 import CardRequests from './pages/admin/CardRequests.jsx';
 import Services from './pages/admin/Services.jsx';
 import MeetingRooms from './pages/admin/MeetingRooms.jsx';
-import {MeetingRoomBooking as AdminMeetingRoomBooking } from './pages/admin/MeetingRoomBooking.jsx';
-import {MeetingRoomBooking as CompanyMeetingRoomBooking } from './pages/company/MeetingRoomBooking.jsx';
+import { MeetingRoomBooking as AdminMeetingRoomBooking } from './pages/admin/MeetingRoomBooking.jsx';
+import Performance from './pages/admin/Performance.jsx';
+
+// Company Pages
+import Dashboard from './pages/company/Dashboard.jsx';
+import Employees from './pages/company/Employees.jsx';
+import { Complaints as CompanyComplaints } from './pages/company/Complaints.jsx';
+import { MeetingRoomBooking as CompanyMeetingRoomBooking } from './pages/company/MeetingRoomBooking.jsx';
 import Evaluations from './pages/company/Evaluations.jsx';
 import Parking from './pages/company/Parking.jsx';
+
+// Receptionist Pages
+import { Dashboard as ReceptionistDashboard } from './pages/receptionist/Dashboard.jsx';
+import MeetingRoomBooking from './pages/receptionist/MeetingRoomBooking.jsx';
+
+// Common Pages
+import Company from './pages/CompanyProfile.jsx';
+import Complaints from './pages/Complaints.jsx';
+import GatePasses from './pages/GatePasses.jsx';
 import WorkPermit from './pages/WorkPermit.jsx';
 
 function App() {
@@ -42,6 +52,7 @@ function App() {
           <Route path='bookings' element={<AdminMeetingRoomBooking />} />       
           <Route path='complaints' element={<Complaints role={'admin'} />} />       
           <Route path="cards" element={<CardRequests />} />
+          <Route path="performance" element={<Performance />} />
         </Route>
 
         <Route path="company">
