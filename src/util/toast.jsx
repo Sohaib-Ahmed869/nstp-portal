@@ -3,8 +3,8 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 const showToast = (success = true, msg = '') => {
-  const defaultSuccessMsg = "Action completed successfully";
-  const defaultErrorMsg = "An error occurred. Please try later";
+  const defaultSuccessMsg = "Action completed successfully.";
+  const defaultErrorMsg = "An error occurred, please try later.";
 
   const message = msg || (success ? defaultSuccessMsg : defaultErrorMsg);
   const alertClass = success ? "alert-info text-lime-800" : "alert-error text-base-100";

@@ -207,7 +207,7 @@ const Company = ({ role }) => {
     setTimeout(() => {
       console.log('Form Data:', formData);
       setModalLoading(false);
-      showToast(false, 'An erorr occurred, please be a smart kiddo and try again later, long msg');
+      showToast(true);
 
       document.getElementById('tenure-end-modal').close();
     }, 2000);
