@@ -108,7 +108,7 @@ const WorkPermit = ({ role }) => {
         setModalLoading(true);
         //change api call here depending on the selectedworkpermit (issued or not) and the role
         // eg tenant - cancel pending vs cancel issued
-        // recp  - cancel pending vs cancel issued
+        // admin  - cancel pending vs cancel issued
         setTimeout(() => {
             const updatedWorkPermits = workPermits.filter((permit) => permit.id !== selectedWorkPermitId);
             setWorkPermits(updatedWorkPermits);
@@ -271,13 +271,13 @@ const WorkPermit = ({ role }) => {
                         <thead>
                             <tr className='bg-base-200 cursor-pointer'>
                                 <th onClick={() => handleSortChange("date")}>Date {sortField === "date" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
-                                {role === "receptionist" && <th onClick={() => handleSortChange("tenantName")}>Tenant {sortField === "tenantName" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>}
+                                {role !== "tenant" && <th onClick={() => handleSortChange("tenantName")}>Tenant {sortField === "tenantName" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>}
                                 <th onClick={() => handleSortChange("name")}>Name {sortField === "name" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
                                 <th onClick={() => handleSortChange("department")}>Department {sortField === "department" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
                                 <th onClick={() => handleSortChange("description")}>Description {sortField === "description" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
                                 <th onClick={() => handleSortChange("ppe")}>PPE {sortField === "ppe" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
                                 <th onClick={() => handleSortChange("issued")}>Status {sortField === "issued" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
-                                <th>Actions</th>
+                                {role !== "receptionist" && <th>Actions</th>} {/* recep can only view */}
                             </tr>
                         </thead>
                         <tbody>
@@ -289,7 +289,7 @@ const WorkPermit = ({ role }) => {
                                 filteredData.map((permit) => (
                                     <tr key={permit.id}>
                                         <td>{permit.date}</td>
-                                        {role === "receptionist" && <td>{permit.tenantName}</td>}
+                                        {role != "tenant" && <td>{permit.tenantName}</td>}
                                         <td>{permit.name}</td>
                                         <td>{permit.department}</td>
                                         <td>{permit.description}</td>
@@ -298,9 +298,9 @@ const WorkPermit = ({ role }) => {
                                             {permit.issued ? <CheckIcon className="size-4 mr-2" /> : <ClockIcon className="size-4 mr-2" />}
                                             {permit.issued ? "Issued" : "Pending"}
                                         </td>
-                                        <td>
+                                        {role !== "receptionist" && <td>
                                             <div className="flex gap-3">
-                                                {role === "receptionist" && !permit.issued && (
+                                                {role === "admin" && !permit.issued && (
                                                     <button
                                                         className="btn btn-success btn-outline btn-sm"
                                                         onClick={() => {
@@ -321,7 +321,7 @@ const WorkPermit = ({ role }) => {
                                                     Cancel
                                                 </button>
                                             </div>
-                                        </td>
+                                        </td>}
                                     </tr>
                                 ))
                             )}
