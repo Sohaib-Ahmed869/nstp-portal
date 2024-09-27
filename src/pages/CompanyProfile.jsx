@@ -9,6 +9,7 @@ import EmployeeStats from '../components/EmployeeStats';
 import NSTPLoader from '../components/NSTPLoader';
 import EmployeeProfileModal from '../components/EmployeeProfileModal';
 import FloatingLabelInput from '../components/FloatingLabelInput';
+import showToast from '../util/toast';
 
 /**
 |--------------------------------------------------
@@ -195,6 +196,7 @@ const Company = ({ role }) => {
 
     setTimeout(() => {
       setLoading(false);
+
     }, 2000);
 
   }, [companyId]);
@@ -205,6 +207,8 @@ const Company = ({ role }) => {
     setTimeout(() => {
       console.log('Form Data:', formData);
       setModalLoading(false);
+      showToast(false, 'An erorr occurred, please be a smart kiddo and try again later, long msg');
+
       document.getElementById('tenure-end-modal').close();
     }, 2000);
   };
@@ -500,14 +504,12 @@ const Company = ({ role }) => {
                 <UserGroupIcon className="size-7" /> {companyData.interns.total}
               </span>
               <p className="mb-3 mt-1 font-bold"> Internees </p>
-
               <div className="mb-2 p-2 rounded-md bg-accent text-white">{companyData.interns.nustian + " NUSTians"}</div>
               <div className="p-2 rounded-md bg-primary text-white">{companyData.interns.nonNustian + " Non NUSTians"}</div>
             </div>
             <div id="pie-chart">
               <ReactApexChart options={getPieChartOptions(companyData.interns)} series={getPieChartOptions(companyData.interns).series} type="pie" height={220} />
             </div>
-
           </div>
 
           {/* Contract duration stats and radial progress */}
@@ -517,10 +519,8 @@ const Company = ({ role }) => {
                 <CalendarDateRangeIcon className="size-7" /> {companyData.contractDuration + "%"}
               </span>
               <p className="mb-3 mt-1 font-bold"> Contract complete </p>
-
               <span className="mt-2 block">Contract start: {companyData.contractStartDate}</span>
               <span className="">Contract end: {companyData.contractEndDate}</span>
-
             </div>
             <div>
               <div className="radial-progress bg-neutral text-primary" style={{ "--value": `${companyData.contractDuration}`, "--size": "7rem", "--thickness": "13px" }} role="progressbar">
@@ -569,7 +569,6 @@ const Company = ({ role }) => {
               <div className="stat-desc">↗︎ Hours utilized </div>
             </div>
           </div>
-
         </div>
 
         {/* Employees list */}
@@ -617,8 +616,6 @@ const Company = ({ role }) => {
             ))}
           </div>
         </div>
-
-
       </div>
     </Sidebar>
   );
