@@ -8,6 +8,7 @@ import { getPieChartOptions } from '../util/charts';
 import EmployeeStats from '../components/EmployeeStats';
 import NSTPLoader from '../components/NSTPLoader';
 import EmployeeProfileModal from '../components/EmployeeProfileModal';
+import FloatingLabelInput from '../components/FloatingLabelInput';
 
 /**
 |--------------------------------------------------
@@ -27,6 +28,7 @@ const Company = ({ role }) => {
   const [companyData, setCompanyData] = useState({
     name: "Tech Innovators",
     type: "Startup",
+    category: "EdTech",
     joiningDate: "2022-01-15",
     contractStartDate: "2022-01-15",
     contractEndDate: "2022-04-15",
@@ -144,6 +146,14 @@ const Company = ({ role }) => {
   });
   const [loading, setLoading] = useState(true);
   const [modalLoading, setModalLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    applicantName: '',
+    applicantDesignation: '',
+    applicantCnic: '',
+    officeNumber: '',
+    vacatingDate: '',
+    reasonForLeaving: ''
+  });
 
   const actions = role == "admin" ? [
     {
@@ -191,12 +201,22 @@ const Company = ({ role }) => {
 
   const handleEndTenure = () => {
     setModalLoading(true);
+    // Simulate an API call
     setTimeout(() => {
-      console.log(`Company ID: ${companyId}`);
+      console.log('Form Data:', formData);
       setModalLoading(false);
       document.getElementById('tenure-end-modal').close();
     }, 2000);
-  }
+  };
+
+  //handle change for clearnace form
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
 
   const sendFeedback = () => {
     setModalLoading(true);
@@ -212,64 +232,139 @@ const Company = ({ role }) => {
   return (
     <Sidebar>
       {loading && <NSTPLoader />}
+
+      {/** DIALOGS */}
+      {/* Terminate Confirmation Modal */}
+      <dialog id="terminate-modal" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Confirm Termination</h3>
+          <p className="py-4">Are you sure you want to terminate {selectedEmployee?.name}?</p>
+          <div className="modal-action">
+            <button
+              className="btn btn-error"
+              onClick={() => {
+                terminateEmployee(selectedEmployee._id);
+                document.getElementById('terminate-modal').close();
+              }}
+            >
+              Yes
+            </button>
+            <button className="btn" onClick={() => document.getElementById('terminate-modal').close()}>No</button>
+          </div>
+        </div>
+      </dialog>
+
+      {/*end tenure confirmation modal */}
+      <dialog id="tenure-end-modal" className="modal">
+        <div className="modal-box min-w-3xl max-w-3xl">
+          <h3 className="font-bold text-lg mb-3">End Tenure Form</h3>
+
+          <form className='grid grid-cols-2 gap-3'>
+            <FloatingLabelInput
+              name="applicantName"
+              type="text"
+              id="applicantName"
+              label="Applicant Name"
+              value={formData.applicantName}
+              onChange={handleInputChange}
+            />
+            <FloatingLabelInput
+              name="applicantDesignation"
+              type="text"
+              id="applicantDesignation"
+              label="Applicant Designation"
+              value={formData.applicantDesignation}
+              onChange={handleInputChange}
+            />
+            <FloatingLabelInput
+              name="applicantCnic"
+              type="text"
+              id="applicantCnic"
+              label="Applicant CNIC"
+              value={formData.applicantCnic}
+              onChange={handleInputChange}
+            />
+            <FloatingLabelInput
+              name="officeNumber"
+              type="text"
+              id="officeNumber"
+              label="Office Number"
+              value={formData.officeNumber}
+              onChange={handleInputChange}
+            />
+            <FloatingLabelInput
+              name="vacatingDate"
+              type="date"
+              id="vacatingDate"
+              label="Date for Vacating Office"
+              value={formData.vacatingDate}
+              onChange={handleInputChange}
+            />
+            <div className="col-span-2">
+              <FloatingLabelInput
+                name="reasonForLeaving"
+                type="textarea"
+                id="reasonForLeaving"
+                label="Reason for Leaving"
+                value={formData.reasonForLeaving}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div role="alert" className="col-span-2 alert bg-yellow-300 bg-opacity-40 text-yellow-900">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 shrink-0 stroke-current"
+                fill="none"
+                viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <span>Warning: This is a serious action. Proceed with caution!</span>
+            </div>
+          </form>
+          <div className="modal-action">
+            <button className="btn" onClick={() => document.getElementById('tenure-end-modal').close()}>Cancel</button>
+            <button
+              className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
+              onClick={(e) => {
+                e.preventDefault();
+                handleEndTenure();
+              }}
+            >
+              {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}
+            </button>
+          </div>
+
+
+        </div>
+      </dialog>
+
+      {/* Feedback modal (type in a text area and send/cancel buttons, with modalloading) */}
+      <dialog id="evaluation-feedback-modal" className="modal">
+        <div className="modal-box">
+          <h3 className="font-bold text-xl mb-5">Send Evaluation/Feedback</h3>
+          <textarea rows={10} className="w-full h-32 p-2 input input-bordered" placeholder="Type your feedback here..." value={feedback} onChange={(e) => setFeedback(e.target.value)}></textarea>
+          <div className="modal-action">
+            <button className="btn" onClick={() => document.getElementById('evaluation-feedback-modal').close()}>Cancel</button>
+            <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={sendFeedback}>
+              {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Sending..." : "Send"}
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      {/* View Profile Modal */}
+      <EmployeeProfileModal employeeProfileSelected={selectedEmployee} />
+
+      {/** END DIALOGS */}
+
+      {/** MAIN CONTENT */}
       <div className={`bg-base-100 rounded-md shadow-md p-5 lg:p-10 mt-10 ${loading && "hidden"}`}>
 
-        {/* Terminate Confirmation Modal */}
-        <dialog id="terminate-modal" className="modal">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Confirm Termination</h3>
-            <p className="py-4">Are you sure you want to terminate {selectedEmployee?.name}?</p>
-            <div className="modal-action">
-              <button
-                className="btn btn-error"
-                onClick={() => {
-                  terminateEmployee(selectedEmployee._id);
-                  document.getElementById('terminate-modal').close();
-                }}
-              >
-                Yes
-              </button>
-              <button className="btn" onClick={() => document.getElementById('terminate-modal').close()}>No</button>
-            </div>
-          </div>
-        </dialog>
-
-        {/*end tenure confirmation modal */}
-        <dialog id="tenure-end-modal" className="modal">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Are you sure?</h3>
-            <p>Do you really want to end the tenure?</p>
-            <div className="modal-action">
-              <button className="btn" onClick={() => document.getElementById('tenure-end-modal').close()}>No</button>
-              <button
-                className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
-                onClick={() => {
-                  handleEndTenure();
-                }}
-              >
-                {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Yes"}
-              </button>
-            </div>
-          </div>
-        </dialog>
-
-        {/* Feedback modal (type in a text area and send/cancel buttons, with modalloading) */}
-        <dialog id="evaluation-feedback-modal" className="modal">
-          <div className="modal-box">
-            <h3 className="font-bold text-xl mb-5">Send Evaluation/Feedback</h3>
-            <textarea rows={10} className="w-full h-32 p-2 input input-bordered" placeholder="Type your feedback here..." value={feedback} onChange={(e) => setFeedback(e.target.value)}></textarea>
-            <div className="modal-action">
-              <button className="btn" onClick={() => document.getElementById('evaluation-feedback-modal').close()}>Cancel</button>
-              <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={sendFeedback}>
-                {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Sending..." : "Send"}
-              </button>
-            </div>
-          </div>
-        </dialog>
-
-        {/* View Profile Modal */}
-        <EmployeeProfileModal employeeProfileSelected={selectedEmployee} />
-
+        {/** ACTIONS dropdwon on right */}
         <div className='w-full flex justify-end'>
           <div className="relative">
             <button
@@ -306,15 +401,15 @@ const Company = ({ role }) => {
           </div>
         </div>
 
-
         {/* Header with company info, description, logo and join date */}
         <div className="flex max-sm:flex-col justify-start items-start gap-5">
-          <img src={sampleCompanyLogo} alt="Company Logo" className="size-48 rounded-lg ring-1 ring-gray-200" />
+          <img src={sampleCompanyLogo} alt="Company Logo" className="size-48  rounded-lg ring-1 ring-gray-200" />
 
           <div className="">
             <h1 className="text-4xl font-semibold text-primary">{companyData.name}</h1>
             <p className="text-base text-secondary mt-2">{companyData.description}</p>
             <div className='badge badge-secondary mt-2 mb-1'>{companyData.type}</div>
+            <div className='badge badge-secondary mt-2 mb-1 ml-2'>{companyData.category}</div>
             <div className="flex flex-row gap-7 mt-3">
               <div className="flex">
                 <CalendarIcon className="h-6 w-6 text-secondary" />
