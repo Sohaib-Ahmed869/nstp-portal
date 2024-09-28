@@ -47,21 +47,21 @@ function App() {
             <Route index element={<AdminHome />} />
             <Route path="add-company" element={<CompanyAddition />} />
             <Route path="companies" element={<Companies />} />
-            <Route path="etags" element={<Etags />} />
-            <Route path="services" element={<Services />} />
-            <Route path="meeting-rooms" element={<MeetingRooms />} />
-            <Route path='bookings' element={<AdminMeetingRoomBooking />} />
-            <Route path="cards" element={<CardRequests />} />
-            <Route path="performance" element={<Performance />} />
-            <Route path='complaints' element={<Complaints role={'admin'} />} />
             <Route path="companies/:companyId" element={<Company role={"admin"} />} />
+            <Route path="etags" element={<Etags />} />
             <Route path="work-permits" element={<WorkPermit role={'admin'} />} />
+            <Route path='bookings' element={<AdminMeetingRoomBooking />} />
+            <Route path="meeting-rooms" element={<MeetingRooms />} />
+            <Route path="cards" element={<CardRequests />} />
+            <Route path='complaints' element={<Complaints role={'admin'} />} />
+            <Route path="services" element={<Services />} />
+            {/** Opportunities to be added here */}
+            <Route path="performance" element={<Performance />} />
           </Route>
 
           <Route path="company">
             <Route index element={<Dashboard />} />
             <Route path="employees" element={<Employees />} />
-            <Route path="complaints" element={<CompanyComplaints />} />
             <Route path="bookings" element={<CompanyMeetingRoomBooking />} />
             <Route path="evaluations" element={<Evaluations />} />
             <Route path="parking" element={<Parking />} />
@@ -70,6 +70,7 @@ function App() {
             <Route path="gate-passes" element={<GatePasses role={"tenant"} />} />
             <Route path="lost-and-found" element={<LostAndFound role={"tenant"} />} />
             <Route path="occurences" element={<Occurences role={"tenant"} />} />
+            <Route path="complaints" element={<CompanyComplaints />} />
           </Route>
 
           <Route path="receptionist">

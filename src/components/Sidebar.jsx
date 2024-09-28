@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   ArrowLeftStartOnRectangleIcon,
   Bars3Icon,
@@ -13,28 +13,69 @@ import {
   RocketLaunchIcon,
   WrenchScrewdriverIcon,
   TrophyIcon,
-  DocumentIcon
+  DocumentIcon,
+  CalendarDaysIcon,
+  ChatBubbleLeftEllipsisIcon,
+  PuzzlePieceIcon,
+  TicketIcon,
+  PresentationChartLineIcon,
+  IdentificationIcon,
+  UserGroupIcon
 } from "@heroicons/react/24/outline";
 import { SidebarItem } from "./SidebarItem";
+import { AuthContext } from '../context/AuthContext';
 
 import nstpPng from '../assets/nstplogowhite.png'
 
-const sidebarItems = [
-  { icon: <HomeIcon />, text: "Home", url: "home" },
-  { icon: <ChartBarIcon />, text: "Dashboard", url: "dashboard" },
-  { icon: <UserPlusIcon />, text: "Registration", url: "registration" },
-  { icon: <CircleStackIcon />, text: "Resources", url: "resources" },
-  { icon: <TruckIcon />, text: "Parking", url: "parking" },
-  { icon: <ClipboardDocumentCheckIcon />, text: "Assessment", url: "assessment" },
-  { icon: <WrenchScrewdriverIcon />, text: "Services", url: "services" },
-  { icon: <RocketLaunchIcon />, text: "Opportunities", url: "opportunities" },
-  { icon: <DocumentIcon />, text: "Request", url: "request" },
-  { icon: <TrophyIcon />, text: "Performance", url: "performance" },
-];
 
 const Sidebar = ({ children }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedItem, setSelectedItem] = useState("");
+  const { role, actions } = useContext(AuthContext);
+
+  const sidebarItems = 
+  role == "receptionist" ? [
+    { icon: <HomeIcon />, text: "Home", url: `/${role}/home` },
+    { icon: <ChartBarIcon />, text: "Dashboard", url: `/${role}` },
+    { icon: <CalendarDaysIcon />, text: "Bookings", url: `/${role}/bookings` },
+    { icon: <WrenchScrewdriverIcon />, text: "Complaints", url: `/${role}/complaints` },
+    { icon: <TruckIcon />, text: "Gate Passes", url: `/${role}/gate-passes` },
+    { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: `/${role}/work-permits` },
+    { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: `/${role}/lost-and-found` },
+    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: `/${role}/occurences` },
+  ] : 
+  role == "admin" ? [
+    { icon: <HomeIcon />, text: "Home", url: `/${role}/home` },
+    { icon: <ChartBarIcon />, text: "Dashboard", url: `/${role}` },
+    { icon: <UserGroupIcon />, text: "Companies", url: `/${role}/companies` },
+    { icon: <TicketIcon />, text: "E-Tags", url: `/${role}/etags` },
+    { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: `/${role}/work-permits` },
+    { icon: <CalendarDaysIcon />, text: "Bookings", url: `/${role}/bookings` },
+    { icon: <PresentationChartLineIcon />, text: "Meeting Rooms", url: `/${role}/meeting-rooms`},
+    { icon: <IdentificationIcon />, text: "Cards", url: `/${role}/cards` },
+    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: `/${role}/complaints` },
+    { icon: <WrenchScrewdriverIcon />, text: "Services", url: `/${role}/services` },
+    { icon: <RocketLaunchIcon />, text: "Opportunities", url: `/${role}/opportunities` },
+    { icon: <TrophyIcon />, text: "Performance", url: `/${role}/performance` },
+  ] 
+  : role == "tenant" ? [
+    { icon: <HomeIcon />, text: "Home", url: `/${role}/home` },
+    { icon: <ChartBarIcon />, text: "Dashboard", url: `/${role}` },
+    { icon: <UserGroupIcon />, text: "Employees", url: `/${role}/employees` },
+    { icon: <CalendarDaysIcon />, text: "Bookings", url: `/${role}/bookings` },
+    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Evaluations", url: `/${role}/evaluations` },
+    { icon: <TruckIcon />, text: "Parking", url: `/${role}/parking` },
+    //profile
+    //work permits
+    { icon: <TicketIcon />, text: "Gate Passes", url: `/${role}/gate-passes` },
+    { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: `/${role}/lost-and-found` },
+    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: `/${role}/complaints` },
+    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: `/${role}/occurences` },
+
+  ] 
+  : [];
+  
+
 
   const toggleDrawer = () => {
     setIsExpanded(!isExpanded);
