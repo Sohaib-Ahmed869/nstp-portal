@@ -26,8 +26,8 @@ const ComparativeChart = ({ title, comparisonData, link }) => {
         <p className="my-2 font-bold">{title}</p>
         {
           link && (
-            <Link to={link} className="btn btn-primary text-white btn-md">
-              <TableCellsIcon className="size-6"></TableCellsIcon>
+            <Link to={link} className="btn btn-primary text-white btn-md max-sm:btn-sm">
+              <TableCellsIcon className="size-6 max-sm:size-5"></TableCellsIcon>
               View All
             </Link>
           )

@@ -5,15 +5,12 @@ import {
   ChartBarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  UserPlusIcon,
   HomeIcon,
-  CircleStackIcon,
   TruckIcon,
   ClipboardDocumentCheckIcon,
   RocketLaunchIcon,
   WrenchScrewdriverIcon,
   TrophyIcon,
-  DocumentIcon,
   CalendarDaysIcon,
   ChatBubbleLeftEllipsisIcon,
   PuzzlePieceIcon,
@@ -28,53 +25,60 @@ import { AuthContext } from '../context/AuthContext';
 import nstpPng from '../assets/nstplogowhite.png'
 
 
+const sidebarConfig = {
+  receptionist: [
+    { icon: <HomeIcon />, text: "Home", url: "/home" },
+    { icon: <ChartBarIcon />, text: "Dashboard", url: "/" },
+    { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
+    { icon: <WrenchScrewdriverIcon />, text: "Complaints", url: "/complaints" },
+    { icon: <TruckIcon />, text: "Gate Passes", url: "/gate-passes" },
+    { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: "/work-permits" },
+    { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: "/lost-and-found" },
+    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: "/occurences" },
+  ],
+  admin: [
+    { icon: <HomeIcon />, text: "Home", url: "/home" },
+    { icon: <ChartBarIcon />, text: "Dashboard", url: "/" },
+    { icon: <UserGroupIcon />, text: "Companies", url: "/companies" },
+    { icon: <TicketIcon />, text: "E-Tags", url: "/etags" },
+    { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: "/work-permits" },
+    { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
+    { icon: <PresentationChartLineIcon />, text: "Meeting Rooms", url: "/meeting-rooms" },
+    { icon: <IdentificationIcon />, text: "Cards", url: "/cards" },
+    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },
+    { icon: <WrenchScrewdriverIcon />, text: "Services", url: "/services" },
+    { icon: <RocketLaunchIcon />, text: "Opportunities", url: "/opportunities" },
+    { icon: <TrophyIcon />, text: "Performance", url: "/performance" },
+  ],
+  tenant: [
+    { icon: <HomeIcon />, text: "Home", url: "/home" },
+    { icon: <ChartBarIcon />, text: "Dashboard", url: "/" },
+    { icon: <UserGroupIcon />, text: "Employees", url: "/employees" },
+    { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
+    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Evaluations", url: "/evaluations" },
+    { icon: <TruckIcon />, text: "Parking", url: "/parking" },
+    { icon: <TicketIcon />, text: "Gate Passes", url: "/gate-passes" },
+    { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: "/lost-and-found" },
+    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },
+    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: "/occurences" },
+  ],
+};
+
+
+const getSidebarItems = (role) => {
+  return sidebarConfig[role]?.map(item => ({
+    ...item,
+    url: `/${role}${item.url}`
+  })) || [];
+};
+
+
+
 const Sidebar = ({ children }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedItem, setSelectedItem] = useState("");
   const { role, actions } = useContext(AuthContext);
-
-  const sidebarItems = 
-  role == "receptionist" ? [
-    { icon: <HomeIcon />, text: "Home", url: `/${role}/home` },
-    { icon: <ChartBarIcon />, text: "Dashboard", url: `/${role}` },
-    { icon: <CalendarDaysIcon />, text: "Bookings", url: `/${role}/bookings` },
-    { icon: <WrenchScrewdriverIcon />, text: "Complaints", url: `/${role}/complaints` },
-    { icon: <TruckIcon />, text: "Gate Passes", url: `/${role}/gate-passes` },
-    { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: `/${role}/work-permits` },
-    { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: `/${role}/lost-and-found` },
-    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: `/${role}/occurences` },
-  ] : 
-  role == "admin" ? [
-    { icon: <HomeIcon />, text: "Home", url: `/${role}/home` },
-    { icon: <ChartBarIcon />, text: "Dashboard", url: `/${role}` },
-    { icon: <UserGroupIcon />, text: "Companies", url: `/${role}/companies` },
-    { icon: <TicketIcon />, text: "E-Tags", url: `/${role}/etags` },
-    { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: `/${role}/work-permits` },
-    { icon: <CalendarDaysIcon />, text: "Bookings", url: `/${role}/bookings` },
-    { icon: <PresentationChartLineIcon />, text: "Meeting Rooms", url: `/${role}/meeting-rooms`},
-    { icon: <IdentificationIcon />, text: "Cards", url: `/${role}/cards` },
-    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: `/${role}/complaints` },
-    { icon: <WrenchScrewdriverIcon />, text: "Services", url: `/${role}/services` },
-    { icon: <RocketLaunchIcon />, text: "Opportunities", url: `/${role}/opportunities` },
-    { icon: <TrophyIcon />, text: "Performance", url: `/${role}/performance` },
-  ] 
-  : role == "tenant" ? [
-    { icon: <HomeIcon />, text: "Home", url: `/${role}/home` },
-    { icon: <ChartBarIcon />, text: "Dashboard", url: `/${role}` },
-    { icon: <UserGroupIcon />, text: "Employees", url: `/${role}/employees` },
-    { icon: <CalendarDaysIcon />, text: "Bookings", url: `/${role}/bookings` },
-    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Evaluations", url: `/${role}/evaluations` },
-    { icon: <TruckIcon />, text: "Parking", url: `/${role}/parking` },
-    //profile
-    //work permits
-    { icon: <TicketIcon />, text: "Gate Passes", url: `/${role}/gate-passes` },
-    { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: `/${role}/lost-and-found` },
-    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: `/${role}/complaints` },
-    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: `/${role}/occurences` },
-
-  ] 
-  : [];
-  
+  const sidebarItems = getSidebarItems(role);
 
 
   const toggleDrawer = () => {

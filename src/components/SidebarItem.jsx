@@ -20,8 +20,8 @@ const SidebarItem = ({
 
   return (
     <Link to={url} onClick={() => setSelectedItem(url)}>
-      <li className={`sidebar-item ${selectedItem == url ? "border-l-primary border-l-4 rounded-md bg-base-100  " : ""}`}>
-        <a className="flex items-center">
+      <li className={`sidebar-item ${selectedItem == url ? "border-l-primary border-l-4 rounded-lg bg-base-100  " : ""}`}>
+        <a className={`flex items-center ${selectedItem == url && "bg-base-200 bg-opacity-20"} `}>
           <div
             ref={tooltipRef}
             onMouseEnter={() => setIsHovered(true)}

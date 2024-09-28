@@ -33,7 +33,7 @@ const ThemeControl = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="relative inline-flex items-center rounded-full btn btn-outline btn-primary focus:outline-none transition-colors duration-300"
+      className="relative inline-flex items-center rounded-full max-sm:btn-sm btn btn-outline btn-primary focus:outline-none transition-colors duration-300"
     >
       <span className="sr-only">Toggle Theme</span>
       <div className="flex items-center justify-center rounded-full transition-transform duration-300 transform">

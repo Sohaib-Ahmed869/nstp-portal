@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react'
-import Sidebar from '../../components/Sidebar'
+import React, { useEffect, useState, useContext } from 'react';
+import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
 import { Link } from 'react-router-dom';
 import { MagnifyingGlassIcon, ChevronUpIcon, ChevronDownIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
@@ -7,30 +7,11 @@ import { EyeIcon } from '@heroicons/react/20/solid';
 import { AdminService } from '../../services';
 import { TowerContext } from '../../context/TowerContext';
 
-const COLUMNS = ['no', 'name', 'category', 'noEmployees', 'noInterns', 'workPasses', 'gatePasses']
-const COMPANY_CATEGORIES = ['Startup', 'Company', 'Hatch8'];
+const COLUMNS = ['no', 'name', 'category', 'registrationNum', 'email', 'noEmployees', 'industryCategory', 'noComplaints'];
+const COMPANY_CATEGORIES = ['Company', 'Cube 8', 'Hatch 8', 'Startup'];
 
 const Companies = () => {
-  const [companiesTableData, setCompaniesTableData] = useState([
-    { id: "12", name: "Hexler", category: "Startup", noEmployees: 10, noInterns: 84, workPasses: 2, gatePasses: 12 },
-    { id: "13", name: "AgriTech", category: "Startup", noEmployees: 10, noInterns: 3, workPasses: 12, gatePasses: 2 },
-    { id: "14", name: "PinkFly", category: "Company", noEmployees: 20, noInterns: 3, workPasses: 2, gatePasses: 2 },
-    { id: "15", name: "Zambeel", category: "Startup", noEmployees: 10, noInterns: 13, workPasses: 24, gatePasses: 2 },
-    { id: "16", name: "InnoSolution", category: "Company", noEmployees: 13, noInterns: 3, workPasses: 2, gatePasses: 2 },
-    { id: "17", name: "NanoTech", category: "Hatch8", noEmployees: 10, noInterns: 3, workPasses: 12, gatePasses: 12 },
-    { id: "18", name: "GrowFly", category: "Hatch8", noEmployees: 14, noInterns: 3, workPasses: 24, gatePasses: 2 },
-    { id: "19", name: "BigPal", category: "Startup", noEmployees: 10, noInterns: 13, workPasses: 12, gatePasses: 2 },
-    { id: "20", name: "FashionMashion", category: "Startup", noEmployees: 140, noInterns: 3, workPasses: 12, gatePasses: 24 },
-    { id: "21", name: "TechSolutions", category: "Company", noEmployees: 10, noInterns: 3, workPasses: 2, gatePasses: 2 },
-    { id: "22", name: "InnoTech", category: "Company", noEmployees: 10, noInterns: 3, workPasses: 2, gatePasses: 2 },
-    { id: "23", name: "TechFly", category: "Startup", noEmployees: 10, noInterns: 3, workPasses: 2, gatePasses: 2 },
-    { id: "24", name: "TechPal", category: "Startup", noEmployees: 10, noInterns: 3, workPasses: 2, gatePasses: 2 },
-    { id: "25", name: "TechMashion", category: "Company", noEmployees: 10, noInterns: 3, workPasses: 2, gatePasses: 2 },
-    { id: "26", name: "TechSolutions", category: "Company", noEmployees: 10, noInterns: 3, workPasses: 2, gatePasses: 2 },
-    { id: "27", name: "TechTech", category: "Startup", noEmployees: 10, noInterns: 3, workPasses: 2, gatePasses: 2 },
-
-  ]);
-
+  const [companiesTableData, setCompaniesTableData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('All');
   const [sortField, setSortField] = useState('');
@@ -39,8 +20,8 @@ const Companies = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [paginatedData, setPaginatedData] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(10)
-  const [loading, setLoading] = useState(true)
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [loading, setLoading] = useState(true);
 
   const { tower } = useContext(TowerContext);
 
@@ -68,20 +49,27 @@ const Companies = () => {
     async function fetchData() {
       try {
         // API call here
-        console.log("🚀 ~ fetchData ~ tower:", tower)
         const response = await AdminService.getTenants(tower.id);
-        console.log("🚀 ~ fetchData ~ response:", response)
+        console.log("🚀 ~ fetchData ~ response:", response);
 
-        if(response.error) {
+        if (response.error) {
           console.error("Error fetching tenants:", response.response);
           return;
         }
 
+        // Extract required data
+        const companiesData = response.data.tenants.map((tenant) => ({
+          id: tenant._id,
+          name: tenant.registration.organizationName,
+          category: tenant.registration.category,
+          registrationNum: tenant.companyProfile.registrationNumber,
+          email: tenant.registration.companyEmail,
+          noEmployees: tenant.companyProfile.numberOfEmployees,
+          industryCategory: tenant.industrySector.category,
+          noComplaints: tenant.complaints.length,
+        }));
 
-        
-        
-        // Assuming response.data contains the data you need
-        // setCompaniesTableData(response.data);
+        setCompaniesTableData(companiesData);
       } catch (error) {
         console.error("Error fetching tenants:", error);
       } finally {
@@ -90,10 +78,9 @@ const Companies = () => {
     }
 
     fetchData();
-  }, []);
+  }, [tower.id]);
 
-
-  // re render when table data is updated or search/fitler is applied
+  // Re-render when table data is updated or search/filter is applied
   useEffect(() => {
     const filtered = companiesTableData
       .filter((company) => company.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -147,7 +134,7 @@ const Companies = () => {
         </div>
 
         {filteredData.length === 0 ? (
-          <p className="text-gray-500">No data to show for now.</p>
+          <p className="text-gray-500 mt-10">No data to show for now.</p>
         ) : (
           <div className="h-full min-h-content overflow-y-auto">
             <p className="my-2 text-gray-500 text-sm">Click on any column header to sort data</p>
@@ -167,10 +154,11 @@ const Companies = () => {
                     <td className="text-primary">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td>{company.name}</td>
                     <td>{company.category}</td>
+                    <td>{company.registrationNum}</td>
+                    <td>{company.email}</td>
                     <td>{company.noEmployees}</td>
-                    <td>{company.noInterns}</td>
-                    <td>{company.workPasses}</td>
-                    <td>{company.gatePasses}</td>
+                    <td>{company.industryCategory}</td>
+                    <td>{company.noComplaints}</td>
                     <div className="absolute inset-0  flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Link to={`/admin/companies/${company.id}`} className="btn btn-ghost w-full backdrop-blur-sm ">
                         <EyeIcon className="h-5 w-5" />
@@ -196,7 +184,6 @@ const Companies = () => {
                 <span className="font-bold text-sm">
                   Showing {Math.min(itemsPerPage, filteredData.length - (currentPage - 1) * itemsPerPage)} of {filteredData.length} companies
                 </span>
-
               </div>
               <button
                 className="btn btn-outline"

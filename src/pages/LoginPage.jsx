@@ -3,6 +3,7 @@ import { useState, useContext } from "react";
 import { AuthContext } from '../context/AuthContext'
 import nstpLogoColored from "../assets/nstplogocolored.png";
 import AuthService from "../services/AuthService";
+import { useNavigate } from "react-router-dom";
 
 const SidebarElement = ({ role, handleSidebarClick, icon, text }) => {
   return (
@@ -29,6 +30,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const { login } = useContext(AuthContext);
 
@@ -138,6 +140,7 @@ const LoginPage = () => {
           isValid = checkResponse(response);
           if (isValid) {
             login(response.data.role, response.data.towers);
+            navigate("/admin");
           } else {
             return;
           }
