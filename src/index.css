@@ -1,12 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.rbc-event {
+  background-color: #87b37a !important;
+  border-color: #87b37a !important;
+  color: white !important;
+}
 
-
-.icon-container:hover svg {
-    fill: darkgreen;
-  }
-  
-  .icon-container:hover p {
-    color: darkgreen;
-  }
+.rbc-event:hover {
+  background-color: #76a06b !important;
+  border-color: #76a06b !important;
+}
