@@ -12,7 +12,7 @@ const NSTPLoader = () => {
   }, []);
 
   return (
-    <div className="loader-container w-full min-h-screen overflow-hidden overflow-y-hidden overflow-x-hidden  flex flex-col items-center justify-center"> 
+    <div className="loader-container w-full min-h-screen overflow-hidden overflow-y-hidden overflow-x-hidden  flex flex-col items-center justify-center">
       <img src={NSTPLogo} alt="NSTP Logo" className="w-20 h-20 animate-spin animate-infinite animate-ease-in-out" />
       <p className="text-lg font-sm mt-3 text-primary ml-2">{message}</p>
     </div>

@@ -68,7 +68,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
             return sortOrder === 'asc' ? a[sortField] - b[sortField] : b[sortField] - a[sortField];
         }
     });
-    
+
     const paginatedData = dashboardComponent ? sortedData : sortedData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
 
@@ -199,11 +199,11 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
                                         <th>{row.roomNo}</th>
                                         <td>
                                             <div className={`rounded-md text-center p-1 ${row.status === 'Approved'
-                                                    ? 'bg-lime-200 text-lime-900'
-                                                    : row.status === 'Unapproved'
-                                                        ? 'bg-red-300 text-red-800'
-                                                        : 'bg-yellow-100 text-yellow-700'
-                                                    }`}>
+                                                ? 'bg-lime-200 text-lime-900'
+                                                : row.status === 'Unapproved'
+                                                    ? 'bg-red-300 text-red-800'
+                                                    : 'bg-yellow-100 text-yellow-700'
+                                                }`}>
                                                 {row.status}
                                             </div>
                                         </td>
@@ -229,7 +229,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
                                                             Unapprove
                                                         </button>
                                                     </>
-                                                    
+
                                                 ) : (
                                                     <button
                                                         className="btn btn-sm btn-outline btn-error"

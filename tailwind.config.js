@@ -75,12 +75,12 @@ export default {
         },
         nstpDark: { //nstp color pallette
           'primary': '#647d5c',     //sage green
-          'secondary': '#4c6663',  //bluish gray 
-          'accent': '#2a1e5c',      //dark purple
+          'secondary': '#658b88',  //bluish gray 
+          'accent': '#332c4d',      //dark purple
           'neutral': '#fbf5f3',    //dark brown
-          'base-100': '#1d241c',    //black
-          'base-200': '#141713',
-          'base-300': '#191f18',
+          'base-100': '#262626',    //black
+          'base-200': '#1a1a1a',
+          'base-300': '#000000',
           'base-content': '#ffffff',    //white
           'info': '#9ce37d',        //bright light green     
           'warning': '#ff5722',     //default (not part of nstp color pallette)

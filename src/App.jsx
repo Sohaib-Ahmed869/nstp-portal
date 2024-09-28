@@ -35,54 +35,58 @@ import Complaints from './pages/Complaints.jsx';
 import GatePasses from './pages/GatePasses.jsx';
 import WorkPermit from './pages/WorkPermit.jsx';
 import LostAndFound from './pages/LostAndFound.jsx';
+import Occurences from './pages/Occurences.jsx';
 
 function App() {
   return (
     <Router>
-    <Routes>
-      <Route path="/">
-        <Route index element={<LoginPage />} />
-        <Route path="admin">
-          <Route index element={<AdminHome />} />
-          <Route path="add-company" element={<CompanyAddition />} />
-          <Route path="companies" element={<Companies />} />
-          <Route path="etags" element={<Etags />} />          
-          <Route path="services" element={<Services />} />          
-          <Route path="meeting-rooms" element={<MeetingRooms />} />
-          <Route path='bookings' element={<AdminMeetingRoomBooking />} />       
-          <Route path="cards" element={<CardRequests />} />
-          <Route path="performance" element={<Performance />} />
-          <Route path='complaints' element={<Complaints role={'admin'} />} />       
-          <Route path="companies/:companyId" element={<Company role={"admin"} />} />
-          <Route path="work-permits" element={<WorkPermit role={'admin'} />} />
-        </Route>
+      <Routes>
+        <Route path="/">
+          <Route index element={<LoginPage />} />
+          <Route path="admin">
+            <Route index element={<AdminHome />} />
+            <Route path="add-company" element={<CompanyAddition />} />
+            <Route path="companies" element={<Companies />} />
+            <Route path="companies/:companyId" element={<Company role={"admin"} />} />
+            <Route path="etags" element={<Etags />} />
+            <Route path="work-permits" element={<WorkPermit role={'admin'} />} />
+            <Route path='bookings' element={<AdminMeetingRoomBooking />} />
+            <Route path="meeting-rooms" element={<MeetingRooms />} />
+            <Route path="cards" element={<CardRequests />} />
+            <Route path='complaints' element={<Complaints role={'admin'} />} />
+            <Route path="services" element={<Services />} />
+            {/** Opportunities to be added here */}
+            <Route path="performance" element={<Performance />} />
+          </Route>
 
-        <Route path="company">
-          <Route index element={<Dashboard />} />
-          <Route path="employees" element={<Employees />} />
-          <Route path="complaints" element={<CompanyComplaints />} />
-          <Route path="bookings" element={<CompanyMeetingRoomBooking />} />
-          <Route path="evaluations" element={<Evaluations />} />
-          <Route path="parking" element={<Parking />} />
-          <Route path="profile" element={<Company role={"tenant"} />} />
-          <Route path="work-permits" element={<WorkPermit role={"tenant"} />} />
-          <Route path="gate-passes" element={<GatePasses role={"tenant"} />} />
-          <Route path="lost-and-found" element={<LostAndFound role={"tenant"}/>} />
-        </Route>
+          <Route path="company">
+            <Route index element={<Dashboard />} />
+            <Route path="employees" element={<Employees />} />
+            <Route path="bookings" element={<CompanyMeetingRoomBooking />} />
+            <Route path="evaluations" element={<Evaluations />} />
+            <Route path="parking" element={<Parking />} />
+            <Route path="profile" element={<Company role={"tenant"} />} />
+            <Route path="work-permits" element={<WorkPermit role={"tenant"} />} />
+            <Route path="gate-passes" element={<GatePasses role={"tenant"} />} />
+            <Route path="lost-and-found" element={<LostAndFound role={"tenant"} />} />
+            <Route path="occurences" element={<Occurences role={"tenant"} />} />
+            <Route path="complaints" element={<CompanyComplaints />} />
+          </Route>
 
-        <Route path="receptionist">
-          <Route index element={<ReceptionistDashboard />} />
-          <Route path="bookings" element={<MeetingRoomBooking />} />
-          <Route path="complaints" element={<Complaints role={"receptionist"} />} />
-          <Route path="gate-passes" element={<GatePasses role={"receptionist"} />} />
-          <Route path="work-permits" element={<WorkPermit role={"receptionist"} />} />
-          <Route path="lost-and-found" element={<LostAndFound role={"receptionist"}  />} />
+          <Route path="receptionist">
+            <Route index element={<ReceptionistDashboard />} />
+            <Route path="bookings" element={<MeetingRoomBooking />} />
+            <Route path="complaints" element={<Complaints role={"receptionist"} />} />
+            <Route path="gate-passes" element={<GatePasses role={"receptionist"} />} />
+            <Route path="work-permits" element={<WorkPermit role={"receptionist"} />} />
+            <Route path="lost-and-found" element={<LostAndFound role={"receptionist"} />} />
+            <Route path="occurences" element={<Occurences role={"receptionist"} />} />
+          </Route>
+
+          <Route path="*" element={<ErrorPage />} />
         </Route>
-      
-        <Route path="*" element={<ErrorPage />} />
-      </Route>
-    </Routes>
-  </Router>
+      </Routes>
+    </Router>
   )
 }
 

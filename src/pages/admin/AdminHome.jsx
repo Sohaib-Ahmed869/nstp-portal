@@ -59,7 +59,7 @@ const AdminHome = () => {
         <p className="font-semibold text-white">Tower: </p>
         <select className="select select-bordered max-w-xs" value={tower} onChange={(e) => setTower(e.target.value)}>
           {towerOptions.map((tower, index) => (
-            <option key={index} value={tower}>{"NSTP "+tower}</option>
+            <option key={index} value={tower}>{"NSTP " + tower}</option>
           ))}
         </select>
       </div>

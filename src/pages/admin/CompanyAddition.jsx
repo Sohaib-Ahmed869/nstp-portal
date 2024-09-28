@@ -99,9 +99,8 @@ const CompanyAddition = () => {
     return fields.map(({ name, type, labelName, longText }) => (
       <div
         key={name}
-        className={`col-span-1 ${
-          longText || type == "radio" ? "col-span-2" : ""
-        } max-sm:col-span-1`}
+        className={`col-span-1 ${longText || type == "radio" ? "col-span-2" : ""
+          } max-sm:col-span-1`}
       >
         {type === "boolean" ? (
           <div className="">
@@ -120,8 +119,8 @@ const CompanyAddition = () => {
                 {labelName && labelName !== ""
                   ? labelName
                   : name
-                      .replace(/([A-Z])/g, " $1")
-                      .replace(/^./, (str) => str.toUpperCase())}
+                    .replace(/([A-Z])/g, " $1")
+                    .replace(/^./, (str) => str.toUpperCase())}
               </span>
             </label>
           </div>
@@ -154,8 +153,8 @@ const CompanyAddition = () => {
               labelName && labelName != ""
                 ? labelName
                 : name
-                    .replace(/([A-Z])/g, " $1")
-                    .replace(/^./, (str) => str.toUpperCase())
+                  .replace(/([A-Z])/g, " $1")
+                  .replace(/^./, (str) => str.toUpperCase())
             }
             type={type}
             value={data[name]}

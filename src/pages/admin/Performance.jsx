@@ -14,7 +14,7 @@ const Performance = () => {
   const [title, setTitle] = useState('Top Receptionists');
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
-const rowsPerPage = 10;
+  const rowsPerPage = 10;
 
   useEffect(() => {
     // Simulate an API call with a timeout
@@ -97,7 +97,7 @@ const rowsPerPage = 10;
   const filteredData = receptionistPerformanceData.filter((rec) =>
     rec.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
+
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
@@ -112,15 +112,15 @@ const rowsPerPage = 10;
         </div>
         <hr className="my-5 text-gray-200" />
         <div className="relative w-full lg:max-w-xs mb-4">
-  <input
-    type="text"
-    placeholder="Search..."
-    className="input input-bordered w-full pl-10"
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-  />
-  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
-</div>
+          <input
+            type="text"
+            placeholder="Search..."
+            className="input input-bordered w-full pl-10"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+        </div>
         <table className="table w-full">
           <thead>
             <tr className="bg-base-200 cursor-pointer">
@@ -130,40 +130,40 @@ const rowsPerPage = 10;
             </tr>
           </thead>
           <tbody>
-  {currentRows.length === 0 ? (
-    <tr>
-      <td colSpan="3" className="text-center text-gray-500">No data to show for now.</td>
-    </tr>
-  ) : (
-    currentRows.map((rec) => (
-      <tr key={rec.id}>
-        <td>{rec.name}</td>
-        <td>{rec.gatepasses}</td>
-        <td>{rec.complaints}</td>
-      </tr>
-    ))
-  )}
-</tbody>
+            {currentRows.length === 0 ? (
+              <tr>
+                <td colSpan="3" className="text-center text-gray-500">No data to show for now.</td>
+              </tr>
+            ) : (
+              currentRows.map((rec) => (
+                <tr key={rec.id}>
+                  <td>{rec.name}</td>
+                  <td>{rec.gatepasses}</td>
+                  <td>{rec.complaints}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
         </table>
         <div className="flex justify-between items-center mt-4">
-  <button
-    className="btn btn-outline"
-    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-    disabled={currentPage === 1}
-  >
-    Previous
-  </button>
-  <span>
-    Page {currentPage} of {Math.ceil(receptionistPerformanceData.length / rowsPerPage)}
-  </span>
-  <button
-    className="btn btn-outline"
-    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(receptionistPerformanceData.length / rowsPerPage)))}
-    disabled={currentPage === Math.ceil(receptionistPerformanceData.length / rowsPerPage)}
-  >
-    Next
-  </button>
-</div>
+          <button
+            className="btn btn-outline"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {Math.ceil(receptionistPerformanceData.length / rowsPerPage)}
+          </span>
+          <button
+            className="btn btn-outline"
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, Math.ceil(receptionistPerformanceData.length / rowsPerPage)))}
+            disabled={currentPage === Math.ceil(receptionistPerformanceData.length / rowsPerPage)}
+          >
+            Next
+          </button>
+        </div>
 
         <div className="flex flex-row items-center justify-between mt-10">
           <h1 className="text-2xl font-bold">{title}</h1>
