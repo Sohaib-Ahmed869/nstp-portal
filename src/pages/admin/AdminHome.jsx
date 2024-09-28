@@ -96,14 +96,14 @@ const AdminHome = () => {
 
       <div className={`bg-base-100 mt-5  ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && 'hidden'}`}>
         {/* Header (Title, toggles etc) */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center md:flex-row flex-col md:justify-between">
           <h1 className='text-2xl font-semibold mb-5'>Main Dashboard</h1>
           <div className="flex gap-3">
             <ThemeControl />
-            <button className="btn btn-primary hover:text-white btn-outline rounded-full">
+            <button className="btn btn-primary max-sm:btn-sm hover:text-white btn-outline rounded-full">
               <BellAlertIcon className="size-6" />
             </button>
-            <button className="btn btn-primary hover:text-white btn-outline rounded-full">
+            <button className="btn btn-primary max-sm:btn-sm hover:text-white btn-outline rounded-full">
               <QuestionMarkCircleIcon className="size-6" />
             </button>
           </div>
@@ -117,8 +117,8 @@ const AdminHome = () => {
           <div className=" md:col-span-3">
             <div className="mb-3 grid grid-cols-2 gap-3 md:grid-cols-3">
               <div className="md:col-span-3 col-span-2">
-                <Link to="cards" className="btn btn-primary btn-md text-white">
-                  <IdentificationIcon className="size-6"></IdentificationIcon> View Cards
+                <Link to="cards" className="btn btn-primary btn-md max-sm:btn-sm text-white">
+                  <IdentificationIcon className="size-6 max-sm:size-5"></IdentificationIcon> View Cards
                 </Link>
 
               </div>
@@ -150,17 +150,17 @@ const AdminHome = () => {
           <div className=" md:col-span-4 ">
             <div className="card p-5 min-h-full ">
               <div className="w-full flex flex-col">
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex max-sm:flex-col items-center max-sm:items-start justify-between mb-2">
                   <p className="mb-3 font-bold"> Companies</p>
-                  <div className="flex gap-1">
-                    <Link to="/admin/companies">
-                      <button className="btn btn-primary btn-outline btn-md text-white">
-                        <UsersIcon className="size-6"></UsersIcon> View All
+                  <div className="flex max-[450px]:flex-col max-sm:items-end max-sm:w-full gap-1">
+                    <Link to="/admin/companies" className='max-sm:w-1/2 max-[450px]:w-full'>
+                      <button className="btn btn-primary btn-outline max-sm:btn-block btn-md max-sm:btn-sm text-white">
+                        <UsersIcon className="size-6 max-[450px]:hidden"></UsersIcon> View All
                       </button>
                     </Link>
-                    <Link to="/admin/add-company">
-                      <button className="btn btn-primary btn-md text-white">
-                        <PlusCircleIcon className="size-6"></PlusCircleIcon> Add Company
+                    <Link to="/admin/add-company" className='max-sm:w-1/2 max-[450px]:w-full'>
+                      <button className="btn btn-primary btn-md max-sm:btn-block max-sm:btn-sm text-white">
+                        <PlusCircleIcon className="size-6 max-[450px]:hidden"></PlusCircleIcon> Add Company
                       </button>
                     </Link>
                   </div>

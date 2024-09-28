@@ -18,9 +18,9 @@ const NewsFeed = () => {
     <div className="card p-5 min-h-full max-h-full overflow-y-scroll flex flex-col gap-5">
       <h1 className="text-2xl font-bold">News Feed</h1>
       {news.map((item, index) => (
-        <div key={index} className="flex gap-3">
-          <img src={item.imageSrc} alt={item.title} className="w-25 h-20 rounded-md" />
-          <div className="flex flex-col gap-0">
+        <div key={index} className="flex sm:flex-row flex-col gap-3">
+          <img src={item.imageSrc} alt={item.title} className="w-25 h-20 rounded-md object-cover" />
+          <div className="flex flex-col gap-0 sm:mb-0 mb-5">
             <h2 className="text-lg font-semibold">{item.title}</h2>
             <p className="text-sm text-gray-500">{item.blurb}</p>
             <Link to={item.link} className=" underline text-sm text-primary">Read More</Link>
