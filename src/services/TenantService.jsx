@@ -19,7 +19,7 @@ const TenantService = {
     try {
       console.log("🚀 ~ addEmployee ~ employee", empBody);
       const response = await axios.post(
-        `${BASE_URL}/tenant/register-employee`,
+        `${BASE_URL}/tenant/employee/register`,
         {
           empBody,
         },
@@ -41,6 +41,7 @@ const TenantService = {
       const response = await axios.get(`${BASE_URL}/tenant/employees`, {
         withCredentials: true,
       });
+      
       return await handleResponse(response);
     } catch (error) {
       return { error: error };
@@ -49,7 +50,7 @@ const TenantService = {
 
   getCardAllocations: async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/tenant/card-allocations`, {
+      const response = await axios.get(`${BASE_URL}/tenant/card/allocations`, {
         withCredentials: true,
       });
       return await handleResponse(response);
@@ -60,7 +61,7 @@ const TenantService = {
 
   getEtagAllocations: async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/tenant/etag-allocations`, {
+      const response = await axios.get(`${BASE_URL}/tenant/etag/allocations`, {
         withCredentials: true,
       });
       return await handleResponse(response);
