@@ -35,6 +35,7 @@ import Complaints from './pages/Complaints.jsx';
 import GatePasses from './pages/GatePasses.jsx';
 import WorkPermit from './pages/WorkPermit.jsx';
 import LostAndFound from './pages/LostAndFound.jsx';
+import Occurences from './pages/Occurences.jsx';
 
 function App() {
   return (
@@ -68,6 +69,7 @@ function App() {
           <Route path="work-permits" element={<WorkPermit role={"tenant"} />} />
           <Route path="gate-passes" element={<GatePasses role={"tenant"} />} />
           <Route path="lost-and-found" element={<LostAndFound role={"tenant"}/>} />
+          <Route path="occurences" element={<Occurences role={"tenant"} />} />
         </Route>
 
         <Route path="receptionist">
@@ -77,6 +79,7 @@ function App() {
           <Route path="gate-passes" element={<GatePasses role={"receptionist"} />} />
           <Route path="work-permits" element={<WorkPermit role={"receptionist"} />} />
           <Route path="lost-and-found" element={<LostAndFound role={"receptionist"}  />} />
+          <Route path="occurences" element={<Occurences role={"receptionist"}  />} />
         </Route>
       
         <Route path="*" element={<ErrorPage />} />

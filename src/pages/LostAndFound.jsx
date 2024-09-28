@@ -43,7 +43,7 @@ const LostAndFound = ({ role }) => {
                 { id: 13, title: 'Lost Book', desc: 'The Alchemist by Paulo Coelho', dateAdded: '2023-08-01', photo: 'https://www.repoapp.com/wp-content/uploads/2015/11/shms-lost-and-found.jpg' },
                 { id: 14, title: 'Lost Shoes', desc: 'Nike Air Max', dateAdded: '2023-07-25' },
                 { id: 15, title: 'Lost Jacket', desc: 'Blue denim jacket with several large patches and holes, bhai kisi ghareb ko de do', dateAdded: '2023-07-20' },
-                { id: 16, title: 'Lost Cap', desc: 'Black baseball cap', dateAdded: '2023-07-15',  },
+                { id: 16, title: 'Lost Cap', desc: 'Black baseball cap', dateAdded: '2023-07-15', },
                 { id: 17, title: 'Lost Gloves', desc: 'Leather gloves', dateAdded: '2023-07-10' },
                 { id: 18, title: 'Lost bunch of keys', desc: 'Brown leather belt', dateAdded: '2023-07-05', photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDMStsQ_jFWL5e9Bl5_ajExux4sj49_yBITQ&s' },
                 { id: 19, title: 'Lost Perfume', desc: 'Chanel No. 5', dateAdded: '2023-07-01' },
@@ -113,9 +113,9 @@ const LostAndFound = ({ role }) => {
     };
 
     const filteredItems = lostItems
-    .filter((item) => item.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    .sort((a, b) => (sortOrder === 'asc' ? new Date(a.dateAdded) - new Date(b.dateAdded) : new Date(b.dateAdded) - new Date(a.dateAdded)))
-    .slice(0, page * 10);
+        .filter((item) => item.title.toLowerCase().includes(searchQuery.toLowerCase()))
+        .sort((a, b) => (sortOrder === 'asc' ? new Date(a.dateAdded) - new Date(b.dateAdded) : new Date(b.dateAdded) - new Date(a.dateAdded)))
+        .slice(0, page * 10);
     /** card click, delete or complete marking for receptionist */
     const handleCardClick = (itemId) => {
         setExpandedCard(expandedCard === itemId ? null : itemId);
@@ -140,7 +140,8 @@ const LostAndFound = ({ role }) => {
     return (
         <Sidebar>
             {loading && <NSTPLoader />}
-
+            
+            {/** form to add new item (recp only) */}
             <dialog id="item_form" className="modal">
                 <div className="modal-box min-w-3xl max-w-3xl">
                     <h3 className="font-bold text-lg mb-3">Register New Item</h3>
@@ -189,7 +190,8 @@ const LostAndFound = ({ role }) => {
                     </div>
                 </div>
             </dialog>
-
+            
+            {/** confirmation modal for resolving/deleting a psot (recp only) */}
             <dialog id="confirmation-modal" className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg">Confirm {modalAction === 'resolve' ? 'Resolution' : 'Deletion'}</h3>
@@ -204,6 +206,7 @@ const LostAndFound = ({ role }) => {
                 </div>
             </dialog>
 
+            {/** main content */}
             <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && 'hidden'}`}>
                 {/* Header + add new item btn */}
                 <div className="flex flex-row items-center justify-between">
@@ -229,12 +232,12 @@ const LostAndFound = ({ role }) => {
                         <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                     </div>
                     <button
-  className="btn btn-outline mt-3 md:mt-0 md:ml-4"
-  onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
->
-  <ArrowsUpDownIcon className="h-5 w-5" />
-  Sort by Date ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
-</button>
+                        className="btn btn-outline mt-3 md:mt-0 md:ml-4"
+                        onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                    >
+                        <ArrowsUpDownIcon className="h-5 w-5" />
+                        Sort by Date ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
+                    </button>
                 </div>
 
                 {/* Lost Items Grid */}

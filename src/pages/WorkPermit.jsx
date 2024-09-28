@@ -32,7 +32,7 @@ const WorkPermit = ({ role }) => {
                     { id: "4", name: "Sohaib Ahmed", department: "HVAC", description: "Installing AC", ppe: "Mask, Gloves", date: "2024-12-23", issued: true },
                     { id: "5", name: "Ahmed Electrician", department: "Electrical", description: "Fixing lights", ppe: "Insulated Gloves", date: "2024-12-24", issued: false },
                 ]);
-            } else if (role === "receptionist") {
+            } else if (role === "receptionist" || role == "admin") {
                 setWorkPermits([
                     { id: "1", tenantName: "HexlerTech", name: "Musa Plumber", department: "Maintenance", description: "Fixing pipes", ppe: "Helmet, Gloves", date: "2024-12-20", issued: false },
                     { id: "2", tenantName: "HexlerTech", name: "Salman Builder", department: "Construction", description: "Building walls", ppe: "Helmet, Safety Shoes", date: "2024-12-21", issued: true },
@@ -277,7 +277,7 @@ const WorkPermit = ({ role }) => {
                                 <th onClick={() => handleSortChange("description")}>Description {sortField === "description" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
                                 <th onClick={() => handleSortChange("ppe")}>PPE {sortField === "ppe" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
                                 <th onClick={() => handleSortChange("issued")}>Status {sortField === "issued" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
-                                {role !== "receptionist" && <th>Actions</th>} {/* recep can only view */}
+                                {role !== "receptionist" && <th>Actions</th>} {/* recep can only view, no actions */}
                             </tr>
                         </thead>
                         <tbody>
@@ -298,7 +298,8 @@ const WorkPermit = ({ role }) => {
                                             {permit.issued ? <CheckIcon className="size-4 mr-2" /> : <ClockIcon className="size-4 mr-2" />}
                                             {permit.issued ? "Issued" : "Pending"}
                                         </td>
-                                        {role !== "receptionist" && <td>
+                                        {role !== "receptionist" && 
+                                        <td>
                                             <div className="flex gap-3">
                                                 {role === "admin" && !permit.issued && (
                                                     <button
