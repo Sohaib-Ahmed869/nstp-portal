@@ -30,6 +30,7 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const { login } = useContext(AuthContext);
 
   const sidebarElements = [
     {
@@ -105,20 +106,28 @@ const LoginPage = () => {
     setError("");
   };
 
+  const checkResponse = (response) => {
+    if (response.error) {
+      setError(response.error);
+      return false;
+    } else {
+      console.log("🚀 ~ checkResponse ~ response:", response );
+      return true;
+    }
+  }
+
   const submitLogin = async () => {
     try {
       const lowerCaseUsername = username.toLowerCase();
       setError("");
       setLoading(true);
       // Simulate API call
-
-      setTimeout(async () => {
-        setLoading(false);
         console.log(lowerCaseUsername, password, role);
         // Handle successful login here
         console.log("🚀 ~ setTimeout ~ role:", role);
 
         var response = {};
+        var isValid = false;
         if (role === "reception") {
           response = await AuthService.receptionistLogin(
             lowerCaseUsername,
@@ -126,6 +135,14 @@ const LoginPage = () => {
           );
         } else if (role === "admin") {
           response = await AuthService.adminLogin(lowerCaseUsername, password);
+          isValid = checkResponse(response);
+          if (isValid) {
+            login(response.data.role, response.data.towers);
+          } else {
+            return;
+          }
+
+
         } else if (role === "supervisor") {
           response = await AuthService.supervisorLogin(
             lowerCaseUsername,
@@ -135,14 +152,9 @@ const LoginPage = () => {
           response = await AuthService.tenantLogin(lowerCaseUsername, password);
         }
 
-        if (response.error) {
-          setError(response.error);
-        } else {
-          console.log(response.message);
-        }
-      }, 2000);
     } catch (error) {
       setError("Server Error");
+    } finally {
       setLoading(false);
     }
   };

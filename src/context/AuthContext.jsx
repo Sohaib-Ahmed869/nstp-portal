@@ -4,27 +4,27 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     const [role, setRole] = useState(localStorage.getItem('userRole') || '');
-    const [actions, setActions] = useState(JSON.parse(localStorage.getItem('userActions')) || []);
+    const [permissions, setPermissions] = useState(JSON.parse(localStorage.getItem('userActions')) || []);
 
     useEffect(() => {
         localStorage.setItem('userRole', role);
-        localStorage.setItem('userActions', JSON.stringify(actions));
-    }, [role, actions]);
+        localStorage.setItem('userActions', JSON.stringify(permissions));
+    }, [role, permissions]);
 
     const login = (role, actions = []) => {
         setRole(role);
-        setActions(actions);
+        setPermissions(actions);
     };
 
     const logout = () => {
         setRole('');
-        setActions([]);
+        setPermissions([]);
         localStorage.removeItem('userRole');
-        localStorage.removeItem('userActions');
+        localStorage.removeItem('userPermissions');
     };
 
     return (
-        <AuthContext.Provider value={{ role, actions, login, logout }}>
+        <AuthContext.Provider value={{ role, permissions, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

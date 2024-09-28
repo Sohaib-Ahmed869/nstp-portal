@@ -18,8 +18,9 @@ const handleResponse = async (response) => {
 const AdminService = {
   getTenants: async (towerId) => {
     try {
+      console.log("🚀 ~ getTenants ~ towerId", towerId);
       const response = await axios.get(
-        `${BASE_URL}/admin/tower/${towerId}/tenants`,
+        `${BASE_URL}/admin/towers/${towerId}/tenants`,
         {
           withCredentials: true,
         }
@@ -61,6 +62,20 @@ const AdminService = {
       return { error: error };
     }
   },
+
+  getEtagAllocations: async (towerId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/etag/allocations`,
+        {
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  }
 };
 
 export default AdminService;

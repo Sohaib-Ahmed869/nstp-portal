@@ -68,7 +68,8 @@ const Companies = () => {
     async function fetchData() {
       try {
         // API call here
-        const response = await AdminService.getTenants(tower);
+        console.log("🚀 ~ fetchData ~ tower:", tower)
+        const response = await AdminService.getTenants(tower.id);
         console.log("🚀 ~ fetchData ~ response:", response)
 
         if(response.error) {

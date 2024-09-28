@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { TowerContext } from '../../context/TowerContext';
+import { AuthContext } from '../../context/AuthContext';
 import Sidebar from '../../components/Sidebar'
 import ThemeControl from '../../components/ThemeControl'
 import { QuestionMarkCircleIcon, BellAlertIcon, IdentificationIcon, ArchiveBoxArrowDownIcon, ArrowPathRoundedSquareIcon, UsersIcon, PlusCircleIcon, UserGroupIcon, RocketLaunchIcon, BuildingOffice2Icon } from '@heroicons/react/24/outline'
@@ -21,6 +22,7 @@ const AdminHome = () => {
     resolved: 233,
     recieved: 542
   })
+  const { permissions } = useContext(AuthContext);
   const { tower, setTower } = useContext(TowerContext);
   const [towerOptions, setTowerOptions] = useState(["1","2","3","4"]) //tower options for the currently logged in admin
   const [companyTableData, setCompanyTableData] = useState([
@@ -41,11 +43,39 @@ const AdminHome = () => {
 
   // Simulate loading
   useEffect(() => {
-    setLoading(true)
-    //Api call here to fetch data and populate the above states,based on tower state
-    
-    
+    //api call here to update the dashboard data when tower change 
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }
+      , 1000)
+      console.log(permissions);
+  
   }, [tower])
+
+  useEffect(() => { 
+    async function fetchData() {
+      try {
+        setLoading(true);
+        // Extract towers from permissions and set tower options
+        const towers = permissions.map(permission => ({
+          id: permission.tower._id,
+          name: permission.tower.name
+        }));
+        setTowerOptions(towers);
+        setTower(towers[0]);
+
+        console.log("🚀 ~ fetchData ~ towers:", towers)
+        console.log(permissions);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [])
 
 
   return (
@@ -59,7 +89,7 @@ const AdminHome = () => {
         <p className="font-semibold text-white">Tower: </p>
         <select className="select select-bordered max-w-xs" value={tower} onChange={(e) => setTower(e.target.value)}>
           {towerOptions.map((tower, index) => (
-            <option key={index} value={tower}>{"NSTP " + tower}</option>
+            <option key={index} value={tower}>{tower.name}</option>
           ))}
         </select>
       </div>
