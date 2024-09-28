@@ -20,7 +20,9 @@ import {
   TicketIcon,
   PresentationChartLineIcon,
   IdentificationIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  ArchiveBoxIcon,
+  DocumentTextIcon
 } from "@heroicons/react/24/outline";
 import { SidebarItem } from "./SidebarItem";
 import { AuthContext } from '../context/AuthContext';
@@ -63,14 +65,14 @@ const Sidebar = ({ children }) => {
     { icon: <ChartBarIcon />, text: "Dashboard", url: `/${role}` },
     { icon: <UserGroupIcon />, text: "Employees", url: `/${role}/employees` },
     { icon: <CalendarDaysIcon />, text: "Bookings", url: `/${role}/bookings` },
-    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Evaluations", url: `/${role}/evaluations` },
+    { icon: <DocumentTextIcon />, text: "Evaluations", url: `/${role}/evaluations` },
     { icon: <TruckIcon />, text: "Parking", url: `/${role}/parking` },
-    //profile
-    //work permits
+    { icon: <PresentationChartLineIcon />, text: "Profile", url: `/${role}/profile` },
+    { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: `/${role}/work-permits` },
     { icon: <TicketIcon />, text: "Gate Passes", url: `/${role}/gate-passes` },
     { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: `/${role}/lost-and-found` },
     { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: `/${role}/complaints` },
-    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: `/${role}/occurences` },
+    { icon: <ArchiveBoxIcon />, text: "Occurences", url: `/${role}/occurences` },
 
   ] 
   : [];
