@@ -214,7 +214,7 @@ const [modalLoading, setModalLoading] = useState(false);
         .map((item) => (
           <div key={item.id} className="card bg-base-100 shadow-xl p-4">
             {role === 'receptionist' && item.company &&  <h2 className="card-title text-lg text-primary">{item.company}</h2>}
-            <h2 className="card-title  text-secondary my-2 ">{item.title}</h2>
+            <h2 className="card-title dark:text-primary text-secondary my-2 ">{item.title}</h2>
             <p>{item.desc}</p>
             <p className="text-sm text-gray-500">{item.date}</p>
           </div>
