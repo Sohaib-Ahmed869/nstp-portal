@@ -31,6 +31,20 @@ const AdminService = {
     }
   },
 
+  getTenant: async (towerId, tenantId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/tenants/${tenantId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
   addTenant: async (
     registration,
     contactInfo,
@@ -75,7 +89,7 @@ const AdminService = {
     } catch (error) {
       return { error: error };
     }
-  }
+  },
 };
 
 export default AdminService;

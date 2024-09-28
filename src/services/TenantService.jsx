@@ -69,6 +69,7 @@ const TenantService = {
       return { error: error };
     }
   },
+
 };
 
 export default TenantService;

@@ -17,6 +17,7 @@ import {
 import FloatingLabelInput from "../../components/FloatingLabelInput";
 import TenantService from "../../services/TenantService";
 import EditEmployeeProfileModal from "../../components/EditEmployeeProfileModal";
+import showToast from "../../util/toast";
 
 const Employees = () => {
   const dropdownRefs = useRef({});
@@ -269,13 +270,17 @@ const Employees = () => {
       console.log("🚀 ~ Employee response:", response);
       if (response.error) {
         console.error("Error adding employee:", response.error);
+        showToast(false, response.error.response.data.message);
         return;
       }
+      showToast(true);
       // setEmployeeTableData((prevData) => [...prevData, response.data]);
+      
+      document.getElementById("employee_form").close();
+      clearForm();
     });
-
-    // clearForm();
   };
+
   const requestCard = (employee_id) => {
     console.log("Requesting card for employee:", employee_id);
     setModalLoading(true);
