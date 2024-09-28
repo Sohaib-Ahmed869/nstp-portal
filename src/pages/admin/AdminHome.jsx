@@ -22,7 +22,7 @@ const AdminHome = () => {
     recieved: 542
   })
   const { tower, setTower } = useContext(TowerContext);
-  const [towerOptions, setTowerOptions] = useState([1,2,3,4]) //tower options for the currently logged in admin
+  const [towerOptions, setTowerOptions] = useState(["1","2","3","4"]) //tower options for the currently logged in admin
   const [companyTableData, setCompanyTableData] = useState([
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
@@ -43,11 +43,9 @@ const AdminHome = () => {
   useEffect(() => {
     setLoading(true)
     //Api call here to fetch data and populate the above states,based on tower state
-    setTimeout(() => {
-      setLoading(false)
-    }, 2000)
-  }
-    , [tower])
+    
+    
+  }, [tower])
 
 
   return (

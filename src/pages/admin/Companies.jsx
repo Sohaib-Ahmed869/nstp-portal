@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import Sidebar from '../../components/Sidebar'
 import NSTPLoader from '../../components/NSTPLoader';
 import { Link } from 'react-router-dom';
 import { MagnifyingGlassIcon, ChevronUpIcon, ChevronDownIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { EyeIcon } from '@heroicons/react/20/solid';
+import { AdminService } from '../../services';
+import { TowerContext } from '../../context/TowerContext';
 
 const COLUMNS = ['no', 'name', 'category', 'noEmployees', 'noInterns', 'workPasses', 'gatePasses']
 const COMPANY_CATEGORIES = ['Startup', 'Company', 'Hatch8'];
-
 
 const Companies = () => {
   const [companiesTableData, setCompaniesTableData] = useState([
@@ -41,6 +42,8 @@ const Companies = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10)
   const [loading, setLoading] = useState(true)
 
+  const { tower } = useContext(TowerContext);
+
   // Handle search change
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -62,13 +65,30 @@ const Companies = () => {
   };
 
   useEffect(() => {
-    //api call here
-    //setCompaniesTableData(data)
+    async function fetchData() {
+      try {
+        // API call here
+        const response = await AdminService.getTenants(tower);
+        console.log("🚀 ~ fetchData ~ response:", response)
 
-    setTimeout(() => {
-      setLoading(false)
-    }, 2000)
+        if(response.error) {
+          console.error("Error fetching tenants:", response.response);
+          return;
+        }
 
+
+        
+        
+        // Assuming response.data contains the data you need
+        // setCompaniesTableData(response.data);
+      } catch (error) {
+        console.error("Error fetching tenants:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
   }, []);
 
 

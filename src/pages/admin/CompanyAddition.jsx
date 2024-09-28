@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import Sidebar from '../../components/Sidebar'
-import { TrashIcon, UserPlusIcon } from '@heroicons/react/24/outline';
-import FloatingLabelInput from '../../components/FloatingLabelInput';
+import React, { useEffect, useState } from "react";
+import Sidebar from "../../components/Sidebar";
+import { TrashIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import FloatingLabelInput from "../../components/FloatingLabelInput";
+import { AdminService } from "../../services";
 
 const CATEGORIES =
   "AgriTech, AutoTech, DefTech, EdTech, EnergyTech, FinTech, HealthTech, Other - SmartTech";
@@ -291,26 +292,24 @@ const CompanyAddition = () => {
         formData.industrySector,
         formData.companyResourceComposition
       );
-      setTimeout(async () => {
-        //remove this codeblock out from timeout and add it AFTER the api call.
-        const response = await SignupService.tenantSignup(
-          formData.registration,
-          formData.contactInfo,
-          formData.stakeholders,
-          formData.companyProfile,
-          formData.industrySector,
-          formData.companyResourceComposition
-        );
-        console.log(response);
+      //remove this codeblock out from timeout and add it AFTER the api call.
+      const response = await AdminService.addTenant(
+        formData.registration,
+        formData.contactInfo,
+        formData.stakeholders,
+        formData.companyProfile,
+        formData.industrySector,
+        formData.companyResourceComposition
+      );
+      console.log(response);
 
-        setLoading(false);
-        setSubmitModalTitle("Form Submitted");
-        setSubmitModalText(
-          "Your form has been submitted successfully. We will get back to you soon."
-        );
-        document.getElementById("submit-modal").showModal();
-        //we can also reset the form data here or navigate to another page (not implemented yet)
-      }, 2000);
+      setLoading(false);
+      setSubmitModalTitle("Form Submitted");
+      setSubmitModalText(
+        "Your form has been submitted successfully. We will get back to you soon."
+      );
+      document.getElementById("submit-modal").showModal();
+      //we can also reset the form data here or navigate to another page (not implemented yet)
     } else {
       setSubmitModalTitle("Form not filled correctly");
       setSubmitModalText(
@@ -375,68 +374,121 @@ const CompanyAddition = () => {
             { name: "applicantLandline", type: "text" },
           ])}
 
-                    {/** Stakeholders Section */}
-                    <div className="col-span-2 max-sm:col-span-1">
-                        <div className="w-full flex justify-between items-center mt-5">
-                            <h1 className="font-bold text-xl">Stakeholders Profiles</h1>
-                            <button onClick={() => {
-                                setFormData(prevState => ({
-                                    ...prevState, stakeholders: [...prevState.stakeholders, {
-                                        name: '',
-                                        designation: '',
-                                        email: '',
-                                        presentAddress: '',
-                                        nationality: '',
-                                        dualNationality: '',
-                                        profile: '',
-                                        isNustAlumni: false,
-                                        isNustEmployee: false,
-                                    }]
-                                }))
-                                document.getElementById("stakeholder-" + (formData.stakeholders.length - 1)).scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
-                            }} className="btn btn-primary text-white">
-                                <UserPlusIcon className="size-5" />Add
-                            </button>
-                        </div>
-                        <p className="text-gray-400 text-sm max-md:mt-5">{"(Note: Details of all Director(s) / Stakeholder(s) are mandatory)"}</p>
-                        <hr className="my-4" ></hr>
-                    </div>
-                    {/** Map over stakeholders array and render fields for each */}
-                    {formData.stakeholders.map((stakeholder, index) => (
-                        <div key={index} className="col-span-2 max-sm:col-span-1 ring-1 rounded-lg p-5 ring-gray-400" id={"stakeholder-" + index}>
-                            <div className="flex justify-between items-center">
-                            <p className="text-primary font-bold mb-5"> {"Stakeholder " + (index + 1)}</p>
-                            <div>
-                            {index > 0 && <button onClick={() => {
-                                setFormData(prevState => {
-                                    const updatedArray = [...prevState.stakeholders];
-                                    updatedArray.splice(index, 1);
-                                    return {
-                                        ...prevState,
-                                        stakeholders: updatedArray
-                                    };
-                                })
-                            }} className="btn btn-primary text-white">
-                                <TrashIcon className="size-5" />
-                                Remove
-                            </button>}</div>
-                            
-                            </div>
-                            <div className="grid gap-5 max-sm:grid-cols-1 md:grid-cols-2">
-                                {renderFields('stakeholders', [
-                                    { name: 'name', type: 'text' },
-                                    { name: 'designation', type: 'text' },
-                                    { name: 'email', type: 'email' },
-                                    { name: 'presentAddress', type: 'text' },
-                                    { name: 'nationality', type: 'text' },
-                                    { name: 'dualNationality', type: 'text', labelName: 'If dual national, enter other nationality' },
-                                    { name: 'profile', type: 'text', labelName: 'Brief profile of individual/LinkedIn Profile', longText: true },
-                                    { name: 'isNustAlumni', type: 'boolean', labelName: 'The individual is a NUST Alumni' },
-                                    { name: 'isNustEmployee', type: 'boolean', labelName: 'The individual is a NUST Employee' }
-                                ], index)}
-                            </div>
-                        </div>
-                    ))}
+          {/** Stakeholders Section */}
+          <div className="col-span-2 max-sm:col-span-1">
+            <div className="w-full flex justify-between items-center mt-5">
+              <h1 className="font-bold text-xl">Stakeholders Profiles</h1>
+              <button
+                onClick={() => {
+                  setFormData((prevState) => ({
+                    ...prevState,
+                    stakeholders: [
+                      ...prevState.stakeholders,
+                      {
+                        name: "",
+                        designation: "",
+                        email: "",
+                        presentAddress: "",
+                        nationality: "",
+                        dualNationality: "",
+                        profile: "",
+                        isNustAlumni: false,
+                        isNustEmployee: false,
+                      },
+                    ],
+                  }));
+                  document
+                    .getElementById(
+                      "stakeholder-" + (formData.stakeholders.length - 1)
+                    )
+                    .scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                      inline: "nearest",
+                    });
+                }}
+                className="btn btn-primary text-white"
+              >
+                <UserPlusIcon className="size-5" />
+                Add
+              </button>
+            </div>
+            <p className="text-gray-400 text-sm max-md:mt-5">
+              {
+                "(Note: Details of all Director(s) / Stakeholder(s) are mandatory)"
+              }
+            </p>
+            <hr className="my-4"></hr>
+          </div>
+          {/** Map over stakeholders array and render fields for each */}
+          {formData.stakeholders.map((stakeholder, index) => (
+            <div
+              key={index}
+              className="col-span-2 max-sm:col-span-1 ring-1 rounded-lg p-5 ring-gray-400"
+              id={"stakeholder-" + index}
+            >
+              <div className="flex justify-between items-center">
+                <p className="text-primary font-bold mb-5">
+                  {" "}
+                  {"Stakeholder " + (index + 1)}
+                </p>
+                <div>
+                  {index > 0 && (
+                    <button
+                      onClick={() => {
+                        setFormData((prevState) => {
+                          const updatedArray = [...prevState.stakeholders];
+                          updatedArray.splice(index, 1);
+                          return {
+                            ...prevState,
+                            stakeholders: updatedArray,
+                          };
+                        });
+                      }}
+                      className="btn btn-primary text-white"
+                    >
+                      <TrashIcon className="size-5" />
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="grid gap-5 max-sm:grid-cols-1 md:grid-cols-2">
+                {renderFields(
+                  "stakeholders",
+                  [
+                    { name: "name", type: "text" },
+                    { name: "designation", type: "text" },
+                    { name: "email", type: "email" },
+                    { name: "presentAddress", type: "text" },
+                    { name: "nationality", type: "text" },
+                    {
+                      name: "dualNationality",
+                      type: "text",
+                      labelName: "If dual national, enter other nationality",
+                    },
+                    {
+                      name: "profile",
+                      type: "text",
+                      labelName: "Brief profile of individual/LinkedIn Profile",
+                      longText: true,
+                    },
+                    {
+                      name: "isNustAlumni",
+                      type: "boolean",
+                      labelName: "The individual is a NUST Alumni",
+                    },
+                    {
+                      name: "isNustEmployee",
+                      type: "boolean",
+                      labelName: "The individual is a NUST Employee",
+                    },
+                  ],
+                  index
+                )}
+              </div>
+            </div>
+          ))}
 
           {/** Company Profile Section */}
           <div className="col-span-2 max-sm:col-span-1 mt-5">

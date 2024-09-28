@@ -18,7 +18,7 @@ const AuthService = {
   receptionistLogin: async (username, password) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/auth/receptionist-login`,
+        `${BASE_URL}/auth/login/receptionist`,
         {
           username,
           password,
@@ -39,7 +39,7 @@ const AuthService = {
   adminLogin: async (username, password) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/auth/admin-login`,
+        `${BASE_URL}/auth/login/admin`,
         {
           username,
           password,
@@ -59,7 +59,7 @@ const AuthService = {
   supervisorLogin: async (username, password) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/auth/supervisor-login`,
+        `${BASE_URL}/auth/login/supervisor`,
         {
           username,
           password,
@@ -79,7 +79,7 @@ const AuthService = {
   tenantLogin: async (username, password) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/auth/tenant-login`,
+        `${BASE_URL}/auth/login/tenant`,
         {
           username,
           password,
