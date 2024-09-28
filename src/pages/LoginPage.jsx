@@ -13,9 +13,8 @@ const SidebarElement = ({ role, handleSidebarClick, icon, text }) => {
     >
       {icon}
       <p
-        className={`font-semibold ${
-          role == text ? "text-[#3d5e5a]" : "text-white"
-        } transition-colors ease-in-out`}
+        className={`font-semibold ${role == text ? "text-[#3d5e5a]" : "text-white"
+          } transition-colors ease-in-out`}
       >
         {text}
       </p>
@@ -185,9 +184,8 @@ const LoginPage = () => {
           />
           {error && <p className="text-red-500 mt-2">{error}</p>}
           <button
-            className={`btn btn-primary mt-5 w-96 max-sm:w-full text-white rounded-full ${
-              loading ? "cursor-not-allowed btn-disabled" : ""
-            }`}
+            className={`btn btn-primary mt-5 w-96 max-sm:w-full text-white rounded-full ${loading ? "cursor-not-allowed btn-disabled" : ""
+              }`}
             onClick={submitLogin}
           >
             {loading && <span className="loading loading-spinner"></span>}

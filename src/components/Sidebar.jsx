@@ -63,20 +63,18 @@ const Sidebar = ({ children }) => {
           ></div>
         )}
         <div
-          className={`${
-            isExpanded ? "w-64" : "w-20"
-          } h-screen bg-neutral transition-width duration-300 overflow-hidden fixed top-0 z-30`}
+          className={`${isExpanded ? "w-64" : "w-20"
+            } h-screen bg-neutral transition-width duration-300 overflow-hidden fixed top-0 z-30`}
         >
           <nav className="h-full">
             <ul
-              className={`menu h-full ${
-                isExpanded ? "w-64" : "w-20"
-              } bg-primary text-white min-h-full w-60 pt-4 pl-4 pb-4 pr-0 flex flex-col justify-between`}
+              className={`menu h-full ${isExpanded ? "w-64" : "w-20"
+                } bg-primary text-white min-h-full w-60 pt-4 pl-4 pb-4 pr-0 flex flex-col justify-between`}
             >
               <div>
-               
+
                 <img src={nstpPng} className="w-12 h-auto mb-3 " alt="NSTP Logo" />
-             
+
                 <li className="sidebar-item w-10" onClick={toggleDrawer}>
                   <a className="flex items-center">
                     <button className="p-0 ">

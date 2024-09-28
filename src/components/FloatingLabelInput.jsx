@@ -1,5 +1,5 @@
 // required by default
-const FloatingLabelInput = ({ name, type, id, label, value, onChange , required=true}) => {
+const FloatingLabelInput = ({ name, type, id, label, value, onChange, required = true }) => {
     return (
         <div className="relative z-0 w-full mb-5 group">
             {type === 'textarea' ? (

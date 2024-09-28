@@ -298,31 +298,31 @@ const WorkPermit = ({ role }) => {
                                             {permit.issued ? <CheckIcon className="size-4 mr-2" /> : <ClockIcon className="size-4 mr-2" />}
                                             {permit.issued ? "Issued" : "Pending"}
                                         </td>
-                                        {role !== "receptionist" && 
-                                        <td>
-                                            <div className="flex gap-3">
-                                                {role === "admin" && !permit.issued && (
+                                        {role !== "receptionist" &&
+                                            <td>
+                                                <div className="flex gap-3">
+                                                    {role === "admin" && !permit.issued && (
+                                                        <button
+                                                            className="btn btn-success btn-outline btn-sm"
+                                                            onClick={() => {
+                                                                setSelectedWorkPermitId(permit.id);
+                                                                document.getElementById('approve_work_permit_modal').showModal();
+                                                            }}
+                                                        >
+                                                            Approve
+                                                        </button>
+                                                    )}
                                                     <button
-                                                        className="btn btn-success btn-outline btn-sm"
+                                                        className="btn btn-error btn-outline btn-sm"
                                                         onClick={() => {
                                                             setSelectedWorkPermitId(permit.id);
-                                                            document.getElementById('approve_work_permit_modal').showModal();
+                                                            document.getElementById('cancel_work_permit_modal').showModal();
                                                         }}
                                                     >
-                                                        Approve
+                                                        Cancel
                                                     </button>
-                                                )}
-                                                <button
-                                                    className="btn btn-error btn-outline btn-sm"
-                                                    onClick={() => {
-                                                        setSelectedWorkPermitId(permit.id);
-                                                        document.getElementById('cancel_work_permit_modal').showModal();
-                                                    }}
-                                                >
-                                                    Cancel
-                                                </button>
-                                            </div>
-                                        </td>}
+                                                </div>
+                                            </td>}
                                     </tr>
                                 ))
                             )}

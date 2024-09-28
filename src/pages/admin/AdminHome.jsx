@@ -22,7 +22,7 @@ const AdminHome = () => {
     recieved: 542
   })
   const { tower, setTower } = useContext(TowerContext);
-  const [towerOptions, setTowerOptions] = useState([1,2,3,4]) //tower options for the currently logged in admin
+  const [towerOptions, setTowerOptions] = useState([1, 2, 3, 4]) //tower options for the currently logged in admin
   const [companyTableData, setCompanyTableData] = useState([
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
@@ -61,7 +61,7 @@ const AdminHome = () => {
         <p className="font-semibold text-white">Tower: </p>
         <select className="select select-bordered max-w-xs" value={tower} onChange={(e) => setTower(e.target.value)}>
           {towerOptions.map((tower, index) => (
-            <option key={index} value={tower}>{"NSTP "+tower}</option>
+            <option key={index} value={tower}>{"NSTP " + tower}</option>
           ))}
         </select>
       </div>

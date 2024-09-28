@@ -17,7 +17,7 @@ const CardRequests = () => {
     const [loadingOldRequests, setLoadingOldRequests] = useState(false);
     const { tower } = useContext(TowerContext);
 
-    
+
     const itemsPerPage = 10;
 
     const dummyData = [
@@ -134,7 +134,7 @@ const CardRequests = () => {
 
     return (
         <Sidebar>
-             <h1>Current Tower: {tower}</h1>
+            <h1>Current Tower: {tower}</h1>
             {/* Modal */}
             <dialog id="confirmation_modal" className="modal">
                 <div className="modal-box">

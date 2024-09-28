@@ -140,7 +140,7 @@ const LostAndFound = ({ role }) => {
     return (
         <Sidebar>
             {loading && <NSTPLoader />}
-            
+
             {/** form to add new item (recp only) */}
             <dialog id="item_form" className="modal">
                 <div className="modal-box min-w-3xl max-w-3xl">
@@ -190,7 +190,7 @@ const LostAndFound = ({ role }) => {
                     </div>
                 </div>
             </dialog>
-            
+
             {/** confirmation modal for resolving/deleting a psot (recp only) */}
             <dialog id="confirmation-modal" className="modal">
                 <div className="modal-box">

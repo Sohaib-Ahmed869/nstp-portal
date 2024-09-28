@@ -12,10 +12,10 @@ const Occurences = ({ role }) => {
     const [page, setPage] = useState(1);
     const [loadingMore, setLoadingMore] = useState(false);
     const [formData, setFormData] = useState({ company: '', title: '', desc: '' });
-const [errors, setErrors] = useState({});
-const [companyList, setCompanyList] = useState(['TechCorp', 'HealthPlus', 'EduLearn', 'FinServe', 'RetailMart']);
-const [modalLoading, setModalLoading] = useState(false);
-    
+    const [errors, setErrors] = useState({});
+    const [companyList, setCompanyList] = useState(['TechCorp', 'HealthPlus', 'EduLearn', 'FinServe', 'RetailMart']);
+    const [modalLoading, setModalLoading] = useState(false);
+
 
     useEffect(() => {
         // Simulate API call to initially fetch data
@@ -68,31 +68,31 @@ const [modalLoading, setModalLoading] = useState(false);
     const handleSubmit = (e) => {
         e.preventDefault();
         setModalLoading(true);
-    
+
         // Validate form data
         const newErrors = {};
         if (!formData.company) newErrors.company = 'Company is required';
         if (!formData.title) newErrors.title = 'Title is required';
         if (!formData.desc) newErrors.desc = 'Description is required';
-    
+
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             setModalLoading(false);
             return;
         }
-    
+
         const newOccurrence = {
             ...formData,
             date: new Date().toISOString(),
         };
-    
+
         console.log(newOccurrence);
-    
-        
+
+
         setErrors({});
         setTimeout(() => {
             // Reset form and close modal
-        setFormData({ company: '', title: '', desc: '' });
+            setFormData({ company: '', title: '', desc: '' });
             setModalLoading(false);
             setOccurences([newOccurrence, ...occurences]);
             document.getElementById('add-new-occurence').close();
@@ -107,64 +107,64 @@ const [modalLoading, setModalLoading] = useState(false);
         <Sidebar>
             {loading && <NSTPLoader />}
 
-           {/** form to add new item (recp only) */}
-<dialog id="add-new-occurence" className="modal">
-    <div className="modal-box min-w-3xl max-w-3xl">
-        <h3 className="font-bold text-lg mb-3">Register New Occurrence</h3>
+            {/** form to add new item (recp only) */}
+            <dialog id="add-new-occurence" className="modal">
+                <div className="modal-box min-w-3xl max-w-3xl">
+                    <h3 className="font-bold text-lg mb-3">Register New Occurrence</h3>
 
-        <form onSubmit={handleSubmit}>
-            <div className="form-control mb-4">
-                <label htmlFor="company" className="label">Company</label>
-                <select
-                    name="company"
-                    id="company"
-                    className="select select-bordered"
-                    value={formData.company}
-                    onChange={handleInputChange}
-                    required
-                >
-                    <option value="">Select a company</option>
-                    {companyList.map((company) => (
-                        <option key={company} value={company}>{company}</option>
-                    ))}
-                </select>
-                {errors.company && <span className="text-red-500">{errors.company}</span>}
-            </div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-control mb-4">
+                            <label htmlFor="company" className="label">Company</label>
+                            <select
+                                name="company"
+                                id="company"
+                                className="select select-bordered"
+                                value={formData.company}
+                                onChange={handleInputChange}
+                                required
+                            >
+                                <option value="">Select a company</option>
+                                {companyList.map((company) => (
+                                    <option key={company} value={company}>{company}</option>
+                                ))}
+                            </select>
+                            {errors.company && <span className="text-red-500">{errors.company}</span>}
+                        </div>
 
-            <FloatingLabelInput
-                name="title"
-                type="text"
-                id="title"
-                label="Title"
-                value={formData.title}
-                onChange={handleInputChange}
-                required={true}
-            />
-            {errors.title && <span className="text-red-500 col-span-2">{errors.title}</span>}
+                        <FloatingLabelInput
+                            name="title"
+                            type="text"
+                            id="title"
+                            label="Title"
+                            value={formData.title}
+                            onChange={handleInputChange}
+                            required={true}
+                        />
+                        {errors.title && <span className="text-red-500 col-span-2">{errors.title}</span>}
 
-            <FloatingLabelInput
-                name="desc"
-                type="textarea"
-                id="desc"
-                label="Description"
-                value={formData.desc}
-                onChange={handleInputChange}
-                required={true}
-            />
-            {errors.desc && <span className="text-red-500 col-span-2">{errors.desc}</span>}
-        </form>
+                        <FloatingLabelInput
+                            name="desc"
+                            type="textarea"
+                            id="desc"
+                            label="Description"
+                            value={formData.desc}
+                            onChange={handleInputChange}
+                            required={true}
+                        />
+                        {errors.desc && <span className="text-red-500 col-span-2">{errors.desc}</span>}
+                    </form>
 
-        <div className="modal-action">
-            <button className="btn" onClick={() => document.getElementById('item_form').close()}>Cancel</button>
-            <button
-                className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
-                onClick={handleSubmit}
-            >
-                {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}
-            </button>
-        </div>
-    </div>
-</dialog>
+                    <div className="modal-action">
+                        <button className="btn" onClick={() => document.getElementById('item_form').close()}>Cancel</button>
+                        <button
+                            className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
+                            onClick={handleSubmit}
+                        >
+                            {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}
+                        </button>
+                    </div>
+                </div>
+            </dialog>
 
             {/* Main Page Content */}
             <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"}`}>
@@ -183,45 +183,45 @@ const [modalLoading, setModalLoading] = useState(false);
                 </div>
                 <hr className="my-5 text-gray-200" />
 
-               <div className="flex md:flex-row flex-col justify-between">
-                 <div className="relative w-full md:max-w-xs mb-5">
-                     <input
-                         type="text"
-                         placeholder="Search..."
-                         value={searchQuery}
-                         onChange={handleSearch}
-                         className="input input-bordered w-full pl-10"
-                     />
-                     <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
-                 </div>
-                
-                 <button
-                     className="btn btn-outline mt-3 md:mt-0 md:ml-4"
-                     onClick={handleSortOrderChange}
-                 >
-                     <ArrowsUpDownIcon className="h-5 w-5" />
-                     Sort by Date ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
-                 </button>
-                
-               </div >
-               
+                <div className="flex md:flex-row flex-col justify-between">
+                    <div className="relative w-full md:max-w-xs mb-5">
+                        <input
+                            type="text"
+                            placeholder="Search..."
+                            value={searchQuery}
+                            onChange={handleSearch}
+                            className="input input-bordered w-full pl-10"
+                        />
+                        <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+                    </div>
 
-               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
-  {Array.from({ length: 4 }).map((_, colIndex) => (
-    <div key={colIndex} className="flex flex-col gap-6">
-      {filteredItems
-        .filter((_, itemIndex) => itemIndex % 4 === colIndex)
-        .map((item) => (
-          <div key={item.id} className="card bg-base-100 shadow-xl p-4">
-            {role === 'receptionist' && item.company &&  <h2 className="card-title text-lg text-primary">{item.company}</h2>}
-            <h2 className="card-title dark:text-primary text-secondary my-2 ">{item.title}</h2>
-            <p>{item.desc}</p>
-            <p className="text-sm text-gray-500">{item.date}</p>
-          </div>
-        ))}
-    </div>
-  ))}
-</div>
+                    <button
+                        className="btn btn-outline mt-3 md:mt-0 md:ml-4"
+                        onClick={handleSortOrderChange}
+                    >
+                        <ArrowsUpDownIcon className="h-5 w-5" />
+                        Sort by Date ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
+                    </button>
+
+                </div >
+
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+                    {Array.from({ length: 4 }).map((_, colIndex) => (
+                        <div key={colIndex} className="flex flex-col gap-6">
+                            {filteredItems
+                                .filter((_, itemIndex) => itemIndex % 4 === colIndex)
+                                .map((item) => (
+                                    <div key={item.id} className="card bg-base-100 shadow-xl p-4">
+                                        {role === 'receptionist' && item.company && <h2 className="card-title text-lg text-primary">{item.company}</h2>}
+                                        <h2 className="card-title dark:text-primary text-secondary my-2 ">{item.title}</h2>
+                                        <p>{item.desc}</p>
+                                        <p className="text-sm text-gray-500">{item.date}</p>
+                                    </div>
+                                ))}
+                        </div>
+                    ))}
+                </div>
 
                 {filteredItems.length < occurences.length && (
                     <div className="flex justify-center mt-6">

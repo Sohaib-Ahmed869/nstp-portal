@@ -60,7 +60,7 @@ const ComparativeChart = ({ title, comparisonData, link }) => {
         <span className="text-secondary font-semibold"> {percentages[1]}%</span>
       </div>
 
-      <hr className="mt-2"/>
+      <hr className="mt-2" />
 
       <div className="mt-2 text-lg font-semibold">
         Total: {isNaN(total) ? 0 : total}
