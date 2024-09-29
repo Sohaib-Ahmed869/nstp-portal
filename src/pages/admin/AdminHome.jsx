@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 import hatch8icon from '../../assets/hatch8.png'
 import NewsFeed from '../../components/NewsFeed'
 import NSTPLoader from '../../components/NSTPLoader'
+import AdminService from '../../services/AdminService'
 
 
 const AdminHome = () => {
@@ -46,12 +47,26 @@ const AdminHome = () => {
   useEffect(() => {
     //api call here to update the dashboard data when tower change 
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    async function fetchData() {
+      try {
+        const response = await AdminService.getDashboard(tower.id);
+        if (response.error) {
+          console.log("🚀 ~ fetchData ~ response", response);
+          console.log(response.error);
+          return;
+        }
+        const dashboard = response.data.dashboard;
+        console.log("🚀 ~ fetchData ~ dashboard", dashboard);
+
+
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      } 
     }
-      , 1000)
-      console.log(permissions);
-  
+    console.log(permissions);
+    fetchData();  
   }, [tower])
 
   useEffect(() => { 

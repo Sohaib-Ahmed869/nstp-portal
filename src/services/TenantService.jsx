@@ -36,12 +36,34 @@ const TenantService = {
     }
   },
 
+  updateEmployee: async (employeeId, empBody) => {
+    try {
+      console.log("🚀 ~ addEmployee ~ employee", empBody);
+      const response = await axios.put(
+        `${BASE_URL}/tenant/employee/update`,
+        {
+          employeeId,
+          empBody,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
   getEmployees: async () => {
     try {
       const response = await axios.get(`${BASE_URL}/tenant/employees`, {
         withCredentials: true,
       });
-      
+
       return await handleResponse(response);
     } catch (error) {
       return { error: error };
@@ -70,6 +92,46 @@ const TenantService = {
     }
   },
 
+  requestCard: async (employeeId) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/tenant/card/request`,
+        {
+          employeeId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  requestEtag: async (employeeId, plateNum) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/tenant/etag/request`,
+        {
+          employeeId,
+          plateNum,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
 };
 
 export default TenantService;
