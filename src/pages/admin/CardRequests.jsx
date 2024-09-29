@@ -42,6 +42,7 @@ const CardRequests = () => {
     
                     return {
                         id: item._id,
+                        employeeId: item.employee_id._id,
                         requestedOn: new Date(item.date_requested).toLocaleString(),
                         expiresOn: expiresOn,
                         companyName: item.employee_id.tenant_name,
@@ -78,25 +79,33 @@ const CardRequests = () => {
         setSortOrder(order);
     };
 
-    const handleApproveUnapprove = (request, action) => {
+    const handleApproveUnapprove = async (request, action) => {
         setModalLoading(true);
         console.log(`${action} request for`, request);
         //Api call here to approve/unapprove the request
-        // try {
-        //     console.log("🚀 ~ handleApproveUnapprove ~ request", request)
-        // } catch (error) {
-        //     console.error("Error approving/unapproving request", error);
-        // }
-
-        // document.getElementById('confirmation_modal').close();
-
-        // Simulate API call
-        setTimeout(() => {
+        try {
+            console.log("🚀 ~ handleApproveUnapprove ~ request", request);
+            const response = await AdminService.handleCardAllocationRequest(request.employeeId, action);
+            if (response.error) {
+                console.error("Error approving/unapproving request", response.error);
+                return;
+            }
+            console.log("🚀 ~ handleApproveUnapprove ~ response", response);           
+            setCardRequests((prevRequests) => prevRequests.filter((r) => r.id !== request.id));
+        } catch (error) {
+            console.error("Error approving/unapproving request", error);
+        } finally {
             setModalLoading(false);
             document.getElementById('confirmation_modal').close();
-            // Remove the request from the array (simulate state update)
-            setCardRequests((prevRequests) => prevRequests.filter((r) => r.id !== request.id));
-        }, 2000);
+        }
+
+        // Simulate API call
+        // setTimeout(() => {
+        //     setModalLoading(false);
+        //     document.getElementById('confirmation_modal').close();
+        //     // Remove the request from the array (simulate state update)
+        //     setCardRequests((prevRequests) => prevRequests.filter((r) => r.id !== request.id));
+        // }, 2000);
     };
 
     //state to allow u to fetch old requests only once, once it is true btn will be disabled
@@ -144,7 +153,6 @@ const CardRequests = () => {
                 return;
             }
 
-            setCardRequests((prevRequests) => [...prevRequests, ...oldRequests]);
             // sort by issued date, oldest first
             setSortField('issued');
             setSortOrder('asc');
@@ -181,6 +189,7 @@ const CardRequests = () => {
     });
 
     const paginatedData = sortedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+    
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
     return (
@@ -196,7 +205,10 @@ const CardRequests = () => {
                         <button className="btn mr-1" onClick={() => document.getElementById('confirmation_modal').close()}>Cancel</button>
                         <button
                             className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
-                            onClick={() => handleApproveUnapprove(currentRequest.request, currentRequest.action)}
+                            onClick={() => {
+                                console.log("🚀 ~ onClick ~ currentRequest", currentRequest);
+                                handleApproveUnapprove(currentRequest.request, currentRequest.action)
+                            }}
                         >
                             {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "OK"}
                         </button>

@@ -189,11 +189,14 @@ const AdminService = {
     }
   },
 
-  handleCardAllocationRequest: async (towerId, cardAllocationId, action) => {
+  handleCardAllocationRequest: async (employeeId, action) => {
     try {
+      console.log("🚀 ~ handleCardAllocationRequest ~ employeeId", employeeId);
       const response = await axios.post(
-        `${BASE_URL}/admin/towers/${towerId}/card/generate`,
-        {},
+        `${BASE_URL}/admin/card/generate`,
+        {
+          employeeId,
+        },
         {
           withCredentials: true,
         }
@@ -204,11 +207,13 @@ const AdminService = {
     }
   },
 
-  handleEtagAllocationRequest: async (towerId, etagAllocationId, action) => {
+  handleEtagAllocationRequest: async (employeeId, action) => {
     try {
       const response = await axios.post(
         `${BASE_URL}/admin/towers/${towerId}/etag/generate`,
-        {},
+        {
+          employeeId,
+        },
         {
           withCredentials: true,
         }
