@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
 import { CheckIcon, ClockIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon, PrinterIcon } from '@heroicons/react/24/outline';
+import AdminService from '../../services/AdminService';
+import { TowerContext } from '../../context/TowerContext';
+
 
 const EMPTY_FORM_DATA = {
     registration: {
@@ -76,6 +79,7 @@ const ApproveOffice = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [data, setData] = useState(initialData);
     const itemsPerPage = 10;
+    const { tower } = useContext(TowerContext);
 
     //for assigning new office modal
     const [wing, setWing] = useState('');
@@ -86,9 +90,23 @@ const ApproveOffice = () => {
     // Simulate API call to fetch data
     useEffect(() => {
         setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-        }, 1000);
+        async function fetchData() {
+            try{
+                const response = await AdminService.getOfficeRequests(tower.id);
+                console.log('🚀 ~ fetchData ~ response', response);
+                if ( response.error ) {
+                    console.error('Error fetching data:', response.error);
+                    return;
+                }
+                setData(response.data.tenants);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchData();
     }, []);
 
     const handleApproveUnapprove = (request, action) => {

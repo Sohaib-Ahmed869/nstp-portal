@@ -91,6 +91,42 @@ const AdminService = {
     }
   },
 
+  getOfficeRequests: async (towerId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/office/requests`,
+        {
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  assignOffice: async (towerId, tenantId, office) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/admin/office/assign`,
+        {
+          towerId,
+          tenantId,
+          office,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
   getCardAllocations: async (towerId, queryParam) => {
     console.log("🚀 ~ getCardAllocations: ~ queryParam:", queryParam);
     try {
