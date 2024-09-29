@@ -210,7 +210,7 @@ const AdminService = {
   handleEtagAllocationRequest: async (employeeId, action) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/admin/towers/${towerId}/etag/generate`,
+        `${BASE_URL}/admin/etag/generate`,
         {
           employeeId,
         },

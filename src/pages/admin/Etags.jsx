@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
-import { UserPlusIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon, EyeIcon, CheckIcon, ClockIcon, ArchiveBoxIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, CheckIcon, ClockIcon, ArchiveBoxIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import NSTPLoader from '../../components/NSTPLoader';
-import 'tailwindcss-animated'; // Ensure this is imported in your project
-import AdminService from '../../services/AdminService';
 import { TowerContext } from '../../context/TowerContext';
+import AdminService from '../../services/AdminService';
 
 const Etags = () => {
     const [loading, setLoading] = useState(true);
@@ -17,156 +16,56 @@ const Etags = () => {
     const [modalLoading, setModalLoading] = useState(false);
     const [loadingOldRequests, setLoadingOldRequests] = useState(false);
     const { tower } = useContext(TowerContext);
-
     const itemsPerPage = 10;
-
-    // const dummyData = [
-    //     {
-    //         id: 1,
-    //         requestedOn: '2023-10-01 10:00 AM',
-    //         expiresOn: '2023-12-01 10:00 AM',
-    //         companyName: 'Company A',
-    //         employeeName: 'John Doe',
-    //         employeeCnic: '12345-6789012-3',
-    //         carRegistrationNumber: 'ABC-123',
-    //         issued: false,
-    //         active: true,
-    //     },
-    //     {
-    //         id: 2,
-    //         requestedOn: '2023-09-15 09:30 AM',
-    //         expiresOn: '2023-11-15 09:30 AM',
-    //         companyName: 'Company B',
-    //         employeeName: 'Jane Smith',
-    //         employeeCnic: '98765-4321098-7',
-    //         carRegistrationNumber: 'XYZ-789',
-    //         issued: false,
-    //         active: true,
-    //     },
-    //     {
-    //         id: 3,
-    //         requestedOn: '2023-08-20 02:45 PM',
-    //         expiresOn: '2023-10-20 02:45 PM',
-    //         companyName: 'Company C',
-    //         employeeName: 'Alice Johnson',
-    //         employeeCnic: '11223-4455667-8',
-    //         carRegistrationNumber: 'LMN-456',
-    //         issued: false,
-    //         active: false,
-    //     },
-    //     {
-    //         id: 4,
-    //         requestedOn: '2023-07-10 11:15 AM',
-    //         expiresOn: '2023-09-10 11:15 AM',
-    //         companyName: 'Company D',
-    //         employeeName: 'Bob Brown',
-    //         employeeCnic: '22334-5566778-9',
-    //         carRegistrationNumber: 'DEF-321',
-    //         issued: false,
-    //         active: false,
-    //     },
-    //     {
-    //         id: 5,
-    //         requestedOn: '2023-06-05 08:00 AM',
-    //         expiresOn: '2023-08-05 08:00 AM',
-    //         companyName: 'Company E',
-    //         employeeName: 'Charlie Davis',
-    //         employeeCnic: '33445-6677889-0',
-    //         carRegistrationNumber: 'GHI-654',
-    //         issued: false,
-    //         active: true,
-    //     },
-    //     {
-    //         id: 6,
-    //         requestedOn: '2023-05-25 03:30 PM',
-    //         expiresOn: '2023-07-25 03:30 PM',
-    //         companyName: 'Company F',
-    //         employeeName: 'Diana Evans',
-    //         employeeCnic: '44556-7788990-1',
-    //         carRegistrationNumber: 'JKL-987',
-    //         issued: false,
-    //         active: true,
-    //     },
-    //     {
-    //         id: 7,
-    //         requestedOn: '2023-04-15 01:00 PM',
-    //         expiresOn: '2023-06-15 01:00 PM',
-    //         companyName: 'Company G',
-    //         employeeName: 'Edward Foster',
-    //         employeeCnic: '55667-8899001-2',
-    //         carRegistrationNumber: 'MNO-321',
-    //         issued: false,
-    //         active: false,
-    //     },
-    //     {
-    //         id: 8,
-    //         requestedOn: '2023-03-10 10:45 AM',
-    //         expiresOn: '2023-05-10 10:45 AM',
-    //         companyName: 'Company H',
-    //         employeeName: 'Fiona Green',
-    //         employeeCnic: '66778-9900112-3',
-    //         carRegistrationNumber: 'PQR-654',
-    //         issued: false,
-    //         active: false,
-    //     },
-    //     {
-    //         id: 9,
-    //         requestedOn: '2023-02-05 09:15 AM',
-    //         expiresOn: '2023-04-05 09:15 AM',
-    //         companyName: 'Company I',
-    //         employeeName: 'George Harris',
-    //         employeeCnic: '77889-0011223-4',
-    //         carRegistrationNumber: 'STU-987',
-    //         issued: false,
-    //         active: true,
-    //     },
-    //     {
-    //         id: 10,
-    //         requestedOn: '2023-01-01 08:30 AM',
-    //         expiresOn: '2023-03-01 08:30 AM',
-    //         companyName: 'Company J',
-    //         employeeName: 'Hannah White',
-    //         employeeCnic: '88990-1122334-5',
-    //         carRegistrationNumber: 'VWX-321',
-    //         issued: false,
-    //         active: true,
-    //     },
-    //     {
-    //         id: 11,
-    //         requestedOn: '2023-01-01 08:30 AM',
-    //         expiresOn: '2023-03-01 08:30 AM',
-    //         companyName: 'Company J',
-    //         employeeName: 'Hannah White',
-    //         employeeCnic: '88990-1122334-5',
-    //         carRegistrationNumber: 'VWX-321',
-    //         issued: false,
-    //         active: true,
-    //     },
-    // ];
-
     const [etagRequests, setEtagRequests] = useState([]);
+    const [fetchedOldRequests, setFetchedOldRequests] = useState(false);
 
     useEffect(() => {
-        //api call here to fetch etag reuests 
-        async function fetchPendingEtags() {
+        // API call to fetch E-tag requests
+        async function fetchEtagRequests() {
             try {
                 const response = await AdminService.getPendingEtagAllocations(tower.id);
-                console.log("🚀 ~ fetchPendingEtags ~ response", response);
+                console.log("🚀 ~ fetchEtagRequests ~ response", response);
                 if (response.error) {
-                    throw new Error(response.error.message);
+                    console.error("Error fetching E-tag requests", response.error);
+                    return;
                 }
-                // setEtagRequests(response.data);
-
+                console.log("🚀 ~ fetchEtagRequests ~ response.data.etagAllocations", response.data.etagAllocations);
+                
+                // Transform the data to match the expected structure
+                const transformedData = response.data.etagAllocations.map(item => {
+                    let expiresOn = " - ";
+                    if (item.is_issued) {
+                        const dateIssued = new Date(item.date_issued);
+                        const expiresDate = new Date(dateIssued.setMonth(dateIssued.getMonth() + 6));
+                        expiresOn = expiresDate.toLocaleString();
+                    }
+    
+                    return {
+                        id: item._id,
+                        employeeId: item.employee_id._id,
+                        requestedOn: new Date(item.date_requested).toLocaleString(),
+                        expiresOn: expiresOn,
+                        companyName: item.employee_id.tenant_name,
+                        employeeName: item.employee_id.name,
+                        employeeCnic: item.employee_id.cnic,
+                        issued: item.is_issued,
+                        active: item.is_requested && !item.is_returned,
+                        carRegistrationNumber: item.vehicle_number
+                    };
+                });
+    
+                setEtagRequests(transformedData);
+    
             } catch (error) {
-                console.log(error);
+                console.error("Error fetching E-tag requests", error);
             } finally {
                 setLoading(false);
             }
         }
         
-        fetchPendingEtags();
-        setEtagRequests(dummyData);
-    }, []);
+        fetchEtagRequests();
+    }, [tower.id]);
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
@@ -182,80 +81,77 @@ const Etags = () => {
         setSortOrder(order);
     };
 
-
-    const handleApproveUnapprove = (request, action) => {
+    const handleApproveUnapprove = async (request, action) => {
         setModalLoading(true);
         console.log(`${action} request for`, request);
-
-        // Add slide-out class to the row
-        const rowElement = document.getElementById(`request-row-${request.id}`);
-        rowElement.classList.add('animate-slide-out');
-
-        // Simulate API call
-        setTimeout(() => {
+        // API call to approve/unapprove the request
+        try {
+            console.log("🚀 ~ handleApproveUnapprove ~ request", request);
+            const response = await AdminService.handleEtagAllocationRequest(request.employeeId, action);
+            if (response.error) {
+                console.error("Error approving/unapproving request", response.error);
+                return;
+            }
+            console.log("🚀 ~ handleApproveUnapprove ~ response", response);           
+            setEtagRequests((prevRequests) => prevRequests.filter((r) => r.id !== request.id));
+        } catch (error) {
+            console.error("Error approving/unapproving request", error);
+        } finally {
             setModalLoading(false);
             document.getElementById('confirmation_modal').close();
-            // Remove the request from the array (simulate state update)
-            setEtagRequests((prevRequests) => prevRequests.filter((r) => r.id !== request.id));
-        }, 2000);
+        }
     };
 
+    const fetchOldRequests = () => {
+        async function fetchOldRequests() {
+            setLoadingOldRequests(true);
+            const oldRequests = [];
+            try {
+                const response = await AdminService.getIssuedEtagAllocations(tower.id);
+                if (response.error) {
+                    console.error("Error fetching old requests", response.error);
+                    return;
+                }
+                console.log("🚀 ~ fetchOldRequests ~ response.data.etagAllocations", response.data.etagAllocations);
+                setFetchedOldRequests(true);
+                // Transform the data to match the expected structure
+                const transformedData = response.data.etagAllocations.map(item => {
+                    let expiresOn = " - ";
+                    if (item.is_issued) {
+                        const dateIssued = new Date(item.date_issued);
+                        const expiresDate = new Date(dateIssued.setMonth(dateIssued.getMonth() + 6));
+                        expiresOn = expiresDate.toLocaleString();
+                    }
+    
+                    return {
+                        id: item._id,
+                        employeeId: item.employee_id._id,
+                        requestedOn: new Date(item.date_requested).toLocaleString(),
+                        expiresOn: expiresOn,
+                        companyName: item.employee_id.tenant_name,
+                        employeeName: item.employee_id.name,
+                        employeeCnic: item.employee_id.cnic,
+                        issued: item.is_issued,
+                        active: item.is_requested && !item.is_returned,
+                        carRegistrationNumber: item.vehicle_number
+                    };
+                });
 
+                oldRequests.push(...transformedData);
+                setEtagRequests((prevRequests) => [...prevRequests, ...oldRequests]);
 
-    const fetchOldRequests = async () => {
-        setLoadingOldRequests(true);
-        try{
-
-            const response = await AdminService.getIssuedEtagAllocations(tower.id);
-            // console.log("🚀 ~ fetchOldRequests ~ response", response)
-            if (response.error) {
-                console.log(response.error.message);
+            } catch (error) {
+                console.error("Error fetching old requests", error);
+                return;
             }
-            
-            console.log("🚀 ~ fetchOldRequests ~ response", response.data.etagAllocations);
-            // setEtagRequests(response.data.etagAllocations);
 
-        } catch (error) {
-            console.log(error);
-        } finally {
+            // Sort by issued date, oldest first
+            setSortField('issued');
+            setSortOrder('asc');
             setLoadingOldRequests(false);
         }
 
-
-    
-
-        // setTimeout(() => {
-        //     const oldRequests = [
-        //         {
-        //             id: 12,
-        //             requestedOn: '2022-12-01 10:00 AM',
-        //             expiresOn: '2023-02-01 10:00 AM',
-        //             companyName: 'Company K',
-        //             employeeName: 'Ivy Blue',
-        //             employeeCnic: '99887-6655443-2',
-        //             carRegistrationNumber: 'QWE-123',
-        //             issued: true,
-        //             active: false,
-        //         },
-        //         {
-        //             id: 13,
-        //             requestedOn: '2022-11-15 09:30 AM',
-        //             expiresOn: '2023-01-15 09:30 AM',
-        //             companyName: 'Company L',
-        //             employeeName: 'Jack Black',
-        //             employeeCnic: '77665-4433221-0',
-        //             carRegistrationNumber: 'RTY-456',
-        //             issued: true,
-        //             active: false,
-        //         },
-        //         // Add more old requests here
-        //     ];
-        //     setEtagRequests((prevRequests) => [...prevRequests, ...oldRequests]);
-        //     // sort by issued date, oldest first
-        //     setSortField('issued');
-        //     setSortOrder('asc');
-        //     setLoadingOldRequests(false);
-        // }, 2000);
+        fetchOldRequests();
     };
 
     const filteredData = etagRequests.filter((request) => {
@@ -263,8 +159,7 @@ const Etags = () => {
             (filter === 'All' || (filter === 'Pending' && !request.issued) || (filter === 'Issued' && request.issued)) &&
             (request.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 request.employeeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                request.employeeCnic.includes(searchQuery) ||
-                request.carRegistrationNumber.toLowerCase().includes(searchQuery.toLowerCase()))
+                request.employeeCnic.includes(searchQuery))
         );
     });
 
@@ -397,7 +292,7 @@ const Etags = () => {
                                                     >
                                                         Approve
                                                     </button>
-                                                    <button
+                                                    {/* <button
                                                         className="btn btn-sm btn-error btn-outline"
                                                         onClick={() => {
                                                             setCurrentRequest({ request, action: 'unapprove' });
@@ -405,7 +300,7 @@ const Etags = () => {
                                                         }}
                                                     >
                                                         Unapprove
-                                                    </button>
+                                                    </button> */}
                                                 </>
                                             )}
                                         </td>

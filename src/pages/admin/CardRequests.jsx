@@ -135,6 +135,7 @@ const CardRequests = () => {
     
                     return {
                         id: item._id,
+                        employeeId: item.employee_id._id,
                         requestedOn: new Date(item.date_requested).toLocaleString(),
                         expiresOn: expiresOn,
                         companyName: item.employee_id.tenant_name,
