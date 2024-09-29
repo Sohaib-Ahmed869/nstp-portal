@@ -488,7 +488,7 @@ const Company = ({ role }) => {
               <div className=" flex  items-center gap-1  p-1 rounded-lg rounded-tl-none rounded-bl-none  px-3 text-primary font-bold border border-primary border-l-0 max-md:border-r-0 md:"> <PhoneIcon className="size-4" /> {companyData.contactPhone} </div>
             </div>
             <div className="flex gap-3">
-              <p className="text-base text-secondary ">Rental Space: {companyData.rentalSpaceSqft} </p>
+              <p className="text-base text-secondary">Rental Space: {companyData.rentalSpaceSqft} </p>
               <p className="text-base text-secondary">Headquarters: {companyData.companyHeadquarters} </p>
 
             </div>
