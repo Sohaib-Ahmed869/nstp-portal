@@ -102,6 +102,54 @@ const AdminService = {
     }
   },
 
+  getCardAllocations: async (towerId, queryParam) => {
+    console.log("🚀 ~ getCardAllocations: ~ queryParam:", queryParam)
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/card/allocations?${queryParam}=true`,
+        {
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  getPendingCardAllocations: async (towerId) => {
+    try {
+      console.log("🚀 ~ getPendingCardAllocations ~ towerId", towerId);
+      return AdminService.getCardAllocations(towerId, "is_requested");
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  getIssuedCardAllocations: async (towerId) => {
+    try {
+      return AdminService.getCardAllocations(towerId, "is_issued");
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  handleCardAllocationRequest: async (towerId, cardAllocationId, action) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/admin/towers/${towerId}/card/generate`,
+        {
+          
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
   
 };
 
