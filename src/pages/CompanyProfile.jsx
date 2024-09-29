@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Sidebar from '../components/Sidebar';
 import { useParams } from 'react-router-dom';
-import { UserGroupIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
 import sampleCompanyLogo from '../assets/samplecompanylogo.png'
 import ReactApexChart from 'react-apexcharts';
 import { getPieChartOptions } from '../util/charts';
@@ -10,6 +10,9 @@ import NSTPLoader from '../components/NSTPLoader';
 import EmployeeProfileModal from '../components/EmployeeProfileModal';
 import FloatingLabelInput from '../components/FloatingLabelInput';
 import showToast from '../util/toast';
+import AdminService from '../services/AdminService';
+import { TowerContext } from '../context/TowerContext'
+
 
 /**
 |--------------------------------------------------
@@ -22,6 +25,7 @@ const Company = ({ role }) => {
   const { companyId } = useParams();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const { tower } = useContext(TowerContext);
   const terminateEmployee = (employeeId) => {
     // API CALL to terminate
     console.log(`Terminating employee with ID: ${employeeId}`);
@@ -188,18 +192,81 @@ const Company = ({ role }) => {
       [id]: !prev[id],
     }));
   };
-
   useEffect(() => {
-    // API call here, Fetch company data using the companyId
-    //simulate loading
-    console.log(companyData)
-
-    setTimeout(() => {
-      setLoading(false);
-
-    }, 2000);
-
-  }, [companyId]);
+    const fetchCompanyData = async () => {
+      try {
+        if (companyId) {
+          const response = await AdminService.getTenant(tower.id, companyId);
+          if (!response.error) {
+            const fetchedData = response.data.tenant;
+  
+            // Calculate contract end date (one month after joining date)
+            const contractStartDate = new Date(fetchedData.dateJoining);
+            const contractEndDate = new Date(contractStartDate);
+            contractEndDate.setMonth(contractEndDate.getMonth() + 1); //PLACEHOLDER
+  
+            // Calculate contract duration and elapsed time
+            const totalContractDuration = contractEndDate - contractStartDate;
+            const elapsedTime = new Date() - contractStartDate;
+            const contractDurationPercentage = Math.min(
+              Math.floor((elapsedTime / totalContractDuration) * 100),
+              100
+            );
+  
+            // Format dates
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            const formattedJoiningDate = contractStartDate.toLocaleDateString('en-GB', options);
+            const formattedContractStartDate = contractStartDate.toLocaleDateString('en-GB', options);
+            const formattedContractEndDate = contractEndDate.toLocaleDateString('en-GB', options);
+  
+            // Map the fetched data to the existing state structure
+            const consolidatedData = {
+              name: fetchedData.registration.organizationName,
+              type: fetchedData.registration.category,
+              category: fetchedData.industrySector.category,
+              rentalSpaceSqft: fetchedData.industrySector.rentalSpaceSqFt + " sq ft",
+              companyHeadquarters: fetchedData.companyProfile.companyHeadquarters,
+              contactPerson: fetchedData.contactInfo.applicantName,
+              contactEmail: fetchedData.contactInfo.applicantEmail,
+              contactPhone: fetchedData.contactInfo.applicantPhone,
+              joiningDate: formattedJoiningDate,
+              contractStartDate: formattedContractStartDate,
+              offices: fetchedData.offices,
+              companyResourceComposition: fetchedData.companyResourceComposition,
+              contractEndDate: formattedContractEndDate,
+              totalEmployees: fetchedData.employees,
+              activeEmployees: fetchedData.activeEmployees,
+              cardsNotIssued: fetchedData.cardsNotIssued,
+              cardsIssued: fetchedData.cardsIssued,
+              interns: {
+                nustian: fetchedData.nustianInterns,
+                nonNustian: fetchedData.nonNustianInterns,
+                total: fetchedData.nustianInterns + fetchedData.nonNustianInterns,
+              },
+              gatePasses: fetchedData.gatepasses,
+              workPermits: fetchedData.workpermits,
+              eTags: fetchedData.etags,
+              violations: fetchedData.violations,
+              contractDuration: contractDurationPercentage,
+              employees: [], //Placeholder
+            };
+  
+            setCompanyData(consolidatedData);
+          } else {
+            showToast(false, response.error);
+            console.log("Error fetching company data:", response.error);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching company data:", error);
+        showToast(false, "An error occurred while fetching company data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchCompanyData();
+  }, [companyId, tower.id]);
 
   const handleEndTenure = () => {
     setModalLoading(true);
@@ -411,10 +478,21 @@ const Company = ({ role }) => {
 
           <div className="">
             <h1 className="text-4xl font-semibold text-primary">{companyData.name}</h1>
-            <p className="text-base text-secondary mt-2">{companyData.description}</p>
             <div className='badge badge-secondary mt-2 mb-1'>{companyData.type}</div>
             <div className='badge badge-secondary mt-2 mb-1 ml-2'>{companyData.category}</div>
-            <div className="flex flex-row gap-7 mt-3">
+            {/* <p className="text-base text-secondary mt-2">{companyData.description}</p> */}
+            
+            <div className="flex flex-col md:flex-row gap-0 my-2">
+              <div className=" flex  items-center gap-1 bg-secondary p-1 rounded-lg rounded-tr-none rounded-br-none px-3 text-base-100"> <UserIcon className="size-4" /> {companyData.contactPerson} </div>
+              <div className=" flex  items-center gap-1  p-1 border border-primary border-r-0 border-l-0 px-3 text-primary font-bold"> <EnvelopeIcon className="size-4" /> {companyData.contactEmail} </div>
+              <div className=" flex  items-center gap-1  p-1 rounded-lg rounded-tl-none rounded-bl-none  px-3 text-primary font-bold border border-primary border-l-0 max-md:border-r-0 md:"> <PhoneIcon className="size-4" /> {companyData.contactPhone} </div>
+            </div>
+           <div className="flex gap-3">
+             <p className="text-base text-secondary ">Rental Space: {companyData.rentalSpaceSqft} </p>
+             <p className="text-base text-secondary">Headquarters: {companyData.companyHeadquarters} </p>
+            
+           </div>
+            <div className="flex flex-row gap-7 mt-2">
               <div className="flex">
                 <CalendarIcon className="h-6 w-6 text-secondary" />
                 <span className="text-secondary ml-2 font-semibold">{"Joined on " + companyData.joiningDate}</span>
@@ -437,7 +515,7 @@ const Company = ({ role }) => {
           />
 
           {/* Company Stats grid */}
-          <div className="card p-5 grid divide-y divide-x divide-gray-200 grid-cols-1 md:grid-cols-1 lg:grid-cols-3">
+          <div className="card p-5 grid divide-y divide-x divide-gray-200 grid-cols-1 md:grid-cols-1 lg:grid-cols-2">
 
             <div className="stat">
               <div className="stat-figure text-secondary">
@@ -450,30 +528,12 @@ const Company = ({ role }) => {
 
             <div className="stat">
               <div className="stat-figure text-secondary">
-                <TruckIcon className="inline-block h-8 w-8" />
-              </div>
-              <div className="stat-title">Vehicles</div>
-              <div className="stat-value">{companyData.vehiclesRegistered}</div>
-              <div className="stat-desc">Registered</div>
-            </div>
-
-            <div className="stat">
-              <div className="stat-figure text-secondary">
                 <BuildingOfficeIcon className="inline-block h-8 w-8" />
               </div>
               <div className="stat-title">Gate Passes</div>
               <div className="stat-value">{companyData.gatePasses}</div>
               <div className="stat-desc">Issued</div>
             </div>
-
-            <div className="stat">
-              <div className="stat-figure text-secondary">
-                <BanknotesIcon className="inline-block h-8 w-8" />
-              </div>
-              <div className="stat-title">Gate Entries</div>
-              <div className="stat-value">{companyData.gateEntries}</div>
-            </div>
-
 
             <div className="stat">
               <div className="stat-figure text-secondary">
@@ -513,7 +573,7 @@ const Company = ({ role }) => {
           </div>
 
           {/* Contract duration stats and radial progress */}
-          <div className="mt-2 card p-5 flex flex-row justify-between items-center">
+          <div className="mt-2 card p-5 flex flex-col lg:flex-row lg:justify-between lg:items-center">
             <div>
               <span className="font-bold text-4xl flex flex-row items-center gap-2">
                 <CalendarDateRangeIcon className="size-7" /> {companyData.contractDuration + "%"}
@@ -523,58 +583,55 @@ const Company = ({ role }) => {
               <span className="">Contract end: {companyData.contractEndDate}</span>
             </div>
             <div>
-              <div className="radial-progress bg-neutral text-primary" style={{ "--value": `${companyData.contractDuration}`, "--size": "7rem", "--thickness": "13px" }} role="progressbar">
+              <div className="radial-progress bg-neutral mt-10 lg:mt-0 text-primary" style={{ "--value": `${companyData.contractDuration}`, "--size": "7rem", "--thickness": "13px" }} role="progressbar">
                 {companyData.contractDuration}%
               </div>
             </div>
           </div>
 
 
-          {/* No of jobs/internships stat */}
-          <div className=" mt-2 card p-5 ">
-            <div className="stat border-b">
-              <div className="stat-figure text-secondary">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  className="inline-block h-8 w-8 stroke-current">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                </svg>
-              </div>
-              <div className="stat-title">Jobs & Internships</div>
-              <div className="stat-value text-secondary">{companyData.jobsInternships}</div>
-              <div className="stat-desc">↗︎ Creating opportunities</div>
-            </div>
-            <div className="stat">
-              <div className="stat-figure text-secondary">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  className="inline-block h-8 w-8 stroke-current">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
-                </svg>
-              </div>
-              <div className="stat-title">Meeting rooms</div>
-              <div className="stat-value">{companyData.meetingRoomUsage}</div>
-              <div className="stat-desc">↗︎ Hours utilized </div>
-            </div>
-          </div>
+          {/* Company Resource Composition */}
+<div className="mt-2 card p-5">
+  <h2 className="text-xl font-bold mb-4">Company Resource Composition</h2>
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div>
+      <h3 className="text-lg font-semibold">Management</h3>
+      <p>{companyData.companyResourceComposition.management}%</p>
+    </div>
+    <div>
+      <h3 className="text-lg font-semibold">Engineering</h3>
+      <p>{companyData.companyResourceComposition.engineering}%</p>
+    </div>
+    <div>
+      <h3 className="text-lg font-semibold">Marketing and Sales</h3>
+      <p>{companyData.companyResourceComposition.marketingAndSales}%</p>
+    </div>
+    <div>
+      <h3 className="text-lg font-semibold">Remaining Predominant Area</h3>
+      <p>{companyData.companyResourceComposition.remainingPredominantArea}</p>
+    </div>
+    <div>
+      <h3 className="text-lg font-semibold">Areas of Research</h3>
+      <ul className="list-disc list-inside">
+        {companyData.companyResourceComposition.areasOfResearch.split(';').map((area, index) => (
+          <li key={index}>{area}</li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <h3 className="text-lg font-semibold">NUST School to Collaborate</h3>
+      <p>{companyData.companyResourceComposition.nustSchoolToCollab}</p>
+    </div>
+  </div>
+</div>
         </div>
 
         {/* Employees list */}
         <div>
           <h1 className="text-2xl font-semibold mt-5">Employees</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
+            {companyData.employees.length === 0 && <div className="text-secondary">No employees found</div>
+            }
             {companyData.employees.map((employee) => (
               <div key={employee._id} className="relative card p-5 flex flex-col gap-5 items-start group">
                 <div className="flex gap-2">
