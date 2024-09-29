@@ -199,12 +199,12 @@ const Company = ({ role }) => {
           const response = await AdminService.getTenant(tower.id, companyId);
           if (!response.error) {
             const fetchedData = response.data.tenant;
-  
+
             // Calculate contract end date (one month after joining date)
             const contractStartDate = new Date(fetchedData.dateJoining);
             const contractEndDate = new Date(contractStartDate);
             contractEndDate.setMonth(contractEndDate.getMonth() + 1); //PLACEHOLDER
-  
+
             // Calculate contract duration and elapsed time
             const totalContractDuration = contractEndDate - contractStartDate;
             const elapsedTime = new Date() - contractStartDate;
@@ -212,13 +212,13 @@ const Company = ({ role }) => {
               Math.floor((elapsedTime / totalContractDuration) * 100),
               100
             );
-  
+
             // Format dates
             const options = { year: 'numeric', month: 'short', day: 'numeric' };
             const formattedJoiningDate = contractStartDate.toLocaleDateString('en-GB', options);
             const formattedContractStartDate = contractStartDate.toLocaleDateString('en-GB', options);
             const formattedContractEndDate = contractEndDate.toLocaleDateString('en-GB', options);
-  
+
             // Map the fetched data to the existing state structure
             const consolidatedData = {
               name: fetchedData.registration.organizationName,
@@ -250,7 +250,7 @@ const Company = ({ role }) => {
               contractDuration: contractDurationPercentage,
               employees: [], //Placeholder
             };
-  
+
             setCompanyData(consolidatedData);
           } else {
             showToast(false, response.error);
@@ -264,7 +264,7 @@ const Company = ({ role }) => {
         setLoading(false);
       }
     };
-  
+
     fetchCompanyData();
   }, [companyId, tower.id]);
 
@@ -481,17 +481,17 @@ const Company = ({ role }) => {
             <div className='badge badge-secondary mt-2 mb-1'>{companyData.type}</div>
             <div className='badge badge-secondary mt-2 mb-1 ml-2'>{companyData.category}</div>
             {/* <p className="text-base text-secondary mt-2">{companyData.description}</p> */}
-            
+
             <div className="flex flex-col md:flex-row gap-0 my-2">
               <div className=" flex  items-center gap-1 bg-secondary p-1 rounded-lg rounded-tr-none rounded-br-none px-3 text-base-100"> <UserIcon className="size-4" /> {companyData.contactPerson} </div>
               <div className=" flex  items-center gap-1  p-1 border border-primary border-r-0 border-l-0 px-3 text-primary font-bold"> <EnvelopeIcon className="size-4" /> {companyData.contactEmail} </div>
               <div className=" flex  items-center gap-1  p-1 rounded-lg rounded-tl-none rounded-bl-none  px-3 text-primary font-bold border border-primary border-l-0 max-md:border-r-0 md:"> <PhoneIcon className="size-4" /> {companyData.contactPhone} </div>
             </div>
-           <div className="flex gap-3">
-             <p className="text-base text-secondary ">Rental Space: {companyData.rentalSpaceSqft} </p>
-             <p className="text-base text-secondary">Headquarters: {companyData.companyHeadquarters} </p>
-            
-           </div>
+            <div className="flex gap-3">
+              <p className="text-base text-secondary ">Rental Space: {companyData.rentalSpaceSqft} </p>
+              <p className="text-base text-secondary">Headquarters: {companyData.companyHeadquarters} </p>
+
+            </div>
             <div className="flex flex-row gap-7 mt-2">
               <div className="flex">
                 <CalendarIcon className="h-6 w-6 text-secondary" />
@@ -591,39 +591,39 @@ const Company = ({ role }) => {
 
 
           {/* Company Resource Composition */}
-<div className="mt-2 card p-5">
-  <h2 className="text-xl font-bold mb-4">Company Resource Composition</h2>
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-    <div>
-      <h3 className="text-lg font-semibold">Management</h3>
-      <p>{companyData.companyResourceComposition.management}%</p>
-    </div>
-    <div>
-      <h3 className="text-lg font-semibold">Engineering</h3>
-      <p>{companyData.companyResourceComposition.engineering}%</p>
-    </div>
-    <div>
-      <h3 className="text-lg font-semibold">Marketing and Sales</h3>
-      <p>{companyData.companyResourceComposition.marketingAndSales}%</p>
-    </div>
-    <div>
-      <h3 className="text-lg font-semibold">Remaining Predominant Area</h3>
-      <p>{companyData.companyResourceComposition.remainingPredominantArea}</p>
-    </div>
-    <div>
-      <h3 className="text-lg font-semibold">Areas of Research</h3>
-      <ul className="list-disc list-inside">
-        {companyData.companyResourceComposition.areasOfResearch.split(';').map((area, index) => (
-          <li key={index}>{area}</li>
-        ))}
-      </ul>
-    </div>
-    <div>
-      <h3 className="text-lg font-semibold">NUST School to Collaborate</h3>
-      <p>{companyData.companyResourceComposition.nustSchoolToCollab}</p>
-    </div>
-  </div>
-</div>
+          <div className="mt-2 card p-5">
+            <h2 className="text-xl font-bold mb-4">Company Resource Composition</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div>
+                <h3 className="text-lg font-semibold">Management</h3>
+                <p>{companyData.companyResourceComposition?.management}%</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Engineering</h3>
+                <p>{companyData.companyResourceComposition?.engineering}%</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Marketing and Sales</h3>
+                <p>{companyData.companyResourceComposition?.marketingAndSales}%</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Remaining Predominant Area</h3>
+                <p>{companyData.companyResourceComposition?.remainingPredominantArea}</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Areas of Research</h3>
+                <ul className="list-disc list-inside">
+                  {companyData.companyResourceComposition?.areasOfResearch.split(';').map((area, index) => (
+                    <li key={index}>{area}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">NUST School to Collaborate</h3>
+                <p>{companyData.companyResourceComposition?.nustSchoolToCollab}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Employees list */}
