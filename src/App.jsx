@@ -36,6 +36,7 @@ import GatePasses from './pages/GatePasses.jsx';
 import WorkPermit from './pages/WorkPermit.jsx';
 import LostAndFound from './pages/LostAndFound.jsx';
 import Occurences from './pages/Occurences.jsx';
+import ApproveOffice from './pages/admin/ApproveOffice.jsx';
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
             <Route path="cards" element={<CardRequests />} />
             <Route path='complaints' element={<Complaints role={'admin'} />} />
             <Route path="services" element={<Services />} />
+            <Route path="assign-office" element={<ApproveOffice />} />
             {/** Opportunities to be added here */}
             <Route path="performance" element={<Performance />} />
           </Route>

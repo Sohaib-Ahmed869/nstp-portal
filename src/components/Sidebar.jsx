@@ -17,7 +17,8 @@ import {
   TicketIcon,
   PresentationChartLineIcon,
   IdentificationIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  BuildingOfficeIcon
 } from "@heroicons/react/24/outline";
 import { SidebarItem } from "./SidebarItem";
 import { AuthContext } from '../context/AuthContext';
@@ -40,6 +41,7 @@ const sidebarConfig = {
     { icon: <HomeIcon />, text: "Home", url: "/home" },
     { icon: <ChartBarIcon />, text: "Dashboard", url: "/" },
     { icon: <UserGroupIcon />, text: "Companies", url: "/companies" },
+    { icon: <BuildingOfficeIcon /> , text: "Assign Office", url: "/assign-office" },
     { icon: <TicketIcon />, text: "E-Tags", url: "/etags" },
     { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: "/work-permits" },
     { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
