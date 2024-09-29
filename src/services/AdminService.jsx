@@ -18,9 +18,12 @@ const handleResponse = async (response) => {
 const AdminService = {
   getDashboard: async (towerId) => {
     try {
-      const response = await axios.get(`${BASE_URL}/admin/towers/${towerId}/dashboard`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/dashboard`,
+        {
+          withCredentials: true,
+        }
+      );
       return await handleResponse(response);
     } catch (error) {
       return { error: error };
@@ -88,22 +91,8 @@ const AdminService = {
     }
   },
 
-  getEtagAllocations: async (towerId) => {
-    try {
-      const response = await axios.get(
-        `${BASE_URL}/admin/towers/${towerId}/etag/allocations`,
-        {
-          withCredentials: true,
-        }
-      );
-      return await handleResponse(response);
-    } catch (error) {
-      return { error: error };
-    }
-  },
-
   getCardAllocations: async (towerId, queryParam) => {
-    console.log("🚀 ~ getCardAllocations: ~ queryParam:", queryParam)
+    console.log("🚀 ~ getCardAllocations: ~ queryParam:", queryParam);
     try {
       const response = await axios.get(
         `${BASE_URL}/admin/towers/${towerId}/card/allocations?${queryParam}=true`,
@@ -134,13 +123,10 @@ const AdminService = {
     }
   },
 
-  handleCardAllocationRequest: async (towerId, cardAllocationId, action) => {
+  getEtagAllocations: async (towerId, queryParam) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/admin/towers/${towerId}/card/generate`,
-        {
-          
-        },
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/etag/allocations?${queryParam}=true`,
         {
           withCredentials: true,
         }
@@ -150,7 +136,52 @@ const AdminService = {
       return { error: error };
     }
   },
-  
+
+  getPendingEtagAllocations: async (towerId) => {
+    try {
+      return AdminService.getEtagAllocations(towerId, "is_requested");
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  getIssuedEtagAllocations: async (towerId) => {
+    try {
+      return AdminService.getEtagAllocations(towerId, "is_issued");
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  handleCardAllocationRequest: async (towerId, cardAllocationId, action) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/admin/towers/${towerId}/card/generate`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  handleEtagAllocationRequest: async (towerId, etagAllocationId, action) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/admin/towers/${towerId}/etag/generate`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
 };
 
 export default AdminService;

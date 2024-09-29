@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { UserPlusIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon, EyeIcon, CheckIcon, ClockIcon, ArchiveBoxIcon } from '@heroicons/react/24/outline';
 import NSTPLoader from '../../components/NSTPLoader';
 import 'tailwindcss-animated'; // Ensure this is imported in your project
-
+import AdminService from '../../services/AdminService';
+import { TowerContext } from '../../context/TowerContext';
 
 const Etags = () => {
     const [loading, setLoading] = useState(true);
@@ -15,6 +16,7 @@ const Etags = () => {
     const [currentRequest, setCurrentRequest] = useState(null);
     const [modalLoading, setModalLoading] = useState(false);
     const [loadingOldRequests, setLoadingOldRequests] = useState(false);
+    const { tower } = useContext(TowerContext);
 
     const itemsPerPage = 10;
 
@@ -145,8 +147,24 @@ const Etags = () => {
     const [etagRequests, setEtagRequests] = useState([]);
 
     useEffect(() => {
-        //api call here to fetch etag reuests info
-        setLoading(false);
+        //api call here to fetch etag reuests 
+        async function fetchPendingEtags() {
+            try {
+                const response = await AdminService.getPendingEtagAllocations(tower.id);
+                console.log("🚀 ~ fetchPendingEtags ~ response", response);
+                if (response.error) {
+                    throw new Error(response.error.message);
+                }
+                // setEtagRequests(response.data);
+
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        fetchPendingEtags();
         setEtagRequests(dummyData);
     }, []);
 
@@ -184,40 +202,60 @@ const Etags = () => {
 
 
 
-    const fetchOldRequests = () => {
+    const fetchOldRequests = async () => {
         setLoadingOldRequests(true);
-        setTimeout(() => {
-            const oldRequests = [
-                {
-                    id: 12,
-                    requestedOn: '2022-12-01 10:00 AM',
-                    expiresOn: '2023-02-01 10:00 AM',
-                    companyName: 'Company K',
-                    employeeName: 'Ivy Blue',
-                    employeeCnic: '99887-6655443-2',
-                    carRegistrationNumber: 'QWE-123',
-                    issued: true,
-                    active: false,
-                },
-                {
-                    id: 13,
-                    requestedOn: '2022-11-15 09:30 AM',
-                    expiresOn: '2023-01-15 09:30 AM',
-                    companyName: 'Company L',
-                    employeeName: 'Jack Black',
-                    employeeCnic: '77665-4433221-0',
-                    carRegistrationNumber: 'RTY-456',
-                    issued: true,
-                    active: false,
-                },
-                // Add more old requests here
-            ];
-            setEtagRequests((prevRequests) => [...prevRequests, ...oldRequests]);
-            // sort by issued date, oldest first
-            setSortField('issued');
-            setSortOrder('asc');
+        try{
+
+            const response = await AdminService.getIssuedEtagAllocations(tower.id);
+            // console.log("🚀 ~ fetchOldRequests ~ response", response)
+            if (response.error) {
+                console.log(response.error.message);
+            }
+            
+            console.log("🚀 ~ fetchOldRequests ~ response", response.data.etagAllocations);
+            // setEtagRequests(response.data.etagAllocations);
+
+        } catch (error) {
+            console.log(error);
+        } finally {
             setLoadingOldRequests(false);
-        }, 2000);
+        }
+
+
+    
+
+        // setTimeout(() => {
+        //     const oldRequests = [
+        //         {
+        //             id: 12,
+        //             requestedOn: '2022-12-01 10:00 AM',
+        //             expiresOn: '2023-02-01 10:00 AM',
+        //             companyName: 'Company K',
+        //             employeeName: 'Ivy Blue',
+        //             employeeCnic: '99887-6655443-2',
+        //             carRegistrationNumber: 'QWE-123',
+        //             issued: true,
+        //             active: false,
+        //         },
+        //         {
+        //             id: 13,
+        //             requestedOn: '2022-11-15 09:30 AM',
+        //             expiresOn: '2023-01-15 09:30 AM',
+        //             companyName: 'Company L',
+        //             employeeName: 'Jack Black',
+        //             employeeCnic: '77665-4433221-0',
+        //             carRegistrationNumber: 'RTY-456',
+        //             issued: true,
+        //             active: false,
+        //         },
+        //         // Add more old requests here
+        //     ];
+        //     setEtagRequests((prevRequests) => [...prevRequests, ...oldRequests]);
+        //     // sort by issued date, oldest first
+        //     setSortField('issued');
+        //     setSortOrder('asc');
+        //     setLoadingOldRequests(false);
+        // }, 2000);
     };
 
     const filteredData = etagRequests.filter((request) => {
