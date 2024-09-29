@@ -16,61 +16,7 @@ const CardRequests = () => {
     const [modalLoading, setModalLoading] = useState(false);
     const [loadingOldRequests, setLoadingOldRequests] = useState(false);
     const { tower } = useContext(TowerContext);
-
-
     const itemsPerPage = 10;
-
-    const dummyData = [
-        {
-            id: 1,
-            requestedOn: '2023-10-01 10:00 AM',
-            expiresOn: '2023-12-01 10:00 AM',
-            companyName: 'Company A',
-            employeeName: 'John Doe',
-            employeeCnic: '12345-6789012-3',
-            issued: false,
-            active: true,
-        },
-        // more data...
-    ];
-
-    const actualData = [
-        {
-            "_id": "66f7deb1787f6b046e0ee415",
-            "tower": "66f7b5ee7c51cd5775306b61",
-            "tenant_id": "66f7b251d42fec9018e6046b",
-            "employee_id": {
-                "_id": "66f7deb1787f6b046e0ee414",
-                "tower": "66f7b5ee7c51cd5775306b61",
-                "tenant_id": "66f7b251d42fec9018e6046b",
-                "tenant_name": "Hexler Tech",
-                "email": "musa@gmail.com",
-                "phone": "03341110111",
-                "name": "Musa Haroon Satti",
-                "designation": "Full Stack Developer",
-                "cnic": "6110166894529",
-                "dob": "2003-10-30T00:00:00.000Z",
-                "address": "F/10-1 Street 11 House 29",
-                "date_joining": "2023-01-01T00:00:00.000Z",
-                "employee_type": "Contract",
-                "contract_duration": "6 Months",
-                "is_nustian": false,
-                "status_employment": true,
-                "createdAt": "2024-09-28T10:47:13.456Z",
-                "updatedAt": "2024-09-28T10:47:13.456Z",
-                "__v": 0
-            },
-            "is_issued": false,
-            "is_requested": true,
-            "is_returned": false,
-            "createdAt": "2024-09-28T10:47:13.260Z",
-            "updatedAt": "2024-09-28T15:57:33.958Z",
-            "__v": 0,
-            "date_requested": "2024-09-28T15:57:33.950Z"
-        }
-    ]
-   
-
     const [cardRequests, setCardRequests] = useState([]);
 
     useEffect(() => {
@@ -143,7 +89,6 @@ const CardRequests = () => {
         // }
 
         // document.getElementById('confirmation_modal').close();
-
 
         // Simulate API call
         setTimeout(() => {
