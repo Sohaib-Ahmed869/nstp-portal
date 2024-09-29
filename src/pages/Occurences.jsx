@@ -170,7 +170,7 @@ const Occurences = ({ role }) => {
             <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"}`}>
                 {/* Header + add new  btn */}
                 <div className="flex flex-row items-center justify-between">
-                    <h1 className="text-2xl font-bold">Meeting Rooms</h1>
+                    <h1 className="text-2xl font-bold">Occurences Against Company</h1>
                     {role == "receptionist" && <button
                         className="btn btn-primary text-white"
                         onClick={() => {

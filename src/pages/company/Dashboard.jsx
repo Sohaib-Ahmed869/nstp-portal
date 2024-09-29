@@ -216,7 +216,7 @@ const Dashboard = () => {
                   <PaperAirplaneIcon className="h-5 w-5" />
                   Send Complaint
                 </button>
-                <Link to="/company/complaints">
+                <Link to="/tenant/complaints">
                   <button className='btn btn-primary text-white btn-md' >
                     <TableCellsIcon className="h-5 w-5" />
                     View All
@@ -251,7 +251,7 @@ const Dashboard = () => {
             <div className=" card p-5 min-h-full ">
               <div className="w-full flex justify-between mb-3">
                 <p className="mb-3 font-bold"> Employees</p>
-                <Link to="/company/employees">
+                <Link to="/tenant/employees">
                   <button className="btn btn-primary text-white btn-md">
                     <TableCellsIcon className="h-5 w-5" />
                     View All

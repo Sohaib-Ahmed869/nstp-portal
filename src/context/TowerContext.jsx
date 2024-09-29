@@ -6,7 +6,12 @@ export const TowerProvider = ({ children }) => {
     const [tower, setTower] = useState(() => {
         // Retrieve the tower from local storage if it exists
         const savedTower = localStorage.getItem('selectedTower');
-        return savedTower ? JSON.parse(savedTower) : null;
+        try {
+            return savedTower ? JSON.parse(savedTower) : null;
+        } catch (e) {
+            console.error("Error parsing saved tower from localStorage", e);
+            return null;
+        }
     });
 
     useEffect(() => {

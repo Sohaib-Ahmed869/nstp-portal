@@ -153,6 +153,13 @@ const LoginPage = () => {
           );
         } else if (role === "tenant") {
           response = await AuthService.tenantLogin(lowerCaseUsername, password);
+          isValid = checkResponse(response);
+          if (isValid) {
+            login(response.data.role, response.data.towers);
+            navigate("/tenant");
+          } else {
+            return;
+          }
         }
 
     } catch (error) {
