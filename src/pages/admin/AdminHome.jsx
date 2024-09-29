@@ -9,7 +9,8 @@ import { Link } from 'react-router-dom'
 import hatch8icon from '../../assets/hatch8.png'
 import NewsFeed from '../../components/NewsFeed'
 import NSTPLoader from '../../components/NSTPLoader'
-import AdminService from '../../services/AdminService'
+import showToast from '../../util/toast';
+import { AdminService } from '../../services';
 
 
 const AdminHome = () => {
@@ -43,32 +44,6 @@ const AdminHome = () => {
   const [eTags, setETags] = useState({ issued: 10, pending: 20 }); //total = pending + approved
 
 
-  // Simulate loading
-  useEffect(() => {
-    //api call here to update the dashboard data when tower change 
-    setLoading(true);
-    async function fetchData() {
-      try {
-        const response = await AdminService.getDashboard(tower.id);
-        if (response.error) {
-          console.log("🚀 ~ fetchData ~ response", response);
-          console.log(response.error);
-          return;
-        }
-        const dashboard = response.data.dashboard;
-        console.log("🚀 ~ fetchData ~ dashboard", dashboard);
-
-
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      } 
-    }
-    console.log(permissions);
-    fetchData();  
-  }, [tower])
-
   useEffect(() => { 
     async function fetchData() {
       try {
@@ -92,6 +67,66 @@ const AdminHome = () => {
 
     fetchData();
   }, [])
+
+  
+  useEffect(() => {
+    // API call here to update the dashboard data when tower changes
+    setLoading(true);
+    async function fetchData() {
+      try {
+        console.log("TOWER ", tower)
+        const response = await AdminService.getDashboard(tower.id);
+        if (response.error) {
+          console.log("🚀 ~ fetchData ~ response", response);
+          console.log(response.error);
+          showToast(false, "Unfortunately, an error occurred. Please try again later.");
+          return;
+        }
+        const dashboard = response.data.dashboard;
+        console.log("🚀 ~ fetchData ~ dashboard", dashboard);
+  
+        // Update states based on the dashboard object
+        setCardsStats({
+          cardsIssued: dashboard.cards.issued,
+          cardsReturned: dashboard.cards.returned,
+          cardsRequested: dashboard.cards.requested,
+        });
+  
+        setComplaintStats({
+          resolved: dashboard.complaints.resolved,
+          recieved: dashboard.complaints.total,
+        });
+  
+        setCompanyTableData(
+          dashboard.tenants.map((tenant) => ({
+            name: tenant.registration.organizationName || "N/A",
+            category: tenant.industrySector.category || "N/A",
+            employees: tenant.employees || "N/A",
+            companyEmail: tenant.registration.companyEmail || "N/A" , // Placeholder value as totalRevenue is not available in the dashboard object
+          }))
+        );
+  
+        setCompanyStats({
+          total: Object.values(dashboard.companyCategories).reduce((acc, val) => acc + val, 0),
+          hatch8: dashboard.companyCategories["Hatch 8"],
+          startups: dashboard.companyCategories["Startup"],
+        });
+  
+        setETags({
+          issued: dashboard.etags.issued,
+          pending: dashboard.etags.requested,
+        });
+  
+      } catch (error) {
+        console.log(error);
+        showToast(false, "Unfortunately, an error occurred. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    console.log(permissions);
+    fetchData();
+  }, [tower]);
 
 
   return (
@@ -188,7 +223,7 @@ const AdminHome = () => {
                         <th>Name</th>
                         <th>Category</th>
                         <th>Employees</th>
-                        <th>Total Revenue</th>
+                        <th>Company Mail</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -197,7 +232,7 @@ const AdminHome = () => {
                           <td>{company.name}</td>
                           <td>{company.category}</td>
                           <td>{company.employees}</td>
-                          <td>{company.totalRevenue}</td>
+                          <td>{company.companyEmail}</td>
                         </tr>
                       ))}
                     </tbody>
