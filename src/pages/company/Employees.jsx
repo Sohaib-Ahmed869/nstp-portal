@@ -270,7 +270,7 @@ const Employees = () => {
       console.log("🚀 ~ Employee response:", response);
       if (response.error) {
         console.error("Error adding employee:", response.error);
-        showToast(false, response.error.response.data.message);
+        showToast(false);
         return;
       }
       showToast(true);
@@ -281,28 +281,54 @@ const Employees = () => {
     });
   };
 
-  const requestCard = (employee_id) => {
+  const requestCard = async (employee_id) => {
     console.log("Requesting card for employee:", employee_id);
     setModalLoading(true);
     //API call
-
-    setTimeout(() => {
+    try{
+      const response = await TenantService.requestCard(employee_id);
+      console.log("🚀 ~ response:", response)
+      if(response.error){
+        console.error("Error requesting card:", response.error);
+        showToast(false);
+        return;
+      }
+      showToast(true);
+    }
+    catch(error){
+      console.error("Error requesting card:", error);
+      showToast(false);
+    }
+    finally {
       setModalLoading(false);
       document.getElementById("card_request_modal").close();
-    }, 2000);
+    }  
   };
 
-  const requestEtag = (employeeId, carLicenseNumber) => {
+  const requestEtag = async (employeeId, carLicenseNumber) => {
     console.log(
       `Employee ID: ${employeeId}, Car License Number: ${carLicenseNumber}`
     );
     setModalLoading(true);
 
-    setTimeout(() => {
+    //API call
+    try{
+      const response = await TenantService.requestEtag(employeeId, carLicenseNumber);
+      console.log("🚀 ~ response:", response)
+      if(response.error){
+        console.error("Error requesting etag:", response.error);
+        showToast(false);
+        return;
+      }
+      showToast(true);            
+    } catch (error) {
+      console.error("Error requesting etag:", error);
+      showToast(false);
+    } finally {
       setModalLoading(false);
       document.getElementById("etag_request_modal").close();
       setCarLicenseNumber("");
-    }, 2000);
+    }
   };
 
   // *** Constants ***
