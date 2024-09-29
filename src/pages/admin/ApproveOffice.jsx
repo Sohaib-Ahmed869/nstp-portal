@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
+import FloatingLabelInput from '../../components/FloatingLabelInput';
 import { CheckIcon, ClockIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon, PrinterIcon } from '@heroicons/react/24/outline';
 
 const EMPTY_FORM_DATA = {
@@ -76,6 +77,12 @@ const ApproveOffice = () => {
     const [data, setData] = useState(initialData);
     const itemsPerPage = 10;
 
+    //for assigning new office modal
+    const [wing, setWing] = useState('');
+    const [floor, setFloor] = useState('');
+    const [officeNumber, setOfficeNumber] = useState('');
+    const [assignModalLoading, setAssignModalLoading] = useState(false);
+
     // Simulate API call to fetch data
     useEffect(() => {
         setLoading(true);
@@ -131,6 +138,16 @@ const ApproveOffice = () => {
         document.getElementById('details_modal').showModal();
     };
 
+    const handleAssignOffice = (e, requestId) => {
+        e.preventDefault();
+        setAssignModalLoading(true);
+        console.log(`Assigning office to request ID: ${requestId}`);
+        setTimeout(() => {
+            setAssignModalLoading(false);
+            document.getElementById('assign_office_modal').close();
+        }, 2000);
+    };
+
     return (
         <Sidebar>
             {/* Confirmation Modal */}
@@ -149,6 +166,45 @@ const ApproveOffice = () => {
                             {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "OK"}
                         </button>
                     </div>
+                </div>
+            </dialog>
+
+            {/* Assign Office Modal */}
+            <dialog id="assign_office_modal" className="modal">
+                <div className="modal-box">
+                    <h3 className="font-bold text-lg mb-3">Assign Office to Employee</h3>
+                    <form onSubmit={(e) => handleAssignOffice(e, currentRequest.request.id)}>
+                        <FloatingLabelInput
+                            name="wing"
+                            type="text"
+                            id="wing"
+                            label="Wing"
+                            value={wing}
+                            onChange={(e) => setWing(e.target.value)}
+                        />
+                        <FloatingLabelInput
+                            name="floor"
+                            type="text"
+                            id="floor"
+                            label="Floor"
+                            value={floor}
+                            onChange={(e) => setFloor(e.target.value)}
+                        />
+                        <FloatingLabelInput
+                            name="officeNumber"
+                            type="text"
+                            id="officeNumber"
+                            label="Office Number"
+                            value={officeNumber}
+                            onChange={(e) => setOfficeNumber(e.target.value)}
+                        />
+                        <div className="modal-action">
+                            <button type="button" className="btn mr-1" onClick={() => document.getElementById('assign_office_modal').close()}>Cancel</button>
+                            <button type="submit" className={`btn btn-primary text-base-100 ${assignModalLoading && "btn-disabled"}`}>
+                                {assignModalLoading && <span className="loading loading-spinner"></span>} {assignModalLoading ? "Please wait..." : "Assign"}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </dialog>
 
@@ -293,7 +349,7 @@ const ApproveOffice = () => {
                                                             className="btn btn-sm btn-outline btn-success"
                                                             onClick={() => {
                                                                 setCurrentRequest({ request, action: 'approve' });
-                                                                document.getElementById('confirmation_modal').showModal();
+                                                                document.getElementById('assign_office_modal').showModal();
                                                             }}
                                                         >
                                                             Approve

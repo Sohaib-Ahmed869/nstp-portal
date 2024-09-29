@@ -13,6 +13,7 @@ import {
   IdentificationIcon,
   PencilSquareIcon,
   TagIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import FloatingLabelInput from "../../components/FloatingLabelInput";
 import TenantService from "../../services/TenantService";
@@ -180,31 +181,6 @@ const Employees = () => {
   }, []);
 
   useEffect(() => {
-    // close dropdown when clicking outside. however, its not working perfectly so commented for now
-    // const handleClickOutside = (event) => {
-    //   Object.keys(dropdownRefs.current).forEach((id) => {
-    //     if (
-    //       dropdownRefs.current[id] &&
-    //       !dropdownRefs.current[id].contains(event.target) &&
-    //       buttonRefs.current[id] &&
-    //       !buttonRefs.current[id].contains(event.target)
-    //     ) {
-    //       setTimeout(() => {
-    //         setDropdownOpen((prevState) => ({
-    //           ...prevState,
-    //           [id]: false,
-    //         }));
-    //       }, 10);
-    //     }
-    //   });
-    // };
-    // document.addEventListener('mousedown', handleClickOutside);
-    // return () => {
-    //   document.removeEventListener('mousedown', handleClickOutside);
-    // };
-  }, []);
-
-  useEffect(() => {
     //By defualt, sort by status_employment in descending order (Active first)
     setSortField("status_employment");
     setSortOrder("desc");
@@ -274,7 +250,23 @@ const Employees = () => {
         return;
       }
       showToast(true);
-      // setEmployeeTableData((prevData) => [...prevData, response.data]);
+      // Add new employee to the table
+      setEmployeeTableData((prevData) => {
+        return [
+          ...prevData,
+          {
+            ...formData,
+            _id: response.data.employee._id,
+            card_num: null,
+            status_employment: true,
+            etags: 0,
+            employee_type: formData.empType,
+
+            card: { is_requested: false },
+          },
+        ];
+      });
+
       
       document.getElementById("employee_form").close();
       clearForm();
@@ -294,6 +286,14 @@ const Employees = () => {
         return;
       }
       showToast(true);
+      setEmployeeTableData((prevData) => {
+        return prevData.map((emp) => {
+          if (emp._id === employee_id) {
+            return { ...emp, card: { is_requested: true } };
+          }
+          return emp;
+        });
+      });
     }
     catch(error){
       console.error("Error requesting card:", error);
@@ -681,11 +681,15 @@ const Employees = () => {
                 {filteredData.map((row, index) => (
                   <tr key={row._id} className="relative group">
                     <td>
-                      <div className="avatar">
+                      {row.photo ? <div className="avatar">
                         <div className="w-16 rounded-full">
                           <img src={row.photo} />
                         </div>
-                      </div>
+                      </div> : 
+                      <div className="size-10 rounded-full bg-gray-300">
+                      <UserCircleIcon className="size-10 text-gray-400" />
+                   </div>
+                      }
                     </td>
                     <td>{row.name}</td>
                     <td>{row.email}</td>

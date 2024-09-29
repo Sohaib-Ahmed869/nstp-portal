@@ -64,7 +64,7 @@ const Companies = () => {
           category: tenant.registration.category,
           registrationNum: tenant.companyProfile.registrationNumber,
           email: tenant.registration.companyEmail,
-          noEmployees: tenant.companyProfile.numberOfEmployees,
+          noEmployees: tenant.numEmployees,
           industryCategory: tenant.industrySector.category,
           noComplaints: tenant.complaints.length,
         }));
