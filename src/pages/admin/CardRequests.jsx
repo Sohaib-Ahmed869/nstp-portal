@@ -3,7 +3,7 @@ import Sidebar from '../../components/Sidebar';
 import { UserPlusIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon, EyeIcon, CheckIcon, ClockIcon, ArchiveBoxIcon, PrinterIcon } from '@heroicons/react/24/outline';
 import NSTPLoader from '../../components/NSTPLoader';
 import { TowerContext } from '../../context/TowerContext';
-
+import AdminService from '../../services/AdminService';
 
 const CardRequests = () => {
     const [loading, setLoading] = useState(true);
@@ -38,7 +38,25 @@ const CardRequests = () => {
 
     useEffect(() => {
         // api call here to fetch card requests info
-        setLoading(false);
+        async function fetchCardRequests() {
+            try {
+                const response = await AdminService.getPendingCardAllocations(tower.id);
+                console.log("🚀 ~ fetchCardRequests ~ response", response);
+                if (response.error) {
+                    console.error("Error fetching card requests", response.error);
+                    return;
+                }
+                console.log("🚀 ~ fetchCardRequests ~ response.data.cardAllocations", response.data.cardAllocations);
+                // setCardRequests(response.data.cardAllocations);
+
+            } catch (error) {
+                console.error("Error fetching card requests", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        fetchCardRequests();
         setCardRequests(dummyData);
     }, []);
 
@@ -60,6 +78,15 @@ const CardRequests = () => {
         setModalLoading(true);
         console.log(`${action} request for`, request);
         //Api call here to approve/unapprove the request
+        // try {
+        //     console.log("🚀 ~ handleApproveUnapprove ~ request", request)
+        // } catch (error) {
+        //     console.error("Error approving/unapproving request", error);
+        // }
+
+        // document.getElementById('confirmation_modal').close();
+
+
         // Simulate API call
         setTimeout(() => {
             setModalLoading(false);
@@ -70,8 +97,8 @@ const CardRequests = () => {
     };
 
     const fetchOldRequests = () => {
-        setLoadingOldRequests(true);
-        setTimeout(() => {
+        async function fetchOldRequests() {
+            setLoadingOldRequests(true);
             const oldRequests = [
                 {
                     id: 12,
@@ -95,12 +122,30 @@ const CardRequests = () => {
                 },
                 // Add more old requests here
             ];
+            try{
+                const response = await AdminService.getIssuedCardAllocations(tower.id);
+                console.log("🚀 ~ fetchOldRequests ~ response", response)
+                if (response.error) {
+                    console.error("Error fetching old requests", response.error);
+                    return;
+                }
+                console.log("🚀 ~ fetchOldRequests ~ response.data.cardAllocations", response.data.cardAllocations)
+                // setCardRequests(response.data.cardAllocations);
+
+
+            } catch (error) {
+                console.error("Error fetching old requests", error);
+                return;
+            }
+
             setCardRequests((prevRequests) => [...prevRequests, ...oldRequests]);
             // sort by issued date, oldest first
             setSortField('issued');
             setSortOrder('asc');
             setLoadingOldRequests(false);
-        }, 2000);
+        }
+
+        fetchOldRequests();
     };
 
     const filteredData = cardRequests.filter((request) => {
