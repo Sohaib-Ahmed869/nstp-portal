@@ -26,7 +26,7 @@ const AdminHome = () => {
   })
   const { permissions } = useContext(AuthContext);
   const { tower, setTower } = useContext(TowerContext);
-  const [towerOptions, setTowerOptions] = useState(["1","2","3","4"]) //tower options for the currently logged in admin
+  const [towerOptions, setTowerOptions] = useState([]) //tower options for the currently logged in admin
   const [companyTableData, setCompanyTableData] = useState([
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
@@ -53,8 +53,12 @@ const AdminHome = () => {
           id: permission.tower._id,
           name: permission.tower.name
         }));
+        console.log("TOWERS ", towers)
         setTowerOptions(towers);
-        setTower(towers[0]);
+        if (!tower || !towers.some(t => t.id === tower.id)) {
+          setTower(towers[0]);
+        }
+  
 
         console.log("🚀 ~ fetchData ~ towers:", towers)
         console.log(permissions);
@@ -72,11 +76,12 @@ const AdminHome = () => {
 
   
   useEffect(() => {
+    console.log("\n\nTOWER ", tower)
     // API call here to update the dashboard data when tower changes
     setLoading(true);
     async function fetchData() {
       try {
-        console.log("TOWER ", tower)
+        console.log("TOWER ", tower.id)
         const response = await AdminService.getDashboard(tower.id);
         if (response.error) {
           console.log("🚀 ~ fetchData ~ response", response);
@@ -139,12 +144,19 @@ const AdminHome = () => {
       {loading && <NSTPLoader />}
 
       {/* Select the tower with a dropdown*/}
-      <div className={`flex items-center justify-center bg-primary py-5 rounded-lg  gap-2 my-5 ${loading && 'hidden'}`}>
+      <div className={`flex items-center justify-center bg-primary py-5 rounded-lg gap-2 my-5 ${loading && 'hidden'}`}>
         <BuildingOffice2Icon className="size-9 text-white" />
         <p className="font-semibold text-white">Tower: </p>
-        <select className="select select-bordered max-w-xs" value={tower} onChange={(e) => setTower(e.target.value)}>
-          {towerOptions.map((tower, index) => (
-            <option key={index} value={tower}>{tower.name}</option>
+        <select
+          className="select select-bordered max-w-xs"
+          value={tower ? tower.id : ''}
+          onChange={(e) => {
+            const selectedTower = towerOptions.find(t => t.id === e.target.value);
+            setTower(selectedTower);
+          }}
+        >
+          {towerOptions.map((tower) => (
+            <option key={tower.id} value={tower.id}>{tower.name}</option>
           ))}
         </select>
       </div>
