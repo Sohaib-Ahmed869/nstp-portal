@@ -4,6 +4,54 @@ import { BuildingOffice2Icon, ChartBarSquareIcon, ChartPieIcon, CpuChipIcon, Env
 import FloatingLabelInput from "../../components/FloatingLabelInput";
 import { AdminService } from "../../services";
 
+const EMPTY_FORM_DATA = {
+  registration: {
+    category: "",
+    organizationName: "",
+    presentAddress: "",
+    website: "",
+    companyEmail: "",
+  },
+  contactInfo: {
+    applicantName: "",
+    applicantPhone: "",
+    applicantEmail: "",
+    applicantLandline: "",
+  },
+  stakeholders: [
+    {
+      name: "",
+      designation: "",
+      email: "",
+      presentAddress: "",
+      nationality: "",
+      dualNationality: "",
+      profile: "",
+      isNustAlumni: false,
+      isNustEmployee: false,
+    },
+  ],
+  companyProfile: {
+    companyHeadquarters: "",
+    yearsInBusiness: "",
+    numberOfEmployees: 0,
+    registrationNumber: 0,
+  },
+  industrySector: {
+    category: "",
+    rentalSpaceSqFt: 0,
+    timeFrame: "",
+  },
+  companyResourceComposition: {
+    management: 0,
+    engineering: 0,
+    marketingAndSales: 0,
+    remainingPredominantArea: "",
+    areasOfResearch: "",
+    nustSchoolToCollab: "",
+  },
+}
+
 const CATEGORIES =
   "AgriTech, AutoTech, DefTech, EdTech, EnergyTech, FinTech, HealthTech, Other - SmartTech";
 
@@ -11,53 +59,7 @@ const CompanyAddition = () => {
   const [loading, setLoading] = useState(false);
   const [submitModalTitle, setSubmitModalTitle] = useState("");
   const [submitModalText, setSubmitModalText] = useState("");
-  const [formData, setFormData] = useState({
-    registration: {
-      category: "",
-      organizationName: "",
-      presentAddress: "",
-      website: "",
-      companyEmail: "",
-    },
-    contactInfo: {
-      applicantName: "",
-      applicantPhone: "",
-      applicantEmail: "",
-      applicantLandline: "",
-    },
-    stakeholders: [
-      {
-        name: "",
-        designation: "",
-        email: "",
-        presentAddress: "",
-        nationality: "",
-        dualNationality: "",
-        profile: "",
-        isNustAlumni: false,
-        isNustEmployee: false,
-      },
-    ],
-    companyProfile: {
-      companyHeadquarters: "",
-      yearsInBusiness: "",
-      numberOfEmployees: 0,
-      registrationNumber: 0,
-    },
-    industrySector: {
-      category: "",
-      rentalSpaceSqFt: 0,
-      timeFrame: "",
-    },
-    companyResourceComposition: {
-      management: 0,
-      engineering: 0,
-      marketingAndSales: 0,
-      remainingPredominantArea: "",
-      areasOfResearch: "",
-      nustSchoolToCollab: "",
-    },
-  });
+  const [formData, setFormData] = useState(EMPTY_FORM_DATA);
 
   const handleChange = (section, field, value, index = null) => {
     if (index !== null) {
@@ -165,6 +167,12 @@ const CompanyAddition = () => {
     ));
   };
 
+  const formatKey = (key) => {
+    return key
+      .replace(/([A-Z])/g, ' $1') // Add space before capital letters
+      .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+  };
+  
   const validateFormData = () => {
     const {
       registration,
@@ -174,101 +182,81 @@ const CompanyAddition = () => {
       industrySector,
       companyResourceComposition,
     } = formData;
-
-    // console.log(
-    //   "🚀 ~ validateFormData ~ ",
-    //   registration,
-    //   contactInfo,
-    //   stakeholders,
-    //   companyProfile,
-    //   industrySector,
-    //   companyResourceComposition
-    // );
-
+  
+    let missingFields = [];
+  
     // Check registration fields
     for (const key in registration) {
-      if (registration[key] === "") return false;
+      if (registration[key] === "") {
+        missingFields.push(`Registration: ${formatKey(key)}`);
+      }
     }
-    console.log("🚀 ~ validateFormData ~ registration:", registration);
-
+  
     // Check contactInfo fields
     for (const key in contactInfo) {
-      if (contactInfo[key] === "") return false;
+      if (contactInfo[key] === "") {
+        missingFields.push(`Contact Info: ${formatKey(key)}`);
+      }
     }
-    console.log("🚀 ~ validateFormData ~ contactInfo:", contactInfo);
-
+  
     // Check stakeholders fields
     for (const stakeholder of stakeholders) {
       for (const key in stakeholder) {
-        if (key !== "dualNationality" && stakeholder[key] === "") return false;
+        if (key !== "dualNationality" && stakeholder[key] === "") {
+          missingFields.push(`Stakeholder: ${formatKey(key)}`);
+        }
       }
     }
-    console.log("🚀 ~ validateFormData ~ stakeholders:", stakeholders);
-
+  
     // Check companyProfile fields
     for (const key in companyProfile) {
-      if (companyProfile[key] === "") return false;
+      if (companyProfile[key] === "") {
+        missingFields.push(`Company Profile: ${formatKey(key)}`);
+      }
     }
-    console.log("🚀 ~ validateFormData ~ companyProfile:", companyProfile);
-
+  
     // Check industrySector fields
     for (const key in industrySector) {
-      if (industrySector[key] === "") return false;
+      if (industrySector[key] === "") {
+        missingFields.push(`Industry Sector: ${formatKey(key)}`);
+      }
     }
-    console.log("🚀 ~ validateFormData ~ industrySector:", industrySector);
-
+  
     // Additional checks for industrySector
-    if (industrySector.rentalSpaceSqFt < 350) return false;
-    console.log(
-      "🚀 ~ validateFormData ~ industrySector.rentalSpaceSqFt:",
-      industrySector.rentalSpaceSqFt
-    );
-
+    if (industrySector.rentalSpaceSqFt < 350) {
+      missingFields.push("Industry Sector: Rental Space Sq Ft (must be at least 350 Sq Ft)");
+    }
+  
     // Additional checks for companyProfile
-    if (
-      companyProfile.numberOfEmployees < 1 ||
-      companyProfile.yearsInBusiness < 1
-    )
-      return false;
-    console.log(
-      "🚀 ~ validateFormData ~ companyProfile.numberOfEmployees:",
-      companyProfile.numberOfEmployees
-    );
-
+    if (companyProfile.numberOfEmployees < 1) {
+      missingFields.push("Company Profile: Number Of Employees (must be at least 1)");
+    }
+    if (companyProfile.yearsInBusiness < 1) {
+      missingFields.push("Company Profile: Years In Business (must be at least 1 year)");
+    }
+  
     // Check companyResourceComposition fields
     for (const key in companyResourceComposition) {
       if (
         key !== "remainingPredominantArea" &&
         key !== "nustSchoolToCollab" &&
         companyResourceComposition[key] === ""
-      )
-        return false;
+      ) {
+        missingFields.push(`Company Resource Composition: ${formatKey(key)}`);
+      }
     }
-    console.log(
-      "🚀 ~ validateFormData ~ companyResourceComposition:",
-      companyResourceComposition
-    );
-
+  
     // Additional checks for companyResourceComposition
-    const { management, engineering, marketingAndSales } =
-      companyResourceComposition;
-
-    const total =
-      Number(management) + Number(engineering) + Number(marketingAndSales);
-
-    console.log("🚀 ~ validateFormData ~ total:", total);
-
-    if (total > 100) return false;
-    console.log(
-      "🚀 ~ validateFormData ~ management, engineering, marketingAndSales:",
-      management,
-      engineering,
-      marketingAndSales
-    );
-
-    return true;
+    const { management, engineering, marketingAndSales } = companyResourceComposition;
+    const total = Number(management) + Number(engineering) + Number(marketingAndSales);
+  
+    if (total > 100) {
+      missingFields.push("Company Resource Composition: Total Percentage (must not exceed 100%)");
+    }
+  
+    return missingFields;
   };
-
+  
   useEffect(() => {
     if (loading) {
       document.getElementById("loading-modal").showModal();
@@ -279,9 +267,10 @@ const CompanyAddition = () => {
 
   const handleFormSubmit = async () => {
     console.log(formData);
-    if (validateFormData()) {
+    const missingFields = validateFormData();
+    if (missingFields.length === 0) {
       setLoading(true);
-
+  
       console.log(
         "🚀 ~ formData ~ ",
         formData.registration,
@@ -291,28 +280,38 @@ const CompanyAddition = () => {
         formData.industrySector,
         formData.companyResourceComposition
       );
-      //remove this codeblock out from timeout and add it AFTER the api call.
-      const response = await AdminService.addTenant(
-        formData.registration,
-        formData.contactInfo,
-        formData.stakeholders,
-        formData.companyProfile,
-        formData.industrySector,
-        formData.companyResourceComposition
-      );
-      console.log(response);
-
-      setLoading(false);
-      setSubmitModalTitle("Form Submitted");
-      setSubmitModalText(
-        "Your form has been submitted successfully. We will get back to you soon."
-      );
-      document.getElementById("submit-modal").showModal();
-      //we can also reset the form data here or navigate to another page (not implemented yet)
+  
+      try {
+        const response = await AdminService.addTenant(
+          formData.registration,
+          formData.contactInfo,
+          formData.stakeholders,
+          formData.companyProfile,
+          formData.industrySector,
+          formData.companyResourceComposition
+        );
+        console.log(response);
+  
+        setSubmitModalTitle("Form Submitted");
+        setSubmitModalText(
+          "Your form has been submitted successfully. We will get back to you soon."
+        );
+        document.getElementById("submit-modal").showModal();
+        setFormData(EMPTY_FORM_DATA);
+      } catch (error) {
+        console.error("Error submitting form:", error);
+        setSubmitModalTitle("Submission Failed");
+        setSubmitModalText(
+          "An error occurred while submitting the form. Please try again later."
+        );
+        document.getElementById("submit-modal").showModal();
+      } finally {
+        setLoading(false);
+      }
     } else {
       setSubmitModalTitle("Form not filled correctly");
       setSubmitModalText(
-        "It seems that you have not filled in all the mandatory fields."
+        `The following fields are missing or incorrect:\n\n${missingFields.join("\n")}`
       );
       console.log("Please fill all mandatory fields.");
       document.getElementById("submit-modal").showModal();
@@ -333,7 +332,7 @@ const CompanyAddition = () => {
       </dialog>
 
       {/* Modal showed after form submission (error or success depending on scenario) */}
-      <dialog id="submit-modal" className="modal">
+      <dialog id="submit-modal" className="modal whitespace-pre-wrap">
         <div className="modal-box">
           <h3 className="font-bold text-lg">{submitModalTitle}</h3>
           <p className="py-4">{submitModalText}</p>
