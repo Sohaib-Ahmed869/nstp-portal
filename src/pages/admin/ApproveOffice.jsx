@@ -91,13 +91,14 @@ const ApproveOffice = () => {
     useEffect(() => {
         setLoading(true);
         async function fetchData() {
-            try{
+            try {
                 const response = await AdminService.getOfficeRequests(tower.id);
                 console.log('🚀 ~ fetchData ~ response', response);
-                if ( response.error ) {
+                if (response.error) {
                     console.error('Error fetching data:', response.error);
                     return;
                 }
+                // Assuming response.data.tenants is the array of objects you provided
                 setData(response.data.tenants);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -105,19 +106,46 @@ const ApproveOffice = () => {
                 setLoading(false);
             }
         }
-
+    
         fetchData();
     }, []);
 
+    useEffect(() => {
+        console.log('Data:', data);
+    }, [data]);
+
     const handleApproveUnapprove = (request, action) => {
         setModalLoading(true);
-        setTimeout(() => {
-            setModalLoading(false);
-            if (action === 'approve') {
+
+        async function handleRequest() {
+            try {
+                const response = await AdminService.assignOffice();
+                console.log('🚀 ~ handleRequest ~ response', response)
+                if (response.error) {
+                    console.error('Error approving request:', response.error);
+                    return;
+                }
+                // remove from data
                 setData((prevData) => prevData.filter((item) => item.id !== request.id));
+                
+            } catch (error) {
+                console.error('Error approving request:', error);
+            } finally { 
+                setModalLoading(false);
+                // if (action === 'approve') {
+                //     setData((prevData) => prevData.filter((item) => item.id !== request.id));
+                // }
+                document.getElementById('confirmation_modal').close();
             }
-            document.getElementById('confirmation_modal').close();
-        }, 1000);
+        }
+
+        // setTimeout(() => {
+            // setModalLoading(false);
+            // if (action === 'approve') {
+            //     setData((prevData) => prevData.filter((item) => item.id !== request.id));
+            // }
+            // document.getElementById('confirmation_modal').close();
+        // }, 1000);
     };
 
     const handleSearch = (e) => {
@@ -152,18 +180,30 @@ const ApproveOffice = () => {
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
     const showDetails = (request) => {
+        console.log('Showing details for request:', request);
         setCurrentRequest(request);
         document.getElementById('details_modal').showModal();
     };
 
-    const handleAssignOffice = (e, requestId) => {
+    const handleAssignOffice = async (e, requestId) => {
         e.preventDefault();
         setAssignModalLoading(true);
         console.log(`Assigning office to request ID: ${requestId}`);
-        setTimeout(() => {
+        try {
+            const response = await AdminService.assignOffice(tower.id, requestId, { floor, wing, officeNumber });
+            console.log('🚀 ~ handleAssignOffice ~ response', response)
+
+            if (response.error) {
+                console.error('Error assigning office:', response.error);
+                return;
+            }
+
+        } catch (error) {
+            console.error('Error assigning office:', error);
+        } finally {
             setAssignModalLoading(false);
             document.getElementById('assign_office_modal').close();
-        }, 2000);
+        }
     };
 
     return (
@@ -191,15 +231,7 @@ const ApproveOffice = () => {
             <dialog id="assign_office_modal" className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg mb-3">Assign Office to Employee</h3>
-                    <form onSubmit={(e) => handleAssignOffice(e, currentRequest.request.id)}>
-                        <FloatingLabelInput
-                            name="wing"
-                            type="text"
-                            id="wing"
-                            label="Wing"
-                            value={wing}
-                            onChange={(e) => setWing(e.target.value)}
-                        />
+                    <form onSubmit={(e) => handleAssignOffice(e, currentRequest.request._id)}>
                         <FloatingLabelInput
                             name="floor"
                             type="text"
@@ -207,6 +239,14 @@ const ApproveOffice = () => {
                             label="Floor"
                             value={floor}
                             onChange={(e) => setFloor(e.target.value)}
+                        />
+                        <FloatingLabelInput
+                            name="wing"
+                            type="text"
+                            id="wing"
+                            label="Wing"
+                            value={wing}
+                            onChange={(e) => setWing(e.target.value)}
                         />
                         <FloatingLabelInput
                             name="officeNumber"
@@ -234,26 +274,26 @@ const ApproveOffice = () => {
                         {/* Registration Section */}
                         <div className="border border-primary rounded-2xl p-7">
                             <h4 className="font-bold text-md mb-2 text-primary">Registration</h4>
-                            <p><strong>Category:</strong> {currentRequest?.details?.registration?.category}</p>
-                            <p><strong>Organization Name:</strong> {currentRequest?.details?.registration?.organizationName}</p>
-                            <p><strong>Present Address:</strong> {currentRequest?.details?.registration?.presentAddress}</p>
-                            <p><strong>Website:</strong> {currentRequest?.details?.registration?.website}</p>
-                            <p><strong>Company Email:</strong> {currentRequest?.details?.registration?.companyEmail}</p>
+                            <p><strong>Category:</strong> {currentRequest?.registration?.category}</p>
+                            <p><strong>Organization Name:</strong> {currentRequest?.registration?.organizationName}</p>
+                            <p><strong>Present Address:</strong> {currentRequest?.registration?.presentAddress}</p>
+                            <p><strong>Website:</strong> {currentRequest?.registration?.website}</p>
+                            <p><strong>Company Email:</strong> {currentRequest?.registration?.companyEmail}</p>
                         </div>
 
                         {/* Contact Info Section */}
                         <div className="border border-primary rounded-2xl p-7">
                             <h4 className="font-bold text-md mb-2 text-primary">Contact Info</h4>
-                            <p><strong>Applicant Name:</strong> {currentRequest?.details?.contactInfo?.applicantName}</p>
-                            <p><strong>Applicant Phone:</strong> {currentRequest?.details?.contactInfo?.applicantPhone}</p>
-                            <p><strong>Applicant Email:</strong> {currentRequest?.details?.contactInfo?.applicantEmail}</p>
-                            <p><strong>Applicant Landline:</strong> {currentRequest?.details?.contactInfo?.applicantLandline}</p>
+                            <p><strong>Applicant Name:</strong> {currentRequest?.contactInfo?.applicantName}</p>
+                            <p><strong>Applicant Phone:</strong> {currentRequest?.contactInfo?.applicantPhone}</p>
+                            <p><strong>Applicant Email:</strong> {currentRequest?.contactInfo?.applicantEmail}</p>
+                            <p><strong>Applicant Landline:</strong> {currentRequest?.contactInfo?.applicantLandline}</p>
                         </div>
 
                         {/* Stakeholders Section */}
                         <div className="border border-primary rounded-2xl p-7">
                             <h4 className="font-bold text-md mb-2 text-primary">Stakeholders</h4>
-                            {currentRequest?.details?.stakeholders?.map((stakeholder, index) => (
+                            {currentRequest?.stakeholders?.map((stakeholder, index) => (
                                 <div key={index} className="mb-4">
                                     <p><strong>Name:</strong> {stakeholder.name}</p>
                                     <p><strong>Designation:</strong> {stakeholder.designation}</p>
@@ -271,29 +311,29 @@ const ApproveOffice = () => {
                         {/* Company Profile Section */}
                         <div className="border border-primary rounded-2xl p-7">
                             <h4 className="font-bold text-md mb-2 text-primary">Company Profile</h4>
-                            <p><strong>Company Headquarters:</strong> {currentRequest?.details?.companyProfile?.companyHeadquarters}</p>
-                            <p><strong>Years in Business:</strong> {currentRequest?.details?.companyProfile?.yearsInBusiness}</p>
-                            <p><strong>Number of Employees:</strong> {currentRequest?.details?.companyProfile?.numberOfEmployees}</p>
-                            <p><strong>Registration Number:</strong> {currentRequest?.details?.companyProfile?.registrationNumber}</p>
+                            <p><strong>Company Headquarters:</strong> {currentRequest?.companyProfile?.companyHeadquarters}</p>
+                            <p><strong>Years in Business:</strong> {currentRequest?.companyProfile?.yearsInBusiness}</p>
+                            <p><strong>Number of Employees:</strong> {currentRequest?.companyProfile?.numberOfEmployees}</p>
+                            <p><strong>Registration Number:</strong> {currentRequest?.companyProfile?.registrationNumber}</p>
                         </div>
 
                         {/* Industry Sector Section */}
                         <div className="border border-primary rounded-2xl p-7">
                             <h4 className="font-bold text-md mb-2 text-primary">Industry Sector</h4>
-                            <p><strong>Category:</strong> {currentRequest?.details?.industrySector?.category}</p>
-                            <p><strong>Rental Space (Sq Ft):</strong> {currentRequest?.details?.industrySector?.rentalSpaceSqFt}</p>
-                            <p><strong>Time Frame:</strong> {currentRequest?.details?.industrySector?.timeFrame}</p>
+                            <p><strong>Category:</strong> {currentRequest?.industrySector?.category}</p>
+                            <p><strong>Rental Space (Sq Ft):</strong> {currentRequest?.industrySector?.rentalSpaceSqFt}</p>
+                            <p><strong>Time Frame:</strong> {currentRequest?.industrySector?.timeFrame}</p>
                         </div>
 
                         {/* Company Resource Composition Section */}
                         <div className="border border-primary rounded-2xl p-7">
                             <h4 className="font-bold text-md mb-2 text-primary">Company Resource Composition</h4>
-                            <p><strong>Management:</strong> {currentRequest?.details?.companyResourceComposition?.management}</p>
-                            <p><strong>Engineering:</strong> {currentRequest?.details?.companyResourceComposition?.engineering}</p>
-                            <p><strong>Marketing and Sales:</strong> {currentRequest?.details?.companyResourceComposition?.marketingAndSales}</p>
-                            <p><strong>Remaining Predominant Area:</strong> {currentRequest?.details?.companyResourceComposition?.remainingPredominantArea}</p>
-                            <p><strong>Areas of Research:</strong> {currentRequest?.details?.companyResourceComposition?.areasOfResearch}</p>
-                            <p><strong>NUST School to Collaborate:</strong> {currentRequest?.details?.companyResourceComposition?.nustSchoolToCollab}</p>
+                            <p><strong>Management:</strong> {currentRequest?.companyResourceComposition?.management}</p>
+                            <p><strong>Engineering:</strong> {currentRequest?.companyResourceComposition?.engineering}</p>
+                            <p><strong>Marketing and Sales:</strong> {currentRequest?.companyResourceComposition?.marketingAndSales}</p>
+                            <p><strong>Remaining Predominant Area:</strong> {currentRequest?.companyResourceComposition?.remainingPredominantArea}</p>
+                            <p><strong>Areas of Research:</strong> {currentRequest?.companyResourceComposition?.areasOfResearch}</p>
+                            <p><strong>NUST School to Collaborate:</strong> {currentRequest?.companyResourceComposition?.nustSchoolToCollab}</p>
                         </div>
                     </div>
                     <div className="modal-action">
@@ -349,19 +389,19 @@ const ApproveOffice = () => {
                             </thead>
                             <tbody>
                                 {paginatedData.map((request) => (
-                                    <tr id={`request-row-${request.id}`} key={request.id} className="relative group">
-                                        <td>{request.requestedOn}</td>
-                                        <td>{request.companyName}</td>
-                                        <td>{request.companyType}</td>
-                                        <td>{request.companyIndustry}</td>
+                                    <tr id={`request-row-${request._id}`} key={request._id} className="relative group">
+                                        <td>{new Date(request.createdAt).toLocaleDateString()}</td>
+                                        <td>{request.registration?.organizationName || 'N/A'}</td>
+                                        <td>{request.registration?.category || 'N/A'}</td>
+                                        <td>{request.industrySector?.category || 'N/A'}</td>
                                         <td>
-                                            <div className={`badge p-3 ${request.status === 'Issued' ? "badge-success text-lime-100" : "badge-accent text-white"} text-sm mt-2`}>
-                                                {request.status === 'Issued' ? <CheckIcon className="size-4 mr-2" /> : <ClockIcon className="size-4 mr-2" />} {request.status}
+                                            <div className={`badge p-3 ${request.statusTenancy ? "badge-success text-lime-100" : "badge-accent text-white"} text-sm mt-2`}>
+                                                {request.statusTenancy ? <CheckIcon className="size-4 mr-2" /> : <ClockIcon className="size-4 mr-2" />} {request.statusTenancy ? 'Issued' : 'Pending'}
                                             </div>
                                         </td>
                                         <td>
                                             <div className="flex items-center gap-2">
-                                                {request.status === 'Pending' && (
+                                                {!request.statusTenancy && (
                                                     <>
                                                         <button
                                                             className="btn btn-sm btn-outline btn-success"
@@ -372,15 +412,6 @@ const ApproveOffice = () => {
                                                         >
                                                             Approve
                                                         </button>
-                                                        {/* <button
-                                                            className="btn btn-sm btn-error btn-outline"
-                                                            onClick={() => {
-                                                                setCurrentRequest({ request, action: 'unapprove' });
-                                                                document.getElementById('confirmation_modal').showModal();
-                                                            }}
-                                                        >
-                                                            Unapprove
-                                                        </button> */}
                                                     </>
                                                 )}
                                                 <button className="btn btn-sm btn-outline btn-primary" onClick={() => showDetails(request)}>
