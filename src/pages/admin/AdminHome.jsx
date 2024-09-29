@@ -31,6 +31,7 @@ const AdminHome = () => {
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
+    { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
 
   ])
   const [companyStats, setCompanyStats] = useState({
@@ -148,7 +149,7 @@ const AdminHome = () => {
 
           {/* Table of companies info */}
           <div className=" md:col-span-4 ">
-            <div className="card p-5 min-h-full ">
+            <div className="card p-5 max-h-60 overflow-y-scroll min-h-full ">
               <div className="w-full flex flex-col">
                 <div className="flex max-sm:flex-col items-center max-sm:items-start justify-between mb-2">
                   <p className="mb-3 font-bold"> Companies</p>
@@ -165,8 +166,8 @@ const AdminHome = () => {
                     </Link>
                   </div>
                 </div>
-                <div className="h-full max-h-60 overflow-scroll">
-                  <table className="table w-full mt-2">
+                <div className="h-full ">
+                  <table className="table w-full h-full mt-2">
                     <thead className="bg-base-200">
                       <tr>
                         <th>Name</th>
