@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
-import { TrashIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import { BuildingOffice2Icon, ChartBarSquareIcon, ChartPieIcon, CpuChipIcon, EnvelopeIcon, TrashIcon, UserCircleIcon, UserGroupIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import FloatingLabelInput from "../../components/FloatingLabelInput";
 import { AdminService } from "../../services";
 
@@ -350,7 +350,10 @@ const CompanyAddition = () => {
         <div className="grid gap-5 max-sm:grid-cols-1 md:grid-cols-2">
           {/** Registration Section */}
           <div className="col-span-2 max-sm:col-span-1">
-            <h1 className="font-bold text-xl">Registration</h1>
+            <div className="flex items-center gap-2">
+              <UserPlusIcon className="size-6" />
+              <h1 className="font-bold text-xl">Registration</h1>
+            </div>
             <hr className="my-4"></hr>
           </div>
           {renderFields("registration", [
@@ -363,7 +366,10 @@ const CompanyAddition = () => {
 
           {/** Contact Info Section */}
           <div className="col-span-2 max-sm:col-span-1">
-            <h1 className="font-bold text-xl">Contact Info</h1>
+          <div className="flex items-center gap-2">
+              <EnvelopeIcon className="size-6" />
+              <h1 className="font-bold text-xl">Contact Information</h1>
+            </div>
             <hr className="my-4"></hr>
           </div>
           {renderFields("contactInfo", [
@@ -376,7 +382,10 @@ const CompanyAddition = () => {
           {/** Stakeholders Section */}
           <div className="col-span-2 max-sm:col-span-1">
             <div className="w-full flex justify-between items-center mt-5">
-              <h1 className="font-bold text-xl">Stakeholders Profiles</h1>
+            <div className="flex items-center gap-2">
+              <UserGroupIcon className="size-6" />
+              <h1 className="font-bold text-xl">Stakeholder Profiles</h1>
+            </div>
               <button
                 onClick={() => {
                   setFormData((prevState) => ({
@@ -427,8 +436,8 @@ const CompanyAddition = () => {
               id={"stakeholder-" + index}
             >
               <div className="flex justify-between items-center">
-                <p className="text-primary font-bold mb-5">
-                  {" "}
+                <p className="text-primary font-bold mb-5 flex items-center gap-2">
+                  <UserCircleIcon className="size-6" />
                   {"Stakeholder " + (index + 1)}
                 </p>
                 <div>
@@ -491,7 +500,10 @@ const CompanyAddition = () => {
 
           {/** Company Profile Section */}
           <div className="col-span-2 max-sm:col-span-1 mt-5">
-            <h1 className="font-bold text-xl">Company Profile</h1>
+          <div className="flex items-center gap-2">
+              <BuildingOffice2Icon className="size-6" />
+              <h1 className="font-bold text-xl">Company Profile</h1>
+            </div>
             <hr className="my-4"></hr>
           </div>
           {renderFields("companyProfile", [
@@ -515,7 +527,10 @@ const CompanyAddition = () => {
 
           {/** Industry Sector Section */}
           <div className="col-span-2 max-sm:col-span-1">
-            <h1 className="font-bold text-xl">Industry Sector</h1>
+          <div className="flex items-center gap-2">
+              <CpuChipIcon className="size-6" />
+              <h1 className="font-bold text-xl">Industry Sector</h1>
+            </div>
             <hr className="my-4"></hr>
           </div>
           {renderFields("industrySector", [
@@ -534,7 +549,10 @@ const CompanyAddition = () => {
 
           {/** Company Resource Composition Section */}
           <div className="col-span-2 max-sm:col-span-1">
-            <h1 className="font-bold text-xl">Company Resource Composition</h1>
+          <div className="flex items-center gap-2">
+              <ChartPieIcon className="size-6" />
+              <h1 className="font-bold text-xl">Company Resource Composition</h1>
+            </div>
             <hr className="my-4"></hr>
           </div>
           {renderFields("companyResourceComposition", [

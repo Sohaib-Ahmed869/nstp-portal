@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
 import { Link } from 'react-router-dom';
-import { MagnifyingGlassIcon, ChevronUpIcon, ChevronDownIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, PlusCircleIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { EyeIcon } from '@heroicons/react/20/solid';
 import { AdminService } from '../../services';
 import { TowerContext } from '../../context/TowerContext';
@@ -108,6 +108,11 @@ const Companies = () => {
       <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"}`}>
         <div className="flex flex-row items-center justify-between">
           <h1 className="text-2xl font-bold">Companies</h1>
+          <Link to="/admin/add-company" className='max-sm:w-1/2 max-[450px]:w-full'>
+                      <button className="btn btn-primary btn-md max-sm:btn-block max-sm:btn-sm text-white">
+                        <PlusCircleIcon className="size-6 max-[450px]:hidden"></PlusCircleIcon> Add Company
+                      </button>
+                    </Link>
         </div>
 
         {/* Search & filter */}

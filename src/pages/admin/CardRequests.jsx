@@ -134,7 +134,6 @@ const CardRequests = () => {
 
     return (
         <Sidebar>
-            <h1>Current Tower: {tower}</h1>
             {/* Modal */}
             <dialog id="confirmation_modal" className="modal">
                 <div className="modal-box">
