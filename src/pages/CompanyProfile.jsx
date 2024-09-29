@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Sidebar from '../components/Sidebar';
 import { useParams } from 'react-router-dom';
-import { UserGroupIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import sampleCompanyLogo from '../assets/samplecompanylogo.png'
 import ReactApexChart from 'react-apexcharts';
 import { getPieChartOptions } from '../util/charts';
@@ -234,6 +234,7 @@ const Company = ({ role }) => {
               offices: fetchedData.offices,
               companyResourceComposition: fetchedData.companyResourceComposition,
               contractEndDate: formattedContractEndDate,
+
               totalEmployees: fetchedData.employees,
               activeEmployees: fetchedData.activeEmployees,
               cardsNotIssued: fetchedData.cardsNotIssued,
@@ -248,7 +249,7 @@ const Company = ({ role }) => {
               eTags: fetchedData.etags,
               violations: fetchedData.violations,
               contractDuration: contractDurationPercentage,
-              employees: [], //Placeholder
+              employees: fetchedData.employees
             };
 
             setCompanyData(consolidatedData);
@@ -488,7 +489,7 @@ const Company = ({ role }) => {
               <div className=" flex  items-center gap-1  p-1 rounded-lg rounded-tl-none rounded-bl-none  px-3 text-primary font-bold border border-primary border-l-0 max-md:border-r-0 md:"> <PhoneIcon className="size-4" /> {companyData.contactPhone} </div>
             </div>
             <div className="flex gap-3">
-              <p className="text-base text-secondary ">Rental Space: {companyData.rentalSpaceSqft} </p>
+              <p className="text-base text-secondary">Rental Space: {companyData.rentalSpaceSqft} </p>
               <p className="text-base text-secondary">Headquarters: {companyData.companyHeadquarters} </p>
 
             </div>
@@ -508,7 +509,7 @@ const Company = ({ role }) => {
         <div className="grid md:grid-cols-2 gap-5 mt-5 ">
           {/* Employee Stats */}
           <EmployeeStats
-            total={companyData.totalEmployees}
+            total={companyData.employees.length}
             active={companyData.activeEmployees}
             cardsNotIssued={companyData.cardsNotIssued}
             cardsIssued={companyData.cardsIssued}
@@ -629,22 +630,25 @@ const Company = ({ role }) => {
         {/* Employees list */}
         <div>
           <h1 className="text-2xl font-semibold mt-5">Employees</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
-            {companyData.employees.length === 0 && <div className="text-secondary">No employees found</div>
-            }
+          {companyData.employees.length === 0 ? <div className="text-secondary">No employees found</div>
+            :
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
+           
             {companyData.employees.map((employee) => (
               <div key={employee._id} className="relative card p-5 flex flex-col gap-5 items-start group">
                 <div className="flex gap-2">
                   <div className="avatar">
-                    <div className="w-24 rounded-full">
-                      <img src={employee.photo} alt={employee.name} />
+                    <div className="w-20 rounded-full bg-gray-300">
+                      
+                      { employee.photo ? <img src={employee.photo} alt={employee.name} /> :
+                      <UserCircleIcon className="size-20 text-gray-400" />}
                     </div>
                   </div>
 
                   <div>
                     <h2 className="text-lg font-semibold">{employee.name}</h2>
                     <p className="text-sm text-gray-500">{employee.designation}</p>
-                    <p className="text-sm text-gray-500">{"Joined on " + employee.date_joining}</p>
+                    <p className="text-sm text-gray-500">{"Joined on " +  new Date(employee.date_joining).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
                   </div>
                 </div>
                 <div className="absolute inset-0 bg-base-100 rounded-md bg-opacity-50 backdrop-blur-sm flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -672,6 +676,7 @@ const Company = ({ role }) => {
               </div>
             ))}
           </div>
+}
         </div>
       </div>
     </Sidebar>
