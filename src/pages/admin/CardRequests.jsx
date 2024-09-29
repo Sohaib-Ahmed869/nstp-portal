@@ -34,6 +34,43 @@ const CardRequests = () => {
         // more data...
     ];
 
+    const actualData = [
+        {
+            "_id": "66f7deb1787f6b046e0ee415",
+            "tower": "66f7b5ee7c51cd5775306b61",
+            "tenant_id": "66f7b251d42fec9018e6046b",
+            "employee_id": {
+                "_id": "66f7deb1787f6b046e0ee414",
+                "tower": "66f7b5ee7c51cd5775306b61",
+                "tenant_id": "66f7b251d42fec9018e6046b",
+                "tenant_name": "Hexler Tech",
+                "email": "musa@gmail.com",
+                "phone": "03341110111",
+                "name": "Musa Haroon Satti",
+                "designation": "Full Stack Developer",
+                "cnic": "6110166894529",
+                "dob": "2003-10-30T00:00:00.000Z",
+                "address": "F/10-1 Street 11 House 29",
+                "date_joining": "2023-01-01T00:00:00.000Z",
+                "employee_type": "Contract",
+                "contract_duration": "6 Months",
+                "is_nustian": false,
+                "status_employment": true,
+                "createdAt": "2024-09-28T10:47:13.456Z",
+                "updatedAt": "2024-09-28T10:47:13.456Z",
+                "__v": 0
+            },
+            "is_issued": false,
+            "is_requested": true,
+            "is_returned": false,
+            "createdAt": "2024-09-28T10:47:13.260Z",
+            "updatedAt": "2024-09-28T15:57:33.958Z",
+            "__v": 0,
+            "date_requested": "2024-09-28T15:57:33.950Z"
+        }
+    ]
+   
+
     const [cardRequests, setCardRequests] = useState([]);
 
     useEffect(() => {
@@ -47,8 +84,30 @@ const CardRequests = () => {
                     return;
                 }
                 console.log("🚀 ~ fetchCardRequests ~ response.data.cardAllocations", response.data.cardAllocations);
-                // setCardRequests(response.data.cardAllocations);
-
+                
+                // Transform the data to match the expected structure
+                const transformedData = response.data.cardAllocations.map(item => {
+                    let expiresOn = " - ";
+                    if (item.is_issued) {
+                        const dateIssued = new Date(item.date_issued);
+                        const expiresDate = new Date(dateIssued.setMonth(dateIssued.getMonth() + 6));
+                        expiresOn = expiresDate.toLocaleString();
+                    }
+    
+                    return {
+                        id: item._id,
+                        requestedOn: new Date(item.date_requested).toLocaleString(),
+                        expiresOn: expiresOn,
+                        companyName: item.employee_id.tenant_name,
+                        employeeName: item.employee_id.name,
+                        employeeCnic: item.employee_id.cnic,
+                        issued: item.is_issued,
+                        active: item.is_requested && !item.is_returned,
+                    };
+                });
+    
+                setCardRequests(transformedData);
+    
             } catch (error) {
                 console.error("Error fetching card requests", error);
             } finally {
@@ -57,7 +116,6 @@ const CardRequests = () => {
         }
         
         fetchCardRequests();
-        setCardRequests(dummyData);
     }, []);
 
     const handleSearch = (e) => {
@@ -96,42 +154,45 @@ const CardRequests = () => {
         }, 2000);
     };
 
+    //state to allow u to fetch old requests only once, once it is true btn will be disabled
+    const [fetchedOldRequests, setFetchedOldRequests] = useState(false);
+
     const fetchOldRequests = () => {
         async function fetchOldRequests() {
             setLoadingOldRequests(true);
-            const oldRequests = [
-                {
-                    id: 12,
-                    requestedOn: '2022-12-01 10:00 AM',
-                    expiresOn: '2023-02-01 10:00 AM',
-                    companyName: 'Company K',
-                    employeeName: 'Ivy Blue',
-                    employeeCnic: '99887-6655443-2',
-                    issued: true,
-                    active: false,
-                },
-                {
-                    id: 13,
-                    requestedOn: '2022-11-15 09:30 AM',
-                    expiresOn: '2023-01-15 09:30 AM',
-                    companyName: 'Company L',
-                    employeeName: 'Jack Black',
-                    employeeCnic: '77665-4433221-0',
-                    issued: true,
-                    active: false,
-                },
-                // Add more old requests here
-            ];
+            const oldRequests = [ ];
             try{
                 const response = await AdminService.getIssuedCardAllocations(tower.id);
-                console.log("🚀 ~ fetchOldRequests ~ response", response)
                 if (response.error) {
                     console.error("Error fetching old requests", response.error);
+                    
                     return;
                 }
                 console.log("🚀 ~ fetchOldRequests ~ response.data.cardAllocations", response.data.cardAllocations)
-                // setCardRequests(response.data.cardAllocations);
+                setFetchedOldRequests(true);
+                // Transform the data to match the expected structure
+                const transformedData = response.data.cardAllocations.map(item => {
+                    let expiresOn = " - ";
+                    if (item.is_issued) {
+                        const dateIssued = new Date(item.date_issued);
+                        const expiresDate = new Date(dateIssued.setMonth(dateIssued.getMonth() + 6));
+                        expiresOn = expiresDate.toLocaleString();
+                    }
+    
+                    return {
+                        id: item._id,
+                        requestedOn: new Date(item.date_requested).toLocaleString(),
+                        expiresOn: expiresOn,
+                        companyName: item.employee_id.tenant_name,
+                        employeeName: item.employee_id.name,
+                        employeeCnic: item.employee_id.cnic,
+                        issued: item.is_issued,
+                        active: item.is_requested && !item.is_returned,
+                    };
+                });
 
+                oldRequests.push(...transformedData);
+                setCardRequests((prevRequests) => [...prevRequests, ...oldRequests]);
 
             } catch (error) {
                 console.error("Error fetching old requests", error);
@@ -204,7 +265,7 @@ const CardRequests = () => {
                 <div className="flex flex-row items-center justify-between">
                     <h1 className="text-2xl font-bold">Card Requests</h1>
                     <button
-                        className={`btn btn-primary text-white ${loadingOldRequests && 'btn-disabled'}`}
+                        className={`btn btn-primary text-white ${(loadingOldRequests | fetchedOldRequests) && 'btn-disabled'}`}
                         onClick={fetchOldRequests}
                         disabled={loadingOldRequests}
                     >
@@ -216,7 +277,7 @@ const CardRequests = () => {
                         ) : (
                             <>
                                 <ArchiveBoxIcon className="size-6 mr-2" />
-                                Fetch Old Requests
+                                {fetchedOldRequests ? "Old Requests Fetched " : "Fetch Old Requests"}
                             </>
                         )}
                     </button>
@@ -285,7 +346,7 @@ const CardRequests = () => {
                                                         >
                                                             Approve
                                                         </button>
-                                                        <button
+                                                        {/* <button
                                                             className="btn btn-sm btn-error btn-outline"
                                                             onClick={() => {
                                                                 setCurrentRequest({ request, action: 'unapprove' });
@@ -293,7 +354,7 @@ const CardRequests = () => {
                                                             }}
                                                         >
                                                             Unapprove
-                                                        </button>
+                                                        </button> */}
                                                     </>
                                                 )}
                                                 <button className="btn btn-sm btn-outline btn-primary">
