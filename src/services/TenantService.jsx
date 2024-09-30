@@ -132,6 +132,68 @@ const TenantService = {
       return { error: error };
     }
   },
+
+  getGatePasses: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/tenant/gatepasses`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  requestGatePass: async (guestName, guestCnic, guestContact, gateNumber) => {
+    try {
+      console.log(
+        "🚀 ~ requestGatePass ~ guestData",
+        guestName,
+        guestCnic,
+        guestContact,
+        gateNumber
+      );
+      const response = await axios.post(
+        `${BASE_URL}/tenant/gatepass/request`,
+        {
+          guestName,
+          guestCnic,
+          guestContact,
+          gateNumber,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      console.log("🚀 ~ requestGatePass ~ response", response);
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  requestWorkPermit: async () => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/tenant/workpermit/request`,
+        {
+          //
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
 };
 
 export default TenantService;
