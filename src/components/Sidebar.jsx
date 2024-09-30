@@ -18,12 +18,15 @@ import {
   PresentationChartLineIcon,
   IdentificationIcon,
   UserGroupIcon,
-  BuildingOfficeIcon
+  BuildingOfficeIcon,
+  ExclamationTriangleIcon,
+  WrenchIcon
 } from "@heroicons/react/24/outline";
 import { SidebarItem } from "./SidebarItem";
 import { AuthContext } from '../context/AuthContext';
 
 import nstpPng from '../assets/nstplogowhite.png'
+import { ChatBubbleBottomCenterIcon } from "@heroicons/react/16/solid";
 
 
 const sidebarConfig = {
@@ -57,12 +60,13 @@ const sidebarConfig = {
     { icon: <ChartBarIcon />, text: "Dashboard", url: "/" },
     { icon: <UserGroupIcon />, text: "Employees", url: "/employees" },
     { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
-    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Evaluations", url: "/evaluations" },
+    { icon: <ClipboardDocumentCheckIcon />, text: "Evaluations", url: "/evaluations" },
     { icon: <TruckIcon />, text: "Parking", url: "/parking" },
     { icon: <TicketIcon />, text: "Gate Passes", url: "/gate-passes" },
+    { icon: <WrenchIcon />, text: "Work Permits", url: "/work-permits" },
     { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: "/lost-and-found" },
     { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },
-    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: "/occurences" },
+    { icon: <ExclamationTriangleIcon />, text: "Occurences", url: "/occurences" },
   ],
 };
 

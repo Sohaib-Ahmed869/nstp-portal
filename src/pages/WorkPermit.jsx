@@ -18,6 +18,8 @@ const WorkPermit = ({ role }) => {
         department: "",
         description: "",
         ppe: "",
+        startDate: "",
+        endDate: "",
     });
 
 
@@ -179,6 +181,23 @@ const WorkPermit = ({ role }) => {
                             id="department"
                             label="Department"
                             value={newWorkPermit.department}
+                            onChange={handleInputChange}
+                        />
+                        {/** Start date and end date */}
+                        <FloatingLabelInput
+                            name="startDate"
+                            type="date"
+                            id="startDate"
+                            label="Start Date"
+                            value={newWorkPermit.startDate}
+                            onChange={handleInputChange}
+                        />
+                        <FloatingLabelInput
+                            name="endDate"
+                            type="date"
+                            id="endDate"
+                            label="End Date"
+                            value={newWorkPermit.endDate}
                             onChange={handleInputChange}
                         />
                         <FloatingLabelInput
