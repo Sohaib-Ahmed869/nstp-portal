@@ -130,11 +130,19 @@ const LoginPage = () => {
 
         var response = {};
         var isValid = false;
-        if (role === "reception") {
+        
+        if (role === "receptionist") {
           response = await AuthService.receptionistLogin(
             lowerCaseUsername,
             password
           );
+          isValid = checkResponse(response);
+          if (isValid) {
+            login(response.data.role, response.data.towers);
+            navigate("/receptionist");
+          } else {
+            return;
+          }
         } else if (role === "admin") {
           response = await AuthService.adminLogin(lowerCaseUsername, password);
           isValid = checkResponse(response);

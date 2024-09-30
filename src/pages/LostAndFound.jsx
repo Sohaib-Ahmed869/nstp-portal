@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../components/Sidebar';
 import NSTPLoader from '../components/NSTPLoader';
 import FloatingLabelInput from '../components/FloatingLabelInput';
 import { PlusCircleIcon, MagnifyingGlassIcon, ArrowsUpDownIcon } from '@heroicons/react/24/outline';
+import { CommonService, ReceptionistService } from '../services';
+import { TowerContext } from '../context/TowerContext';
 
 const LostAndFound = ({ role }) => {
     const [loading, setLoading] = useState(true);
@@ -24,33 +26,56 @@ const LostAndFound = ({ role }) => {
     const [sortOrder, setSortOrder] = useState('asc');
     const [errors, setErrors] = useState({});
 
+    const { tower } = useContext(TowerContext);
+
     useEffect(() => {
         // Simulate API call to fetch data
-        setTimeout(() => {
-            setLostItems([
-                { id: 1, title: 'Lost Wallet', desc: 'Black leather wallet, including an interesting engraving. ', dateAdded: '2023-10-01', photo: 'https://www.bates.edu/news/files/2019/12/191213-lost-and-found-084750.jpg' },
-                { id: 2, title: 'Lost Keys', desc: 'strange-looking car keys without any buttons, khokla key, does this thing even work?', dateAdded: '2023-09-25', },
-                { id: 3, title: 'Lost Watch', desc: 'Silver wristwatch', dateAdded: '2023-09-20' },
-                { id: 4, title: 'Lost Phone', desc: 'Black iPhone 12, with a blue cover and some money included in it for free!', dateAdded: '2023-09-15', photo: 'https://www.repoapp.com/wp-content/uploads/2015/11/shms-lost-and-found.jpg' },
-                { id: 5, title: 'Lost Glasses', desc: 'Black frame glasses', dateAdded: '2023-09-10' },
-                { id: 6, title: 'Lost Ring', desc: 'Gold ring with diamond', dateAdded: '2023-09-05', photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDMStsQ_jFWL5e9Bl5_ajExux4sj49_yBITQ&s' },
-                { id: 7, title: 'Lost Bag', desc: 'Brown leather bag', dateAdded: '2023-09-01' },
-                { id: 8, title: 'Lost Earphones', desc: 'White wireless earphones', dateAdded: '2023-08-25', photo: 'https://www.bates.edu/news/files/2019/12/191213-lost-and-found-084750.jpg' },
-                { id: 9, title: 'Lost Bracelet', desc: 'Silver bracelet with gems', dateAdded: '2023-08-20' },
-                { id: 10, title: 'Lost Scarf', desc: 'Red woolen scarf seems hand knitted and quite worn out, surprisnly.', dateAdded: '2023-08-15' },
-                { id: 11, title: 'Lost Umbrella', desc: 'Black foldable umbrella', dateAdded: '2023-08-10' },
-                { id: 12, title: 'Lost Laptop', desc: 'HP Omen gaming looks exactly like the laptop belonging to CTO Hexler Tech.', dateAdded: '2023-08-05' },
-                { id: 13, title: 'Lost Book', desc: 'The Alchemist by Paulo Coelho', dateAdded: '2023-08-01', photo: 'https://www.repoapp.com/wp-content/uploads/2015/11/shms-lost-and-found.jpg' },
-                { id: 14, title: 'Lost Shoes', desc: 'Nike Air Max', dateAdded: '2023-07-25' },
-                { id: 15, title: 'Lost Jacket', desc: 'Blue denim jacket with several large patches and holes, bhai kisi ghareb ko de do', dateAdded: '2023-07-20' },
-                { id: 16, title: 'Lost Cap', desc: 'Black baseball cap', dateAdded: '2023-07-15', },
-                { id: 17, title: 'Lost Gloves', desc: 'Leather gloves', dateAdded: '2023-07-10' },
-                { id: 18, title: 'Lost bunch of keys', desc: 'Brown leather belt', dateAdded: '2023-07-05', photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDMStsQ_jFWL5e9Bl5_ajExux4sj49_yBITQ&s' },
-                { id: 19, title: 'Lost Perfume', desc: 'Chanel No. 5', dateAdded: '2023-07-01' },
-                { id: 20, title: 'Lost Necklace', desc: 'Gold chain with pendant', dateAdded: '2023-06-25' },
-            ]);
-            setLoading(false);
-        }, 2000);
+
+        async function fetchData() {
+            try {
+                const response = await CommonService.viewLostAndFound(tower.id);
+                // console.log('Lost Items:', response);
+                if (response.error) {
+                    console.error('Error fetching lost items:', response.error);
+                    return;
+                }
+                console.log('Lost Items:', response.data.lostAndFound);
+                // setLostItems(response.data);
+            } catch (error) {
+                console.error('Error fetching lost items:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+
+
+        // setTimeout(() => {
+            // setLostItems([
+            //     { id: 1, title: 'Lost Wallet', desc: 'Black leather wallet, including an interesting engraving. ', dateAdded: '2023-10-01', photo: 'https://www.bates.edu/news/files/2019/12/191213-lost-and-found-084750.jpg' },
+            //     { id: 2, title: 'Lost Keys', desc: 'strange-looking car keys without any buttons, khokla key, does this thing even work?', dateAdded: '2023-09-25', },
+            //     { id: 3, title: 'Lost Watch', desc: 'Silver wristwatch', dateAdded: '2023-09-20' },
+            //     { id: 4, title: 'Lost Phone', desc: 'Black iPhone 12, with a blue cover and some money included in it for free!', dateAdded: '2023-09-15', photo: 'https://www.repoapp.com/wp-content/uploads/2015/11/shms-lost-and-found.jpg' },
+            //     { id: 5, title: 'Lost Glasses', desc: 'Black frame glasses', dateAdded: '2023-09-10' },
+            //     { id: 6, title: 'Lost Ring', desc: 'Gold ring with diamond', dateAdded: '2023-09-05', photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDMStsQ_jFWL5e9Bl5_ajExux4sj49_yBITQ&s' },
+            //     { id: 7, title: 'Lost Bag', desc: 'Brown leather bag', dateAdded: '2023-09-01' },
+            //     { id: 8, title: 'Lost Earphones', desc: 'White wireless earphones', dateAdded: '2023-08-25', photo: 'https://www.bates.edu/news/files/2019/12/191213-lost-and-found-084750.jpg' },
+            //     { id: 9, title: 'Lost Bracelet', desc: 'Silver bracelet with gems', dateAdded: '2023-08-20' },
+            //     { id: 10, title: 'Lost Scarf', desc: 'Red woolen scarf seems hand knitted and quite worn out, surprisnly.', dateAdded: '2023-08-15' },
+            //     { id: 11, title: 'Lost Umbrella', desc: 'Black foldable umbrella', dateAdded: '2023-08-10' },
+            //     { id: 12, title: 'Lost Laptop', desc: 'HP Omen gaming looks exactly like the laptop belonging to CTO Hexler Tech.', dateAdded: '2023-08-05' },
+            //     { id: 13, title: 'Lost Book', desc: 'The Alchemist by Paulo Coelho', dateAdded: '2023-08-01', photo: 'https://www.repoapp.com/wp-content/uploads/2015/11/shms-lost-and-found.jpg' },
+            //     { id: 14, title: 'Lost Shoes', desc: 'Nike Air Max', dateAdded: '2023-07-25' },
+            //     { id: 15, title: 'Lost Jacket', desc: 'Blue denim jacket with several large patches and holes, bhai kisi ghareb ko de do', dateAdded: '2023-07-20' },
+            //     { id: 16, title: 'Lost Cap', desc: 'Black baseball cap', dateAdded: '2023-07-15', },
+            //     { id: 17, title: 'Lost Gloves', desc: 'Leather gloves', dateAdded: '2023-07-10' },
+            //     { id: 18, title: 'Lost bunch of keys', desc: 'Brown leather belt', dateAdded: '2023-07-05', photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDMStsQ_jFWL5e9Bl5_ajExux4sj49_yBITQ&s' },
+            //     { id: 19, title: 'Lost Perfume', desc: 'Chanel No. 5', dateAdded: '2023-07-01' },
+            //     { id: 20, title: 'Lost Necklace', desc: 'Gold chain with pendant', dateAdded: '2023-06-25' },
+            // ]);
+            // setLoading(false);
+        // }, 2000);
     }, []);
 
     const handleSearch = (e) => {
@@ -77,23 +102,46 @@ const LostAndFound = ({ role }) => {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
 
         setModalLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            console.log('Form Data:', formData);
-            setLostItems((prevItems) => [
-                { id: prevItems.length + 1, title: formData.title, desc: formData.desc, dateAdded: new Date().toISOString().split('T')[0] },
-                ...prevItems
-            ]);
-            setFormData({ title: '', desc: '', image: '' });
 
+        try{
+            const response = await ReceptionistService.addLostAndFound(formData.title, formData.desc, formData.image);
+            if (response.error) {
+                console.error('Error adding lost item:', response.error);
+                return;
+            }
+            console.log('Lost item added:', response.data);
+
+            // setLostItems((prevItems) => [
+            //     { id: prevItems.length + 1, title: formData.title, desc: formData.desc, dateAdded: new Date().toISOString().split('T')[0] },
+            //     ...prevItems
+            // ]);
+            // setFormData({ title: '', desc: '', image: '' });
+
+        } catch (error) {
+            console.error('Error adding lost item:', error);
+        } finally {
             setModalLoading(false);
             document.getElementById('item_form').close();
-        }, 2000);
+        }
+
+        // Simulate API call
+        // setTimeout(() => {
+        //     console.log('Form Data:', formData);
+        //     setLostItems((prevItems) => [
+        //         { id: prevItems.length + 1, title: formData.title, desc: formData.desc, dateAdded: new Date().toISOString().split('T')[0] },
+        //         ...prevItems
+        //     ]);
+        //     setFormData({ title: '', desc: '', image: '' });
+
+        //     setModalLoading(false);
+        //     document.getElementById('item_form').close();
+        // }, 2000);
     };
 
 

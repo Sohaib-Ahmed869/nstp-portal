@@ -3,12 +3,12 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './index.css';
 
 // Pages
-import LoginPage from '/src/pages/LoginPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 
 // Admin Pages
-import AdminHome from '/src/pages/admin/AdminHome.jsx';
-import CompanyAddition from '/src/pages/admin/CompanyAddition.jsx';
+import AdminHome from './pages/admin/AdminHome.jsx';
+import CompanyAddition from './pages/admin/CompanyAddition.jsx';
 import Companies from './pages/admin/Companies.jsx';
 import Etags from './pages/admin/Etags.jsx';
 import CardRequests from './pages/admin/CardRequests.jsx';
