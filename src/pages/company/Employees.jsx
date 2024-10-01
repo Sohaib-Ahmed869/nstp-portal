@@ -273,6 +273,29 @@ const Employees = () => {
     });
   };
 
+  const handleLayoff = async (employee_id) => {
+    // add loading state
+
+    try {
+      const response = await TenantService.layOffEmployee(employee_id);
+      console.log("🚀 ~ response:", response)
+      if(response.error){
+        console.error("Error laying off employee:", response.error);
+        showToast(false);
+        return;
+      }
+      showToast(true);
+      console.log("🚀 ~ response", response)
+
+    } catch (error) {
+      console.error("Error laying off employee:", error);
+      showToast(false);
+    } finally {
+      // remove loading state
+      document.getElementById("layoff_modal").close();
+    }
+  };
+
   const requestCard = async (employee_id) => {
     console.log("Requesting card for employee:", employee_id);
     setModalLoading(true);
@@ -409,7 +432,7 @@ const Employees = () => {
             >
               Cancel
             </button>
-            <button className="btn btn-primary text-base-100">Layoff</button>
+            <button className="btn btn-primary text-base-100" onClick={() => handleLayoff(employeeProfileSelected._id)}>Layoff</button>
           </div>
         </div>
       </dialog>
@@ -801,6 +824,7 @@ const Employees = () => {
                                     document
                                       .getElementById("layoff_modal")
                                       .showModal();
+                                    setEmployeeProfileSelected(row);
                                     toggleDropdown(row._id);
                                   }}
                                 >

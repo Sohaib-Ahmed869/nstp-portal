@@ -31,12 +31,13 @@ const WorkPermit = ({ role }) => {
         async function fetchWorkPermits() {
             setLoading(true);
             try {
+                let response;
                 if(role === "tenant") {
-                    const response = await TenantService.getWorkPermits();
+                    response = await TenantService.getWorkPermits();
                 } else if(role === "receptionist") {
-                    const response = await ReceptionistService.getWorkPermits();
+                    response = await ReceptionistService.getWorkPermits();
                 } else if(role === "admin") {
-                    const response = await AdminService.getWorkPermits(tower.id);
+                    response = await AdminService.getWorkPermits(tower.id);
                 }
                 if (response.error) {
                     console.error(response.error);

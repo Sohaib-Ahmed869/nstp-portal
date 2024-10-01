@@ -10,7 +10,7 @@ import NSTPLoader from '../components/NSTPLoader';
 import EmployeeProfileModal from '../components/EmployeeProfileModal';
 import FloatingLabelInput from '../components/FloatingLabelInput';
 import showToast from '../util/toast';
-import AdminService from '../services/AdminService';
+import { AdminService } from '../services';
 import { TowerContext } from '../context/TowerContext'
 
 
@@ -26,10 +26,32 @@ const Company = ({ role }) => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [feedback, setFeedback] = useState("");
   const { tower } = useContext(TowerContext);
-  const terminateEmployee = (employeeId) => {
-    // API CALL to terminate
+
+
+  const terminateEmployee = async (employeeId) => {
+    // add loading state
     console.log(`Terminating employee with ID: ${employeeId}`);
+    try{
+      const response = await AdminService.terminateEmployee(employeeId);
+      if (response.error) {
+        console.error("Error terminating employee:", response);
+        showToast(false, response.error.message);
+        return;
+      }
+      showToast(true, "Employee terminated successfully.");
+      
+      // remove employee from the list
+
+    } catch (error) {
+      console.error("Error terminating employee:", error);
+      showToast(false, "An error occurred while terminating employee.");
+    } finally {
+      // remove loading state
+    }
+    // API CALL to terminate
   };
+
+
   const [companyData, setCompanyData] = useState({
     name: "Tech Innovators",
     type: "Startup",

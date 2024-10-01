@@ -205,6 +205,26 @@ const TenantService = {
       return { error: error };
     }
   },
+
+  layOffEmployee: async (employeeId) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/tenant/employee/layoff`,
+        {
+          employeeId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        },
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
 };
 
 export default TenantService;
