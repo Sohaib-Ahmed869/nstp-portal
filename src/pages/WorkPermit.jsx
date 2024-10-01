@@ -26,6 +26,8 @@ const WorkPermit = ({ role }) => {
         ppe: "",
     });
     const { tower } = useContext(TowerContext);
+    const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 10;
 
     useEffect(() => {
         async function fetchWorkPermits() {
@@ -203,6 +205,24 @@ const WorkPermit = ({ role }) => {
             document.getElementById('request_work_permit_modal').close();
         }
     };
+
+    
+const indexOfLastItem = currentPage * itemsPerPage;
+const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+const handleNextPage = () => {
+    if (currentPage < totalPages) {
+        setCurrentPage(currentPage + 1);
+    }
+};
+
+const handlePrevPage = () => {
+    if (currentPage > 1) {
+        setCurrentPage(currentPage - 1);
+    }
+};
 
     return (
         <Sidebar>
@@ -386,37 +406,55 @@ const WorkPermit = ({ role }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredData.length === 0 ? (
-                                <tr>
-                                    <td colSpan="6" className="text-center text-gray-500">No data to show for now.</td>
-                                </tr>
-                            ) : (
-                                filteredData.map((permit) => (
-                                    <tr key={permit.id}>
-                                        <td>{permit.date}</td>
-                                        <td>{permit.name}</td>
-                                        <td>{permit.department}</td>
-                                        <td className={`badge ${permit.status === "approved" ? "badge-primary" : permit.status === "rejected" ? "badge-error" : "badge-secondary"} text-sm mt-2 flex gap-2`}>
-                                            {permit.status == "approved" ? <CheckIcon className="size-4" /> : permit.status == "rejected" ? <XMarkIcon className="size-4" /> : <ClockIcon className="size-4" />}
-                                            {permit.status.charAt(0).toUpperCase() + permit.status.slice(1)}
-
-                                        </td>
-                                        <td>
-                                            <button
-                                                className="btn btn-primary btn-outline btn-sm"
-                                                onClick={() => {
-                                                    setSelectedWorkPermitId(permit.id);
-                                                    document.getElementById('work_permit_details_modal').showModal();
-                                                }}
-                                            >
-                                                Show Details
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
+    {currentItems.length === 0 ? (
+        <tr>
+            <td colSpan="6" className="text-center text-gray-500">No data to show for now.</td>
+        </tr>
+    ) : (
+        currentItems.map((permit) => (
+            <tr key={permit.id}>
+                <td>{permit.date}</td>
+                <td>{permit.name}</td>
+                <td>{permit.department}</td>
+                <td className={`badge ${permit.status === "approved" ? "badge-primary" : permit.status === "rejected" ? "badge-error" : "badge-secondary"} text-sm mt-2 flex gap-2`}>
+                    {permit.status == "approved" ? <CheckIcon className="size-4" /> : permit.status == "rejected" ? <XMarkIcon className="size-4" /> : <ClockIcon className="size-4" />}
+                    {permit.status.charAt(0).toUpperCase() + permit.status.slice(1)}
+                </td>
+                <td>
+                    <button
+                        className="btn btn-primary btn-outline btn-sm"
+                        onClick={() => {
+                            setSelectedWorkPermitId(permit.id);
+                            document.getElementById('work_permit_details_modal').showModal();
+                        }}
+                    >
+                        Show Details
+                    </button>
+                </td>
+            </tr>
+        ))
+    )}
+</tbody>
                     </table>
+                    <div className="flex justify-between items-center mt-4">
+    <button
+        className="btn btn-secondary"
+        onClick={handlePrevPage}
+        disabled={currentPage === 1}
+    >
+        Previous
+    </button>
+    <span>
+        Page {currentPage} of {totalPages}
+    </span>
+    <button
+        className="btn btn-secondary"
+        onClick={handleNextPage}
+        disabled={currentPage === totalPages}
+    >
+        Next
+    </button>
+</div>
                 </div>
             </div>
         </Sidebar>
