@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../components/Sidebar';
 import NSTPLoader from '../components/NSTPLoader';
 import FloatingLabelInput from '../components/FloatingLabelInput';
-import { PlusCircleIcon, MagnifyingGlassIcon, ArrowsUpDownIcon } from '@heroicons/react/24/outline';
+import { PlusCircleIcon, MagnifyingGlassIcon, ArrowsUpDownIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { CommonService, ReceptionistService } from '../services';
 import { TowerContext } from '../context/TowerContext';
+import showToast from '../util/toast';
 
 const LostAndFound = ({ role }) => {
     const [loading, setLoading] = useState(true);
@@ -30,54 +31,34 @@ const LostAndFound = ({ role }) => {
 
     useEffect(() => {
         // Simulate API call to fetch data
-
         async function fetchData() {
             try {
                 const response = await CommonService.viewLostAndFound(tower.id);
-                // console.log('Lost Items:', response);
                 if (response.error) {
                     console.error('Error fetching lost items:', response.error);
                     return;
                 }
                 console.log('Lost Items:', response.data.lostAndFound);
-                // setLostItems(response.data);
+    
+                const mappedData = response.data.lostAndFound.map(item => ({
+                    id: item._id,
+                    title: item.item,
+                    desc: item.description,
+                    dateAdded: new Date(item.date_found).toLocaleDateString(),
+                    photo: item.image || null, 
+                    isClaimed: item.is_claimed, //boolean stores value if claimed or not
+                }));
+    
+                setLostItems(mappedData);
             } catch (error) {
                 console.error('Error fetching lost items:', error);
             } finally {
                 setLoading(false);
             }
         };
-
+    
         fetchData();
-
-
-        // setTimeout(() => {
-            // setLostItems([
-            //     { id: 1, title: 'Lost Wallet', desc: 'Black leather wallet, including an interesting engraving. ', dateAdded: '2023-10-01', photo: 'https://www.bates.edu/news/files/2019/12/191213-lost-and-found-084750.jpg' },
-            //     { id: 2, title: 'Lost Keys', desc: 'strange-looking car keys without any buttons, khokla key, does this thing even work?', dateAdded: '2023-09-25', },
-            //     { id: 3, title: 'Lost Watch', desc: 'Silver wristwatch', dateAdded: '2023-09-20' },
-            //     { id: 4, title: 'Lost Phone', desc: 'Black iPhone 12, with a blue cover and some money included in it for free!', dateAdded: '2023-09-15', photo: 'https://www.repoapp.com/wp-content/uploads/2015/11/shms-lost-and-found.jpg' },
-            //     { id: 5, title: 'Lost Glasses', desc: 'Black frame glasses', dateAdded: '2023-09-10' },
-            //     { id: 6, title: 'Lost Ring', desc: 'Gold ring with diamond', dateAdded: '2023-09-05', photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDMStsQ_jFWL5e9Bl5_ajExux4sj49_yBITQ&s' },
-            //     { id: 7, title: 'Lost Bag', desc: 'Brown leather bag', dateAdded: '2023-09-01' },
-            //     { id: 8, title: 'Lost Earphones', desc: 'White wireless earphones', dateAdded: '2023-08-25', photo: 'https://www.bates.edu/news/files/2019/12/191213-lost-and-found-084750.jpg' },
-            //     { id: 9, title: 'Lost Bracelet', desc: 'Silver bracelet with gems', dateAdded: '2023-08-20' },
-            //     { id: 10, title: 'Lost Scarf', desc: 'Red woolen scarf seems hand knitted and quite worn out, surprisnly.', dateAdded: '2023-08-15' },
-            //     { id: 11, title: 'Lost Umbrella', desc: 'Black foldable umbrella', dateAdded: '2023-08-10' },
-            //     { id: 12, title: 'Lost Laptop', desc: 'HP Omen gaming looks exactly like the laptop belonging to CTO Hexler Tech.', dateAdded: '2023-08-05' },
-            //     { id: 13, title: 'Lost Book', desc: 'The Alchemist by Paulo Coelho', dateAdded: '2023-08-01', photo: 'https://www.repoapp.com/wp-content/uploads/2015/11/shms-lost-and-found.jpg' },
-            //     { id: 14, title: 'Lost Shoes', desc: 'Nike Air Max', dateAdded: '2023-07-25' },
-            //     { id: 15, title: 'Lost Jacket', desc: 'Blue denim jacket with several large patches and holes, bhai kisi ghareb ko de do', dateAdded: '2023-07-20' },
-            //     { id: 16, title: 'Lost Cap', desc: 'Black baseball cap', dateAdded: '2023-07-15', },
-            //     { id: 17, title: 'Lost Gloves', desc: 'Leather gloves', dateAdded: '2023-07-10' },
-            //     { id: 18, title: 'Lost bunch of keys', desc: 'Brown leather belt', dateAdded: '2023-07-05', photo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDMStsQ_jFWL5e9Bl5_ajExux4sj49_yBITQ&s' },
-            //     { id: 19, title: 'Lost Perfume', desc: 'Chanel No. 5', dateAdded: '2023-07-01' },
-            //     { id: 20, title: 'Lost Necklace', desc: 'Gold chain with pendant', dateAdded: '2023-06-25' },
-            // ]);
-            // setLoading(false);
-        // }, 2000);
     }, []);
-
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
     };
@@ -116,32 +97,23 @@ const LostAndFound = ({ role }) => {
                 return;
             }
             console.log('Lost item added:', response.data);
+            showToast(true, "Lost item added successfully")
 
-            // setLostItems((prevItems) => [
-            //     { id: prevItems.length + 1, title: formData.title, desc: formData.desc, dateAdded: new Date().toISOString().split('T')[0] },
-            //     ...prevItems
-            // ]);
-            // setFormData({ title: '', desc: '', image: '' });
+
+            setLostItems((prevItems) => [
+                { id: prevItems.length + 1, title: formData.title, desc: formData.desc, dateAdded: new Date().toISOString().split('T')[0] },
+                ...prevItems
+            ]);
+            setFormData({ title: '', desc: '', image: '' });
 
         } catch (error) {
             console.error('Error adding lost item:', error);
+            showToast(false)
         } finally {
             setModalLoading(false);
             document.getElementById('item_form').close();
         }
 
-        // Simulate API call
-        // setTimeout(() => {
-        //     console.log('Form Data:', formData);
-        //     setLostItems((prevItems) => [
-        //         { id: prevItems.length + 1, title: formData.title, desc: formData.desc, dateAdded: new Date().toISOString().split('T')[0] },
-        //         ...prevItems
-        //     ]);
-        //     setFormData({ title: '', desc: '', image: '' });
-
-        //     setModalLoading(false);
-        //     document.getElementById('item_form').close();
-        // }, 2000);
     };
 
 
@@ -177,12 +149,24 @@ const LostAndFound = ({ role }) => {
 
     const confirmAction = () => {
         setModalLoading(true);
+        console.log(selectedItem) //ITEM TO RESOLVE
+        
         setTimeout(() => {
-            console.log(`${modalAction} action confirmed for item:`, selectedItem);
-            setModalLoading(false);
-            document.getElementById('confirmation-modal').close();
-            setExpandedCard(null);
+            //----- call this chunk of code after item has been marked as claimed successfully.
+            setLostItems((prevItems) => prevItems.map((item) => { 
+                if (item.id === selectedItem.id) {
+                    return { ...item, isClaimed: true };
+                }
+                return item;
+            }));
+            showToast(true, "Item marked as claimed successfully")
+                setModalLoading(false);
+                document.getElementById('confirmation-modal').close();
+                setExpandedCard(null);
+
+            //--------end chunk of code
         }, 2000);
+       
     };
 
     return (
@@ -205,6 +189,7 @@ const LostAndFound = ({ role }) => {
                             required={true}
                         />
                         {errors.title && <span className="text-red-500 col-span-2">{errors.title}</span>}
+                        
 
                         <FloatingLabelInput
                             name="desc"
@@ -217,18 +202,12 @@ const LostAndFound = ({ role }) => {
                         />
                         {errors.desc && <span className="text-red-500 col-span-2">{errors.desc}</span>}
 
-                        <FloatingLabelInput
-                            name="image"
-                            type="text"
-                            id="image"
-                            label="Image URL (optional)"
-                            value={formData.image}
-                            onChange={handleInputChange}
-                        />
+                        <input type="file" className="file-input file-input-bordered w-full max-w-xs file-input-secondary" />
+
                     </form>
 
                     <div className="modal-action">
-                        <button className="btn" onClick={() => document.getElementById('item_form').close()}>Cancel</button>
+                        <button className="btn" onClick={() => {document.getElementById('item_form').close(); setErrors({}); setFormData({ title: '', desc: '', image: '' }); }}>Cancel</button>
                         <button
                             className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
                             onClick={handleSubmit}
@@ -242,8 +221,8 @@ const LostAndFound = ({ role }) => {
             {/** confirmation modal for resolving/deleting a psot (recp only) */}
             <dialog id="confirmation-modal" className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">Confirm {modalAction === 'resolve' ? 'Resolution' : 'Deletion'}</h3>
-                    <p className="py-4">Are you sure you want to {modalAction} this item?</p>
+                    <h3 className="font-bold text-lg">Confirm {modalAction === 'resolve' ? 'Claim' : 'Deletion'}</h3>
+                    <p className="py-4">Are you sure you want to {modalAction} this item and mark it as claimed?</p>
                     <div className="modal-action">
                         <button className="btn" onClick={() => document.getElementById('confirmation-modal').close()}>Cancel</button>
                         <button className={`btn btn-primary ${modalLoading && 'btn-disabled'}`} onClick={confirmAction}>
@@ -279,6 +258,7 @@ const LostAndFound = ({ role }) => {
                         />
                         <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                     </div>
+
                     <button
                         className="btn btn-outline mt-3 md:mt-0 md:ml-4"
                         onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
@@ -302,13 +282,18 @@ const LostAndFound = ({ role }) => {
                                             </figure>
                                         )}
                                         <div className="card-body">
-                                            <h2 className="card-title">{item.title}</h2>
+                                            <h2 className="card-title">
+                                                {item.title} 
+                                                { item.isClaimed && <span>
+                                                    <div className='badge badge-success text-base-100'> <CheckIcon className="size-4" /> Claimed</div>
+                                                </span>}
+                                            </h2>
                                             <p>{item.desc}</p>
                                             <p className="text-sm text-gray-500">{item.dateAdded}</p>
                                             {expandedCard === item.id && (
                                                 <div className="mt-4 flex flex-wrap">
-                                                    <button className="btn btn-sm btn-outline btn-success mr-2" onClick={() => handleModalAction('resolve', item)}>Mark as Resolved</button>
-                                                    <button className="btn btn-sm btn-outline btn-error " onClick={() => handleModalAction('delete', item)}>Delete Posting</button>
+                                                    <button className="btn btn-sm btn-outline btn-success mr-2" onClick={() => handleModalAction('resolve', item)}>Mark as Claimed</button>
+                                                    {/* <button className="btn btn-sm btn-outline btn-error " onClick={() => handleModalAction('delete', item)}>Delete Posting</button> */}
                                                 </div>
                                             )}
                                         </div>

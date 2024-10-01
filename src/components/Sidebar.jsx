@@ -20,7 +20,8 @@ import {
   UserGroupIcon,
   BuildingOfficeIcon,
   ExclamationTriangleIcon,
-  WrenchIcon
+  WrenchIcon,
+  CircleStackIcon
 } from "@heroicons/react/24/outline";
 import { SidebarItem } from "./SidebarItem";
 import { AuthContext } from '../context/AuthContext';
@@ -35,7 +36,7 @@ const sidebarConfig = {
     { icon: <ChartBarIcon />, text: "Dashboard", url: "/" },
     { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
     { icon: <WrenchScrewdriverIcon />, text: "Complaints", url: "/complaints" },
-    { icon: <TruckIcon />, text: "Gate Passes", url: "/gate-passes" },
+    { icon: <TicketIcon />, text: "Gate Passes", url: "/gate-passes" },
     { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: "/work-permits" },
     { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: "/lost-and-found" },
     { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: "/occurences" },
@@ -53,7 +54,7 @@ const sidebarConfig = {
     { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },
     { icon: <WrenchScrewdriverIcon />, text: "Services", url: "/services" },
     { icon: <RocketLaunchIcon />, text: "Opportunities", url: "/opportunities" },
-    { icon: <TrophyIcon />, text: "Performance", url: "/performance" },
+    { icon: <CircleStackIcon />, text: "Receptionists", url: "/receptionists" },
   ],
   tenant: [
     { icon: <HomeIcon />, text: "Home", url: "/home" },

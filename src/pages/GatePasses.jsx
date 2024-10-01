@@ -4,6 +4,7 @@ import NSTPLoader from '../components/NSTPLoader'
 import FloatingLabelInput from '../components/FloatingLabelInput'
 import { PlusCircleIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon, CheckIcon, ClockIcon } from '@heroicons/react/24/outline'
 import TenantService from '../services/TenantService'
+import showToast from '../util/toast'
 
 const GatePasses = ({ role }) => {
     const [loading, setLoading] = useState(true);
@@ -49,8 +50,11 @@ const GatePasses = ({ role }) => {
                 objectToAdd.gateNumber
             );
             console.log(response);
+
             if (response.error) {
                 console.log(response.error);
+                showToast(false)
+                
                 return;
             }
 
@@ -61,6 +65,7 @@ const GatePasses = ({ role }) => {
             };
 
             setGatePassesTableData((prev) => [...prev, newObject]);
+            showToast(true, "Gate pass requested successfully")
         } catch (error) {
             console.log(error);
             return;
@@ -71,52 +76,54 @@ const GatePasses = ({ role }) => {
     };
 
     // Simulate loading
-    useEffect(() => {
-        setLoading(true);
-        if (role === "tenant") {
-            async function fetchGatePasses() {
-                const response = await TenantService.getGatePasses();
-                // console.log(response);
-                if (response.error) {
-                    console.log(response.error);
-                    return;
-                }
-
-                console.log(response.data.gatePasses);
-                // setGatePassesTableData(response.data);
+   useEffect(() => {
+    setLoading(true);
+    if (role === "tenant") {
+        async function fetchGatePasses() {
+            const response = await TenantService.getGatePasses();
+            if (response.error) {
+                console.log(response.error);
+                return;
             }
-            
-            fetchGatePasses();
-            
-            // setGatePassesTableData([
-            //     { id: "123", date: "9/14/2024, 8:23:43 PM", sponsor: "NSTP", guestName: "Fatima Bilal", guestCNIC: "12345-1234567-8", guestContact: "0333-1234567", gateNumber: "1", nstpRepresentative: "Saleem Khan", issued: true, },
-            //     { id: "124", date: "3/22/2024, 11:45:12 AM", sponsor: "NSTP", guestName: "Malaika Zafar", guestCNIC: "12345-1234567-8", guestContact: "0333-123456", gateNumber: "2", nstpRepresentative: "Saleem Khan", issued: true, },
-            //     { id: "125", date: "3/22/2024, 11:45:12 AM", sponsor: "NSTP", guestName: "Haadiya Sajid", guestCNIC: "12345-333567-8", guestContact: "0333-1234563", gateNumber: "3", nstpRepresentative: "Khan Khan", issued: true, },
-            //     { id: "126", date: "11/5/2024, 9:15:27 AM", sponsor: "NSTP", guestName: "Fatima Sarmad", guestCNIC: "123452134567-8", guestContact: "0333-1234563", gateNumber: "4", nstpRepresentative: "", issued: false, },
-            //     { id: "127", date: "6/30/2024, 2:34:50 PM", sponsor: "NSTP", guestName: "Hanaa Sajid", guestCNIC: "12345-1234567-8", guestContact: "0333-1234563", gateNumber: "5", nstpRepresentative: "", issued: false, },
-            // ]);
-        } else if (role === "receptionist") {
-            setGatePassesTableData([
-                { id: "123", company: "Hexler Tech", date: "9/14/2024, 8:23:43 PM", sponsor: "NSTP", guestName: "Fatima Bilal", guestCNIC: "12345-1234567-8", guestContact: "0333-1234567", gateNumber: "1", nstpRepresentative: "Saleem Khan", issued: true, },
-                { id: "124", company: "Hexler Tech", date: "3/22/2024, 11:45:12 AM", sponsor: "NSTP", guestName: "Malaika Zafar", guestCNIC: "12345-1234567-8", guestContact: "0333-123456", gateNumber: "2", nstpRepresentative: "Saleem Khan", issued: true, },
-                { id: "125", company: "Hexler Tech", date: "3/22/2024, 11:45:12 AM", sponsor: "NSTP", guestName: "Haadiya Sajid", guestCNIC: "12345-333567-8", guestContact: "0333-1234563", gateNumber: "3", nstpRepresentative: "Khan Khan", issued: true, },
-                { id: "126", company: "Hexler Tech", date: "11/5/2024, 9:15:27 AM", sponsor: "NSTP", guestName: "Fatima Sarmad", guestCNIC: "123452134567-8", guestContact: "0333-1234563", gateNumber: "4", nstpRepresentative: "", issued: false, },
-                { id: "127", company: "Hexler Tech", date: "6/30/2024, 2:34:50 PM", sponsor: "NSTP", guestName: "Hanaa Sajid", guestCNIC: "12345-1234567-8", guestContact: "0333-1234563", gateNumber: "5", nstpRepresentative: "", issued: false, },
-            ]);
+
+            const mappedData = response.data.gatePasses.map(pass => ({
+                id: pass._id,
+                date: new Date(pass.date).toLocaleString(),
+                sponsor: "NSTP", // Assuming sponsor is always "NSTP"
+                guestName: pass.guest_name,
+                guestCNIC: pass.guest_cnic,
+                guestContact: pass.guest_contact,
+                gateNumber: pass.gate_number.toString(),
+                nstpRepresentative: "", // Assuming no representative for tenant
+                issued: pass.is_approved,
+            }));
+
+            setGatePassesTableData(mappedData);
         }
 
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000);
+        fetchGatePasses();
+    } else if (role === "receptionist") {
+        setGatePassesTableData([
+            { id: "123", company: "Hexler Tech", date: "9/14/2024, 8:23:43 PM", sponsor: "NSTP", guestName: "Fatima Bilal", guestCNIC: "12345-1234567-8", guestContact: "0333-1234567", gateNumber: "1", nstpRepresentative: "Saleem Khan", issued: true, },
+            { id: "124", company: "Hexler Tech", date: "3/22/2024, 11:45:12 AM", sponsor: "NSTP", guestName: "Malaika Zafar", guestCNIC: "12345-1234567-8", guestContact: "0333-123456", gateNumber: "2", nstpRepresentative: "Saleem Khan", issued: true, },
+            { id: "125", company: "Hexler Tech", date: "3/22/2024, 11:45:12 AM", sponsor: "NSTP", guestName: "Haadiya Sajid", guestCNIC: "12345-333567-8", guestContact: "0333-1234563", gateNumber: "3", nstpRepresentative: "Khan Khan", issued: true, },
+            { id: "126", company: "Hexler Tech", date: "11/5/2024, 9:15:27 AM", sponsor: "NSTP", guestName: "Fatima Sarmad", guestCNIC: "123452134567-8", guestContact: "0333-1234563", gateNumber: "4", nstpRepresentative: "", issued: false, },
+            { id: "127", company: "Hexler Tech", date: "6/30/2024, 2:34:50 PM", sponsor: "NSTP", guestName: "Hanaa Sajid", guestCNIC: "12345-1234567-8", guestContact: "0333-1234563", gateNumber: "5", nstpRepresentative: "", issued: false, },
+        ]);
+    }
 
-        // Default sort by date, latest first for tenants
-        if (role === "tenant") {
-            setGatePassesTableData((prevData) => prevData.sort((a, b) => new Date(b.date) - new Date(a.date)));
-        } else if (role === "receptionist") {
-            // Default sort by status for receptionists
-            setGatePassesTableData((prevData) => prevData.sort((a, b) => a.issued - b.issued));
-        }
-    }, [role]);
+    setTimeout(() => {
+        setLoading(false);
+    }, 2000);
+
+    // Default sort by date, latest first for tenants
+    if (role === "tenant") {
+        setGatePassesTableData((prevData) => prevData.sort((a, b) => new Date(b.date) - new Date(a.date)));
+    } else if (role === "receptionist") {
+        // Default sort by status for receptionists
+        setGatePassesTableData((prevData) => prevData.sort((a, b) => a.issued - b.issued));
+    }
+}, [role]);
 
     const handleSearch = (event) => {
         setSearchQuery(event.target.value);
