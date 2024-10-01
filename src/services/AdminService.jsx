@@ -244,6 +244,27 @@ const AdminService = {
     }
   },
 
+  handleWorkPermit: async (workPermitId, approval) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/admin/workPermit/resolve`,
+        {
+          workPermitId,
+          approval,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
   terminateEmployee: async (employeeId) => {
     try {
       const response = await axios.put(

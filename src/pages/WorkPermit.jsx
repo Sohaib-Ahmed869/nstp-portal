@@ -36,13 +36,13 @@ const itemsPerPage = 10;
                 let response;
                 if (role === "tenant") {
                     response = await TenantService.getWorkPermits();
-                }
-                // Uncomment and adjust for other roles
+                } 
                 // else if (role === "receptionist") {
                 //     response = await ReceptionistService.getWorkPermits();
-                // } else if (role === "admin") {
-                //     response = await AdminService.getWorkPermits(tower.id);
-                // }
+                // } 
+                else if (role === "admin") {
+                    response = await AdminService.getWorkPermits(tower.id);
+                }
                 if (response.error) {
                     showToast(false)
                     console.error(response.error);
@@ -118,17 +118,28 @@ const itemsPerPage = 10;
             }
         });
 
-    const handleApproveWorkPermit = () => {
+    const handleApproveWorkPermit = async () => {
         //api call here
         setModalLoading(true);
-        setTimeout(() => {
-            const updatedWorkPermits = workPermits.map((permit) =>
-                permit.id === selectedWorkPermitId ? { ...permit, issued: true } : permit
-            );
-            setWorkPermits(updatedWorkPermits);
+
+        try{
+            const response = await AdminService.handleWorkPermit(selectedWorkPermitId, true);
+            if (response.error) {
+                console.error(response.error);
+                showToast(false, "Failed to approve work permit");
+                return;
+            }
+            showToast(true, "Work permit approved successfully");
+            // Update the work permit status
+        } catch (error) {
+            console.error(error);
+            showToast(false, "Failed to approve work permit");
+        } finally {
             setModalLoading(false);
             document.getElementById('approve_work_permit_modal').close();
-        }, 2000);
+        }
+
+      
     };
 
     const handleCancelWorkPermit = () => {
@@ -255,7 +266,7 @@ const handlePrevPage = () => {
                     <div className="modal-action">
                         <button className="btn" onClick={() => document.getElementById('approve_work_permit_modal').close()}>No</button>
                         <button
-                            className={`btn btn-success ${modalLoading && "btn-disabled"}`}
+                            className={`btn btn-primary ${modalLoading && "btn-disabled"}`}
                             onClick={handleApproveWorkPermit}
                         >
                             {modalLoading && <span className="loading loading-spinner"></span>}
@@ -421,15 +432,28 @@ const handlePrevPage = () => {
                     {permit.status.charAt(0).toUpperCase() + permit.status.slice(1)}
                 </td>
                 <td>
-                    <button
-                        className="btn btn-primary btn-outline btn-sm"
-                        onClick={() => {
-                            setSelectedWorkPermitId(permit.id);
-                            document.getElementById('work_permit_details_modal').showModal();
-                        }}
-                    >
-                        Show Details
-                    </button>
+                    <div className='flex gap-3'>
+                        <button
+                            className="btn btn-primary btn-outline btn-sm"
+                            onClick={() => {
+                                setSelectedWorkPermitId(permit.id);
+                                document.getElementById('work_permit_details_modal').showModal();
+                            }}
+                        >
+                            Show Details
+                        </button>
+                        {(role === "admin" && !permit.is_issued) && (
+                            <button
+                                className="btn btn-outline btn-success btn-sm"
+                                onClick={() => {
+                                    setSelectedWorkPermitId(permit.id);
+                                    document.getElementById('approve_work_permit_modal').showModal();
+                                }}
+                                >
+                                Approve
+                            </button>
+                        )}
+                    </div>
                 </td>
             </tr>
         ))
