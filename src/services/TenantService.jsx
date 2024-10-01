@@ -175,12 +175,23 @@ const TenantService = {
     }
   },
 
-  requestWorkPermit: async () => {
+  getWorkPermits: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/tenant/workpermits`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  requestWorkPermit: async (permitBody) => {
     try {
       const response = await axios.post(
         `${BASE_URL}/tenant/workpermit/request`,
         {
-          //
+          permitBody,
         },
         {
           headers: {

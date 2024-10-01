@@ -25,6 +25,9 @@ const ReceptionistService = {
           image,
         },
         {
+          headers: {
+            "Content-Type": "application/json",
+          },
           withCredentials: true,
         }
       );

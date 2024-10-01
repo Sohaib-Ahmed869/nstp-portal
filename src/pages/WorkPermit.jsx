@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../components/Sidebar';
 import NSTPLoader from '../components/NSTPLoader';
 import FloatingLabelInput from '../components/FloatingLabelInput';
 import { PlusCircleIcon, AdjustmentsHorizontalIcon, MagnifyingGlassIcon, CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { TenantService, AdminService, ReceptionistService  } from '../services';
+import { TowerContext } from '../context/TowerContext';
 
 const WorkPermit = ({ role }) => {
     const [workPermits, setWorkPermits] = useState([]);
@@ -17,34 +19,60 @@ const WorkPermit = ({ role }) => {
         name: "",
         department: "",
         description: "",
-        ppe: "",
         startDate: "",
         endDate: "",
+        detailedInfo: "",
+        ppe: "",
     });
-
+    const { tower } = useContext(TowerContext);
 
     useEffect(() => {
         //api call here
-        setTimeout(() => {
-            if (role === "tenant") {
-                setWorkPermits([
-                    { id: "1", name: "Musa Plumber", department: "Maintenance", description: "Fixing pipes", ppe: "Helmet, Gloves", date: "2024-12-20", issued: false },
-                    { id: "2", name: "Salman Builder", department: "Construction", description: "Building walls", ppe: "Helmet, Safety Shoes", date: "2024-12-21", issued: true },
-                    { id: "3", name: "Musa Haroon", department: "Electrical", description: "Wiring", ppe: "Insulated Gloves", date: "2024-12-22", issued: false },
-                    { id: "4", name: "Sohaib Ahmed", department: "HVAC", description: "Installing AC", ppe: "Mask, Gloves", date: "2024-12-23", issued: true },
-                    { id: "5", name: "Ahmed Electrician", department: "Electrical", description: "Fixing lights", ppe: "Insulated Gloves", date: "2024-12-24", issued: false },
-                ]);
-            } else if (role === "receptionist" || role == "admin") {
-                setWorkPermits([
-                    { id: "1", tenantName: "HexlerTech", name: "Musa Plumber", department: "Maintenance", description: "Fixing pipes", ppe: "Helmet, Gloves", date: "2024-12-20", issued: false },
-                    { id: "2", tenantName: "HexlerTech", name: "Salman Builder", department: "Construction", description: "Building walls", ppe: "Helmet, Safety Shoes", date: "2024-12-21", issued: true },
-                    { id: "3", tenantName: "HexlerTech", name: "Musa Haroon", department: "Electrical", description: "Wiring", ppe: "Insulated Gloves", date: "2024-12-22", issued: false },
-                    { id: "4", tenantName: "HexlerTech", name: "Sohaib Ahmed", department: "HVAC", description: "Installing AC", ppe: "Mask, Gloves", date: "2024-12-23", issued: true },
-                    { id: "5", tenantName: "HexlerTech", name: "Ahmed Electrician", department: "Electrical", description: "Fixing lights", ppe: "Insulated Gloves", date: "2024-12-24", issued: false },
-                ]);
+        async function fetchWorkPermits() {
+            setLoading(true);
+            try {
+                if(role === "tenant") {
+                    const response = await TenantService.getWorkPermits();
+                } else if(role === "receptionist") {
+                    const response = await ReceptionistService.getWorkPermits();
+                } else if(role === "admin") {
+                    const response = await AdminService.getWorkPermits(tower.id);
+                }
+                if (response.error) {
+                    console.error(response.error);
+                    return;
+                }
+                console.log(response.data.workPermits);
+                // setWorkPermits(response.data);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
-        }, 2000);
+        }
+
+        fetchWorkPermits();
+
+        // setTimeout(() => {
+        //     if (role === "tenant") {
+        //         setWorkPermits([
+        //             { id: "1", name: "Musa Plumber", department: "Maintenance", description: "Fixing pipes", ppe: "Helmet, Gloves", date: "2024-12-20", issued: false },
+        //             { id: "2", name: "Salman Builder", department: "Construction", description: "Building walls", ppe: "Helmet, Safety Shoes", date: "2024-12-21", issued: true },
+        //             { id: "3", name: "Musa Haroon", department: "Electrical", description: "Wiring", ppe: "Insulated Gloves", date: "2024-12-22", issued: false },
+        //             { id: "4", name: "Sohaib Ahmed", department: "HVAC", description: "Installing AC", ppe: "Mask, Gloves", date: "2024-12-23", issued: true },
+        //             { id: "5", name: "Ahmed Electrician", department: "Electrical", description: "Fixing lights", ppe: "Insulated Gloves", date: "2024-12-24", issued: false },
+        //         ]);
+        //     } else if (role === "receptionist" || role == "admin") {
+        //         setWorkPermits([
+        //             { id: "1", tenantName: "HexlerTech", name: "Musa Plumber", department: "Maintenance", description: "Fixing pipes", ppe: "Helmet, Gloves", date: "2024-12-20", issued: false },
+        //             { id: "2", tenantName: "HexlerTech", name: "Salman Builder", department: "Construction", description: "Building walls", ppe: "Helmet, Safety Shoes", date: "2024-12-21", issued: true },
+        //             { id: "3", tenantName: "HexlerTech", name: "Musa Haroon", department: "Electrical", description: "Wiring", ppe: "Insulated Gloves", date: "2024-12-22", issued: false },
+        //             { id: "4", tenantName: "HexlerTech", name: "Sohaib Ahmed", department: "HVAC", description: "Installing AC", ppe: "Mask, Gloves", date: "2024-12-23", issued: true },
+        //             { id: "5", tenantName: "HexlerTech", name: "Ahmed Electrician", department: "Electrical", description: "Fixing lights", ppe: "Insulated Gloves", date: "2024-12-24", issued: false },
+        //         ]);
+        //     }
+        //     setLoading(false);
+        // }, 2000);
     }, []);
 
     const handleSearch = (e) => {
@@ -120,26 +148,52 @@ const WorkPermit = ({ role }) => {
         }, 2000);
     };
 
+    const handleDateChange = (e) => {
+        handleInputChange(e);
+        // Set end date to end of the day
+        const date = new Date(e.target.value);
+        const endDate = new Date(date);
+        endDate.setHours(23, 59, 59, 999); // Set to the end of the day
+        console.log(endDate);
+        setNewWorkPermit((prev) => ({ ...prev, endDate: endDate }));
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewWorkPermit((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleRequestWorkPermit = () => {
+    const handleRequestWorkPermit = async (e) => {
+        e.preventDefault();
         //api call here
         setModalLoading(true);
-        setTimeout(() => {
-            const newPermit = {
-                ...newWorkPermit,
-                id: Date.now().toString(),
-                date: new Date().toISOString().split('T')[0],
-                issued: false,
-            };
-            setWorkPermits((prev) => [...prev, newPermit]);
+
+        try {
+            const response = await TenantService.requestWorkPermit(newWorkPermit);
+            if (response.error) {
+                console.error(response.error);
+                return;
+            }
+            console.log(response);
+            // setWorkPermits((prev) => [...prev, response.data]);
+        } catch (error) {
+            console.error(error);
+        } finally {
             setModalLoading(false);
             document.getElementById('request_work_permit_modal').close();
-        }, 2000);
+        }
+
+        // setTimeout(() => {
+        //     const newPermit = {
+        //         ...newWorkPermit,
+        //         id: Date.now().toString(),
+        //         date: new Date().toISOString().split('T')[0],
+        //         issued: false,
+        //     };
+        //     setWorkPermits((prev) => [...prev, newPermit]);
+        //     setModalLoading(false);
+        //     document.getElementById('request_work_permit_modal').close();
+        // }, 2000);
     };
 
     return (
@@ -166,7 +220,7 @@ const WorkPermit = ({ role }) => {
             <dialog id="request_work_permit_modal" className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg mb-4">Request New Work Permit</h3>
-                    <form>
+                    <form onSubmit={handleRequestWorkPermit}>
                         <FloatingLabelInput
                             name="name"
                             type="text"
@@ -174,6 +228,7 @@ const WorkPermit = ({ role }) => {
                             label="Name of Person"
                             value={newWorkPermit.name}
                             onChange={handleInputChange}
+                            required
                         />
                         <FloatingLabelInput
                             name="department"
@@ -182,30 +237,36 @@ const WorkPermit = ({ role }) => {
                             label="Department"
                             value={newWorkPermit.department}
                             onChange={handleInputChange}
-                        />
-                        {/** Start date and end date */}
-                        <FloatingLabelInput
-                            name="startDate"
-                            type="date"
-                            id="startDate"
-                            label="Start Date"
-                            value={newWorkPermit.startDate}
-                            onChange={handleInputChange}
-                        />
-                        <FloatingLabelInput
-                            name="endDate"
-                            type="date"
-                            id="endDate"
-                            label="End Date"
-                            value={newWorkPermit.endDate}
-                            onChange={handleInputChange}
+                            required
                         />
                         <FloatingLabelInput
                             name="description"
                             type="textarea"
                             id="description"
-                            label="Detailed information, along with use of tools"
+                            label="Description"
                             value={newWorkPermit.description}
+                            onChange={handleInputChange}
+                            required
+                        />
+                        {/** Start date and end date */}
+                        <FloatingLabelInput
+                            name="startDate"
+                            type="datetime-local"
+                            id="startDate"
+                            label="Start Date"
+                            value={newWorkPermit.startDate}
+                            onChange={handleDateChange}
+                            required
+                        />
+                        <p>
+                            {newWorkPermit.endDate.toString()}
+                        </p>
+                        <FloatingLabelInput
+                            name="detailedInfo"
+                            type="textarea"
+                            id="detailedInfo"
+                            label="Detailed information, along with use of tools"
+                            value={newWorkPermit.detailedInfo}
                             onChange={handleInputChange}
                         />
                         <FloatingLabelInput
@@ -216,17 +277,17 @@ const WorkPermit = ({ role }) => {
                             value={newWorkPermit.ppe}
                             onChange={handleInputChange}
                         />
+                        <div className="modal-action">
+                            <button className="btn" onClick={() => document.getElementById('request_work_permit_modal').close()}>Cancel</button>
+                            <button
+                                className={`btn btn-primary ${modalLoading && "btn-disabled"}`}
+                                type='submit'
+                                >
+                                {modalLoading && <span className="loading loading-spinner"></span>}
+                                {modalLoading ? "Please wait..." : "Request"}
+                            </button>
+                        </div>
                     </form>
-                    <div className="modal-action">
-                        <button className="btn" onClick={() => document.getElementById('request_work_permit_modal').close()}>Cancel</button>
-                        <button
-                            className={`btn btn-primary ${modalLoading && "btn-disabled"}`}
-                            onClick={handleRequestWorkPermit}
-                        >
-                            {modalLoading && <span className="loading loading-spinner"></span>}
-                            {modalLoading ? "Please wait..." : "Request"}
-                        </button>
-                    </div>
                 </div>
             </dialog>
 

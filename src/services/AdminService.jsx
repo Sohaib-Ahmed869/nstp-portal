@@ -198,6 +198,9 @@ const AdminService = {
           employeeId,
         },
         {
+          headers: {
+            "Content-Type": "application/json",
+          },
           withCredentials: true,
         }
       );
@@ -214,6 +217,23 @@ const AdminService = {
         {
           employeeId,
         },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
+
+  getWorkPermits: async (towerId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/workPermits`,
         {
           withCredentials: true,
         }
