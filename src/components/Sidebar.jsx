@@ -35,7 +35,7 @@ const sidebarConfig = {
     { icon: <ChartBarIcon />, text: "Dashboard", url: "/" },
     { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
     { icon: <WrenchScrewdriverIcon />, text: "Complaints", url: "/complaints" },
-    { icon: <TruckIcon />, text: "Gate Passes", url: "/gate-passes" },
+    { icon: <TicketIcon />, text: "Gate Passes", url: "/gate-passes" },
     { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: "/work-permits" },
     { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: "/lost-and-found" },
     { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: "/occurences" },
