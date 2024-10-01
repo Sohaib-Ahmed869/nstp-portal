@@ -5,6 +5,7 @@ import FloatingLabelInput from '../components/FloatingLabelInput';
 import { PlusCircleIcon, AdjustmentsHorizontalIcon, MagnifyingGlassIcon, CheckIcon, ClockIcon, WrenchIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { TenantService, AdminService, ReceptionistService } from '../services';
 import { TowerContext } from '../context/TowerContext';
+import showToast from '../util/toast';
 
 const WorkPermit = ({ role }) => {
     const [workPermits, setWorkPermits] = useState([]);
@@ -41,10 +42,10 @@ const WorkPermit = ({ role }) => {
                 //     response = await AdminService.getWorkPermits(tower.id);
                 // }
                 if (response.error) {
+                    showToast(false)
                     console.error(response.error);
                     return;
                 }
-                console.log(response.data.workPermits);
 
                 const mappedData = response.data.workPermits.map(permit => ({
                     key: permit._id,
@@ -57,8 +58,9 @@ const WorkPermit = ({ role }) => {
                     equipment: permit.equipment,
                     description: permit.description,
                 }));
-
                 setWorkPermits(mappedData);
+
+              
             } catch (error) {
                 console.error(error);
             } finally {
@@ -122,7 +124,6 @@ const WorkPermit = ({ role }) => {
                 permit.id === selectedWorkPermitId ? { ...permit, issued: true } : permit
             );
             setWorkPermits(updatedWorkPermits);
-            console.log(updatedWorkPermits.find((permit) => permit.id === selectedWorkPermitId));
             setModalLoading(false);
             document.getElementById('approve_work_permit_modal').close();
         }, 2000);
@@ -160,7 +161,6 @@ const WorkPermit = ({ role }) => {
             hour12: false,
         });
 
-        console.log(formattedEndDate);
         setNewWorkPermit((prev) => ({ ...prev, endDate: formattedEndDate }));
     };
 
@@ -178,13 +178,9 @@ const WorkPermit = ({ role }) => {
                 console.error(response.error);
                 return;
             }
-    
-            console.log("form data: ", newWorkPermit);
-            console.log("response: ", response.data); 
-            console.log("existing: " , workPermits);
-    
             const mappedNewWorkPermit = {
-                id: response.data._id, // Assuming the response contains the new permit's ID
+                id: response.data.id, // Assuming the response contains the new permit's ID
+                key: response.data.id,
                 name: newWorkPermit.name,
                 department: newWorkPermit.department,
                 date: new Date(newWorkPermit.startDate).toLocaleDateString(),
@@ -192,15 +188,16 @@ const WorkPermit = ({ role }) => {
                 detailedInfo: newWorkPermit.detailedInfo,
                 equipment: newWorkPermit.ppe, // Assuming ppe is the equipment field
                 description: newWorkPermit.description,
-                // Add these lines to match the structure of fetched permits
                 valid_from: newWorkPermit.startDate,
                 is_resolved: false,
             };
     
             setWorkPermits((prev) => [...prev, mappedNewWorkPermit]);
+            showToast(true, "Work permit requested successfully");
     
         } catch (error) {
             console.error(error);
+            showToast(false, "Failed to request work permit");
         } finally {
             setModalLoading(false);
             document.getElementById('request_work_permit_modal').close();
@@ -212,13 +209,17 @@ const WorkPermit = ({ role }) => {
             {loading && <NSTPLoader />}
             <dialog id="work_permit_details_modal" className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-xl mb-4 flex items-center gap-3"> <WrenchIcon className="size-6" /> Work Permit Details</h3>
+                    <h3 className="font-bold text-xl mb-4 flex items-center gap-3" > <WrenchIcon className="size-6" /> Work Permit Details</h3>
                     <hr className="my-5 text-gray-200" />
                     {selectedWorkPermitId && (
                         <div>
                             <p><strong className="text-primary">Description:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).description}</p>
                             <p><strong className="text-primary">Detailed Information:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).detailedInfo}</p>
                             <p><strong className="text-primary">Equipment:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).equipment}</p>
+                            <p><strong className="text-primary">Status:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).status}</p>
+                            <p><strong className="text-primary">Date Requested:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).date}</p>
+
+                            <p className="mt-3 text-gray-400">Note: The ending time is 23:59 on the same date. </p>
                         </div>
                     )}
                     <div className="modal-action">
