@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../components/Sidebar';
 import NSTPLoader from '../components/NSTPLoader';
 import FloatingLabelInput from '../components/FloatingLabelInput';
-import { PlusCircleIcon, AdjustmentsHorizontalIcon, MagnifyingGlassIcon, CheckIcon, ClockIcon } from '@heroicons/react/24/outline';
-import { TenantService, AdminService, ReceptionistService  } from '../services';
+import { PlusCircleIcon, AdjustmentsHorizontalIcon, MagnifyingGlassIcon, CheckIcon, ClockIcon, WrenchIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { TenantService, AdminService, ReceptionistService } from '../services';
 import { TowerContext } from '../context/TowerContext';
 
 const WorkPermit = ({ role }) => {
@@ -27,23 +27,38 @@ const WorkPermit = ({ role }) => {
     const { tower } = useContext(TowerContext);
 
     useEffect(() => {
-        //api call here
         async function fetchWorkPermits() {
             setLoading(true);
             try {
-                if(role === "tenant") {
-                    const response = await TenantService.getWorkPermits();
-                } else if(role === "receptionist") {
-                    const response = await ReceptionistService.getWorkPermits();
-                } else if(role === "admin") {
-                    const response = await AdminService.getWorkPermits(tower.id);
+                let response;
+                if (role === "tenant") {
+                    response = await TenantService.getWorkPermits();
                 }
+                // Uncomment and adjust for other roles
+                // else if (role === "receptionist") {
+                //     response = await ReceptionistService.getWorkPermits();
+                // } else if (role === "admin") {
+                //     response = await AdminService.getWorkPermits(tower.id);
+                // }
                 if (response.error) {
                     console.error(response.error);
                     return;
                 }
                 console.log(response.data.workPermits);
-                // setWorkPermits(response.data);
+
+                const mappedData = response.data.workPermits.map(permit => ({
+                    key: permit._id,
+                    id: permit._id,
+                    name: permit.name,
+                    department: permit.department,
+                    date: new Date(permit.valid_from).toLocaleDateString(),
+                    status: permit.is_resolved ? (permit.status === "approved" ? "approved" : "rejected") : "pending",
+                    detailedInfo: permit.detailed_information,
+                    equipment: permit.equipment,
+                    description: permit.description,
+                }));
+
+                setWorkPermits(mappedData);
             } catch (error) {
                 console.error(error);
             } finally {
@@ -52,27 +67,6 @@ const WorkPermit = ({ role }) => {
         }
 
         fetchWorkPermits();
-
-        // setTimeout(() => {
-        //     if (role === "tenant") {
-        //         setWorkPermits([
-        //             { id: "1", name: "Musa Plumber", department: "Maintenance", description: "Fixing pipes", ppe: "Helmet, Gloves", date: "2024-12-20", issued: false },
-        //             { id: "2", name: "Salman Builder", department: "Construction", description: "Building walls", ppe: "Helmet, Safety Shoes", date: "2024-12-21", issued: true },
-        //             { id: "3", name: "Musa Haroon", department: "Electrical", description: "Wiring", ppe: "Insulated Gloves", date: "2024-12-22", issued: false },
-        //             { id: "4", name: "Sohaib Ahmed", department: "HVAC", description: "Installing AC", ppe: "Mask, Gloves", date: "2024-12-23", issued: true },
-        //             { id: "5", name: "Ahmed Electrician", department: "Electrical", description: "Fixing lights", ppe: "Insulated Gloves", date: "2024-12-24", issued: false },
-        //         ]);
-        //     } else if (role === "receptionist" || role == "admin") {
-        //         setWorkPermits([
-        //             { id: "1", tenantName: "HexlerTech", name: "Musa Plumber", department: "Maintenance", description: "Fixing pipes", ppe: "Helmet, Gloves", date: "2024-12-20", issued: false },
-        //             { id: "2", tenantName: "HexlerTech", name: "Salman Builder", department: "Construction", description: "Building walls", ppe: "Helmet, Safety Shoes", date: "2024-12-21", issued: true },
-        //             { id: "3", tenantName: "HexlerTech", name: "Musa Haroon", department: "Electrical", description: "Wiring", ppe: "Insulated Gloves", date: "2024-12-22", issued: false },
-        //             { id: "4", tenantName: "HexlerTech", name: "Sohaib Ahmed", department: "HVAC", description: "Installing AC", ppe: "Mask, Gloves", date: "2024-12-23", issued: true },
-        //             { id: "5", tenantName: "HexlerTech", name: "Ahmed Electrician", department: "Electrical", description: "Fixing lights", ppe: "Insulated Gloves", date: "2024-12-24", issued: false },
-        //         ]);
-        //     }
-        //     setLoading(false);
-        // }, 2000);
     }, []);
 
     const handleSearch = (e) => {
@@ -154,51 +148,84 @@ const WorkPermit = ({ role }) => {
         const date = new Date(e.target.value);
         const endDate = new Date(date);
         endDate.setHours(23, 59, 59, 999); // Set to the end of the day
-        console.log(endDate);
-        setNewWorkPermit((prev) => ({ ...prev, endDate: endDate }));
+
+        // Format the end date
+        const formattedEndDate = endDate.toLocaleString('en-US', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+        });
+
+        console.log(formattedEndDate);
+        setNewWorkPermit((prev) => ({ ...prev, endDate: formattedEndDate }));
     };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewWorkPermit((prev) => ({ ...prev, [name]: value }));
     };
-
     const handleRequestWorkPermit = async (e) => {
         e.preventDefault();
-        //api call here
         setModalLoading(true);
-
+    
         try {
             const response = await TenantService.requestWorkPermit(newWorkPermit);
             if (response.error) {
                 console.error(response.error);
                 return;
             }
-            console.log(response);
-            // setWorkPermits((prev) => [...prev, response.data]);
+    
+            console.log("form data: ", newWorkPermit);
+            console.log("response: ", response.data); 
+            console.log("existing: " , workPermits);
+    
+            const mappedNewWorkPermit = {
+                id: response.data._id, // Assuming the response contains the new permit's ID
+                name: newWorkPermit.name,
+                department: newWorkPermit.department,
+                date: new Date(newWorkPermit.startDate).toLocaleDateString(),
+                status: "pending", // New permits are initially pending
+                detailedInfo: newWorkPermit.detailedInfo,
+                equipment: newWorkPermit.ppe, // Assuming ppe is the equipment field
+                description: newWorkPermit.description,
+                // Add these lines to match the structure of fetched permits
+                valid_from: newWorkPermit.startDate,
+                is_resolved: false,
+            };
+    
+            setWorkPermits((prev) => [...prev, mappedNewWorkPermit]);
+    
         } catch (error) {
             console.error(error);
         } finally {
             setModalLoading(false);
             document.getElementById('request_work_permit_modal').close();
         }
-
-        // setTimeout(() => {
-        //     const newPermit = {
-        //         ...newWorkPermit,
-        //         id: Date.now().toString(),
-        //         date: new Date().toISOString().split('T')[0],
-        //         issued: false,
-        //     };
-        //     setWorkPermits((prev) => [...prev, newPermit]);
-        //     setModalLoading(false);
-        //     document.getElementById('request_work_permit_modal').close();
-        // }, 2000);
     };
 
     return (
         <Sidebar>
             {loading && <NSTPLoader />}
+            <dialog id="work_permit_details_modal" className="modal">
+                <div className="modal-box">
+                    <h3 className="font-bold text-xl mb-4 flex items-center gap-3"> <WrenchIcon className="size-6" /> Work Permit Details</h3>
+                    <hr className="my-5 text-gray-200" />
+                    {selectedWorkPermitId && (
+                        <div>
+                            <p><strong className="text-primary">Description:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).description}</p>
+                            <p><strong className="text-primary">Detailed Information:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).detailedInfo}</p>
+                            <p><strong className="text-primary">Equipment:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).equipment}</p>
+                        </div>
+                    )}
+                    <div className="modal-action">
+                        <button className="btn" onClick={() => document.getElementById('work_permit_details_modal').close()}>Close</button>
+                    </div>
+                </div>
+            </dialog>
 
             <dialog id="approve_work_permit_modal" className="modal">
                 <div className="modal-box">
@@ -258,7 +285,7 @@ const WorkPermit = ({ role }) => {
                             onChange={handleDateChange}
                             required
                         />
-                        <p>
+                        <p className="mb-4"> <span className="font-bold text-primary mb-3">End date: </span>
                             {newWorkPermit.endDate.toString()}
                         </p>
                         <FloatingLabelInput
@@ -273,7 +300,7 @@ const WorkPermit = ({ role }) => {
                             name="ppe"
                             type="text"
                             id="ppe"
-                            label="Personal Protective Equipment"
+                            label="Personal Protective Equipment (Comma Separated)"
                             value={newWorkPermit.ppe}
                             onChange={handleInputChange}
                         />
@@ -282,7 +309,7 @@ const WorkPermit = ({ role }) => {
                             <button
                                 className={`btn btn-primary ${modalLoading && "btn-disabled"}`}
                                 type='submit'
-                                >
+                            >
                                 {modalLoading && <span className="loading loading-spinner"></span>}
                                 {modalLoading ? "Please wait..." : "Request"}
                             </button>
@@ -351,58 +378,39 @@ const WorkPermit = ({ role }) => {
                         <thead>
                             <tr className='bg-base-200 cursor-pointer'>
                                 <th onClick={() => handleSortChange("date")}>Date {sortField === "date" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
-                                {role !== "tenant" && <th onClick={() => handleSortChange("tenantName")}>Tenant {sortField === "tenantName" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>}
                                 <th onClick={() => handleSortChange("name")}>Name {sortField === "name" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
                                 <th onClick={() => handleSortChange("department")}>Department {sortField === "department" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
-                                <th onClick={() => handleSortChange("description")}>Description {sortField === "description" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
-                                <th onClick={() => handleSortChange("ppe")}>PPE {sortField === "ppe" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
-                                <th onClick={() => handleSortChange("issued")}>Status {sortField === "issued" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
-                                {role !== "receptionist" && <th>Actions</th>} {/* recep can only view, no actions */}
+                                <th onClick={() => handleSortChange("status")}>Status {sortField === "status" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredData.length === 0 ? (
                                 <tr>
-                                    <td colSpan="8" className="text-center text-gray-500">No data to show for now.</td>
+                                    <td colSpan="6" className="text-center text-gray-500">No data to show for now.</td>
                                 </tr>
                             ) : (
                                 filteredData.map((permit) => (
                                     <tr key={permit.id}>
                                         <td>{permit.date}</td>
-                                        {role != "tenant" && <td>{permit.tenantName}</td>}
                                         <td>{permit.name}</td>
                                         <td>{permit.department}</td>
-                                        <td>{permit.description}</td>
-                                        <td>{permit.ppe}</td>
-                                        <td className={`badge ${permit.issued ? "badge-success text-lime-100" : "badge-accent text-white"} text-sm mt-2`}>
-                                            {permit.issued ? <CheckIcon className="size-4 mr-2" /> : <ClockIcon className="size-4 mr-2" />}
-                                            {permit.issued ? "Issued" : "Pending"}
+                                        <td className={`badge ${permit.status === "approved" ? "badge-primary" : permit.status === "rejected" ? "badge-error" : "badge-secondary"} text-sm mt-2 flex gap-2`}>
+                                            {permit.status == "approved" ? <CheckIcon className="size-4" /> : permit.status == "rejected" ? <XMarkIcon className="size-4" /> : <ClockIcon className="size-4" />}
+                                            {permit.status.charAt(0).toUpperCase() + permit.status.slice(1)}
+
                                         </td>
-                                        {role !== "receptionist" &&
-                                            <td>
-                                                <div className="flex gap-3">
-                                                    {role === "admin" && !permit.issued && (
-                                                        <button
-                                                            className="btn btn-success btn-outline btn-sm"
-                                                            onClick={() => {
-                                                                setSelectedWorkPermitId(permit.id);
-                                                                document.getElementById('approve_work_permit_modal').showModal();
-                                                            }}
-                                                        >
-                                                            Approve
-                                                        </button>
-                                                    )}
-                                                    <button
-                                                        className="btn btn-error btn-outline btn-sm"
-                                                        onClick={() => {
-                                                            setSelectedWorkPermitId(permit.id);
-                                                            document.getElementById('cancel_work_permit_modal').showModal();
-                                                        }}
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                </div>
-                                            </td>}
+                                        <td>
+                                            <button
+                                                className="btn btn-primary btn-outline btn-sm"
+                                                onClick={() => {
+                                                    setSelectedWorkPermitId(permit.id);
+                                                    document.getElementById('work_permit_details_modal').showModal();
+                                                }}
+                                            >
+                                                Show Details
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))
                             )}
