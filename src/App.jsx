@@ -58,7 +58,7 @@ function App() {
             <Route path="services" element={<Services />} />
             <Route path="assign-office" element={<ApproveOffice />} />
             {/** Opportunities to be added here */}
-            <Route path="performance" element={<Performance />} />
+            <Route path="receptionists" element={<Performance />} />
           </Route>
 
           <Route path="tenant">

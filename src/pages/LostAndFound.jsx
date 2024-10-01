@@ -202,14 +202,8 @@ const LostAndFound = ({ role }) => {
                         />
                         {errors.desc && <span className="text-red-500 col-span-2">{errors.desc}</span>}
 
-                        <FloatingLabelInput
-                            name="image"
-                            type="text"
-                            id="image"
-                            label="Image URL (optional)"
-                            value={formData.image}
-                            onChange={handleInputChange}
-                        />
+                        <input type="file" className="file-input file-input-bordered w-full max-w-xs file-input-secondary" />
+
                     </form>
 
                     <div className="modal-action">
