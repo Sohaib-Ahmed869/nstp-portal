@@ -7,7 +7,7 @@ const handleResponse = async (response) => {
     if (response.status >= 200 && response.status < 300) {
       return { data: response.data, message: response.data.message };
     } else {
-      return { error: response.message };
+      return { error: response.data.message };
     }
   } catch (error) {
     return { error: error };
@@ -33,18 +33,57 @@ const ReceptionistService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
   getWorkPermits: async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/receptionist/workPermit`, {
+      const response = await axios.get(`${BASE_URL}/receptionist/workpermits`, {
         withCredentials: true,
       });
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
+    }
+  },
+
+  getGatePasses: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/receptionist/gatepasses`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  handleGatePassRequest: async (
+    gatepassId,
+    approval,
+    representative,
+    reasonDecline
+  ) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/receptionist/gatepass/approval`,
+        {
+          gatepassId,
+          approval,
+          representative,
+          reasonDecline,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
     }
   },
 };

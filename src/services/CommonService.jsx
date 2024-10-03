@@ -7,7 +7,7 @@ const handleResponse = async (response) => {
     if (response.status >= 200 && response.status < 300) {
       return { data: response.data, message: response.data.message };
     } else {
-      return { error: response.message };
+      return { error: response.data.message };
     }
   } catch (error) {
     return { error: error };
@@ -17,12 +17,15 @@ const handleResponse = async (response) => {
 const CommonService = {
   viewLostAndFound: async (towerId) => {
     try {
-      const response = await axios.get(`${BASE_URL}/common/towers/${towerId}/lostAndFound`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${BASE_URL}/common/towers/${towerId}/lostAndFound`,
+        {
+          withCredentials: true,
+        }
+      );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 };

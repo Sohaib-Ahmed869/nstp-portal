@@ -7,7 +7,7 @@ const handleResponse = async (response) => {
     if (response.status >= 200 && response.status < 300) {
       return { data: response.data, message: response.data.message };
     } else {
-      return { error: response.message };
+      return { error: response.data.message };
     }
   } catch (error) {
     return { error: error };
