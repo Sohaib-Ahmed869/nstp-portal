@@ -98,8 +98,8 @@ const ApproveOffice = () => {
                     console.error('Error fetching data:', response.error);
                     return;
                 }
-                // Assuming response.data.tenants is the array of objects you provided
                 setData(response.data.tenants);
+                console.log('🚀 ~ emmeemoowowmeoww ~ data', data);
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
@@ -163,18 +163,26 @@ const ApproveOffice = () => {
     };
 
     const filteredData = data
-        .filter((item) => {
-            if (filter !== 'All' && item.status !== filter) return false;
-            if (searchQuery && !item.companyName.toLowerCase().includes(searchQuery.toLowerCase())) return false;
-            return true;
-        })
-        .sort((a, b) => {
-            if (!sortField) return 0;
-            const fieldA = a[sortField];
-            const fieldB = b[sortField];
-            if (sortOrder === 'asc') return fieldA > fieldB ? 1 : -1;
-            return fieldA < fieldB ? 1 : -1;
-        });
+    .filter((item) => {
+        if (filter !== 'All' && item.status !== filter) return false;
+        if (searchQuery) {
+            const query = searchQuery.toLowerCase();
+            const organizationName = item.registration.organizationName.toLowerCase();
+            const companyType = item.registration.category.toLowerCase();
+            const companyIndustry = item.industrySector.category.toLowerCase();
+            if (!organizationName.includes(query) && !companyType.includes(query) && !companyIndustry.includes(query)) {
+                return false;
+            }
+        }
+        return true;
+    })
+    .sort((a, b) => {
+        if (!sortField) return 0;
+        const fieldA = sortField.includes('.') ? sortField.split('.').reduce((o, i) => o[i], a) : a[sortField];
+        const fieldB = sortField.includes('.') ? sortField.split('.').reduce((o, i) => o[i], b) : b[sortField];
+        if (sortOrder === 'asc') return fieldA > fieldB ? 1 : -1;
+        return fieldA < fieldB ? 1 : -1;
+    });
 
     const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);

@@ -27,8 +27,9 @@ const WorkPermit = ({ role }) => {
     });
     const { tower } = useContext(TowerContext);
     const [currentPage, setCurrentPage] = useState(1);
-const itemsPerPage = 10;
+    const itemsPerPage = 10;
 
+    /** Effects */
     useEffect(() => {
         async function fetchWorkPermits() {
             setLoading(true);
@@ -62,7 +63,7 @@ const itemsPerPage = 10;
                 }));
                 setWorkPermits(mappedData);
 
-              
+
             } catch (error) {
                 console.error(error);
             } finally {
@@ -72,7 +73,9 @@ const itemsPerPage = 10;
 
         fetchWorkPermits();
     }, []);
+    /** END Effects */
 
+    /** Search, sort and filter related Functions & Controlled states */
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
     };
@@ -117,7 +120,9 @@ const itemsPerPage = 10;
                     : b[sortField].localeCompare(a[sortField]);
             }
         });
-
+    /** END Search, sort and filter related Functions & Controlled states */
+    
+    /** Approve work permit (admin) */
     const handleApproveWorkPermit = () => {
         //api call here
         setModalLoading(true);
@@ -131,6 +136,7 @@ const itemsPerPage = 10;
         }, 2000);
     };
 
+    /** Cancel work permit (admin) */
     const handleCancelWorkPermit = () => {
         setModalLoading(true);
         //change api call here depending on the selectedworkpermit (issued or not) and the role
@@ -145,6 +151,7 @@ const itemsPerPage = 10;
         }, 2000);
     };
 
+    /** Tenant add new work permit related functions */
     const handleDateChange = (e) => {
         handleInputChange(e);
         // Set end date to end of the day
@@ -170,10 +177,23 @@ const itemsPerPage = 10;
         const { name, value } = e.target;
         setNewWorkPermit((prev) => ({ ...prev, [name]: value }));
     };
+
+    const resetWorkPermit = () => {
+        setNewWorkPermit({
+            name: "",
+            department: "",
+            description: "",
+            startDate: "",
+            endDate: "",
+            detailedInfo: "",
+            ppe: "",
+        });
+    };
+
     const handleRequestWorkPermit = async (e) => {
         e.preventDefault();
         setModalLoading(true);
-    
+
         try {
             const response = await TenantService.requestWorkPermit(newWorkPermit);
             if (response.error) {
@@ -193,10 +213,10 @@ const itemsPerPage = 10;
                 valid_from: newWorkPermit.startDate,
                 is_resolved: false,
             };
-    
+
             setWorkPermits((prev) => [...prev, mappedNewWorkPermit]);
             showToast(true, "Work permit requested successfully");
-    
+
         } catch (error) {
             console.error(error);
             showToast(false, "Failed to request work permit");
@@ -205,28 +225,32 @@ const itemsPerPage = 10;
             document.getElementById('request_work_permit_modal').close();
         }
     };
+    /** END Tenant add new work permit related functions */
 
-    
-const indexOfLastItem = currentPage * itemsPerPage;
-const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
-const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    /** Pagination related functions */
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
-const handleNextPage = () => {
-    if (currentPage < totalPages) {
-        setCurrentPage(currentPage + 1);
-    }
-};
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
 
-const handlePrevPage = () => {
-    if (currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-    }
-};
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+    /** END Pagination related functions */
 
     return (
         <Sidebar>
             {loading && <NSTPLoader />}
+
+            {/** Modal for Viewing details of a work permit */}
             <dialog id="work_permit_details_modal" className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-xl mb-4 flex items-center gap-3" > <WrenchIcon className="size-6" /> Work Permit Details</h3>
@@ -248,6 +272,7 @@ const handlePrevPage = () => {
                 </div>
             </dialog>
 
+            {/** Modal to approve work permit (Only for admin) */}
             <dialog id="approve_work_permit_modal" className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg mb-4">Approve Work Permit</h3>
@@ -265,6 +290,7 @@ const handlePrevPage = () => {
                 </div>
             </dialog>
 
+            {/** Modal to request new work permit (Only for tenant) */}
             <dialog id="request_work_permit_modal" className="modal">
                 <div className="modal-box">
                     <h3 className="font-bold text-lg mb-4">Request New Work Permit</h3>
@@ -326,7 +352,12 @@ const handlePrevPage = () => {
                             onChange={handleInputChange}
                         />
                         <div className="modal-action">
-                            <button className="btn" onClick={() => document.getElementById('request_work_permit_modal').close()}>Cancel</button>
+                            <button className="btn" type="button" onClick={(e) => {
+                                e.stopPropagation();
+                                resetWorkPermit()
+                                document.getElementById('request_work_permit_modal').close();
+
+                            }}>Cancel</button>
                             <button
                                 className={`btn btn-primary ${modalLoading && "btn-disabled"}`}
                                 type='submit'
@@ -406,55 +437,55 @@ const handlePrevPage = () => {
                             </tr>
                         </thead>
                         <tbody>
-    {currentItems.length === 0 ? (
-        <tr>
-            <td colSpan="6" className="text-center text-gray-500">No data to show for now.</td>
-        </tr>
-    ) : (
-        currentItems.map((permit) => (
-            <tr key={permit.id}>
-                <td>{permit.date}</td>
-                <td>{permit.name}</td>
-                <td>{permit.department}</td>
-                <td className={`badge ${permit.status === "approved" ? "badge-primary" : permit.status === "rejected" ? "badge-error" : "badge-secondary"} text-sm mt-2 flex gap-2`}>
-                    {permit.status == "approved" ? <CheckIcon className="size-4" /> : permit.status == "rejected" ? <XMarkIcon className="size-4" /> : <ClockIcon className="size-4" />}
-                    {permit.status.charAt(0).toUpperCase() + permit.status.slice(1)}
-                </td>
-                <td>
-                    <button
-                        className="btn btn-primary btn-outline btn-sm"
-                        onClick={() => {
-                            setSelectedWorkPermitId(permit.id);
-                            document.getElementById('work_permit_details_modal').showModal();
-                        }}
-                    >
-                        Show Details
-                    </button>
-                </td>
-            </tr>
-        ))
-    )}
-</tbody>
+                            {currentItems.length === 0 ? (
+                                <tr>
+                                    <td colSpan="6" className="text-center text-gray-500">No data to show for now.</td>
+                                </tr>
+                            ) : (
+                                currentItems.map((permit) => (
+                                    <tr key={permit.id}>
+                                        <td>{permit.date}</td>
+                                        <td>{permit.name}</td>
+                                        <td>{permit.department}</td>
+                                        <td className={`badge ${permit.status === "approved" ? "badge-primary" : permit.status === "rejected" ? "badge-error" : "badge-secondary"} text-sm mt-2 flex gap-2`}>
+                                            {permit.status == "approved" ? <CheckIcon className="size-4" /> : permit.status == "rejected" ? <XMarkIcon className="size-4" /> : <ClockIcon className="size-4" />}
+                                            {permit.status.charAt(0).toUpperCase() + permit.status.slice(1)}
+                                        </td>
+                                        <td>
+                                            <button
+                                                className="btn btn-primary btn-outline btn-sm"
+                                                onClick={() => {
+                                                    setSelectedWorkPermitId(permit.id);
+                                                    document.getElementById('work_permit_details_modal').showModal();
+                                                }}
+                                            >
+                                                Show Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
                     </table>
                     <div className="flex justify-between items-center mt-4">
-    <button
-        className="btn btn-secondary"
-        onClick={handlePrevPage}
-        disabled={currentPage === 1}
-    >
-        Previous
-    </button>
-    <span>
-        Page {currentPage} of {totalPages}
-    </span>
-    <button
-        className="btn btn-secondary"
-        onClick={handleNextPage}
-        disabled={currentPage === totalPages}
-    >
-        Next
-    </button>
-</div>
+                        <button
+                            className="btn btn-secondary"
+                            onClick={handlePrevPage}
+                            disabled={currentPage === 1}
+                        >
+                            Previous
+                        </button>
+                        <span>
+                            Page {currentPage} of {totalPages}
+                        </span>
+                        <button
+                            className="btn btn-secondary"
+                            onClick={handleNextPage}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next
+                        </button>
+                    </div>
                 </div>
             </div>
         </Sidebar>
