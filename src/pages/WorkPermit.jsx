@@ -150,20 +150,16 @@ const WorkPermit = ({ role }) => {
 
     /** Approve work permit (admin) */
     const handleApproveWorkPermit = async () => {
-        console.log("Approving work permit with ID: ", selectedWorkPermitId);
         //api call here
         setModalLoading(true);
 
         try {
-            console.log("in try block")
             const response = await AdminService.handleWorkPermit(selectedWorkPermitId, true);
-            console.log("🚀 ~ response")
             if (response.error) {
                 console.error(response.error);
                 showToast(false, "Failed to approve work permit");
                 return;
             }
-            console.log("after if")
             showToast(true, "Work permit approved successfully");
             // Update the work permit status
             const updatedWorkPermits = workPermits.map((permit) => {
@@ -172,37 +168,45 @@ const WorkPermit = ({ role }) => {
                 }
                 return permit;
             });
-            console.log("mama")
             setWorkPermits(updatedWorkPermits);
-            setModalLoading(false);
-            document.getElementById('approve_work_permit_modal').close();
+
         } catch (error) {
             console.error(error);
             showToast(false, "Failed to approve work permit");
-            setModalLoading(false);
-            document.getElementById('approve_work_permit_modal').close();
         } finally {
             setModalLoading(false);
+            setSelectedWorkPermitId(null); // Reset selectedWorkPermitId
             document.getElementById('approve_work_permit_modal').close();
         }
-
-        setModalLoading(false);
-        document.getElementById('approve_work_permit_modal').close();
-
 
     };
 
     /** Cancel work permit (admin) */
-    const handleCancelWorkPermit = () => {
+    const handleCancelWorkPermit = (selectedWorkPermitId) => {
         setModalLoading(true);
-        //change api call here depending on the selectedworkpermit (issued or not) and the role
-        // eg tenant - cancel pending vs cancel issued
-        // admin  - cancel pending vs cancel issued
-        setTimeout(() => {
-            const updatedWorkPermits = workPermits.filter((permit) => permit.id !== selectedWorkPermitId);
-            setWorkPermits(updatedWorkPermits);
-            console.log(`Cancelled work permit with ID: ${selectedWorkPermitId}`);
+        console.log(`Selected Work Permit ID: ${selectedWorkPermitId}`);
+
+        // Ensure selectedWorkPermitId is not undefined or null
+        if (!selectedWorkPermitId) {
+            console.error("Selected Work Permit ID is undefined or null");
             setModalLoading(false);
+            return;
+        }
+
+        // Ensure selectedWorkPermitId is a string
+        const selectedId = selectedWorkPermitId.toString();
+
+        setTimeout(() => {
+            console.log("Work permits before: ", workPermits);
+
+            const updatedWorkPermits = workPermits.filter((permit) => permit.id.toString() !== selectedId);
+            setWorkPermits(updatedWorkPermits);
+
+            console.log("Work permits after: ", updatedWorkPermits);
+            console.log(`Cancelled work permit with ID: ${selectedId}`);
+
+            setModalLoading(false);
+            setSelectedWorkPermitId(null); // Reset selectedWorkPermitId
             document.getElementById('cancel_work_permit_modal').close();
         }, 2000);
     };
@@ -402,7 +406,7 @@ const WorkPermit = ({ role }) => {
                         <button className="btn" onClick={() => document.getElementById('cancel_work_permit_modal').close()}>No</button>
                         <button
                             className={`btn btn-error text-base-100 ${modalLoading && "btn-disabled"}`}
-                            onClick={handleCancelWorkPermit}
+                            onClick={() => handleCancelWorkPermit(selectedWorkPermitId)}
                         >
                             {modalLoading && <span className="loading loading-spinner"></span>}
                             {modalLoading ? "Please wait..." : role == "admin" ? "Reject Permit" : "Cancel Permit"}
