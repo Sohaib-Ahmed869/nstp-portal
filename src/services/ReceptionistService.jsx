@@ -36,6 +36,17 @@ const ReceptionistService = {
       return { error: error };
     }
   },
+
+  getWorkPermits: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/receptionist/workPermit`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return { error: error };
+    }
+  },
 };
 
 export default ReceptionistService;
