@@ -2,10 +2,22 @@ import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../components/Sidebar';
 import NSTPLoader from '../components/NSTPLoader';
 import FloatingLabelInput from '../components/FloatingLabelInput';
-import { PlusCircleIcon, AdjustmentsHorizontalIcon, MagnifyingGlassIcon, CheckIcon, ClockIcon, WrenchIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { PlusCircleIcon, AdjustmentsHorizontalIcon, MagnifyingGlassIcon, CheckIcon, ClockIcon, WrenchIcon, XMarkIcon, XCircleIcon, HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/outline';
 import { TenantService, AdminService, ReceptionistService } from '../services';
 import { TowerContext } from '../context/TowerContext';
 import showToast from '../util/toast';
+
+//IMP NOTE
+//the format to display
+// key: permit._id,
+// id: permit._id,
+// name: permit.name,
+// department: permit.department,
+// date: new Date(permit.valid_from).toLocaleDateString(),
+// status: permit.is_resolved ? (permit.status === "approved" ? "approved" : "rejected") : "pending",
+// detailedInfo: permit.detailed_information,
+// equipment: permit.equipment,
+// description: permit.description,
 
 const WorkPermit = ({ role }) => {
     const [workPermits, setWorkPermits] = useState([]);
@@ -25,6 +37,17 @@ const WorkPermit = ({ role }) => {
         detailedInfo: "",
         ppe: "",
     });
+
+
+    // testing useeffect to see workpermits value everytiem tis changed
+    useEffect(() => {
+        console.log("🚀 ~ workPermits", workPermits
+
+
+        )
+    }, [workPermits])
+
+
     const { tower } = useContext(TowerContext);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -37,7 +60,7 @@ const WorkPermit = ({ role }) => {
                 let response;
                 if (role === "tenant") {
                     response = await TenantService.getWorkPermits();
-                } 
+                }
                 // else if (role === "receptionist") {
                 //     response = await ReceptionistService.getWorkPermits();
                 // } 
@@ -93,7 +116,10 @@ const WorkPermit = ({ role }) => {
     const filteredData = workPermits
         .filter((permit) => {
             if (filter === "All") return true;
-            return filter === "Issued" ? permit.issued : !permit.issued;
+            if (filter === "Approved") return permit.status === "approved";
+            if (filter === "Pending") return permit.status === "pending";
+            if (filter === "Rejected") return permit.status === "rejected";
+            return false;
         })
         .filter((permit) => {
             const searchLower = searchQuery.toLowerCase();
@@ -121,30 +147,49 @@ const WorkPermit = ({ role }) => {
             }
         });
     /** END Search, sort and filter related Functions & Controlled states */
-    
+
     /** Approve work permit (admin) */
     const handleApproveWorkPermit = async () => {
+        console.log("Approving work permit with ID: ", selectedWorkPermitId);
         //api call here
         setModalLoading(true);
 
-        try{
+        try {
+            console.log("in try block")
             const response = await AdminService.handleWorkPermit(selectedWorkPermitId, true);
+            console.log("🚀 ~ response")
             if (response.error) {
                 console.error(response.error);
                 showToast(false, "Failed to approve work permit");
                 return;
             }
+            console.log("after if")
             showToast(true, "Work permit approved successfully");
             // Update the work permit status
+            const updatedWorkPermits = workPermits.map((permit) => {
+                if (permit.id === selectedWorkPermitId) {
+                    permit.status = "approved";
+                }
+                return permit;
+            });
+            console.log("mama")
+            setWorkPermits(updatedWorkPermits);
+            setModalLoading(false);
+            document.getElementById('approve_work_permit_modal').close();
         } catch (error) {
             console.error(error);
             showToast(false, "Failed to approve work permit");
+            setModalLoading(false);
+            document.getElementById('approve_work_permit_modal').close();
         } finally {
             setModalLoading(false);
             document.getElementById('approve_work_permit_modal').close();
         }
 
-      
+        setModalLoading(false);
+        document.getElementById('approve_work_permit_modal').close();
+
+
     };
 
     /** Cancel work permit (admin) */
@@ -234,6 +279,7 @@ const WorkPermit = ({ role }) => {
         } finally {
             setModalLoading(false);
             document.getElementById('request_work_permit_modal').close();
+            resetWorkPermit();
         }
     };
     /** END Tenant add new work permit related functions */
@@ -263,7 +309,7 @@ const WorkPermit = ({ role }) => {
 
             {/** Modal for Viewing details of a work permit */}
             <dialog id="work_permit_details_modal" className="modal">
-                <div className="modal-box">
+                <div className="modal-box w-11/12 max-w-2xl">
                     <h3 className="font-bold text-xl mb-4 flex items-center gap-3" > <WrenchIcon className="size-6" /> Work Permit Details</h3>
                     <hr className="my-5 text-gray-200" />
                     {selectedWorkPermitId && (
@@ -273,7 +319,6 @@ const WorkPermit = ({ role }) => {
                             <p><strong className="text-primary">Equipment:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).equipment}</p>
                             <p><strong className="text-primary">Status:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).status}</p>
                             <p><strong className="text-primary">Date Requested:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).date}</p>
-
                             <p className="mt-3 text-gray-400">Note: The ending time is 23:59 on the same date. </p>
                         </div>
                     )}
@@ -286,7 +331,10 @@ const WorkPermit = ({ role }) => {
             {/** Modal to approve work permit (Only for admin) */}
             <dialog id="approve_work_permit_modal" className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg mb-4">Approve Work Permit</h3>
+                    <div className="mb-2 flex items-center gap-2">
+                        <HandThumbUpIcon className="size-8 text-primary" />
+                        <h3 className="font-bold text-lg ">Approve Work Permit</h3>
+                    </div>
                     <p>Are you sure you want to approve this work permit?</p>
                     <div className="modal-action">
                         <button className="btn" onClick={() => document.getElementById('approve_work_permit_modal').close()}>No</button>
@@ -304,64 +352,15 @@ const WorkPermit = ({ role }) => {
             {/** Modal to request new work permit (Only for tenant) */}
             <dialog id="request_work_permit_modal" className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg mb-4">Request New Work Permit</h3>
+                    <h3 className="font-bold text-lg mb-4 ">Request New Work Permit</h3>
                     <form onSubmit={handleRequestWorkPermit}>
-                        <FloatingLabelInput
-                            name="name"
-                            type="text"
-                            id="name"
-                            label="Name of Person"
-                            value={newWorkPermit.name}
-                            onChange={handleInputChange}
-                            required
-                        />
-                        <FloatingLabelInput
-                            name="department"
-                            type="text"
-                            id="department"
-                            label="Department"
-                            value={newWorkPermit.department}
-                            onChange={handleInputChange}
-                            required
-                        />
-                        <FloatingLabelInput
-                            name="description"
-                            type="textarea"
-                            id="description"
-                            label="Description"
-                            value={newWorkPermit.description}
-                            onChange={handleInputChange}
-                            required
-                        />
-                        {/** Start date and end date */}
-                        <FloatingLabelInput
-                            name="startDate"
-                            type="datetime-local"
-                            id="startDate"
-                            label="Start Date"
-                            value={newWorkPermit.startDate}
-                            onChange={handleDateChange}
-                            required
-                        />
-                        <p className="mb-4"> <span className="font-bold text-primary mb-3">End date: </span>
-                            {newWorkPermit.endDate.toString()}
-                        </p>
-                        <FloatingLabelInput
-                            name="detailedInfo"
-                            type="textarea"
-                            id="detailedInfo"
-                            label="Detailed information, along with use of tools"
-                            value={newWorkPermit.detailedInfo}
-                            onChange={handleInputChange}
-                        />
-                        <FloatingLabelInput
-                            name="ppe"
-                            type="text"
-                            id="ppe"
-                            label="Personal Protective Equipment (Comma Separated)"
-                            value={newWorkPermit.ppe}
-                            onChange={handleInputChange}
-                        />
+                        <FloatingLabelInput name="name" type="text" id="name" label="Name of Person" value={newWorkPermit.name} onChange={handleInputChange} required />
+                        <FloatingLabelInput name="department" type="text" id="department" label="Department" value={newWorkPermit.department} onChange={handleInputChange} required />
+                        <FloatingLabelInput name="description" type="textarea" id="description" label="Description" value={newWorkPermit.description} onChange={handleInputChange} required />
+                        <FloatingLabelInput name="startDate" type="datetime-local" id="startDate" label="Start Date" value={newWorkPermit.startDate} onChange={handleDateChange} required />
+                        <p className="mb-4"> <span className="font-bold text-primary mb-3">End date: </span>{newWorkPermit.endDate.toString()}</p>
+                        <FloatingLabelInput name="detailedInfo" type="textarea" id="detailedInfo" label="Detailed information, along with use of tools" value={newWorkPermit.detailedInfo} onChange={handleInputChange} />
+                        <FloatingLabelInput name="ppe" type="text" id="ppe" label="Personal Protective Equipment (Comma Separated)" value={newWorkPermit.ppe} onChange={handleInputChange} />
                         <div className="modal-action">
                             <button className="btn" type="button" onClick={(e) => {
                                 e.stopPropagation();
@@ -382,17 +381,31 @@ const WorkPermit = ({ role }) => {
             </dialog>
 
             <dialog id="cancel_work_permit_modal" className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg mb-4">Cancel Work Permit</h3>
-                    <p>Are you sure you want to cancel this work permit?</p>
+                <div className="modal-box w-11/12 max-w-2xl ">
+                    <div className="flex items-center mb-4 gap-3">
+                        <HandThumbDownIcon className="size-8 text-error" />
+                        <h3 className="font-bold text-lg "> {role == "admin" ? "Reject" : "Cancel"} Work Permit</h3>
+
+                    </div>
+                    {
+                        role == "admin" ?
+                            <p className="mb-5">Please provide an explanation for the tenant about rejecting their work permit.</p>
+                            :
+                            <p className="mb-5">Are you sure you want to cancel this work permit?</p>
+                    }
+                    {role == "admin" && <textarea
+                        className="textarea textarea-bordered w-full"
+                        placeholder="Reason for cancellation"
+                        rows={10}
+                    ></textarea>}
                     <div className="modal-action">
                         <button className="btn" onClick={() => document.getElementById('cancel_work_permit_modal').close()}>No</button>
                         <button
-                            className={`btn btn-error ${modalLoading && "btn-disabled"}`}
+                            className={`btn btn-error text-base-100 ${modalLoading && "btn-disabled"}`}
                             onClick={handleCancelWorkPermit}
                         >
                             {modalLoading && <span className="loading loading-spinner"></span>}
-                            {modalLoading ? "Please wait..." : "Yes, Cancel"}
+                            {modalLoading ? "Please wait..." : role == "admin" ? "Reject Permit" : "Cancel Permit"}
                         </button>
                     </div>
                 </div>
@@ -430,7 +443,8 @@ const WorkPermit = ({ role }) => {
                             className="select select-bordered w-full lg:max-w-xs"
                         >
                             <option value="All">All</option>
-                            <option value="Issued">Issued</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
                             <option value="Pending">Pending</option>
                         </select>
                     </div>
@@ -448,48 +462,66 @@ const WorkPermit = ({ role }) => {
                             </tr>
                         </thead>
                         <tbody>
-    {currentItems.length === 0 ? (
-        <tr>
-            <td colSpan="6" className="text-center text-gray-500">No data to show for now.</td>
-        </tr>
-    ) : (
-        currentItems.map((permit) => (
-            <tr key={permit.id}>
-                <td>{permit.date}</td>
-                <td>{permit.name}</td>
-                <td>{permit.department}</td>
-                <td className={`badge ${permit.status === "approved" ? "badge-primary" : permit.status === "rejected" ? "badge-error" : "badge-secondary"} text-sm mt-2 flex gap-2`}>
-                    {permit.status == "approved" ? <CheckIcon className="size-4" /> : permit.status == "rejected" ? <XMarkIcon className="size-4" /> : <ClockIcon className="size-4" />}
-                    {permit.status.charAt(0).toUpperCase() + permit.status.slice(1)}
-                </td>
-                <td>
-                    <div className='flex gap-3'>
-                        <button
-                            className="btn btn-primary btn-outline btn-sm"
-                            onClick={() => {
-                                setSelectedWorkPermitId(permit.id);
-                                document.getElementById('work_permit_details_modal').showModal();
-                            }}
-                        >
-                            Show Details
-                        </button>
-                        {(role === "admin" && !permit.is_issued) && (
-                            <button
-                                className="btn btn-outline btn-success btn-sm"
-                                onClick={() => {
-                                    setSelectedWorkPermitId(permit.id);
-                                    document.getElementById('approve_work_permit_modal').showModal();
-                                }}
-                                >
-                                Approve
-                            </button>
-                        )}
-                    </div>
-                </td>
-            </tr>
-        ))
-    )}
-</tbody>
+                            {currentItems.length === 0 ? (
+                                <tr>
+                                    <td colSpan="6" className="text-center text-gray-500">No data to show for now.</td>
+                                </tr>
+                            ) : (
+                                currentItems.map((permit) => (
+                                    <tr key={permit.id}>
+                                        <td>{permit.date}</td>
+                                        <td>{permit.name}</td>
+                                        <td>{permit.department}</td>
+                                        <td className={`badge ${permit.status === "approved" ? "badge-primary" : permit.status === "rejected" ? "badge-error" : "badge-secondary"} text-sm mt-2 flex gap-2`}>
+                                            {permit.status == "approved" ? <CheckIcon className="size-4" /> : permit.status == "rejected" ? <XMarkIcon className="size-4" /> : <ClockIcon className="size-4" />}
+                                            {permit.status.charAt(0).toUpperCase() + permit.status.slice(1)}
+                                        </td>
+                                        <td>
+                                            <div className='flex gap-3'>
+                                                <button
+                                                    className="btn btn-primary btn-outline btn-sm"
+                                                    onClick={() => {
+                                                        setSelectedWorkPermitId(permit.id);
+                                                        document.getElementById('work_permit_details_modal').showModal();
+                                                    }}
+                                                >
+                                                    Show Details
+                                                </button>
+                                                {
+                                                    role === "admin" ?
+                                                        permit.status == "approved" ?
+                                                            null //the permit is already approved and the user is admin
+                                                            :
+                                                            permit.status == "pending" ?
+                                                                <>
+                                                                    <button
+                                                                        className="btn btn-outline btn-success btn-sm"
+                                                                        onClick={() => {
+                                                                            setSelectedWorkPermitId(permit.id);
+                                                                            document.getElementById('approve_work_permit_modal').showModal();
+                                                                        }}>
+                                                                        Approve
+                                                                    </button>
+                                                                    <button
+                                                                        className="btn btn-outline btn-error btn-sm"
+                                                                        onClick={() => {
+                                                                            setSelectedWorkPermitId(permit.id);
+                                                                            document.getElementById('cancel_work_permit_modal').showModal();
+                                                                        }}>
+                                                                        Cancel
+                                                                    </button>
+                                                                </>
+                                                                :
+                                                                null // the permit is rejected and the user is admin
+                                                        : null // the user is not admin
+
+                                                }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
                     </table>
                     <div className="flex justify-between items-center mt-4">
                         <button

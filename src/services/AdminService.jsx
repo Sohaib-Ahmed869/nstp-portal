@@ -233,7 +233,7 @@ const AdminService = {
   getWorkPermits: async (towerId) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/admin/towers/${towerId}/workPermits`,
+        `${BASE_URL}/admin/towers/${towerId}/workpermits`,
         {
           withCredentials: true,
         }
