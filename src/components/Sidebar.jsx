@@ -166,7 +166,7 @@ const Sidebar = ({ children }) => {
             </ul>
           </nav>
         </div>
-        <div className="flex-grow p-16 pt-0 ml-20 overflow-auto">
+        <div className="flex-grow p-16 pt-0 ml-20 xl:px-32 overflow-auto">
           {children /* this is where the page content will be rendered. */}
         </div>
       </div>

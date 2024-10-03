@@ -198,7 +198,7 @@ const CardRequests = () => {
             {/* Modal */}
             <dialog id="confirmation_modal" className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">{currentRequest?.action === 'approve' ? 'Approve Request' : 'Unapprove Request'}</h3>
+                    <h3 className="font-bold text-lg">{currentRequest?.action === 'approve' ? 'Approve Request' : 'Reject Request'}</h3>
                     <p className="text-sm text-gray-500">
                         Are you sure you want to {currentRequest?.action} this request?
                     </p>
@@ -304,15 +304,14 @@ const CardRequests = () => {
                                                         >
                                                             Approve
                                                         </button>
-                                                        {/* <button
+                                                        <button
                                                             className="btn btn-sm btn-error btn-outline"
                                                             onClick={() => {
                                                                 setCurrentRequest({ request, action: 'unapprove' });
                                                                 document.getElementById('confirmation_modal').showModal();
-                                                            }}
-                                                        >
-                                                            Unapprove
-                                                        </button> */}
+                                                            }}>
+                                                            Reject
+                                                        </button>
                                                     </>
                                                 )}
                                                 <button className="btn btn-sm btn-outline btn-primary">

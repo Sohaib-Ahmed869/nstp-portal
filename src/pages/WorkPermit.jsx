@@ -28,6 +28,7 @@ const WorkPermit = ({ role }) => {
     const [modalLoading, setModalLoading] = useState(false);
     const [selectedWorkPermitId, setSelectedWorkPermitId] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [reasonForRejection, setReasonForRejection] = useState("");
     const [newWorkPermit, setNewWorkPermit] = useState({
         name: "",
         department: "",
@@ -184,6 +185,7 @@ const WorkPermit = ({ role }) => {
     /** Cancel work permit (admin) */
     const handleCancelWorkPermit = (selectedWorkPermitId) => {
         setModalLoading(true);
+        console.log("REASON " , reasonForRejection)
         console.log(`Selected Work Permit ID: ${selectedWorkPermitId}`);
 
         // Ensure selectedWorkPermitId is not undefined or null
@@ -207,6 +209,7 @@ const WorkPermit = ({ role }) => {
 
             setModalLoading(false);
             setSelectedWorkPermitId(null); // Reset selectedWorkPermitId
+            setReasonForRejection(''); // Reset reason for rejection
             document.getElementById('cancel_work_permit_modal').close();
         }, 2000);
     };
@@ -401,6 +404,8 @@ const WorkPermit = ({ role }) => {
                         className="textarea textarea-bordered w-full"
                         placeholder="Reason for cancellation"
                         rows={10}
+                        value={reasonForRejection}
+                        onChange={(e) => setReasonForRejection(e.target.value)}
                     ></textarea>}
                     <div className="modal-action">
                         <button className="btn" onClick={() => document.getElementById('cancel_work_permit_modal').close()}>No</button>
