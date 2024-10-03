@@ -183,7 +183,7 @@ const WorkPermit = ({ role }) => {
     };
 
     /** Cancel work permit (admin) */
-    const handleCancelWorkPermit = (selectedWorkPermitId) => {
+    const handleCancelWorkPermit = async (selectedWorkPermitId) => {
         setModalLoading(true);
         console.log("REASON " , reasonForRejection)
         console.log(`Selected Work Permit ID: ${selectedWorkPermitId}`);
@@ -198,20 +198,48 @@ const WorkPermit = ({ role }) => {
         // Ensure selectedWorkPermitId is a string
         const selectedId = selectedWorkPermitId.toString();
 
-        setTimeout(() => {
-            console.log("Work permits before: ", workPermits);
+        try {
+            const response = await AdminService.handleWorkPermit(selectedId, false, reasonForRejection);
+            if (response.error) {
+                console.error(response.error);
+                showToast(false, "Failed to cancel work permit");
+                return;
+            }
 
-            const updatedWorkPermits = workPermits.filter((permit) => permit.id.toString() !== selectedId);
+            showToast(true, "Work permit cancelled successfully");
+            // Update the work permit status
+            const updatedWorkPermits = workPermits.map((permit) => {
+                if (permit.id === selectedId) {
+                    permit.status = "rejected";
+                }
+                return permit;
+            });
             setWorkPermits(updatedWorkPermits);
 
-            console.log("Work permits after: ", updatedWorkPermits);
-            console.log(`Cancelled work permit with ID: ${selectedId}`);
-
+        } catch (error) {
+            console.error(error);
+            showToast(false, "Failed to cancel work permit");
+        } finally {
             setModalLoading(false);
             setSelectedWorkPermitId(null); // Reset selectedWorkPermitId
             setReasonForRejection(''); // Reset reason for rejection
             document.getElementById('cancel_work_permit_modal').close();
-        }, 2000);
+        }
+
+        // setTimeout(() => {
+        //     console.log("Work permits before: ", workPermits);
+
+        //     const updatedWorkPermits = workPermits.filter((permit) => permit.id.toString() !== selectedId);
+        //     setWorkPermits(updatedWorkPermits);
+
+        //     console.log("Work permits after: ", updatedWorkPermits);
+        //     console.log(`Cancelled work permit with ID: ${selectedId}`);
+
+        //     setModalLoading(false);
+        //     setSelectedWorkPermitId(null); // Reset selectedWorkPermitId
+        //     setReasonForRejection(''); // Reset reason for rejection
+        //     document.getElementById('cancel_work_permit_modal').close();
+        // }, 2000);
     };
 
     /** Tenant add new work permit related functions */
