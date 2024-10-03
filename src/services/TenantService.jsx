@@ -7,7 +7,7 @@ const handleResponse = async (response) => {
     if (response.status >= 200 && response.status < 300) {
       return { data: response.data, message: response.data.message };
     } else {
-      return { error: response.message };
+      return { error: response.data.message };
     }
   } catch (error) {
     return { error: error };
@@ -32,7 +32,7 @@ const TenantService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -54,7 +54,7 @@ const TenantService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -66,7 +66,7 @@ const TenantService = {
 
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -77,7 +77,7 @@ const TenantService = {
       });
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -88,7 +88,7 @@ const TenantService = {
       });
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -108,7 +108,7 @@ const TenantService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -129,7 +129,7 @@ const TenantService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -140,7 +140,7 @@ const TenantService = {
       });
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -171,7 +171,7 @@ const TenantService = {
       console.log("🚀 ~ requestGatePass ~ response", response);
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -182,7 +182,7 @@ const TenantService = {
       });
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -202,7 +202,7 @@ const TenantService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -218,11 +218,11 @@ const TenantService = {
             "Content-Type": "application/json",
           },
           withCredentials: true,
-        },
+        }
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 };

@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import Sidebar from '../components/Sidebar'
 import NSTPLoader from '../components/NSTPLoader'
 import FloatingLabelInput from '../components/FloatingLabelInput'
 import { PlusCircleIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon, CheckIcon, ClockIcon } from '@heroicons/react/24/outline'
-import TenantService from '../services/TenantService'
+import { TenantService, ReceptionistService} from '../services'
 import showToast from '../util/toast'
+import { TowerContext } from '../context/TowerContext'
 
 const GatePasses = ({ role }) => {
     const [loading, setLoading] = useState(true);
@@ -14,7 +15,6 @@ const GatePasses = ({ role }) => {
     const [filter, setFilter] = useState("All");
     const [selectedGatePassId, setSelectedGatePassId] = useState(null);
     const [gatePassesTableData, setGatePassesTableData] = useState([]);
-
     const [modalLoading, setModalLoading] = useState(false);
     const [objectToAdd, setObjectToAdd] = useState({
         date: "",
@@ -26,6 +26,10 @@ const GatePasses = ({ role }) => {
         nstpRepresentative: null,
         issued: false,
     });
+
+    const [reasonDecline, setReasonDecline] = useState("");
+    const [nstpRepresentative, setNstpRepresentative] = useState("");
+    const { tower } = useContext(TowerContext);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -76,52 +80,88 @@ const GatePasses = ({ role }) => {
     };
 
     // Simulate loading
-   useEffect(() => {
+    useEffect(() => {
     setLoading(true);
     if (role === "tenant") {
         async function fetchGatePasses() {
-            const response = await TenantService.getGatePasses();
-            if (response.error) {
-                console.log(response.error);
+            try{
+                const response = await TenantService.getGatePasses();
+                if (response.error) {
+                    console.log(response.error);
+                    return;
+                }
+                
+                // console.log(response.data.gatePasses);
+                
+                const mappedData = response.data.gatePasses.map(pass => ({
+                    id: pass._id,
+                    date: new Date(pass.date).toLocaleString(),
+                    sponsor: pass.sponsor,
+                    guestName: pass.guest_name,
+                    guestCNIC: pass.guest_cnic,
+                    guestContact: pass.guest_contact,
+                    gateNumber: pass.gate_number.toString(),
+                    nstpRepresentative: "", // Assuming no representative for tenant
+                    issued: pass.is_approved,
+                }));
+                
+                setGatePassesTableData(mappedData);
+                setGatePassesTableData((prevData) => prevData.sort((a, b) => new Date(b.date) - new Date(a.date)));
+                showToast(true, "Gate passes fetched successfully");
+            } catch (error) {
+                console.log(error);
+                showToast(false);
                 return;
+            } finally {
+                setLoading(false);
             }
-
-            const mappedData = response.data.gatePasses.map(pass => ({
-                id: pass._id,
-                date: new Date(pass.date).toLocaleString(),
-                sponsor: "NSTP", // Assuming sponsor is always "NSTP"
-                guestName: pass.guest_name,
-                guestCNIC: pass.guest_cnic,
-                guestContact: pass.guest_contact,
-                gateNumber: pass.gate_number.toString(),
-                nstpRepresentative: "", // Assuming no representative for tenant
-                issued: pass.is_approved,
-            }));
-
-            setGatePassesTableData(mappedData);
         }
 
         fetchGatePasses();
     } else if (role === "receptionist") {
-        setGatePassesTableData([
-            { id: "123", company: "Hexler Tech", date: "9/14/2024, 8:23:43 PM", sponsor: "NSTP", guestName: "Fatima Bilal", guestCNIC: "12345-1234567-8", guestContact: "0333-1234567", gateNumber: "1", nstpRepresentative: "Saleem Khan", issued: true, },
-            { id: "124", company: "Hexler Tech", date: "3/22/2024, 11:45:12 AM", sponsor: "NSTP", guestName: "Malaika Zafar", guestCNIC: "12345-1234567-8", guestContact: "0333-123456", gateNumber: "2", nstpRepresentative: "Saleem Khan", issued: true, },
-            { id: "125", company: "Hexler Tech", date: "3/22/2024, 11:45:12 AM", sponsor: "NSTP", guestName: "Haadiya Sajid", guestCNIC: "12345-333567-8", guestContact: "0333-1234563", gateNumber: "3", nstpRepresentative: "Khan Khan", issued: true, },
-            { id: "126", company: "Hexler Tech", date: "11/5/2024, 9:15:27 AM", sponsor: "NSTP", guestName: "Fatima Sarmad", guestCNIC: "123452134567-8", guestContact: "0333-1234563", gateNumber: "4", nstpRepresentative: "", issued: false, },
-            { id: "127", company: "Hexler Tech", date: "6/30/2024, 2:34:50 PM", sponsor: "NSTP", guestName: "Hanaa Sajid", guestCNIC: "12345-1234567-8", guestContact: "0333-1234563", gateNumber: "5", nstpRepresentative: "", issued: false, },
-        ]);
-    }
+        async function fetchGatePasses() {
+            try{
+                const response = await ReceptionistService.getGatePasses();
+                if (response.error) {
+                    console.log(response.error);
+                    return;
+                }
+                console.log(response.data.gatePasses);
 
-    setTimeout(() => {
-        setLoading(false);
-    }, 2000);
+                // map the data
+                
+                const mappedData = response.data.gatePasses.map(pass => ({
+                    id: pass._id,
+                    date: new Date(pass.date).toLocaleString(),
+                    company: pass.tenant_id.registration.organizationName,
+                    sponsor: pass.tower.name,
+                    guestName: pass.guest_name,
+                    guestCNIC: pass.guest_cnic,
+                    guestContact: pass.guest_contact,
+                    gateNumber: pass.gate_number.toString(),
+                    nstpRepresentative: pass.nstp_representative,
+                    issued: pass.is_approved,
+                }));
+
+                setGatePassesTableData(mappedData);
+                setGatePassesTableData((prevData) => prevData.sort((a, b) => a.issued - b.issued));
+                showToast(true, "Gate passes fetched successfully");
+            } catch (error) {
+                console.log(error);
+                showToast(false);
+                return;
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        fetchGatePasses();
+    }
 
     // Default sort by date, latest first for tenants
     if (role === "tenant") {
-        setGatePassesTableData((prevData) => prevData.sort((a, b) => new Date(b.date) - new Date(a.date)));
     } else if (role === "receptionist") {
         // Default sort by status for receptionists
-        setGatePassesTableData((prevData) => prevData.sort((a, b) => a.issued - b.issued));
     }
 }, [role]);
 
@@ -161,17 +201,41 @@ const GatePasses = ({ role }) => {
         { name: "gateNumber", type: "text", id: "gateNumber", label: "Gate Number", value: objectToAdd.gateNumber, required: true },
     ];
 
-    const handleApproveGatePass = () => {
+    const handleApproveGatePass = async (approval) => {
         setModalLoading(true);
-        setTimeout(() => {
+        try{
+            const response = await ReceptionistService.handleGatePassRequest(selectedGatePassId, approval, nstpRepresentative, reasonDecline);
+            if (response.error) {
+                console.log(response.error);
+                showToast(false);
+                return;
+            }
+
             const updatedGatePasses = gatePassesTableData.map((gatePass) =>
                 gatePass.id === selectedGatePassId ? { ...gatePass, issued: true } : gatePass
             );
+
             setGatePassesTableData(updatedGatePasses);
-            console.log(updatedGatePasses.find((gatePass) => gatePass.id === selectedGatePassId));
+            showToast(true);
+
+        } catch (error) {
+            console.log(error);
+            showToast(false);
+            return;
+        } finally {
             setModalLoading(false);
             document.getElementById('approve_gate_pass_modal').close();
-        }, 2000);
+        }
+
+        // setTimeout(() => {
+        //     const updatedGatePasses = gatePassesTableData.map((gatePass) =>
+        //         gatePass.id === selectedGatePassId ? { ...gatePass, issued: true } : gatePass
+        //     );
+        //     setGatePassesTableData(updatedGatePasses);
+        //     console.log(updatedGatePasses.find((gatePass) => gatePass.id === selectedGatePassId));
+        //     setModalLoading(false);
+        //     document.getElementById('approve_gate_pass_modal').close();
+        // }, 2000);
     };
 
     return (
@@ -216,7 +280,7 @@ const GatePasses = ({ role }) => {
                         <button className="btn" onClick={() => document.getElementById('approve_gate_pass_modal').close()}>No</button>
                         <button
                             className={`btn btn-success ${modalLoading && "btn-disabled"}`}
-                            onClick={handleApproveGatePass}
+                            onClick={() => handleApproveGatePass(true)}
                         >
                             {modalLoading && <span className="loading loading-spinner"></span>}
                             {modalLoading ? "Please wait..." : "Yes, Approve"}

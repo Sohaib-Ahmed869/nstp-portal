@@ -8,7 +8,7 @@ const handleResponse = async (response) => {
     if (response.status >= 200 && response.status < 300) {
       return { data: response.data, message: response.data.message };
     } else {
-      return { error: response.message, response };
+      return { error: response.data.message, response };
     }
   } catch (error) {
     return { error: error };
@@ -26,7 +26,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -41,7 +41,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -55,7 +55,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -87,7 +87,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -101,7 +101,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -123,7 +123,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -138,7 +138,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -147,7 +147,7 @@ const AdminService = {
       console.log("🚀 ~ getPendingCardAllocations ~ towerId", towerId);
       return AdminService.getCardAllocations(towerId, "is_requested");
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -155,7 +155,7 @@ const AdminService = {
     try {
       return AdminService.getCardAllocations(towerId, "is_issued");
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -169,7 +169,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -177,7 +177,7 @@ const AdminService = {
     try {
       return AdminService.getEtagAllocations(towerId, "is_requested");
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -185,7 +185,7 @@ const AdminService = {
     try {
       return AdminService.getEtagAllocations(towerId, "is_issued");
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -206,7 +206,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -226,7 +226,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -240,7 +240,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -261,7 +261,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 
@@ -281,7 +281,7 @@ const AdminService = {
       );
       return await handleResponse(response);
     } catch (error) {
-      return { error: error };
+      return await handleResponse(error.response);
     }
   },
 };
