@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
-import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, CheckIcon, ClockIcon, ArchiveBoxIcon, PrinterIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, CheckIcon, ClockIcon, ArchiveBoxIcon, PrinterIcon, HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/outline';
 import NSTPLoader from '../../components/NSTPLoader';
 import { TowerContext } from '../../context/TowerContext';
 import AdminService from '../../services/AdminService';
@@ -19,6 +19,7 @@ const Etags = () => {
     const itemsPerPage = 10;
     const [etagRequests, setEtagRequests] = useState([]);
     const [fetchedOldRequests, setFetchedOldRequests] = useState(false);
+    const [reasonForRejection, setReasonForRejection] = useState(null);
 
     useEffect(() => {
         // API call to fetch E-tag requests
@@ -81,23 +82,25 @@ const Etags = () => {
         setSortOrder(order);
     };
 
-    const handleApproveUnapprove = async (request, action) => {
+    const handleApproveReject = async (request, action) => {
         setModalLoading(true);
         console.log(`${action} request for`, request);
-        // API call to approve/unapprove the request
+        console.log("reason for rejection ", reasonForRejection)
+        // API call to approve/reject the request
         try {
-            console.log("🚀 ~ handleApproveUnapprove ~ request", request);
+            console.log("🚀 ~ handleApproveReject ~ request", request);
             const response = await AdminService.handleEtagAllocationRequest(request.employeeId, action);
             if (response.error) {
-                console.error("Error approving/unapproving request", response.error);
+                console.error("Error approving/rejecting request", response.error);
                 return;
             }
-            console.log("🚀 ~ handleApproveUnapprove ~ response", response);           
+            console.log("🚀 ~ handleApproveReject ~ response", response);           
             setEtagRequests((prevRequests) => prevRequests.filter((r) => r.id !== request.id));
         } catch (error) {
-            console.error("Error approving/unapproving request", error);
+            console.error("Error approving/rejecting request", error);
         } finally {
             setModalLoading(false);
+            setReasonForRejection(null);
             document.getElementById('confirmation_modal').close();
         }
     };
@@ -136,6 +139,9 @@ const Etags = () => {
                         carRegistrationNumber: item.vehicle_number
                     };
                 });
+                
+                //before setting old requests, filter out elements which have the same id , so no duplicate keys occur.
+                setEtagRequests((prevRequests) => prevRequests.filter((r) => !transformedData.some((t) => t.id === r.id)));
 
                 oldRequests.push(...transformedData);
                 setEtagRequests((prevRequests) => [...prevRequests, ...oldRequests]);
@@ -187,18 +193,36 @@ const Etags = () => {
         <Sidebar>
             {/* Modal */}
             <dialog id="confirmation_modal" className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">{currentRequest?.action === 'approve' ? 'Approve Request' : 'Unapprove Request'}</h3>
-                    <p className="text-sm text-gray-500">
+                <div className="modal-box w-11/12 max-w-xl">
+                    <div className="flex items-center gap-3 mb-3">
+                        {
+                            currentRequest?.action === 'approve' ? <HandThumbUpIcon className="size-8 text-primary" /> : <HandThumbDownIcon className="size-8 text-error " />
+                        }
+                        <h3 className="font-bold text-lg">{currentRequest?.action === 'approve' ? 'Approve Request' : 'Reject Request'}</h3>
+                    </div>
+                    <p className="text-sm ">
                         Are you sure you want to {currentRequest?.action} this request?
                     </p>
+                    {
+                        currentRequest?.action === 'reject' && (
+                            <div className="mt-3">
+                                <label htmlFor="reason" className="label">Please provide a reason below to the tenant for rejecting their request </label>
+                                <textarea id="reason" className="textarea textarea-bordered w-full" placeholder="Enter reason for rejection"
+                                    rows={5}
+                                    value={reasonForRejection}
+                                    onChange={(e) => setReasonForRejection(e.target.value)}
+                                ></textarea>
+                            </div>
+                        )
+
+                    }
                     <div className="modal-action">
                         <button className="btn mr-1" onClick={() => document.getElementById('confirmation_modal').close()}>Cancel</button>
                         <button
-                            className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
-                            onClick={() => handleApproveUnapprove(currentRequest.request, currentRequest.action)}
+                            className={`btn ${ currentRequest?.action == "approve" ? "btn-primary" : "btn-error" } text-base-100 ${modalLoading && "btn-disabled"}`}
+                            onClick={() => handleApproveReject(currentRequest.request, currentRequest.action)}
                         >
-                            {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "OK"}
+                            {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : currentRequest?.action === "approve" ? "Approve" : "Reject"}
                         </button>
                     </div>
                 </div>
@@ -211,7 +235,7 @@ const Etags = () => {
                 <div className="flex flex-row items-center justify-between">
                     <h1 className="text-2xl font-bold">E-tag Requests</h1>
                     <button
-                        className={`btn btn-primary text-white ${loadingOldRequests && 'btn-disabled'}`}
+                        className={`btn btn-primary text-white ${loadingOldRequests && 'btn-disabled'} ${fetchedOldRequests && 'btn-disabled'}`}
                         onClick={fetchOldRequests}
                         disabled={loadingOldRequests}
                     >
@@ -292,15 +316,15 @@ const Etags = () => {
                                                     >
                                                         Approve
                                                     </button>
-                                                    {/* <button
+                                                    <button
                                                         className="btn btn-sm btn-error btn-outline"
                                                         onClick={() => {
-                                                            setCurrentRequest({ request, action: 'unapprove' });
+                                                            setCurrentRequest({ request, action: 'reject' });
                                                             document.getElementById('confirmation_modal').showModal();
                                                         }}
                                                     >
-                                                        Unapprove
-                                                    </button> */}
+                                                        Reject
+                                                    </button>
                                                 </>
                                             )}
                                         </td>
