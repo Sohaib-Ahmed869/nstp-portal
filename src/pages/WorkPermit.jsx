@@ -216,21 +216,6 @@ const WorkPermit = ({ role }) => {
             setReasonForRejection(''); // Reset reason for rejection
             document.getElementById('cancel_work_permit_modal').close();
         }
-
-        // setTimeout(() => {
-        //     console.log("Work permits before: ", workPermits);
-
-        //     const updatedWorkPermits = workPermits.filter((permit) => permit.id.toString() !== selectedId);
-        //     setWorkPermits(updatedWorkPermits);
-
-        //     console.log("Work permits after: ", updatedWorkPermits);
-        //     console.log(`Cancelled work permit with ID: ${selectedId}`);
-
-        //     setModalLoading(false);
-        //     setSelectedWorkPermitId(null); // Reset selectedWorkPermitId
-        //     setReasonForRejection(''); // Reset reason for rejection
-        //     document.getElementById('cancel_work_permit_modal').close();
-        // }, 2000);
     };
 
     /** Tenant add new work permit related functions */
