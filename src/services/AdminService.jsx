@@ -244,13 +244,14 @@ const AdminService = {
     }
   },
 
-  handleWorkPermit: async (workPermitId, approval) => {
+  handleWorkPermit: async (workPermitId, approval, reasonDecline) => {
     try {
       const response = await axios.put(
         `${BASE_URL}/admin/workPermit/resolve`,
         {
           workPermitId,
           approval,
+          reasonDecline
         },
         {
           headers: {
