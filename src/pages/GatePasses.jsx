@@ -28,7 +28,7 @@ const GatePasses = ({ role }) => {
     });
 
     const [reasonDecline, setReasonDecline] = useState("");
-    const [nstpRepresentative, setNstpRepresentative] = useState("");
+    const [towerRepresentative, setTowerRepresentative] = useState("");
     const { tower } = useContext(TowerContext);
 
     const handleInputChange = (e) => {
@@ -204,7 +204,7 @@ const GatePasses = ({ role }) => {
     const handleApproveGatePass = async (approval) => {
         setModalLoading(true);
         try{
-            const response = await ReceptionistService.handleGatePassRequest(selectedGatePassId, approval, nstpRepresentative, reasonDecline);
+            const response = await ReceptionistService.handleGatePassRequest(selectedGatePassId, approval, towerRepresentative, reasonDecline);
             if (response.error) {
                 console.log(response.error);
                 showToast(false);

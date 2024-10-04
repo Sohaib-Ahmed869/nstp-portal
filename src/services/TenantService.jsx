@@ -225,6 +225,17 @@ const TenantService = {
       return await handleResponse(error.response);
     }
   },
+
+  getOccurences: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/tenant/occurences`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default TenantService;

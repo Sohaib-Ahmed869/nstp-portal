@@ -3,6 +3,8 @@ import Sidebar from '../components/Sidebar'
 import NSTPLoader from '../components/NSTPLoader';
 import FloatingLabelInput from '../components/FloatingLabelInput';
 import { MagnifyingGlassIcon, PlusCircleIcon, ArrowsUpDownIcon } from '@heroicons/react/24/outline';
+import { ReceptionistService, TenantService } from '../services';
+import showToast from '../util/toast';
 
 const Occurences = ({ role }) => {
     const [loading, setLoading] = useState(true);
@@ -16,30 +18,45 @@ const Occurences = ({ role }) => {
     const [companyList, setCompanyList] = useState(['TechCorp', 'HealthPlus', 'EduLearn', 'FinServe', 'RetailMart']);
     const [modalLoading, setModalLoading] = useState(false);
 
-
     useEffect(() => {
         // Simulate API call to initially fetch data
-        setTimeout(() => {
-            setOccurences([
-                { id: 1, company: 'TechCorp', title: 'Network Issue', desc: 'Internet connectivity is unstable and frequently drops.', date: '2023-10-01' },
-                { id: 2, company: 'HealthPlus', title: 'Billing Error', desc: 'Incorrect charges on the latest invoice.', date: '2023-09-25' },
-                { id: 3, company: 'EduLearn', title: 'Course Material Missing', desc: 'Some course materials are missing from the online portal.', date: '2023-09-20' },
-                { id: 4, company: 'FinServe', title: 'Account Access Problem', desc: 'Unable to access account through the mobile appUnable to access account through the mobile aUnable to access account through the mobile appUnable to access account through the mobile appUnable to access account through the mobile appUnable to access account through the mobile appUnable to access account through the mobile appUnable to access account through the mobile appUnable to access account through the mobile appUnable to access account through the mobile appUnable to access account through the mobile appppUnable to access account through the mobile app.', date: '2023-09-15' },
-                { id: 5, company: 'RetailMart', title: 'Product Not Delivered', desc: 'Ordered product has not been delivered even after the expected delivery date.', date: '2023-09-10' },
-                { id: 6, company: 'AutoFix', title: 'Service Delay', desc: 'Car service is delayed by more than a week.', date: '2023-09-05' },
-                { id: 7, company: 'HomeSecure', title: 'Alarm Malfunction', desc: 'Home alarm system is malfunctioning and triggers false alarms.', date: '2023-09-01' },
-                { id: 8, company: 'Foodies', title: 'Spoiled Food', desc: 'Received spoiled food in the latest delivery.', date: '2023-08-25' },
-                { id: 9, company: 'TravelEase', title: 'Flight Cancellation', desc: 'Flight was canceled without prior notice.', date: '2023-08-20' },
-                { id: 10, company: 'MediCare', title: 'Appointment Issue', desc: 'Unable to book an appointment with the specialist.', date: '2023-08-15' },
-                { id: 11, company: 'GreenEnergy', title: 'High Electricity Bill', desc: 'Received an unusually high electricity bill this month.', date: '2023-08-10' },
-                { id: 12, company: 'PetCare', title: 'Vet Unavailable', desc: 'Veterinarian was unavailable during the scheduled appointment.', date: '2023-08-05' },
-                { id: 13, company: 'BookWorld', title: 'Damaged Book', desc: 'Received a damaged book in the latest order.', date: '2023-08-01' },
-                { id: 14, company: 'FitLife', title: 'Gym Equipment Broken', desc: 'Some gym equipment is broken and not being repaired.', date: '2023-07-25' },
-                { id: 15, company: 'CleanSweep', title: 'Incomplete Cleaning', desc: 'House cleaning service was incomplete and unsatisfactory.', date: '2023-07-20' },
-            ]);
-            setCompanyList(['TechCorp', 'HealthPlus', 'EduLearn', 'FinServe', 'RetailMart', 'AutoFix', 'HomeSecure', 'Foodies', 'TravelEase', 'MediCare', 'GreenEnergy', 'PetCare', 'BookWorld', 'FitLife', 'CleanSweep']);
-            setLoading(false);
-        }, 2000);
+        async function fetchData() {
+            try {
+                if(role === 'receptionist') {
+                    const response = await ReceptionistService.getOccurences();
+                    if (response.error) {
+                        console.log(response.error);
+                        return;
+                    }
+                    console.log(response.data.tenants);
+                    const companies = response.data.tenants.map((tenant) => {
+                        return { id: tenant._id, name: tenant.name };
+                    });
+                    setCompanyList(companies);
+                    
+
+                    // extract occurences from response
+                    
+                } else if (role === 'tenant') {
+                    
+                    const response = await TenantService.getOccurences();
+                    if (response.error) {
+                        console.log(response.error);
+                        return;
+                    }
+                    console.log(response.data.complaints);
+
+                    // set occurences
+
+                }
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        fetchData();
     }, []);
 
     const handleSearch = (e) => {
@@ -62,10 +79,11 @@ const Occurences = ({ role }) => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        console.log(name, value);
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setModalLoading(true);
 
@@ -81,22 +99,42 @@ const Occurences = ({ role }) => {
             return;
         }
 
-        const newOccurrence = {
-            ...formData,
-            date: new Date().toISOString(),
-        };
-
-        console.log(newOccurrence);
-
+        console.log(formData);
 
         setErrors({});
-        setTimeout(() => {
-            // Reset form and close modal
+
+        // API call to add new item
+        try{ 
+            // fix companyId
+            let companyId = "66f7b251d42fec9018e6046b";
+            const response = await ReceptionistService.addOccurence(companyId, formData.title, formData.desc);
+            console.log("🚀 ~ handleSubmit ~ response:", response)
+            
+            if (response.error) {
+                console.log(response.error);
+                return;
+            }
+            
+            console.log(response.data.complaint);
+            const newOccurrence = response.data.complaint;
+            // setOccurences([newOccurrence, ...occurences]);
+            showToast(true, 'Occurrence registered successfully.');
+        } catch (error) {
+            console.log(error);
+            showToast(false, 'An error occurred. Please try again later.');
+        } finally {
             setFormData({ company: '', title: '', desc: '' });
             setModalLoading(false);
-            setOccurences([newOccurrence, ...occurences]);
             document.getElementById('add-new-occurence').close();
-        }, 2000);
+        }
+
+        // setTimeout(() => {
+        //     // Reset form and close modal
+        //     setFormData({ company: '', title: '', desc: '' });
+        //     setModalLoading(false);
+        //     setOccurences([newOccurrence, ...occurences]);
+        //     document.getElementById('add-new-occurence').close();
+        // }, 2000);
     };
 
     const filteredItems = occurences
@@ -125,7 +163,7 @@ const Occurences = ({ role }) => {
                             >
                                 <option value="">Select a company</option>
                                 {companyList.map((company) => (
-                                    <option key={company} value={company}>{company}</option>
+                                    <option key={company.id} value={company.id}>{company.name}</option>
                                 ))}
                             </select>
                             {errors.company && <span className="text-red-500">{errors.company}</span>}

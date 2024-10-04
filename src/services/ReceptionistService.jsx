@@ -86,6 +86,51 @@ const ReceptionistService = {
       return await handleResponse(error.response);
     }
   },
+
+  getCompanies: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/receptionist/tenants`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  getOccurences: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/receptionist/occurences`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  addOccurence: async (tenantId, subject, description) => {
+    console.log("🚀 ~ addOccurence: ~ tenantId, subject, description:", tenantId, subject, description)
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/receptionist/occurence/add`,
+        {
+          tenantId,
+          subject,
+          description,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default ReceptionistService;
