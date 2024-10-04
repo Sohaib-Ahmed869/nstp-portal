@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
-import { UserPlusIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon, EyeIcon, CheckIcon, ClockIcon, ArchiveBoxIcon, PrinterIcon } from '@heroicons/react/24/outline';
+import { UserPlusIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon, EyeIcon, CheckIcon, ClockIcon, ArchiveBoxIcon, PrinterIcon, HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/outline';
 import NSTPLoader from '../../components/NSTPLoader';
 import { TowerContext } from '../../context/TowerContext';
 import AdminService from '../../services/AdminService';
@@ -18,6 +18,7 @@ const CardRequests = () => {
     const { tower } = useContext(TowerContext);
     const itemsPerPage = 10;
     const [cardRequests, setCardRequests] = useState([]);
+    const [reasonForRejection, setReasonForRejection] = useState('');
 
     useEffect(() => {
         // api call here to fetch card requests info
@@ -79,18 +80,18 @@ const CardRequests = () => {
         setSortOrder(order);
     };
 
-    const handleApproveUnapprove = async (request, action) => {
+    const handleApproveReject = async (request, action) => {
         setModalLoading(true);
         console.log(`${action} request for`, request);
-        //Api call here to approve/unapprove the request
+        //Api call here to approve/reject the request
         try {
-            console.log("🚀 ~ handleApproveUnapprove ~ request", request);
+            console.log("🚀 ~ handleApproveReject ~ request", request);
             const response = await AdminService.handleCardAllocationRequest(request.employeeId, action);
             if (response.error) {
                 console.error("Error approving/unapproving request", response.error);
                 return;
             }
-            console.log("🚀 ~ handleApproveUnapprove ~ response", response);           
+            console.log("🚀 ~ handleApproveReject ~ response", response);           
             setCardRequests((prevRequests) => prevRequests.filter((r) => r.id !== request.id));
         } catch (error) {
             console.error("Error approving/unapproving request", error);
@@ -197,28 +198,46 @@ const CardRequests = () => {
         <Sidebar>
             {/* Modal */}
             <dialog id="confirmation_modal" className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">{currentRequest?.action === 'approve' ? 'Approve Request' : 'Reject Request'}</h3>
-                    <p className="text-sm text-gray-500">
+                <div className="modal-box w-11/12 max-w-xl max-h-max">
+                    <div className="flex items-center gap-3">
+                        {currentRequest?.action == "approve" ?
+                            <HandThumbUpIcon className="size-10 text-primary" />
+                            :
+                            <HandThumbDownIcon className="size-10 text-error" />
+                        }
+                        <h3 className="font-bold text-lg">{currentRequest?.action === 'approve' ? 'Approve Request' : 'Reject Request'}</h3>
+                    </div> 
+                    <p className="text-base mt-2">
                         Are you sure you want to {currentRequest?.action} this request?
                     </p>
+                    {currentRequest?.action !== "approve"  ? (
+                        <>
+                        <p> Please provide the reason for rejection: </p>
+                        <textarea
+                            value={reasonForRejection}
+                            onChange={(e) => setReasonForRejection(e.target.value)}
+                            className="textarea textarea-bordered w-full mt-2"
+                            placeholder="Reason for rejection"  
+                            rows={7}
+                        />
+                        </>
+                    ): null}
                     <div className="modal-action">
                         <button className="btn mr-1" onClick={() => document.getElementById('confirmation_modal').close()}>Cancel</button>
                         <button
-                            className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
+                            className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"} ${currentRequest?.action === "approve" && "btn-primary"} ${currentRequest?.action === "reject" && "btn-error"}`}
                             onClick={() => {
-                                console.log("🚀 ~ onClick ~ currentRequest", currentRequest);
-                                handleApproveUnapprove(currentRequest.request, currentRequest.action)
+                                handleApproveReject(currentRequest.request, currentRequest.action)
                             }}
                         >
-                            {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "OK"}
+                            {modalLoading && <span className="loading loading-spinner"></span>} 
+                            {modalLoading ? "Please wait..." : currentRequest?.action == "approve" ? "Approve" : "Reject"}
                         </button>
                     </div>
                 </div>
             </dialog>
             {/* Loading spinner */}
             {loading && <NSTPLoader />}
-
             <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && 'hidden'}`}>
                 <div className="flex flex-row items-center justify-between">
                     <h1 className="text-2xl font-bold">Card Requests</h1>
@@ -307,7 +326,7 @@ const CardRequests = () => {
                                                         <button
                                                             className="btn btn-sm btn-error btn-outline"
                                                             onClick={() => {
-                                                                setCurrentRequest({ request, action: 'unapprove' });
+                                                                setCurrentRequest({ request, action: 'reject' });
                                                                 document.getElementById('confirmation_modal').showModal();
                                                             }}>
                                                             Reject

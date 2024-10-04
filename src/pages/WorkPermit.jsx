@@ -38,17 +38,6 @@ const WorkPermit = ({ role }) => {
         detailedInfo: "",
         ppe: "",
     });
-
-
-    // testing useeffect to see workpermits value everytiem tis changed
-    useEffect(() => {
-        console.log("🚀 ~ workPermits", workPermits
-
-
-        )
-    }, [workPermits])
-
-
     const { tower } = useContext(TowerContext);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -62,9 +51,9 @@ const WorkPermit = ({ role }) => {
                 if (role === "tenant") {
                     response = await TenantService.getWorkPermits();
                 }
-                // else if (role === "receptionist") {
-                //     response = await ReceptionistService.getWorkPermits();
-                // } 
+                else if (role === "receptionist") {
+                    response = await ReceptionistService.getWorkPermits();
+                } 
                 else if (role === "admin") {
                     response = await AdminService.getWorkPermits(tower.id);
                 }
@@ -84,6 +73,8 @@ const WorkPermit = ({ role }) => {
                     detailedInfo: permit.detailed_information,
                     equipment: permit.equipment,
                     description: permit.description,
+                    tenant: permit.tenant,
+                    reasonDecline: permit.reasonDecline,
                 }));
                 setWorkPermits(mappedData);
 
@@ -127,8 +118,8 @@ const WorkPermit = ({ role }) => {
             return (
                 permit.name.toLowerCase().includes(searchLower) ||
                 permit.department.toLowerCase().includes(searchLower) ||
-                permit.description.toLowerCase().includes(searchLower) ||
-                permit.ppe.toLowerCase().includes(searchLower) ||
+                permit.description?.toLowerCase().includes(searchLower) ||
+                permit.ppe?.toLowerCase().includes(searchLower) ||
                 (role === "receptionist" && permit.tenantName?.toLowerCase().includes(searchLower))
             );
         })
@@ -225,21 +216,6 @@ const WorkPermit = ({ role }) => {
             setReasonForRejection(''); // Reset reason for rejection
             document.getElementById('cancel_work_permit_modal').close();
         }
-
-        // setTimeout(() => {
-        //     console.log("Work permits before: ", workPermits);
-
-        //     const updatedWorkPermits = workPermits.filter((permit) => permit.id.toString() !== selectedId);
-        //     setWorkPermits(updatedWorkPermits);
-
-        //     console.log("Work permits after: ", updatedWorkPermits);
-        //     console.log(`Cancelled work permit with ID: ${selectedId}`);
-
-        //     setModalLoading(false);
-        //     setSelectedWorkPermitId(null); // Reset selectedWorkPermitId
-        //     setReasonForRejection(''); // Reset reason for rejection
-        //     document.getElementById('cancel_work_permit_modal').close();
-        // }, 2000);
     };
 
     /** Tenant add new work permit related functions */
@@ -303,6 +279,8 @@ const WorkPermit = ({ role }) => {
                 description: newWorkPermit.description,
                 valid_from: newWorkPermit.startDate,
                 is_resolved: false,
+                reasonDecline: null,
+                
             };
 
             setWorkPermits((prev) => [...prev, mappedNewWorkPermit]);
@@ -349,11 +327,12 @@ const WorkPermit = ({ role }) => {
                     <hr className="my-5 text-gray-200" />
                     {selectedWorkPermitId && (
                         <div>
-                            <p><strong className="text-primary">Description:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).description}</p>
-                            <p><strong className="text-primary">Detailed Information:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).detailedInfo}</p>
-                            <p><strong className="text-primary">Equipment:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).equipment}</p>
-                            <p><strong className="text-primary">Status:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).status}</p>
-                            <p><strong className="text-primary">Date Requested:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).date}</p>
+                            <p className="mt-3"><strong className="text-primary">Description:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).description}</p>
+                            <p className="mt-3"><strong className="text-primary">Detailed Information:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).detailedInfo}</p>
+                            <p className="mt-3"><strong className="text-primary">Equipment:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).equipment}</p>
+                            <p className="mt-3"><strong className="text-primary">Status:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).status}</p>
+                            <p className="mt-3"><strong className="text-primary">Reason for rejection (if any):</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).reasonDecline || "N/A" }</p>
+                            <p className="mt-3"><strong className="text-primary">Date Requested:</strong> {workPermits.find(permit => permit.id === selectedWorkPermitId).date}</p>
                             <p className="mt-3 text-gray-400">Note: The ending time is 23:59 on the same date. </p>
                         </div>
                     )}
@@ -492,6 +471,7 @@ const WorkPermit = ({ role }) => {
                         <thead>
                             <tr className='bg-base-200 cursor-pointer'>
                                 <th onClick={() => handleSortChange("date")}>Date {sortField === "date" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
+                                <th onClick={() => handleSortChange("tenant")}>Tenant {sortField === "tenant" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
                                 <th onClick={() => handleSortChange("name")}>Name {sortField === "name" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
                                 <th onClick={() => handleSortChange("department")}>Department {sortField === "department" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
                                 <th onClick={() => handleSortChange("status")}>Status {sortField === "status" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
@@ -507,6 +487,11 @@ const WorkPermit = ({ role }) => {
                                 currentItems.map((permit) => (
                                     <tr key={permit.id}>
                                         <td>{permit.date}</td>
+                                        {
+                                            role !== "tenant" ? 
+                                            <td>{permit.tenant}</td>
+                                            : null
+                                        }
                                         <td>{permit.name}</td>
                                         <td>{permit.department}</td>
                                         <td className={`badge ${permit.status === "approved" ? "badge-primary" : permit.status === "rejected" ? "badge-error" : "badge-secondary"} text-sm mt-2 flex gap-2`}>
@@ -539,18 +524,22 @@ const WorkPermit = ({ role }) => {
                                                                         }}>
                                                                         Approve
                                                                     </button>
-                                                                    <button
-                                                                        className="btn btn-outline btn-error btn-sm"
-                                                                        onClick={() => {
-                                                                            setSelectedWorkPermitId(permit.id);
-                                                                            document.getElementById('cancel_work_permit_modal').showModal();
-                                                                        }}>
-                                                                        Cancel
-                                                                    </button>
                                                                 </>
                                                                 :
                                                                 null // the permit is rejected and the user is admin
                                                         : null // the user is not admin
+                                                }
+                                                { permit.status == "pending" &&
+                                                <button
+                                                className="btn btn-outline btn-error btn-sm"
+                                                onClick={() => {
+                                                    setSelectedWorkPermitId(permit.id);
+                                                    document.getElementById('cancel_work_permit_modal').showModal();
+                                                }}>
+                                                { role == "tenant" ? "Cancel" : 
+                                                    "Reject"
+                                                }
+                                            </button>
 
                                                 }
                                             </div>
