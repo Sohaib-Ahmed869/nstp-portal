@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import FloatingLabelInput from './FloatingLabelInput';
 import { InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import showToast from '../util/toast';
+import { TenantService } from '../services';
 
 /**
 |--------------------------------------------------
@@ -61,8 +63,8 @@ const ComplaintModal = () => {
         setComplaintUrgency(null);
         setComplaintServiceType(null);
     };
-
-    const submitComplaint = (tabActive) => {
+    
+    const submitComplaint = async (tabActive) => {
         if (!tabActive) {
             alert("Complaint type cannot be null, please click on the right tab"); //this can never happen but just in case
             return;
@@ -79,7 +81,7 @@ const ComplaintModal = () => {
                 return;
             }
         }
-
+        
         const complaint = {
             type: tabActive,
             subject: complaintSubject,
@@ -88,13 +90,25 @@ const ComplaintModal = () => {
             serviceTypeId: complaintServiceType ? serviceTypes.find(service => service.type === complaintServiceType).id : null,
         };
         console.log(complaint);
-        //simulate loading
-        setModalLoading(true);
-        setTimeout(() => {
+        
+        try {
+            setModalLoading(true);
+            const response = await TenantService.generateComplaint(complaint);
+            if (response.error) {
+                showToast(false, response.message);
+                return;
+            }
+            console.log(response.data.complaint);
+            showToast(true, response.message);
+                
+        } catch (error) {
+            console.log(error);
+            showToast(false, "An error occurred while submitting the complaint. Please try again later.");
+        } finally {
             setModalLoading(false);
             resetFields();
-            document.getElementById("complaint_modal").close();
-        }, 2000);
+        }
+        
     };
 
     return (

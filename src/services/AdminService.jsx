@@ -251,7 +251,7 @@ const AdminService = {
         {
           workPermitId,
           approval,
-          reasonDecline
+          reasonDecline,
         },
         {
           headers: {
@@ -272,6 +272,42 @@ const AdminService = {
         `${BASE_URL}/admin/employee/layoff`,
         {
           employeeId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  getComplaints: async (towerId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/complaints`,
+        {
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  handleComplaint: async (complaintId, approval, reasonDecline) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/admin/complaint/resolve`,
+        {
+          complaintId,
+          approval,
+          reasonDecline,
         },
         {
           headers: {

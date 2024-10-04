@@ -4,7 +4,7 @@ import NSTPLoader from '../../components/NSTPLoader'
 import ComplaintModal from '../../components/ComplaintModal'
 import ComplaintsTable from '../../components/ComplaintsTable'
 import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, PencilSquareIcon, CogIcon, WrenchScrewdriverIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
-
+import { TenantService } from '../../services'
 
 export const Complaints = () => {
     const [loading, setLoading] = useState(true);
@@ -32,9 +32,31 @@ export const Complaints = () => {
     ]);
 
     useEffect(() => {
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000);
+
+        async function fetchData() {
+            setLoading(true);
+            try{
+                const response = await TenantService.getComplaints();
+                if (response.error) {
+                    console.error(response.error);
+                    return
+                }
+                console.log(response.data.complaints);
+
+
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchData();
+
+
+        // setTimeout(() => {
+        //     setLoading(false);
+        // }, 2000);
     }, []);
 
     const handleSortChange = (field, type) => {

@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Sidebar from '../components/Sidebar'
 import NSTPLoader from '../components/NSTPLoader'
 import ComplaintsTable from '../components/ComplaintsTable'
 import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, CogIcon, WrenchScrewdriverIcon, } from '@heroicons/react/24/outline'
 import { setRole, getRole } from '../util/store'
+import { ReceptionistService, AdminService } from '../services'
+import { TowerContext } from '../context/TowerContext'
 
 /**
 |--------------------------------------------------
@@ -22,6 +24,7 @@ export const Complaints = ({ role }) => {
     const [servicesSortField, setServicesSortField] = useState("date");
     const [servicesSortOrder, setServicesSortOrder] = useState("asc");
 
+    const {tower} = useContext(TowerContext);
 
     //BELOW IS THE SYNTAX FOR GENERAL COMPLAINT DATA VS SERVICES COMPLAINT DATA. 
     //GENERAL FOR ADMIN
@@ -47,13 +50,39 @@ export const Complaints = ({ role }) => {
     ]);
 
     useEffect(() => {
-        setTimeout(() => {
-            //if role==receptionist servicescomplaintdata will be fetched and general will remain an empty array (not null)
-            //if role==admin generalcomplaintdata will be fetched and services will remain an empty array (not null)
 
-            setLoading(false);
-        }, 2000);
+        async function fetchData() {
+            try {
+                if (role === "admin") {
+                    const response = await AdminService.getComplaints(tower.id);
+                    if(response.error) {
+                        console.log(response.error);
+                        return;
+                    }
+
+                    console.log(response.data.complaints);
+                    // setGeneralComplaintData(data);
+                }
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchData();
+
+        // setTimeout(() => {
+        //     //if role==receptionist servicescomplaintdata will be fetched and general will remain an empty array (not null)
+        //     //if role==admin generalcomplaintdata will be fetched and services will remain an empty array (not null)
+
+
+
+        //     setLoading(false);
+        // }, 2000);
     }, []);
+
+    
 
     const handleSortChange = (field, type) => {
         if (type === "general") {

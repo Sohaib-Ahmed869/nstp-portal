@@ -236,6 +236,40 @@ const TenantService = {
       return await handleResponse(error.response);
     }
   },
+
+  getComplaints: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/tenant/complaints`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  generateComplaint: async (complaint) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/tenant/complaint/generate`,
+        {
+          complaintType: complaint.type,
+          subject: complaint.subject,
+          description: complaint.desc,
+          serviceType: complaint.serviceTypeId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default TenantService;

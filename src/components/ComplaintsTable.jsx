@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircleIcon, CheckIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { AdminService } from '../services';
+import showToast from '../util/toast';
 
 /**
 |--------------------------------------------------
@@ -22,19 +24,41 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
         setRowsToDisplay(complaints.slice(0, rowsPerPage));
     }, [complaints]);
 
-    const markAsCompleted = (id) => {
+    const markAsCompleted = async (id) => {
         setLoading(true);
         setLoadingComplaintId(id);
-        setTimeout(() => {
+
+        try {
+            id = "66ffe8352910ab9757e36c53";    // Hardcoded for testing purposes
+            const response = await AdminService.handleComplaint(id, true, null);
+            if(response.error) {
+                showToast(false, response.message);
+                return;
+            }
+
+            showToast(true, response.message);
+            console.log(response.data);
+
             // Update the complaints state to mark the complaint as resolved
-            setRowsToDisplay((prevRows) =>
-                prevRows.map((complaint) =>
-                    complaint.id === id ? { ...complaint, isResolved: true } : complaint
-                )
-            );
+
+        } catch (error) {
+            console.error(error);
+            showToast(false, "An error occurred. Please try again later.");
+        } finally {
             setLoading(false);
             setLoadingComplaintId(null);
-        }, 2000);
+        }
+
+        // setTimeout(() => {
+        //     // Update the complaints state to mark the complaint as resolved
+        //     setRowsToDisplay((prevRows) =>
+        //         prevRows.map((complaint) =>
+        //             complaint.id === id ? { ...complaint, isResolved: true } : complaint
+        //         )
+        //     );
+        //     setLoading(false);
+        //     setLoadingComplaintId(null);
+        // }, 2000);
     };
 
     const handlePageChange = (pageNumber) => {
