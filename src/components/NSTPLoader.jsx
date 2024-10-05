@@ -3,12 +3,16 @@ import NSTPLogo from '../assets/nstp.png';
 
 const MESSAGES = ["Please Wait...", "Loading...", "Hang tight...", "Almost there...", "Just a moment...", "Working on it...", "Almost done..."];
 
-const NSTPLoader = () => {
+const NSTPLoader = ({ display }) => {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const randomMessage = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
-    setMessage(randomMessage);
+    if (display) {
+      setMessage(display);
+    } else {
+      const randomMessage = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
+      setMessage(randomMessage);
+    }
   }, []);
 
   return (
