@@ -4,6 +4,7 @@ import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, CheckIcon, ClockIcon, A
 import NSTPLoader from '../../components/NSTPLoader';
 import { TowerContext } from '../../context/TowerContext';
 import AdminService from '../../services/AdminService';
+import showToast from '../../util/toast';
 
 const Etags = () => {
     const [loading, setLoading] = useState(true);
@@ -89,12 +90,14 @@ const Etags = () => {
         // API call to approve/reject the request
         try {
             console.log("🚀 ~ handleApproveReject ~ request", request);
-            const response = await AdminService.handleEtagAllocationRequest(request.employeeId, action);
+            const response = await AdminService.handleEtagAllocationRequest(request.id, action, reasonForRejection);
             if (response.error) {
                 console.error("Error approving/rejecting request", response.error);
+                showToast(false, response.error);
                 return;
             }
-            console.log("🚀 ~ handleApproveReject ~ response", response);           
+            console.log("🚀 ~ handleApproveReject ~ response", response);         
+            showToast(true, response.message);  
             setEtagRequests((prevRequests) => prevRequests.filter((r) => r.id !== request.id));
         } catch (error) {
             console.error("Error approving/rejecting request", error);
@@ -110,13 +113,20 @@ const Etags = () => {
             setLoadingOldRequests(true);
             const oldRequests = [];
             try {
-                const response = await AdminService.getIssuedEtagAllocations(tower.id);
+                const response = await AdminService.getNonPendingEtagAllocations(tower.id);
                 if (response.error) {
                     console.error("Error fetching old requests", response.error);
                     return;
                 }
                 console.log("🚀 ~ fetchOldRequests ~ response.data.etagAllocations", response.data.etagAllocations);
                 setFetchedOldRequests(true);
+
+                //checklength of response.data.etagAllocations
+                if (response.data.etagAllocations.length === 0) {
+                    setLoadingOldRequests(false);
+                    return;
+                }
+
                 // Transform the data to match the expected structure
                 const transformedData = response.data.etagAllocations.map(item => {
                     let expiresOn = " - ";
@@ -146,15 +156,14 @@ const Etags = () => {
                 oldRequests.push(...transformedData);
                 setEtagRequests((prevRequests) => [...prevRequests, ...oldRequests]);
 
+                // Sort by issued date, oldest first
+                setSortField('issued');
+                setSortOrder('asc');
+                setLoadingOldRequests(false);
             } catch (error) {
                 console.error("Error fetching old requests", error);
                 return;
             }
-
-            // Sort by issued date, oldest first
-            setSortField('issued');
-            setSortOrder('asc');
-            setLoadingOldRequests(false);
         }
 
         fetchOldRequests();

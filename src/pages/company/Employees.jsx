@@ -27,70 +27,7 @@ const Employees = () => {
   // *** States ***
   const [loading, setLoading] = useState(true);
   const [employees, setEmployees] = useState([]);
-  const [employeeTableData, setEmployeeTableData] = useState([
-    {
-      _id: "66df197161c2c1ed67fe5c27",
-      tenant_id: "66d97748124403bf36e695e8",
-      tenant_name: "Hexlertech",
-      email: "musa@gmail.com",
-      name: "Musa Haroon Satti",
-      photo:
-        "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
-      designation: "Full Stack Developer",
-      cnic: "6110166894529",
-      dob: "2024-09-06",
-      address: "F/10-1 Street 11 House 29",
-      date_joining: "2024-10-11",
-      employee_type: "Intern",
-      contract_duration: "",
-      status_employment: true,
-      is_nustian: true,
-      __v: 0,
-      etags: 1,
-      card_num: 0,
-      card: {
-        _id: "66df197161c2c1ed67fe5c28",
-        tenant_id: "66d97748124403bf36e695e8",
-        employee_id: "66df197161c2c1ed67fe5c27",
-        is_issued: true,
-        is_requested: false,
-        is_returned: false,
-        __v: 0,
-        card_number: 0,
-        date_issued: "2024-09-09T16:48:50.533Z",
-      },
-    },
-    {
-      _id: "66df2a84c84208453e73701a",
-      tenant_id: "66d97748124403bf36e695e8",
-      tenant_name: "Hexlertech",
-      email: "musaharoon.2003@gmail.com",
-      name: "Musa Haroon Satti",
-      photo:
-        "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp",
-      designation: "Full Stack Developer",
-      cnic: "6110166894528",
-      dob: "2024-09-05",
-      address: "F/10-1 Street 11 House 29",
-      date_joining: "2024-10-04",
-      employee_type: "Contract",
-      contract_duration: "6 Months",
-      status_employment: true,
-      is_nustian: false,
-      __v: 0,
-      etags: 1,
-      card: {
-        _id: "66df2a84c84208453e73701b",
-        tenant_id: "66d97748124403bf36e695e8",
-        employee_id: "66df2a84c84208453e73701a",
-        is_issued: false,
-        is_requested: true,
-        is_returned: false,
-        __v: 0,
-        date_requested: "2024-09-09T17:06:10.755Z",
-      },
-    },
-  ]);
+  const [employeeTableData, setEmployeeTableData] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("All");
@@ -151,14 +88,18 @@ const Employees = () => {
         console.log("🚀 ~ Etag Allocations:", etagResponse);
 
         const combinedData = employeeResponse.data.employees.map((emp) => {
-          const card = cardResponse.data.cardAllocations.find(
+          let cards = cardResponse.data.cardAllocations.filter(
             (card) => card.employee_id === emp._id
           );
-          const etags = etagResponse.data.etagAllocations.filter(
+          let card = cards?.filter((card) => card.is_requested || card.is_issued)[0];
+          let etags = etagResponse.data.etagAllocations.filter(
             (etag) => etag.employee_id === emp._id
           );
-          // length of e_tags
-          const count = etags.length;
+          etags = etags?.filter((etag) => etag.is_requested || etag.is_issued);
+
+          // length of issued etags
+          const count = etags.filter((etag) => etag.is_issued).length;
+
           console.log("🚀 ~ count:", count);
           return {
             ...emp,
@@ -305,7 +246,7 @@ const Employees = () => {
       console.log("🚀 ~ response:", response)
       if(response.error){
         console.error("Error requesting card:", response.error);
-        showToast(false);
+        showToast(false, response.error);
         return;
       }
       showToast(true);
@@ -340,10 +281,10 @@ const Employees = () => {
       console.log("🚀 ~ response:", response)
       if(response.error){
         console.error("Error requesting etag:", response.error);
-        showToast(false);
+        showToast(false, response.error);
         return;
       }
-      showToast(true);            
+      showToast(true, response.message);            
     } catch (error) {
       console.error("Error requesting etag:", error);
       showToast(false);
@@ -722,14 +663,14 @@ const Employees = () => {
                     <td>{row.status_employment ? "Active" : "Inactive"}</td>
                     <td
                       className={`${
-                        row.card.is_requested
+                        row.card?.is_requested
                           ? "bg-yellow-100 text-yellow-900"
                           : ""
                       }`}
                     >
-                      {row.card_num !== undefined
+                      {row.card_num
                         ? row.card_num
-                        : row.card.is_requested
+                        : row.card?.is_requested
                         ? "Awaiting Approval"
                         : "Not Assigned"}
                     </td>
