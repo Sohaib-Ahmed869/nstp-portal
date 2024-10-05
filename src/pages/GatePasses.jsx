@@ -220,7 +220,7 @@ const GatePasses = ({ role }) => {
             const nstpRep = nstpRepresentative.trim() !== "" ? nstpRepresentative.trim() : null;
             const reasonDecline = reasonForRejection.trim() !== "" ? reasonForRejection.trim() : null;
 
-            const response = await ReceptionistService.handleGatePassRequest(selectedGatePass, approval, nstpRep, reasonDecline);
+            const response = await ReceptionistService.handleGatePassRequest(selectedGatePass.id, approval, nstpRep, reasonDecline);
             if (response.error) {
                 console.log(response.error);
                 showToast(false, "An error occurred. The gate pass was not " + selectedGatePass.action +"ed.");
@@ -230,7 +230,7 @@ const GatePasses = ({ role }) => {
             // //TODO STATUS FIELD NEEDS TO BE UPDATED.
             // const updatedGatePasses = gatePassesTableData.map((gatePass) =>
             //     gatePass.id === selectedGatePass ? { ...gatePass, issued: true } : gatePass
-            // );
+            // );  
 
             // setGatePassesTableData(updatedGatePasses);
             showToast(true);

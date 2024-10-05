@@ -668,7 +668,7 @@ const Employees = () => {
                           : ""
                       }`}
                     >
-                      {row.card_num
+                      {row.card_num != null
                         ? row.card_num
                         : row.card?.is_requested
                         ? "Awaiting Approval"

@@ -66,6 +66,7 @@ const ReceptionistService = {
     reasonDecline
   ) => {
     try {
+      console.log("🚀 ~ handleGatePassRequest: ~ gatepassId, approval, representative, reasonDecline", gatepassId, approval, representative, reasonDecline)
       const response = await axios.put(
         `${BASE_URL}/receptionist/gatepass/approval`,
         {
