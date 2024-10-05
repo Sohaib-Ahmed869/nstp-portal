@@ -6,11 +6,12 @@ import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, CogIcon, WrenchScrewdri
 import { setRole, getRole } from '../util/store'
 import { ReceptionistService, AdminService } from '../services'
 import { TowerContext } from '../context/TowerContext'
-
+import { formatDate } from '../util/date'
 /**
 |--------------------------------------------------
 | generic page for both admins and receptionists
 | displays complaints based on role (general for admin, services for receptionist)
+| for tenant complaints page go to src/pages/company/Complaints.jsx
 |--------------------------------------------------
 */
 
@@ -18,12 +19,11 @@ export const Complaints = ({ role }) => {
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
-    const [typeFilter, setTypeFilter] = useState("All");
+    // const [typeFilter, setTypeFilter] = useState("All"); //Might be needed later for filtering by type
     const [generalSortField, setGeneralSortField] = useState("date");
     const [generalSortOrder, setGeneralSortOrder] = useState("asc");
     const [servicesSortField, setServicesSortField] = useState("date");
     const [servicesSortOrder, setServicesSortOrder] = useState("asc");
-
     const {tower} = useContext(TowerContext);
 
     //BELOW IS THE SYNTAX FOR GENERAL COMPLAINT DATA VS SERVICES COMPLAINT DATA. 
@@ -40,28 +40,33 @@ export const Complaints = ({ role }) => {
         { id: "22348", date: "12-13-2024 11:32", tenantName: "Cocoa Tech", type: "services", serviceType: "Cleaning", description: "Please clean the fan", urgency: 3, isResolved: false },
         { id: "32348", date: "12-13-2024 11:32", tenantName: "Inno Palette", type: "services", serviceType: "Cleaning", description: "Too dirty", urgency: 1, isResolved: false },
         { id: "42348", date: "12-13-2024 11:32", tenantName: "Cocoa Pallette", type: "services", serviceType: "Cleaning", description: "I need cleaning", urgency: 2, isResolved: true },
-        { id: "52348", date: "12-13-2024 11:32", tenantName: "Cocoa Pallette", type: "services", serviceType: "Cleaning", description: "Too dirty please clean", urgency: 2, isResolved: true },
-        { id: "12349", date: "12-13-2024 11:32", tenantName: "InnoSolutionz", type: "services", serviceType: "Electrician", description: "AC and switches not working!", urgency: 3, isResolved: true },
-        { id: "12339", date: "12-13-2024 11:32", tenantName: "InnoCafe", type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
-        { id: "12331", date: "12-13-2024 11:32", tenantName: "InnoCafe", type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
-        { id: "12332", date: "12-13-2024 11:32", tenantName: "InnoCafe", type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
-        { id: "12333", date: "12-13-2024 11:32", tenantName: "InnoCafe", type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
-        { id: "12933", date: "12-13-2024 11:32", tenantName: "InnoCafe", type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
     ]);
 
     useEffect(() => {
-
         async function fetchData() {
             try {
                 if (role === "admin") {
                     const response = await AdminService.getComplaints(tower.id);
-                    if(response.error) {
+                    if (response.error) {
                         console.log(response.error);
                         return;
                     }
-
-                    console.log(response.data.complaints);
-                    // setGeneralComplaintData(data);
+    
+                    const complaints = response.data.complaints;
+    
+                    const generalComplaints = complaints.map(complaint => ({
+                        id: complaint._id,
+                        date: formatDate(complaint.date_initiated),
+                        tenantName: complaint.tenant_id, // Assuming tenantName is tenant_id for now
+                        type: "general",
+                        urgency: complaint.urgency || "Undetermined",
+                        subject: complaint.subject,
+                        description: complaint.description,
+                        isResolved: complaint.is_resolved,
+                        dateResolved: complaint.is_resolved ? (complaint.date_resolved ? formatDate(complaint.date_resolved) : "-") : "-",
+                    }));
+    
+                    setGeneralComplaintData(generalComplaints);
                 }
             } catch (error) {
                 console.log(error);
@@ -69,20 +74,9 @@ export const Complaints = ({ role }) => {
                 setLoading(false);
             }
         }
-
-        fetchData();
-
-        // setTimeout(() => {
-        //     //if role==receptionist servicescomplaintdata will be fetched and general will remain an empty array (not null)
-        //     //if role==admin generalcomplaintdata will be fetched and services will remain an empty array (not null)
-
-
-
-        //     setLoading(false);
-        // }, 2000);
-    }, []);
-
     
+        fetchData();
+    }, []);
 
     const handleSortChange = (field, type) => {
         if (type === "general") {
@@ -95,7 +89,6 @@ export const Complaints = ({ role }) => {
             setServicesSortOrder(order);
         }
     };
-
 
     const sortData = (data, sortField, sortOrder) => {
         return data.sort((a, b) => {
@@ -204,7 +197,6 @@ export const Complaints = ({ role }) => {
                         sortField={generalSortField}
                         sortOrder={generalSortOrder}
                         handleSortChange={(field) => handleSortChange(field, "general")}
-                        isReceptionist={true}
                         setComplaints={setGeneralComplaintData} // this prop is only passed for receptionist to update the data on frontend
                     />
                 )}
@@ -221,7 +213,6 @@ export const Complaints = ({ role }) => {
                         sortField={servicesSortField}
                         sortOrder={servicesSortOrder}
                         handleSortChange={(field) => handleSortChange(field, "services")}
-                        isReceptionist={true}
                         setComplaints={setServicesComplaintData} //this prop is only passed for receptionist to update the data on frontend
 
                     />

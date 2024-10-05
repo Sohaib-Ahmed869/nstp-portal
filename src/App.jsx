@@ -37,6 +37,7 @@ import WorkPermit from './pages/WorkPermit.jsx';
 import LostAndFound from './pages/LostAndFound.jsx';
 import Occurences from './pages/Occurences.jsx';
 import ApproveOffice from './pages/admin/ApproveOffice.jsx';
+import Logout from './pages/Logout.jsx';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
       <Routes>
         <Route path="/">
           <Route index element={<LoginPage />} />
+          <Route path="logout" element={<Logout />} />
           <Route path="admin">
             <Route index element={<AdminHome />} />
             <Route path="add-company" element={<CompanyAddition />} />

@@ -5,6 +5,7 @@ import FloatingLabelInput from '../components/FloatingLabelInput';
 import { MagnifyingGlassIcon, PlusCircleIcon, ArrowsUpDownIcon } from '@heroicons/react/24/outline';
 import { ReceptionistService, TenantService } from '../services';
 import showToast from '../util/toast';
+import { formatDate } from '../util/date';
 
 const Occurences = ({ role }) => {
     const [loading, setLoading] = useState(true);
@@ -13,39 +14,64 @@ const Occurences = ({ role }) => {
     const [sortOrder, setSortOrder] = useState('asc');
     const [page, setPage] = useState(1);
     const [loadingMore, setLoadingMore] = useState(false);
-    const [formData, setFormData] = useState({ company: '', title: '', desc: '' });
+    const [formData, setFormData] = useState({ title: '', desc: '' });
     const [errors, setErrors] = useState({});
-    const [companyList, setCompanyList] = useState(['TechCorp', 'HealthPlus', 'EduLearn', 'FinServe', 'RetailMart']);
+    const [companyNamesList, setCompanyNamesList] = useState([]);
+    const [companyIdsList, setCompanyIdsList] = useState([]);
+    const [selectedCompanyIndex, setSelectedCompanyIndex] = useState(0);
     const [modalLoading, setModalLoading] = useState(false);
+
 
     useEffect(() => {
         // Simulate API call to initially fetch data
         async function fetchData() {
             try {
-                if(role === 'receptionist') {
+                if (role === 'receptionist') {
                     const response = await ReceptionistService.getOccurences();
                     if (response.error) {
-                        console.log(response.error);
                         return;
                     }
-                    console.log(response.data.tenants);
                     const companies = response.data.tenants.map((tenant) => {
                         return { id: tenant._id, name: tenant.name };
                     });
-                    setCompanyList(companies);
-                    
+
+                    const companyIds = response.data.tenants.map((tenant) => tenant.tenantId);
+                    setCompanyIdsList(companyIds);
+                    //parallel array for the company names only without ids
+                    const companyNames = response.data.tenants.map((tenant) => tenant.name);
+                    setCompanyNamesList(companyNames);
 
                     // extract occurences from response
-                    
+                    // response.data.tenants each have an array of complaints,the array has objects with 4 fields : subject, _id, date_filed, description
+                    const occurences = response.data.tenants.map((tenant) => {
+                        return tenant.complaints.map((complaint) => {
+                            return {
+                                id: complaint._id,
+                                company: tenant.name,
+                                title: complaint.subject,
+                                desc: complaint.description,
+                                date: formatDate(complaint.date_filed)
+                            }
+                        })
+                    }).flat();
+                    setOccurences(occurences);
+
                 } else if (role === 'tenant') {
-                    
+
                     const response = await TenantService.getOccurences();
                     if (response.error) {
                         console.log(response.error);
                         return;
                     }
-                    console.log(response.data.complaints);
-
+                    const occurences = response.data.complaints.complaints.map((complaint) => {
+                        return {
+                            id: complaint._id,
+                            title: complaint.subject,
+                            desc: complaint.description,
+                            date: formatDate(complaint.date_filed)
+                        }
+                    });
+                    setOccurences(occurences);
                     // set occurences
 
                 }
@@ -55,7 +81,7 @@ const Occurences = ({ role }) => {
                 setLoading(false);
             }
         }
-        
+
         fetchData();
     }, []);
 
@@ -77,19 +103,23 @@ const Occurences = ({ role }) => {
         }, 2000);
     };
 
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        console.log(name, value);
-        setFormData({ ...formData, [name]: value });
+        setFormData(prevData => ({ ...prevData, [name]: value }));
+    };
+
+    const handleCompanyChange = (e) => {
+        const index = e.target.selectedIndex - 1; // Subtract 1 to account for the default "Select a company" option
+        setSelectedCompanyIndex(index);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setModalLoading(true);
 
-        // Validate form data
         const newErrors = {};
-        if (!formData.company) newErrors.company = 'Company is required';
+        if (selectedCompanyIndex === -1) newErrors.company = 'Company is required';
         if (!formData.title) newErrors.title = 'Title is required';
         if (!formData.desc) newErrors.desc = 'Description is required';
 
@@ -99,48 +129,47 @@ const Occurences = ({ role }) => {
             return;
         }
 
-        console.log(formData);
-
         setErrors({});
 
+        const selectedCompanyId = companyIdsList[selectedCompanyIndex];
+        const selectedCompanyName = companyNamesList[selectedCompanyIndex];
         // API call to add new item
-        try{ 
+        try {
             // fix companyId
-            let companyId = "66f7b251d42fec9018e6046b";
-            const response = await ReceptionistService.addOccurence(companyId, formData.title, formData.desc);
-            console.log("🚀 ~ handleSubmit ~ response:", response)
-            
+            const response = await ReceptionistService.addOccurence(selectedCompanyId, formData.title, formData.desc);
+
             if (response.error) {
                 console.log(response.error);
                 return;
             }
-            
-            console.log(response.data.complaint);
+
             const newOccurrence = response.data.complaint;
+            // Transform the new occurrence to match the existing structure
+            const transformedOccurrence = {
+                id: newOccurrence.id || new Date().getTime().toString(), // Generate a unique ID if not provided
+                company: selectedCompanyName,
+                title: newOccurrence.subject,
+                desc: newOccurrence.description,
+                date: formatDate(newOccurrence.date_filed)
+            };
+            setOccurences([transformedOccurrence, ...occurences]);
             // setOccurences([newOccurrence, ...occurences]);
             showToast(true, 'Occurrence registered successfully.');
         } catch (error) {
             console.log(error);
             showToast(false, 'An error occurred. Please try again later.');
         } finally {
-            setFormData({ company: '', title: '', desc: '' });
+            setFormData({ companyId: '', companyName: '', title: '', desc: '' });
             setModalLoading(false);
             document.getElementById('add-new-occurence').close();
         }
-
-        // setTimeout(() => {
-        //     // Reset form and close modal
-        //     setFormData({ company: '', title: '', desc: '' });
-        //     setModalLoading(false);
-        //     setOccurences([newOccurrence, ...occurences]);
-        //     document.getElementById('add-new-occurence').close();
-        // }, 2000);
     };
 
     const filteredItems = occurences
         .filter((item) => item.title.toLowerCase().includes(searchQuery.toLowerCase()))
         .sort((a, b) => (sortOrder === 'asc' ? new Date(a.date) - new Date(b.date) : new Date(b.date) - new Date(a.date)))
         .slice(0, page * 10);
+
     return (
         <Sidebar>
             {loading && <NSTPLoader />}
@@ -157,13 +186,14 @@ const Occurences = ({ role }) => {
                                 name="company"
                                 id="company"
                                 className="select select-bordered"
-                                value={formData.company}
-                                onChange={handleInputChange}
+                                onChange={handleCompanyChange}
                                 required
                             >
                                 <option value="">Select a company</option>
-                                {companyList.map((company) => (
-                                    <option key={company.id} value={company.id}>{company.name}</option>
+                                {companyNamesList.map((name, index) => (
+                                    <option key={index} value={index}>
+                                        {name}
+                                    </option>
                                 ))}
                             </select>
                             {errors.company && <span className="text-red-500">{errors.company}</span>}
@@ -190,17 +220,17 @@ const Occurences = ({ role }) => {
                             required={true}
                         />
                         {errors.desc && <span className="text-red-500 col-span-2">{errors.desc}</span>}
-                    </form>
 
-                    <div className="modal-action">
-                        <button className="btn" onClick={() => document.getElementById('item_form').close()}>Cancel</button>
-                        <button
-                            className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
-                            onClick={handleSubmit}
-                        >
-                            {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}
-                        </button>
-                    </div>
+                        <div className="modal-action">
+                            <button type="button" className="btn" onClick={() => document.getElementById('add-new-occurence').close()}>Cancel</button>
+                            <button
+                                type="submit"
+                                className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
+                            >
+                                {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </dialog>
 
