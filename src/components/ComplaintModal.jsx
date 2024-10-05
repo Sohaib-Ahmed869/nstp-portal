@@ -3,6 +3,7 @@ import FloatingLabelInput from './FloatingLabelInput';
 import { InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import showToast from '../util/toast';
 import { TenantService } from '../services';
+import { getCurrentDateTime } from '../util/date';
 
 /**
 |--------------------------------------------------
@@ -19,7 +20,7 @@ import { TenantService } from '../services';
 */
 
 
-const ComplaintModal = () => {
+const ComplaintModal = ({ addNewComplaint }) => {
     const [modalLoading, setModalLoading] = useState(false);
     const [complaintType, setComplaintType] = useState(null); //general or service
     const [complaintDesc, setComplaintDesc] = useState(null); //user provided desc
@@ -63,7 +64,7 @@ const ComplaintModal = () => {
         setComplaintUrgency(null);
         setComplaintServiceType(null);
     };
-    
+
     const submitComplaint = async (tabActive) => {
         if (!tabActive) {
             alert("Complaint type cannot be null, please click on the right tab"); //this can never happen but just in case
@@ -81,7 +82,7 @@ const ComplaintModal = () => {
                 return;
             }
         }
-        
+
         const complaint = {
             type: tabActive,
             subject: complaintSubject,
@@ -89,8 +90,7 @@ const ComplaintModal = () => {
             urgency: complaintUrgency,
             serviceTypeId: complaintServiceType ? serviceTypes.find(service => service.type === complaintServiceType).id : null,
         };
-        console.log(complaint);
-        
+
         try {
             setModalLoading(true);
             const response = await TenantService.generateComplaint(complaint);
@@ -99,16 +99,25 @@ const ComplaintModal = () => {
                 return;
             }
             console.log(response.data.complaint);
+            complaint["id"] = response.data.complaint._id;
+            complaint["isResolved"] = false
+            complaint["date"] = getCurrentDateTime();
+            complaint["dateResolved"] = "-"
+            complaint["urgency"] = response.data.complaint.urgency
+            // add the complaint to the list of complaints
+            console.log("ADDING NEW COMPLAINT ", complaint);
+            addNewComplaint(complaint);
             showToast(true, response.message);
-                
+
         } catch (error) {
             console.log(error);
             showToast(false, "An error occurred while submitting the complaint. Please try again later.");
         } finally {
             setModalLoading(false);
             resetFields();
+            document.getElementById("complaint_modal").close();
         }
-        
+
     };
 
     return (

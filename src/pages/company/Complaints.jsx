@@ -3,8 +3,9 @@ import Sidebar from '../../components/Sidebar'
 import NSTPLoader from '../../components/NSTPLoader'
 import ComplaintModal from '../../components/ComplaintModal'
 import ComplaintsTable from '../../components/ComplaintsTable'
-import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, PencilSquareIcon, CogIcon, WrenchScrewdriverIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, PencilSquareIcon, CogIcon, WrenchScrewdriverIcon, CheckCircleIcon, XCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { TenantService } from '../../services'
+import { formatDate } from '../../util/date'
 
 export const Complaints = () => {
     const [loading, setLoading] = useState(true);
@@ -18,31 +19,56 @@ export const Complaints = () => {
     const [complaintIdToDelete, setComplaintIdToDelete] = useState(null);
     const [complaintTypeToDelete, setComplaintTypeToDelete] = useState(null);
     const [cancelLoading, setCancelLoading] = useState(false);
+    const [generalComplaintData, setGeneralComplaintData] = useState([]);
+    const [servicesComplaintData, setServicesComplaintData] = useState([]);
 
-    const [generalComplaintData, setGeneralComplaintData] = useState([
-        { id: "12345", date: "12-13-2024 21:32", type: "general", subject: "Too much noise", description: "Too much noise being caused please fix this issue", isResolved: false },
-        { id: "12346", date: "12-13-2024 12:32", type: "general", subject: "AC not working", description: "I like it to be working properly and not dirty", isResolved: true },
-        { id: "12347", date: "12-13-2024 15:30", type: "general", subject: "Noisy Neighbours", description: "Please tell them to be quiet", isResolved: false },
-    ]);
-
-    const [servicesComplaintData, setServicesComplaintData] = useState([
-        { id: "12348", date: "12-13-2024 11:32", type: "services", serviceType: "Cleaning", description: "Too dirty please clean", urgency: 2, isResolved: true },
-        { id: "12349", date: "12-13-2024 11:32", type: "services", serviceType: "Electrician", description: "AC and switches not working!", urgency: 3, isResolved: true },
-        { id: "12339", date: "12-13-2024 11:32", type: "services", serviceType: "Hotel", description: " - ", urgency: 1, isResolved: false },
-    ]);
+    const addNewComplaint = (complaint) => {
+        if (complaint.type === "General") {
+            setGeneralComplaintData([...generalComplaintData, complaint]);
+        } else {
+            setServicesComplaintData([...servicesComplaintData, complaint]);
+        }
+    };
 
     useEffect(() => {
-
         async function fetchData() {
             setLoading(true);
-            try{
+            try {
                 const response = await TenantService.getComplaints();
                 if (response.error) {
                     console.error(response.error);
-                    return
+                    return;
                 }
-                console.log(response.data.complaints);
+                console.log(response.data);
 
+                const generalComplaints = response.data.complaints
+                    .filter(complaint => complaint.complaint_type === "General")
+                    .map(complaint => ({
+                        id: complaint._id,
+                        date: formatDate(complaint.date_initiated),
+                        type: "general",
+                        urgency: 3,
+                        subject: complaint.subject,
+                        isResolved: complaint.is_resolved,
+                        dateResolved: complaint.is_resolved ? formatDate(complaint.date_resolved) : '-',
+                        description: complaint.description,
+                    }));
+
+                const servicesComplaints = response.data.complaints
+                    .filter(complaint => complaint.complaint_type === "Service")
+                    .map(complaint => ({
+                        id: complaint._id,
+                        date: formatDate(complaint.date_initiated),
+                        type: "services",
+                        serviceType: complaint.service_type,
+                        description: complaint.description,
+                        urgency: complaint.urgency,
+                        isResolved: complaint.is_resolved,
+                        dateResolved: complaint.is_resolved ? complaint.date_resolved : '-',
+                    }));
+
+                setGeneralComplaintData(generalComplaints);
+                setServicesComplaintData(servicesComplaints);
 
             } catch (error) {
                 console.error(error);
@@ -52,11 +78,6 @@ export const Complaints = () => {
         }
 
         fetchData();
-
-
-        // setTimeout(() => {
-        //     setLoading(false);
-        // }, 2000);
     }, []);
 
     const handleSortChange = (field, type) => {
@@ -103,8 +124,8 @@ export const Complaints = () => {
     const filteredGeneralComplaints = sortData(
         generalComplaintData.filter(complaint =>
             (statusFilter === "All" || (statusFilter === "Resolved" && complaint.isResolved) || (statusFilter === "Unresolved" && !complaint.isResolved)) &&
-            (complaint.subject.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                complaint.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (complaint.subject?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+                complaint.description?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
                 complaint.date.includes(searchQuery))
         ),
         generalSortField,
@@ -114,8 +135,8 @@ export const Complaints = () => {
     const filteredServicesComplaints = sortData(
         servicesComplaintData.filter(complaint =>
             (statusFilter === "All" || (statusFilter === "Resolved" && complaint.isResolved) || (statusFilter === "Unresolved" && !complaint.isResolved)) &&
-            (complaint.serviceType.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                complaint.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (complaint.serviceType?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+                complaint.description?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
                 complaint.date.includes(searchQuery))
         ),
         servicesSortField,
@@ -125,12 +146,15 @@ export const Complaints = () => {
     return (
         <Sidebar>
             {loading && <NSTPLoader />}
-            <ComplaintModal />
+            <ComplaintModal addNewComplaint={addNewComplaint} />
 
             {/* Modal to confirm cancellation of complaint */}
             <dialog id="cancel_complaint_modal" className="modal">
                 <div className="modal-box">
-                    <h2 className="text-xl font-bold">Cancel Complaint</h2>
+                    <div className="flex items-center">
+                        <ExclamationCircleIcon className="size-8 text-red-500 mr-2" />
+                        <h2 className="text-xl font-bold">Cancel Complaint</h2>
+                    </div>
                     <p className="text-gray-500 mt-2">Are you sure you want to cancel this complaint?</p>
                     <div className="modal-action">
                         <button className={`btn btn-danger mr-2 ${cancelLoading && "btn-disabled"}`} onClick={() => document.getElementById("cancel_complaint_modal").close()}>No</button>
