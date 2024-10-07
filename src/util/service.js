@@ -1,3 +1,11 @@
+import { WrenchIcon,
+    WrenchScrewdriverIcon,
+    BoltIcon,
+    LockClosedIcon,
+    WifiIcon,
+    BriefcaseIcon,
+    DocumentCheckIcon, } from '@heroicons/react/24/outline';
+
 
 //Possible icons for services
 export const ICONS_ARRAY = [

@@ -137,7 +137,6 @@ const Services = () => {
         },
       ]);
 
-      console.log(response.data.service);
       showToast(true, response.message);
     } catch (error) {
       console.log(error);
@@ -176,7 +175,7 @@ const Services = () => {
           return;
         }
 
-        console.log(response.data.services);
+        console.log( "DATAAA", response.data.services);
         const mappedData = response.data.services.map((service) => ({
           id: service._id,
           name: service.name,
