@@ -454,6 +454,46 @@ const AdminService = {
     }
   },
 
+  editService: async (serviceId, name, description, icon) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/admin/service/edit`,
+        {
+          serviceId,
+          name,
+          description,
+          icon,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  deleteService: async (serviceId) => {
+    try {
+      const response = await axios.delete(`${BASE_URL}/admin/service/delete`, {
+        data: { serviceId },
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
   getLostAndFound: async (towerId) => {
     try {
       const response = await axios.get(
