@@ -69,7 +69,7 @@ export const Complaints = ({ role }) => {
     
                     setGeneralComplaintData(generalComplaints);
                 } else if (role === "receptionist") {
-                    const response = await ReceptionistService.getComplaints(tower.id);
+                    const response = await ReceptionistService.getComplaints();
                     if (response.error) {
                         console.log(response.error);
                         return;
