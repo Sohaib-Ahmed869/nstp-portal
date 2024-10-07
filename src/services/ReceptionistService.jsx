@@ -132,6 +132,17 @@ const ReceptionistService = {
       return await handleResponse(error.response);
     }
   },
+
+  getComplaints: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/receptionist/complaints`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default ReceptionistService;
