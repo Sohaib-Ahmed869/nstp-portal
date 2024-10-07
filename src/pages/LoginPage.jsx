@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext'
 import nstpLogoColored from "../assets/nstplogocolored.png";
 import AuthService from "../services/AuthService";
 import { useNavigate } from "react-router-dom";
+import { EyeIcon, EyeSlashIcon, UserCircleIcon, UserIcon } from '@heroicons/react/24/outline';
 
 const SidebarElement = ({ role, handleSidebarClick, icon, text }) => {
   return (
@@ -30,6 +31,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const { login } = useContext(AuthContext);
@@ -113,7 +115,7 @@ const LoginPage = () => {
       setError(response.error);
       return false;
     } else {
-      console.log("🚀 ~ checkResponse ~ response:", response );
+      console.log("🚀 ~ checkResponse ~ response:", response);
       return true;
     }
   }
@@ -124,48 +126,48 @@ const LoginPage = () => {
       setError("");
       setLoading(true);
 
-        var response = {};
-        var isValid = false;
-        
-        if (role === "receptionist") {
-          response = await AuthService.receptionistLogin(
-            lowerCaseUsername,
-            password
-          );
-          isValid = checkResponse(response);
-          
-          if (isValid) {
-            login(response.data.role, response.data.towers);
-            navigate("/receptionist");
-          } else {
-            return;
-          }
-        } else if (role === "admin") {
-          response = await AuthService.adminLogin(lowerCaseUsername, password);
-          isValid = checkResponse(response);
-          if (isValid) {
-            login(response.data.role, response.data.towers);
-            navigate("/admin");
-          } else {
-            return;
-          }
+      var response = {};
+      var isValid = false;
 
+      if (role === "receptionist") {
+        response = await AuthService.receptionistLogin(
+          lowerCaseUsername,
+          password
+        );
+        isValid = checkResponse(response);
 
-        } else if (role === "supervisor") {
-          response = await AuthService.supervisorLogin(
-            lowerCaseUsername,
-            password
-          );
-        } else if (role === "tenant") {
-          response = await AuthService.tenantLogin(lowerCaseUsername, password);
-          isValid = checkResponse(response);
-          if (isValid) {
-            login(response.data.role, response.data.towers);
-            navigate("/tenant");
-          } else {
-            return;
-          }
+        if (isValid) {
+          login(response.data.role, response.data.towers);
+          navigate("/receptionist");
+        } else {
+          return;
         }
+      } else if (role === "admin") {
+        response = await AuthService.adminLogin(lowerCaseUsername, password);
+        isValid = checkResponse(response);
+        if (isValid) {
+          login(response.data.role, response.data.towers);
+          navigate("/admin");
+        } else {
+          return;
+        }
+
+
+      } else if (role === "supervisor") {
+        response = await AuthService.supervisorLogin(
+          lowerCaseUsername,
+          password
+        );
+      } else if (role === "tenant") {
+        response = await AuthService.tenantLogin(lowerCaseUsername, password);
+        isValid = checkResponse(response);
+        if (isValid) {
+          login(response.data.role, response.data.towers);
+          navigate("/tenant");
+        } else {
+          return;
+        }
+      }
 
     } catch (error) {
       setError("Server Error");
@@ -196,20 +198,40 @@ const LoginPage = () => {
           <p className="mt-5 font-semibold font-lg">
             Welcome to {role.charAt(0).toUpperCase() + role.slice(1)} Login
           </p>
+          <div className="relative mt-5 w-96 max-sm:w-full">
           <input
             type="text"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="mt-5 input input-bordered rounded-full w-96 max-sm:w-full"
+            className="input input-bordered rounded-full w-full"
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-5 input input-bordered rounded-full w-96 max-sm:w-full"
-          />
+          <div
+              className="cursor-default absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+            >
+              <UserIcon className="size-5" />
+            </div>
+          </div>
+          <div className="relative mt-5 w-96 max-sm:w-full">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input input-bordered rounded-full w-full"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+            >
+              {showPassword ? (
+                <EyeSlashIcon className="h-5 w-5" />
+              ) : (
+                <EyeIcon className="h-5 w-5" />
+              )}
+            </button>
+          </div>
           {error && <p className="text-red-500 mt-2">{error}</p>}
           <button
             className={`btn btn-primary mt-5 w-96 max-sm:w-full text-white rounded-full ${loading ? "cursor-not-allowed btn-disabled" : ""

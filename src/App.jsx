@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useState, useContext } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import './index.css';
 
 // Pages
@@ -38,61 +38,82 @@ import Occurences from './pages/Occurences.jsx';
 import ApproveOffice from './pages/admin/ApproveOffice.jsx';
 import Logout from './pages/Logout.jsx';
 import Etags from './pages/Etags.jsx';
+import Unauthorized from './pages/Unauthorized.jsx';
+
+//Context
+import {AuthContext} from './context/AuthContext';
+const ProtectedRoute = ({ allowedRoles, redirectPath = '/unauthorized' }) => {
+  const { role } = useContext(AuthContext);
+  
+  if (!allowedRoles.includes(role)) {
+    return <Navigate to={redirectPath} replace />;
+  }
+
+  return <Outlet />;
+};
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/">
-          <Route index element={<LoginPage />} />
-          <Route path="logout" element={<Logout />} />
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+
+        {/* Admin Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
           <Route path="admin">
             <Route index element={<AdminHome />} />
             <Route path="add-company" element={<CompanyAddition />} />
             <Route path="companies" element={<Companies />} />
-            <Route path="companies/:companyId" element={<Company role={"admin"} />} />
+            <Route path="companies/:companyId" element={<Company role="admin" />} />
             <Route path="etags" element={<Etags />} />
-            <Route path="work-permits" element={<WorkPermit role={'admin'} />} />
-            <Route path='bookings' element={<AdminMeetingRoomBooking />} />
+            <Route path="work-permits" element={<WorkPermit role="admin" />} />
+            <Route path="bookings" element={<AdminMeetingRoomBooking />} />
             <Route path="meeting-rooms" element={<MeetingRooms />} />
             <Route path="cards" element={<CardRequests />} />
-            <Route path='complaints' element={<Complaints role={'admin'} />} />
+            <Route path="complaints" element={<Complaints role="admin" />} />
             <Route path="services" element={<Services />} />
             <Route path="assign-office" element={<ApproveOffice />} />
-            {/** Opportunities to be added here */}
             <Route path="receptionists" element={<Performance />} />
           </Route>
+        </Route>
 
+        {/* Tenant Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['tenant']} />}>
           <Route path="tenant">
             <Route index element={<Dashboard />} />
             <Route path="employees" element={<Employees />} />
             <Route path="bookings" element={<CompanyMeetingRoomBooking />} />
             <Route path="evaluations" element={<Evaluations />} />
             <Route path="parking" element={<Parking />} />
-            <Route path="profile" element={<Company role={"tenant"} />} />
+            <Route path="profile" element={<Company role="tenant" />} />
             <Route path="etags" element={<Etags />} />
-            <Route path="work-permits" element={<WorkPermit role={"tenant"} />} />
-            <Route path="gate-passes" element={<GatePasses role={"tenant"} />} />
-            <Route path="lost-and-found" element={<LostAndFound role={"tenant"} />} />
-            <Route path="occurences" element={<Occurences role={"tenant"} />} />
+            <Route path="work-permits" element={<WorkPermit role="tenant" />} />
+            <Route path="gate-passes" element={<GatePasses role="tenant" />} />
+            <Route path="lost-and-found" element={<LostAndFound role="tenant" />} />
+            <Route path="occurences" element={<Occurences role="tenant" />} />
             <Route path="complaints" element={<CompanyComplaints />} />
           </Route>
+        </Route>
 
+        {/* Receptionist Routes */}
+        <Route element={<ProtectedRoute allowedRoles={['receptionist']} />}>
           <Route path="receptionist">
             <Route index element={<ReceptionistDashboard />} />
             <Route path="bookings" element={<MeetingRoomBooking />} />
-            <Route path="complaints" element={<Complaints role={"receptionist"} />} />
-            <Route path="gate-passes" element={<GatePasses role={"receptionist"} />} />
-            <Route path="work-permits" element={<WorkPermit role={"receptionist"} />} />
-            <Route path="lost-and-found" element={<LostAndFound role={"receptionist"} />} />
-            <Route path="occurences" element={<Occurences role={"receptionist"} />} />
+            <Route path="complaints" element={<Complaints role="receptionist" />} />
+            <Route path="gate-passes" element={<GatePasses role="receptionist" />} />
+            <Route path="work-permits" element={<WorkPermit role="receptionist" />} />
+            <Route path="lost-and-found" element={<LostAndFound role="receptionist" />} />
+            <Route path="occurences" element={<Occurences role="receptionist" />} />
           </Route>
-
-          <Route path="*" element={<ErrorPage />} />
         </Route>
+
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
-  )
+  );
 }
 
 export default App

@@ -57,7 +57,6 @@ const ComplaintModal = ({ addNewComplaint }) => {
                     showToast(false, response.message);
                     return;
                 }
-                showToast(true, response.message);
                 const mappedData = response.data.services.map(service => {
                     return {
                         id: service._id,
@@ -129,19 +128,20 @@ const ComplaintModal = ({ addNewComplaint }) => {
             setModalLoading(true);
             const response = await TenantService.generateComplaint(complaint);
             if (response.error) {
-                showToast(false, response.message);
+                showToast(false);
                 return;
             }
             console.log(response.data.complaint);
             complaint["id"] = response.data.complaint._id;
             complaint["isResolved"] = false
+            complaint["description"] = response.data.complaint.description
             complaint["date"] = getCurrentDateTime();
             complaint["dateResolved"] = "-"
             complaint["urgency"] = response.data.complaint.urgency
             // add the complaint to the list of complaints
             console.log("ADDING NEW COMPLAINT ", complaint);
             addNewComplaint(complaint);
-            showToast(true, response.message);
+            showToast(true);
 
         } catch (error) {
             console.log(error);

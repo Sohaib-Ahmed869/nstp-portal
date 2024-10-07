@@ -65,6 +65,7 @@ const sidebarConfig = {
     { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: "/lost-and-found" },
     { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },
     { icon: <ExclamationTriangleIcon />, text: "Occurences", url: "/occurences" },
+    { icon: <RocketLaunchIcon />, text: "Profile", url: "/profile" },
   ],
 };
 
