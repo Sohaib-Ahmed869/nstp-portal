@@ -32,13 +32,12 @@ const ComplaintModal = ({ addNewComplaint }) => {
     const modalBoxRef = useRef(null);
 
     //overall set of all possible service types along with desc
-    //Empty this array initialization once api call is added
     const [serviceTypes, setServiceTypes] = useState([
-        { id: "133", type: "Electricity service", description: "This service covers all electrical issues and maintenance." },
-        { id: "153", type: "Water service", description: "This service handles water supply and plumbing issues." },
-        { id: "163", type: "Gas service", description: "This service deals with gas supply and related issues." },
-        { id: "173", type: "Internet and WiFi service", description: "This service manages internet connectivity and WiFi issues." },
-        { id: "183", type: "Cleaning service", description: "This service provides various types of cleaning services." },
+        // { id: "133", type: "Electricity service", description: "This service covers all electrical issues and maintenance." },
+        // { id: "153", type: "Water service", description: "This service handles water supply and plumbing issues." },
+        // { id: "163", type: "Gas service", description: "This service deals with gas supply and related issues." },
+        // { id: "173", type: "Internet and WiFi service", description: "This service manages internet connectivity and WiFi issues." },
+        // { id: "183", type: "Cleaning service", description: "This service provides various types of cleaning services." },
     ]); //all the service types
 
     useEffect(() => {
@@ -57,11 +56,16 @@ const ComplaintModal = ({ addNewComplaint }) => {
                     showToast(false, response.message);
                     return;
                 }
-                console.log(response.data.services);
                 showToast(true, response.message);
-                // setServiceTypes(response.data);
-            
-
+                const mappedData = response.data.services.map(service => {
+                    return {
+                        id: service._id,
+                        type: service.name,
+                        description: service.description,
+                        icon: service.icon
+                    };
+                });
+                setServiceTypes(mappedData);
             } catch (error) {
                 console.log(error);
             }

@@ -167,10 +167,10 @@ export const Complaints = () => {
             {/* Main Page Content */}
             <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"}`} >
                 {/* Header + add new emp btn */}
-                <div className="flex flex-row items-center justify-between">
+                <div className="flex flex-row max-sm:flex-col items-center justify-between">
                     <h1 className="text-2xl font-bold">Complaints</h1>
                     <button
-                        className="btn btn-primary text-white"
+                        className="btn btn-primary text-white max-sm:mt-2"
                         onClick={() => document.getElementById('complaint_modal').showModal()} >
                         <PencilSquareIcon className="size-6" />
                         Register new complaint
