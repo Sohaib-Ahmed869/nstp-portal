@@ -123,10 +123,6 @@ const LoginPage = () => {
       const lowerCaseUsername = username.toLowerCase();
       setError("");
       setLoading(true);
-      // Simulate API call
-        console.log(lowerCaseUsername, password, role);
-        // Handle successful login here
-        console.log("🚀 ~ setTimeout ~ role:", role);
 
         var response = {};
         var isValid = false;
@@ -137,6 +133,7 @@ const LoginPage = () => {
             password
           );
           isValid = checkResponse(response);
+          
           if (isValid) {
             login(response.data.role, response.data.towers);
             navigate("/receptionist");
