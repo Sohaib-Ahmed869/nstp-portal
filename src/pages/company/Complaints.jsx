@@ -61,7 +61,7 @@ export const Complaints = () => {
                         id: complaint._id,
                         date: formatDate(complaint.date_initiated),
                         type: "services",
-                        serviceType: complaint.service_type,
+                        serviceType: complaint.service_name,
                         description: complaint.description,
                         urgency: complaint.urgency,
                         isResolved: complaint.is_resolved,
@@ -244,6 +244,7 @@ export const Complaints = () => {
                         handleSortChange={(field) => handleSortChange(field, "general")}
                         setComplaintIdToDelete={setComplaintIdToDelete}
                         setComplaintTypeToDelete={setComplaintTypeToDelete}
+                        dialogId={"general_complaints_details_dialog"}
                     />
                 )}
 
@@ -261,6 +262,7 @@ export const Complaints = () => {
                         handleSortChange={(field) => handleSortChange(field, "services")}
                         setComplaintIdToDelete={setComplaintIdToDelete}
                         setComplaintTypeToDelete={setComplaintTypeToDelete}
+                        dialogId={"services_complaints_details_dialog"}
 
                     />
                 )}

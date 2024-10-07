@@ -81,9 +81,9 @@ export const Complaints = ({ role }) => {
                     const servicesComplaints = complaints.map(complaint => ({
                         id: complaint._id,
                         date: formatDate(complaint.date_initiated),
-                        tenantName: complaint.tenant_id, // Assuming tenantName is tenant_id for now
+                        tenantName: complaint.tenant_name, 
                         type: "services",
-                        serviceType: complaint.service_id, // Assuming serviceType is service_id for now
+                        serviceType: complaint.service_name, 
                         urgency: complaint.urgency || "Undetermined",
                         description: complaint.description,
                         isResolved: complaint.is_resolved,
@@ -223,7 +223,9 @@ export const Complaints = ({ role }) => {
                         sortOrder={generalSortOrder}
                         handleSortChange={(field) => handleSortChange(field, "general")}
                         setComplaints={setGeneralComplaintData} // this prop is only passed for receptionist to update the data on frontend
-                    />
+                        dialogId={"general-complaint-dialog"}
+
+                        />
                 )}
 
                 {/* {typeFilter === "All" && <hr className="mb-6"></hr>} */}
@@ -239,7 +241,7 @@ export const Complaints = ({ role }) => {
                         sortOrder={servicesSortOrder}
                         handleSortChange={(field) => handleSortChange(field, "services")}
                         setComplaints={setServicesComplaintData} //this prop is only passed for receptionist to update the data on frontend
-
+                        dialogId={"services-complaint-dialog"}
                     />
                 )}
             </div>

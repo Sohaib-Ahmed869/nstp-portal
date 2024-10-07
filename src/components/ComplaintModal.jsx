@@ -140,6 +140,7 @@ const ComplaintModal = ({ addNewComplaint }) => {
             complaint["date"] = getCurrentDateTime();
             complaint["dateResolved"] = "-"
             complaint["urgency"] = response.data.complaint.urgency
+            complaint["serviceType"] = response.data.complaint.service_name
             // add the complaint to the list of complaints
             console.log("ADDING NEW COMPLAINT ", complaint);
             addNewComplaint(complaint);

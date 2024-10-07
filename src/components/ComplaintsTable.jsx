@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ChatBubbleLeftEllipsisIcon, CheckCircleIcon, CheckIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import { AdminService, ReceptionistService } from '../services';
+import { AdminService } from '../services';
 import showToast from '../util/toast';
 import { AuthContext } from '../context/AuthContext';
 import { formatDate } from '../util/date';
@@ -35,7 +35,7 @@ const getUrgencyLabel = (urgency) => {
             return "N/A";
     }
 };
-const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortField, sortOrder, handleSortChange, setComplaintIdToDelete, setComplaintTypeToDelete }) => {
+const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortField, sortOrder, handleSortChange, setComplaintIdToDelete, setComplaintTypeToDelete, dialogId }) => {
     const [loading, setLoading] = useState(false);
     const [loadingComplaintId, setLoadingComplaintId] = useState(null);
     const [rowsToDisplay, setRowsToDisplay] = useState([]);
@@ -75,29 +75,6 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                 setLoading(false);
                 setLoadingComplaintId(null);
             }
-        } else if (role == "receptionist") { //means he is a receptionist, marking service complaint as complete.
-            try {
-                const response = await ReceptionistService.handleComplaint(id, true, null);
-                if (response.error) {
-                    showToast(false, response.message);
-                    return;
-                }
-
-                showToast(true, response.message);
-                console.log(response.data);
-                setRowsToDisplay((prevRows) =>
-                    prevRows.map((complaint) =>
-                        complaint.id === id ? { ...complaint, isResolved: true, dateResolved: formatDate(response.data.complaint.date_resolved) } : complaint
-                    )
-                );
-
-            } catch (error) {
-                console.error(error);
-                showToast(false, "An error occurred. Please try again later.");
-            } finally {
-                setLoading(false);
-                setLoadingComplaintId(null);
-            }
         }
     };
 
@@ -112,7 +89,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
 
     return (
         <>
-            <dialog id="complaint_details_modal" className="modal">
+            <dialog id={dialogId} className="modal">
                 <div className="modal-box w-11/12 max-w-2xl">
                     <h3 className="font-bold text-xl mb-4 flex items-center gap-3">
                         <ChatBubbleLeftEllipsisIcon className="size-6" /> Complaint Details
@@ -121,7 +98,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                     {selectedComplaintId && (
                         <div>
                             <p className="mt-3 text-2xl"><strong className="text-primary">Subject:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).subject || complaints.find(complaint => complaint.id === selectedComplaintId).serviceType}</p>
-                            <o className="mt-3"><strong className="text-primary">From: </strong> {complaints.find(complaint => complaint.id === selectedComplaintId).tenantName}</o>
+                            {role !== "tenant" && <p className="mt-3"><strong className="text-primary">From: </strong> {complaints.find(complaint => complaint.id === selectedComplaintId).tenantName}</p>}
                             <p className="mt-3"><strong className="text-primary">Description:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).description}</p>
                             <p className="mt-3"><strong className="text-primary">Urgency:</strong> {getUrgencyLabel(complaints.find(complaint => complaint.id === selectedComplaintId).urgency)}</p>                <p className="mt-3"><strong className="text-primary">Status:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).isResolved ? "Resolved" : "Pending"}</p>
                             <p className="mt-3"><strong className="text-primary">Date Initiated:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).date}</p>
@@ -129,7 +106,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                         </div>
                     )}
                     <div className="modal-action">
-                        <button className="btn" onClick={() => document.getElementById('complaint_details_modal').close()}>Close</button>
+                        <button className="btn" onClick={() => document.getElementById(dialogId).close()}>Close</button>
                     </div>
                 </div>
             </dialog>
@@ -223,7 +200,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                                     )}
                                                 </>
                                             )}
-                                            <button className="btn btn-sm btn-outline btn-secondary" onClick={() => { setSelectedComplaintId(complaint.id); document.getElementById('complaint_details_modal').showModal(); }}>
+                                            <button className="btn btn-sm btn-outline btn-secondary" onClick={() => { setSelectedComplaintId(complaint.id); document.getElementById(dialogId).showModal();  }}>
                                                 View
                                             </button>
                                         </div>
