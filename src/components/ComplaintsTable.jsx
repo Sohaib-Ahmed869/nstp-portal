@@ -28,7 +28,7 @@ const getUrgencyLabel = (urgency) => {
         case 3:
             return "High";
         case 2:
-            return "Medium";
+            return "Med";
         case 1:
             return "Low";
         default:
@@ -158,7 +158,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                         complaintType == "services" && (
                                             <td className="flex items-center">
                                                 <div className={`badge ${complaint.urgency === 1 ? "badge-primary" : complaint.urgency === 2 ? "badge-secondary" : "badge-error"} flex items-center py-3`} >
-                                                    {complaint.urgency === 1 ? "Low" : complaint.urgency === 2 ? "Medium" : "High"}
+                                                    {complaint.urgency === 1 ? "Low" : complaint.urgency === 2 ? "Med" : "High"}
                                                 </div>
                                             </td>
                                         )
