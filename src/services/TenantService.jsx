@@ -282,6 +282,18 @@ const TenantService = {
       return await handleResponse(error.response);
     }
   },
+
+  getLostAndFound: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/tenant/lost-and-found`, {
+        withCredentials: true,
+      });
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default TenantService;

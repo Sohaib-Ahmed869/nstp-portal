@@ -18,7 +18,7 @@ const ReceptionistService = {
   addLostAndFound: async (item, description, image) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/receptionist/lostAndFound/add`,
+        `${BASE_URL}/receptionist/lost-and-found/add`,
         {
           item,
           description,
@@ -28,6 +28,20 @@ const ReceptionistService = {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  getLostAndFound: async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/receptionist/lost-and-found`,
+        {
           withCredentials: true,
         }
       );
@@ -66,7 +80,13 @@ const ReceptionistService = {
     reasonDecline
   ) => {
     try {
-      console.log("🚀 ~ handleGatePassRequest: ~ gatepassId, approval, representative, reasonDecline", gatepassId, approval, representative, reasonDecline)
+      console.log(
+        "🚀 ~ handleGatePassRequest: ~ gatepassId, approval, representative, reasonDecline",
+        gatepassId,
+        approval,
+        representative,
+        reasonDecline
+      );
       const response = await axios.put(
         `${BASE_URL}/receptionist/gatepass/approval`,
         {
@@ -111,7 +131,12 @@ const ReceptionistService = {
   },
 
   addOccurence: async (tenantId, subject, description) => {
-    console.log("🚀 ~ addOccurence: ~ tenantId, subject, description:", tenantId, subject, description)
+    console.log(
+      "🚀 ~ addOccurence: ~ tenantId, subject, description:",
+      tenantId,
+      subject,
+      description
+    );
     try {
       const response = await axios.post(
         `${BASE_URL}/receptionist/occurence/add`,
