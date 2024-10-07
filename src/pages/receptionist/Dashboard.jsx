@@ -101,7 +101,7 @@ export const Dashboard = () => {
 
             {/** gate entries */}
             <div className="card p-5">
-              <ComparativeChart title={"Gate Entry"} comparisonData={gateEntryStats} link={"gate-entries"} />
+              <ComparativeChart title={"Gate Entry"} comparisonData={gateEntryStats} link={"gate-passes"} />
             </div>
 
             {/* Complaints section charts */}

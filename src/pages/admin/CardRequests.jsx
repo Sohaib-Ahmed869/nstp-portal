@@ -4,6 +4,7 @@ import { UserPlusIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon, EyeIcon, 
 import NSTPLoader from '../../components/NSTPLoader';
 import { TowerContext } from '../../context/TowerContext';
 import AdminService from '../../services/AdminService';
+import showToast from '../../util/toast';
 
 const CardRequests = () => {
     const [loading, setLoading] = useState(true);
@@ -86,12 +87,15 @@ const CardRequests = () => {
         //Api call here to approve/reject the request
         try {
             console.log("🚀 ~ handleApproveReject ~ request", request);
-            const response = await AdminService.handleCardAllocationRequest(request.employeeId, action);
+            const response = await AdminService.handleCardAllocationRequest(request.id, action, reasonForRejection);
+            console.log("🚀 ~ handleApproveReject ~ response", response);
             if (response.error) {
                 console.error("Error approving/unapproving request", response.error);
+                showToast(false, response.error);
                 return;
             }
-            console.log("🚀 ~ handleApproveReject ~ response", response);           
+            console.log("🚀 ~ handleApproveReject ~ response", response); 
+            showToast(true, response.message);          
             setCardRequests((prevRequests) => prevRequests.filter((r) => r.id !== request.id));
         } catch (error) {
             console.error("Error approving/unapproving request", error);
@@ -117,7 +121,7 @@ const CardRequests = () => {
             setLoadingOldRequests(true);
             const oldRequests = [ ];
             try{
-                const response = await AdminService.getIssuedCardAllocations(tower.id);
+                const response = await AdminService.getNonPendingCardAllocations(tower.id);
                 if (response.error) {
                     console.error("Error fetching old requests", response.error);
                     

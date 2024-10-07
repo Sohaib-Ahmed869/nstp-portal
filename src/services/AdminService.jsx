@@ -2,9 +2,7 @@ import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 const handleResponse = async (response) => {
-  console.log("🚀 ~ handleResponse ~ response:", response);
   try {
-    console.log("🚀 ~ handleResponse ~ response:", response);
     if (response.status >= 200 && response.status < 300) {
       return { data: response.data, message: response.data.message };
     } else {
@@ -32,7 +30,6 @@ const AdminService = {
 
   getTenants: async (towerId) => {
     try {
-      console.log("🚀 ~ getTenants ~ towerId", towerId);
       const response = await axios.get(
         `${BASE_URL}/admin/towers/${towerId}/tenants`,
         {
@@ -128,10 +125,9 @@ const AdminService = {
   },
 
   getCardAllocations: async (towerId, queryParam) => {
-    console.log("🚀 ~ getCardAllocations: ~ queryParam:", queryParam);
     try {
       const response = await axios.get(
-        `${BASE_URL}/admin/towers/${towerId}/card/allocations?${queryParam}=true`,
+        `${BASE_URL}/admin/towers/${towerId}/card/allocations?${queryParam}`,
         {
           withCredentials: true,
         }
@@ -144,8 +140,10 @@ const AdminService = {
 
   getPendingCardAllocations: async (towerId) => {
     try {
-      console.log("🚀 ~ getPendingCardAllocations ~ towerId", towerId);
-      return AdminService.getCardAllocations(towerId, "is_requested");
+      return await AdminService.getCardAllocations(
+        towerId,
+        "is_requested=true"
+      );
     } catch (error) {
       return await handleResponse(error.response);
     }
@@ -153,7 +151,18 @@ const AdminService = {
 
   getIssuedCardAllocations: async (towerId) => {
     try {
-      return AdminService.getCardAllocations(towerId, "is_issued");
+      return await AdminService.getCardAllocations(towerId, "is_issued=true");
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  getNonPendingCardAllocations: async (towerId) => {
+    try {
+      return await AdminService.getCardAllocations(
+        towerId,
+        "is_requested=false"
+      );
     } catch (error) {
       return await handleResponse(error.response);
     }
@@ -162,7 +171,7 @@ const AdminService = {
   getEtagAllocations: async (towerId, queryParam) => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/admin/towers/${towerId}/etag/allocations?${queryParam}=true`,
+        `${BASE_URL}/admin/towers/${towerId}/etag/allocations?${queryParam}`,
         {
           withCredentials: true,
         }
@@ -175,7 +184,10 @@ const AdminService = {
 
   getPendingEtagAllocations: async (towerId) => {
     try {
-      return AdminService.getEtagAllocations(towerId, "is_requested");
+      return await AdminService.getEtagAllocations(
+        towerId,
+        "is_requested=true"
+      );
     } catch (error) {
       return await handleResponse(error.response);
     }
@@ -183,19 +195,44 @@ const AdminService = {
 
   getIssuedEtagAllocations: async (towerId) => {
     try {
-      return AdminService.getEtagAllocations(towerId, "is_issued");
+      return await AdminService.getEtagAllocations(towerId, "is_issued=true");
     } catch (error) {
       return await handleResponse(error.response);
     }
   },
 
-  handleCardAllocationRequest: async (employeeId, action) => {
+  getNonPendingEtagAllocations: async (towerId) => {
     try {
-      console.log("🚀 ~ handleCardAllocationRequest ~ employeeId", employeeId);
-      const response = await axios.post(
-        `${BASE_URL}/admin/card/generate`,
+      return await AdminService.getEtagAllocations(
+        towerId,
+        "is_requested=false"
+      );
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  handleCardAllocationRequest: async (allocationId, action, reasonDecline) => {
+    try {
+      if (action === "approve") {
+        return await AdminService.approveCardAllocationRequest(allocationId);
+      } else {
+        return await AdminService.rejectCardAllocationRequest(
+          allocationId,
+          reasonDecline
+        );
+      }
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  approveCardAllocationRequest: async (allocationId) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/admin/card/accept`,
         {
-          employeeId,
+          allocationId,
         },
         {
           headers: {
@@ -210,12 +247,69 @@ const AdminService = {
     }
   },
 
-  handleEtagAllocationRequest: async (employeeId, action) => {
+  rejectCardAllocationRequest: async (allocationId, reasonDecline) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/admin/etag/generate`,
+      const response = await axios.put(
+        `${BASE_URL}/admin/card/reject`,
         {
-          employeeId,
+          allocationId,
+          reasonDecline,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  handleEtagAllocationRequest: async (allocationId, action, reasonDecline) => {
+    try {
+      if (action === "approve") {
+        return await AdminService.approveEtagAllocationRequest(allocationId);
+      } else {
+        return await AdminService.rejectEtagAllocationRequest(
+          allocationId,
+          reasonDecline
+        );
+      }
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  approveEtagAllocationRequest: async (allocationId) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/admin/etag/accept`,
+        {
+          allocationId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  rejectEtagAllocationRequest: async (allocationId, reasonDecline) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/admin/etag/reject`,
+        {
+          allocationId,
+          reasonDecline,
         },
         {
           headers: {
