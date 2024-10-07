@@ -99,7 +99,7 @@ const ComplaintModal = ({ addNewComplaint }) => {
                 setError("Subject and Description are required for General complaints.");
                 return;
             }
-        } else if (tabActive === "Services") {
+        } else if (tabActive === "Service") {
             if (!complaintUrgency || !complaintServiceType) {
                 setError("Urgency and Service Type are required for Service complaints.");
                 return;
@@ -116,7 +116,9 @@ const ComplaintModal = ({ addNewComplaint }) => {
 
         try {
             setModalLoading(true);
+            console.log("SUBMITTING COMPLAINT ", complaint);
             const response = await TenantService.generateComplaint(complaint);
+            console.log(response);
             if (response.error) {
                 showToast(false, response.message);
                 return;
@@ -150,7 +152,7 @@ const ComplaintModal = ({ addNewComplaint }) => {
 
                 <div role="tablist" className="mt-3 tabs tabs-lifted">
                     <a role="tab" className={`tab ${tabActive === "General" && "tab-active font-bold text-primary"}`} onClick={() => { setTabActive("General"); resetFields(); setError("") }}>General</a>
-                    <a role="tab" className={`tab ${tabActive === "Services" && "tab-active font-bold text-primary"}`} onClick={() => { setTabActive("Services"); resetFields(); setError("") }}>Services</a>
+                    <a role="tab" className={`tab ${tabActive === "Service" && "tab-active font-bold text-primary"}`} onClick={() => { setTabActive("Service"); resetFields(); setError("") }}>Services</a>
                 </div>
                 <div className="border border-r-slate-300 border-b-slate-300 border-l-slate-300 rounded-b-lg border-t-0 p-5">
                     {tabActive === "General" ?

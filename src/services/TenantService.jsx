@@ -257,6 +257,7 @@ const TenantService = {
           subject: complaint.subject,
           description: complaint.desc,
           serviceType: complaint.serviceTypeId,
+          urgency: complaint.urgency,
         },
         {
           headers: {
