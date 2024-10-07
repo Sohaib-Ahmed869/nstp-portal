@@ -51,7 +51,8 @@ export const Complaints = ({ role }) => {
                         console.log(response.error);
                         return;
                     }
-    
+                    
+                    console.log(response.data.complaints);
                     const complaints = response.data.complaints;
     
                     const generalComplaints = complaints.map(complaint => ({
@@ -67,7 +68,31 @@ export const Complaints = ({ role }) => {
                     }));
     
                     setGeneralComplaintData(generalComplaints);
+                } else if (role === "receptionist") {
+                    const response = await ReceptionistService.getComplaints(tower.id);
+                    if (response.error) {
+                        console.log(response.error);
+                        return;
+                    }
+    
+                    console.log(response.data.complaints);
+                    const complaints = response.data.complaints;
+    
+                    const servicesComplaints = complaints.map(complaint => ({
+                        id: complaint._id,
+                        date: formatDate(complaint.date_initiated),
+                        tenantName: complaint.tenant_id, // Assuming tenantName is tenant_id for now
+                        type: "services",
+                        serviceType: complaint.service_id, // Assuming serviceType is service_id for now
+                        urgency: complaint.urgency || "Undetermined",
+                        description: complaint.description,
+                        isResolved: complaint.is_resolved,
+                        dateResolved: complaint.is_resolved ? (complaint.date_resolved ? formatDate(complaint.date_resolved) : "-") : "-",
+                    }));
+    
+                    setServicesComplaintData(servicesComplaints);
                 }
+
             } catch (error) {
                 console.log(error);
             } finally {

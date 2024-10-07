@@ -49,6 +49,25 @@ const ComplaintModal = ({ addNewComplaint }) => {
 
     useEffect(() => {
         //api call to fetch servicetypes
+        async function fetchServiceTypes() {
+            try {
+                const response = await TenantService.getServices();
+                console.log(response);
+                if(response.error){
+                    showToast(false, response.message);
+                    return;
+                }
+                console.log(response.data.services);
+                showToast(true, response.message);
+                // setServiceTypes(response.data);
+            
+
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        fetchServiceTypes();
         //setServiceTypes(response.data)
     }, []);
 
