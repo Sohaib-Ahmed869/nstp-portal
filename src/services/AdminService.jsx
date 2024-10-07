@@ -415,6 +415,44 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },
+
+  getServices: async (towerId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/services`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  addService: async (towerId, name, description, icon) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/admin/service/add`,
+        {
+          towerId,
+          name,
+          description,
+          icon,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AdminService;

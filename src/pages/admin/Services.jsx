@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
 import { WrenchIcon, PlusCircleIcon, WrenchScrewdriverIcon, WifiIcon, BoltIcon, LockClosedIcon, PencilIcon, ChevronRightIcon, ClipboardDocumentCheckIcon, LifebuoyIcon, LightBulbIcon, BriefcaseIcon, TrashIcon, DocumentCheckIcon } from '@heroicons/react/24/outline';
+import { AdminService } from '../../services';
+import {TowerContext} from '../../context/TowerContext';
+import showToast from '../../util/toast';
 
 const Services = () => {
     const [loading, setLoading] = useState(true);
@@ -10,7 +13,7 @@ const Services = () => {
     const [modalLoading, setModalLoading] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [currentServiceId, setCurrentServiceId] = useState(null);
-
+    const { tower } = useContext(TowerContext);
 
     // State for form fields
     const [newService, setNewService] = useState({
@@ -56,25 +59,47 @@ const Services = () => {
     };
 
     // Function to handle form submission for adding a new service
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         setModalLoading(true);
-        setTimeout(() => {
+        try{
             console.log(newService);
-            // Append to the services array
-            setServices((prevServices) => [
-                ...prevServices,
-                {
-                    id: (prevServices.length + 1).toString(),
-                    name: newService.name,
-                    description: newService.description,
-                    icon: newService.icon,
-                },
-            ]);
+            const response = await AdminService.addService(tower.id, newService.name, newService.description );// add ", newService.iconNumber" of somin to this
+            console.log(response);
+            if (response.error) {
+                console.log(response.error);
+                showToast(false, response.message);
+                return;
+            }
 
-            setModalLoading(false);
+            console.log(response.data.service);
+
+            showToast(true, response.message);
+            
+            
+        } catch (error) {
+            console.log(error);
+        } finally {
             document.getElementById('add_service_form').close();
+            setModalLoading(false);
             resetForm();
-        }, 2000);
+        }
+
+
+
+        // resetForm();
+        // setTimeout(() => {
+            // Append to the services array
+            // setServices((prevServices) => [
+            //     ...prevServices,
+            //     {
+            //         id: (prevServices.length + 1).toString(),
+            //         name: newService.name,
+            //         description: newService.description,
+            //         icon: newService.icon,
+            //     },
+            // ]);
+
+        // }, 2000);
     };
 
 
@@ -99,16 +124,42 @@ const Services = () => {
     useEffect(() => {
         // Api call here to fetch data and populate the above states
         // Dummy data for services
-        setServices([
-            { id: "1", name: "Plumbing", description: "Fixing of pipes and water systems, leakages, and spillages. Services related to public facilities not included.", icon: WrenchIcon },
-            { id: "2", name: "Electrical", description: "Fixing of electrical system issues, power outages, and other electrical-related problems.", icon: BoltIcon },
-            { id: "3", name: "Cleaning", description: "Cleaning of common areas, especially the lobby, hallways, and restrooms.", icon: WrenchScrewdriverIcon },
-            { id: "4", name: "Security", description: "Security services, monitoring, and access control.", icon: LockClosedIcon },
-            { id: "5", name: "Internet and WiFi", description: "Installation and maintenance of internet and WiFi services, as well as troubleshooting.", icon: WifiIcon },
-        ]);
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000);
+
+        async function fetchData() {
+            setLoading(true);
+            try{
+                const response = await AdminService.getServices(tower.id);
+                if (response.error) {
+                    console.log(response.error);
+                    showToast(false, response.message);
+                    return;
+                }
+
+                console.log(response.data.services);
+                // setServices(response.data.services);
+
+                showToast(true, response.message);
+
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setLoading(false);
+            }
+            
+        }
+
+        fetchData();
+
+        // setServices([
+        //     { id: "1", name: "Plumbing", description: "Fixing of pipes and water systems, leakages, and spillages. Services related to public facilities not included.", icon: WrenchIcon },
+        //     { id: "2", name: "Electrical", description: "Fixing of electrical system issues, power outages, and other electrical-related problems.", icon: BoltIcon },
+        //     { id: "3", name: "Cleaning", description: "Cleaning of common areas, especially the lobby, hallways, and restrooms.", icon: WrenchScrewdriverIcon },
+        //     { id: "4", name: "Security", description: "Security services, monitoring, and access control.", icon: LockClosedIcon },
+        //     { id: "5", name: "Internet and WiFi", description: "Installation and maintenance of internet and WiFi services, as well as troubleshooting.", icon: WifiIcon },
+        // ]);
+        // setTimeout(() => {
+        //     setLoading(false);
+        // }, 2000);
     }, []);
 
     // Function to handle edit button click
