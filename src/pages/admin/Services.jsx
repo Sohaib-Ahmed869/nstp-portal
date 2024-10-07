@@ -6,6 +6,32 @@ import { AdminService } from '../../services';
 import {TowerContext} from '../../context/TowerContext';
 import showToast from '../../util/toast';
 
+
+//Possible icons for services
+const ICONS_ARRAY= [WrenchIcon, WrenchScrewdriverIcon, BoltIcon, LockClosedIcon, WifiIcon, BriefcaseIcon, DocumentCheckIcon]
+
+function getServiceIcon(iconNumber) {
+    switch (iconNumber) {
+        case 1:
+            return WrenchIcon;
+        case 2:
+            return BoltIcon;
+        case 3:
+            return WrenchScrewdriverIcon;
+        case 4:
+            return LockClosedIcon;
+        case 5:
+            return WifiIcon;
+        case 6:
+            return BriefcaseIcon;
+        case 7:
+            return DocumentCheckIcon;
+        default:
+            return WrenchIcon;
+    }
+}
+
+
 const Services = () => {
     const [loading, setLoading] = useState(true);
     const [services, setServices] = useState([]);
@@ -19,7 +45,7 @@ const Services = () => {
     const [newService, setNewService] = useState({
         name: '',
         description: '',
-        icon: WrenchIcon,
+        icon: 1,
     });
 
     // Function to handle form field changes
@@ -63,7 +89,8 @@ const Services = () => {
         setModalLoading(true);
         try{
             console.log(newService);
-            const response = await AdminService.addService(tower.id, newService.name, newService.description );// add ", newService.iconNumber" of somin to this
+            
+            const response = await AdminService.addService(tower.id, newService.name, newService.description , newService.icon);// add ", newService.iconNumber" of somin to this
             console.log(response);
             if (response.error) {
                 console.log(response.error);
@@ -71,11 +98,19 @@ const Services = () => {
                 return;
             }
 
-            console.log(response.data.service);
+            // Append to the services array
+            setServices((prevServices) => [
+                ...prevServices,
+                {
+                    id: (prevServices.length + 1).toString(),
+                    name: newService.name,
+                    description: newService.description,
+                    icon: getServiceIcon(newService.icon),
+                },
+            ]);
 
+            console.log(response.data.service);
             showToast(true, response.message);
-            
-            
         } catch (error) {
             console.log(error);
         } finally {
@@ -88,16 +123,7 @@ const Services = () => {
 
         // resetForm();
         // setTimeout(() => {
-            // Append to the services array
-            // setServices((prevServices) => [
-            //     ...prevServices,
-            //     {
-            //         id: (prevServices.length + 1).toString(),
-            //         name: newService.name,
-            //         description: newService.description,
-            //         icon: newService.icon,
-            //     },
-            // ]);
+           
 
         // }, 2000);
     };
@@ -114,7 +140,7 @@ const Services = () => {
         setNewService({
             name: '',
             description: '',
-            icon: WrenchIcon,
+            icon: 1,
         });
         setIsEditMode(false);
         setCurrentServiceId(null);
@@ -122,9 +148,6 @@ const Services = () => {
 
 
     useEffect(() => {
-        // Api call here to fetch data and populate the above states
-        // Dummy data for services
-
         async function fetchData() {
             setLoading(true);
             try{
@@ -136,7 +159,13 @@ const Services = () => {
                 }
 
                 console.log(response.data.services);
-                // setServices(response.data.services);
+                const mappedData = response.data.services.map(service => ({
+                    id: service._id,
+                    name: service.name,
+                    description: service.description,
+                    icon: getServiceIcon(service.icon),
+                }));
+                setServices(mappedData);
 
                 showToast(true, response.message);
 
@@ -200,7 +229,7 @@ const Services = () => {
                     <h3 className="font-bold text-lg">{isEditMode ? 'Edit Service' : 'Add New Service'}</h3>
                     <div className="form-control">
                         <label className="label">
-                            <span className="label-text">Service Name</span>
+                            <span className="label-text">Service Name (required)</span>
                         </label>
                         <input
                             type="text"
@@ -212,7 +241,7 @@ const Services = () => {
                     </div>
                     <div className="form-control">
                         <label className="label">
-                            <span className="label-text">Description</span>
+                            <span className="label-text">Description (required)</span>
                         </label>
                         <textarea
                             name="description"
@@ -226,12 +255,12 @@ const Services = () => {
                             <span className="label-text">Icon</span>
                         </label>
                         <div className="flex gap-2">
-                            {[WrenchIcon, WrenchScrewdriverIcon, BoltIcon, LockClosedIcon, WifiIcon, BriefcaseIcon, DocumentCheckIcon].map((Icon, index) => (
+                            {ICONS_ARRAY.map((Icon, index) => (
                                 <button
                                     key={index}
                                     type="button"
-                                    className={`btn ${newService.icon === Icon ? 'btn-primary' : 'btn-outline'}`}
-                                    onClick={() => handleIconChange(Icon)}
+                                    className={`btn ${newService.icon === index+1 ? 'btn-primary' : 'btn-outline'}`}
+                                    onClick={() => handleIconChange(index+1)}
                                 >
                                     <Icon className="size-6" />
                                 </button>
@@ -241,7 +270,7 @@ const Services = () => {
                     <div className="modal-action">
                         <button className="btn" onClick={handleCancel}>Cancel</button>
                         <button
-                            className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
+                            className={`btn btn-primary text-base-100 ${(modalLoading || newService.name.trim() == "" || newService.description.trim() == "") && "btn-disabled"}`}
                             onClick={isEditMode ? saveEditedService : handleSubmit}
                         >
                             {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}

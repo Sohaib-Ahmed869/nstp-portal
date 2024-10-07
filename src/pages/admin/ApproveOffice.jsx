@@ -238,7 +238,7 @@ const ApproveOffice = () => {
             {/* Assign Office Modal */}
             <dialog id="assign_office_modal" className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg mb-3">Assign Office to Employee</h3>
+                    <h3 className="font-bold text-lg mb-3">Assign Office to Tenant</h3>
                     <form onSubmit={(e) => handleAssignOffice(e, currentRequest.request._id)}>
                         <FloatingLabelInput
                             name="floor"

@@ -1,4 +1,5 @@
 export const formatDate = (dateString) => {
+    if(!dateString) return dateString;
     try {
         const date = new Date(dateString);
         
@@ -20,6 +21,7 @@ export const formatDate = (dateString) => {
         return `${formattedDate}, ${formattedTime}`;
     } catch (error) {
         console.error("Error formatting date:", error);
+        console.log("datestring which caused the error: ", dateString)
         return dateString; //return the original string if error occurs
     }
 };
