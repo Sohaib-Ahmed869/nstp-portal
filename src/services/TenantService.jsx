@@ -272,6 +272,23 @@ const TenantService = {
     }
   },
 
+  cancelComplaint: async (complaintId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/tenant/complaints/${complaintId}/cancel`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
   getServices: async () => {
     try {
       const response = await axios.get(`${BASE_URL}/tenant/services`, {
