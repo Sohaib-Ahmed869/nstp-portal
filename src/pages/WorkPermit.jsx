@@ -74,7 +74,7 @@ const WorkPermit = ({ role }) => {
                     equipment: permit.equipment,
                     description: permit.description,
                     tenant: permit.tenant,
-                    reasonDecline: permit.reasonDecline,
+                    reasonDecline: permit.reason_decline,
                 }));
                 setWorkPermits(mappedData);
 
