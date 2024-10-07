@@ -148,7 +148,7 @@ export const Complaints = ({ role }) => {
         servicesComplaintData.filter(complaint =>
             (statusFilter === "All" || (statusFilter === "Resolved" && complaint.isResolved) || (statusFilter === "Unresolved" && !complaint.isResolved)) &&
             (complaint.serviceType?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                complaint.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            complaint.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 complaint.date.includes(searchQuery))
         ),
         servicesSortField,
