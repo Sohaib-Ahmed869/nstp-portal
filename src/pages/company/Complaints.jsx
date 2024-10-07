@@ -6,6 +6,7 @@ import ComplaintsTable from '../../components/ComplaintsTable'
 import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, PencilSquareIcon, CogIcon, WrenchScrewdriverIcon, CheckCircleIcon, XCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { TenantService } from '../../services'
 import { formatDate } from '../../util/date'
+import showToast from '../../util/toast'
 
 export const Complaints = () => {
     const [loading, setLoading] = useState(true);
@@ -92,20 +93,32 @@ export const Complaints = () => {
         }
     };
 
-    const handleCancel = (id, type) => {
+    const handleCancel = async (id, type) => {
         //api call here to cancel complaint
         setCancelLoading(true);
-        setTimeout(() => {
+
+        try{
+            console.log("Cancelling complaint with id: ", id);
+            const response = await TenantService.cancelComplaint(id);
+            console.log("🚀 ~ handleCancel ~ response", response);
+            if (response.error) {
+                console.error(response.error);
+                showToast(false, response.message);
+                return;
+            }
+            showToast(true, response.message);
+
+            if (type === "general") {
+                setGeneralComplaintData(generalComplaintData.filter(complaint => complaint.id !== id));
+            } else {
+                setServicesComplaintData(servicesComplaintData.filter(complaint => complaint.id !== id));
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
             setCancelLoading(false);
             document.getElementById("cancel_complaint_modal").close();
-        }, 2000);
-
-        // below code will update the table on frontend by removing it from the data to display
-        // if (type === "general") {
-        //     setGeneralComplaintData(generalComplaintData.filter(complaint => complaint.id !== id));
-        // } else {
-        //     setServicesComplaintData(servicesComplaintData.filter(complaint => complaint.id !== id));
-        // }
+        }
     };
 
     const sortData = (data, sortField, sortOrder) => {

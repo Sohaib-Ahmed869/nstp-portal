@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ChatBubbleLeftEllipsisIcon, CheckCircleIcon, CheckIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import { AdminService } from '../services';
+import { AdminService, ReceptionistService } from '../services';
 import showToast from '../util/toast';
 import { AuthContext } from '../context/AuthContext';
 import { formatDate } from '../util/date';
@@ -55,6 +55,29 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
         if (role == "admin") { //means he is an admin, marking general complaint as complete.
             try {
                 const response = await AdminService.handleComplaint(id, true, null);
+                if (response.error) {
+                    showToast(false, response.message);
+                    return;
+                }
+
+                showToast(true, response.message);
+                console.log(response.data);
+                setRowsToDisplay((prevRows) =>
+                    prevRows.map((complaint) =>
+                        complaint.id === id ? { ...complaint, isResolved: true, dateResolved: formatDate(response.data.complaint.date_resolved) } : complaint
+                    )
+                );
+
+            } catch (error) {
+                console.error(error);
+                showToast(false, "An error occurred. Please try again later.");
+            } finally {
+                setLoading(false);
+                setLoadingComplaintId(null);
+            }
+        } else if (role == "receptionist") { //means he is a receptionist, marking service complaint as complete.
+            try {
+                const response = await ReceptionistService.handleComplaint(id, true, null);
                 if (response.error) {
                     showToast(false, response.message);
                     return;

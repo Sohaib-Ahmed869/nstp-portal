@@ -257,7 +257,25 @@ const TenantService = {
           subject: complaint.subject,
           description: complaint.desc,
           serviceType: complaint.serviceTypeId,
+          urgency: complaint.urgency,
         },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  cancelComplaint: async (complaintId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/tenant/complaints/${complaintId}/cancel`,
         {
           headers: {
             "Content-Type": "application/json",
