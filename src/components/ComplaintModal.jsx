@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import FloatingLabelInput from './FloatingLabelInput';
-import { InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import showToast from '../util/toast';
 import { TenantService } from '../services';
 import { getCurrentDateTime } from '../util/date';
+import { ICONS_ARRAY } from '../util/service';
 
 /**
 |--------------------------------------------------
@@ -75,10 +76,20 @@ const ComplaintModal = ({ addNewComplaint }) => {
         //setServiceTypes(response.data)
     }, []);
 
+    //getting desc and icon of service based on its name because the dropdown only controls the name
     const getServiceDesc = (serviceType) => {
         const service = serviceTypes.find(service => service.type === serviceType);
         return service ? service.description : "";
     };
+
+    const getServiceIcon = (serviceType) => {
+        const service = serviceTypes.find(service => service.type === serviceType);
+        console.log("getting service: " , service)
+        const iconNumber = service ? service.icon : 1; //default icon is 1 (wrench)
+        const Icon = ICONS_ARRAY[iconNumber-1];
+        return <Icon className="h-6 w-6" />; //default icon is wrench
+    };
+
 
     const resetFields = () => {
         setComplaintType(null);
@@ -172,7 +183,7 @@ const ComplaintModal = ({ addNewComplaint }) => {
 
                             {complaintServiceType && <div className="mb-5 bg-info bg-opacity-30 rounded-md p-4">
                                 <div className="flex flex-row gap-2 mb-2 items-center">
-                                    <InformationCircleIcon className="h-6 w-6" />
+                                    {getServiceIcon(complaintServiceType)}
                                     <h1 className="text-lg font-bold">{complaintServiceType}</h1>
                                 </div>
                                 <p className="text-sm">{getServiceDesc(complaintServiceType)}</p>
