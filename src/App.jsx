@@ -10,8 +10,7 @@ import ErrorPage from './pages/ErrorPage.jsx';
 import AdminHome from './pages/admin/AdminHome.jsx';
 import CompanyAddition from './pages/admin/CompanyAddition.jsx';
 import Companies from './pages/admin/Companies.jsx';
-import Etags from './pages/admin/Etags.jsx';
-import CardRequests from './pages/admin/CardRequests.jsx';
+import CardRequests from './pages/CardRequests.jsx';
 import Services from './pages/admin/Services.jsx';
 import MeetingRooms from './pages/admin/MeetingRooms.jsx';
 import { MeetingRoomBooking as AdminMeetingRoomBooking } from './pages/admin/MeetingRoomBooking.jsx';
@@ -38,6 +37,7 @@ import LostAndFound from './pages/LostAndFound.jsx';
 import Occurences from './pages/Occurences.jsx';
 import ApproveOffice from './pages/admin/ApproveOffice.jsx';
 import Logout from './pages/Logout.jsx';
+import Etags from './pages/Etags.jsx';
 
 function App() {
   return (
@@ -70,6 +70,7 @@ function App() {
             <Route path="evaluations" element={<Evaluations />} />
             <Route path="parking" element={<Parking />} />
             <Route path="profile" element={<Company role={"tenant"} />} />
+            <Route path="etags" element={<Etags />} />
             <Route path="work-permits" element={<WorkPermit role={"tenant"} />} />
             <Route path="gate-passes" element={<GatePasses role={"tenant"} />} />
             <Route path="lost-and-found" element={<LostAndFound role={"tenant"} />} />

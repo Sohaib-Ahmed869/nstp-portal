@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Sidebar from '../../components/Sidebar';
+import Sidebar from '../components/Sidebar';
 import { UserPlusIcon, MagnifyingGlassIcon, AdjustmentsHorizontalIcon, EyeIcon, CheckIcon, ClockIcon, ArchiveBoxIcon, PrinterIcon, HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/outline';
-import NSTPLoader from '../../components/NSTPLoader';
-import { TowerContext } from '../../context/TowerContext';
-import AdminService from '../../services/AdminService';
-import showToast from '../../util/toast';
+import NSTPLoader from '../components/NSTPLoader';
+import { TowerContext } from '../context/TowerContext';
+import AdminService from '../services/AdminService';
+import showToast from '../util/toast';
 
 const CardRequests = () => {
     const [loading, setLoading] = useState(true);
@@ -316,7 +316,7 @@ const CardRequests = () => {
                                         </td>
                                         <td>
                                             <div className="flex items-center gap-2">
-                                                {!request.issued && (
+                                                {(!request.issued && role!== "tenant" )&& (
                                                     <>
                                                         <button
                                                             className="btn btn-sm btn-outline btn-success"

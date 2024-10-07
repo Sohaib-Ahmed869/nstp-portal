@@ -32,8 +32,7 @@ import { ChatBubbleBottomCenterIcon } from "@heroicons/react/16/solid";
 
 const sidebarConfig = {
   receptionist: [
-    { icon: <HomeIcon />, text: "Home", url: "/home" },
-    { icon: <ChartBarIcon />, text: "Dashboard", url: "/" },
+    { icon: <HomeIcon />, text: "Dashboard", url: "/" },
     { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
     { icon: <WrenchScrewdriverIcon />, text: "Complaints", url: "/complaints" },
     { icon: <TicketIcon />, text: "Gate Passes", url: "/gate-passes" },
@@ -42,8 +41,7 @@ const sidebarConfig = {
     { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: "/occurences" },
   ],
   admin: [
-    { icon: <HomeIcon />, text: "Home", url: "/home" },
-    { icon: <ChartBarIcon />, text: "Dashboard", url: "/" },
+    { icon: <HomeIcon />, text: "Dashboard", url: "/" },
     { icon: <UserGroupIcon />, text: "Companies", url: "/companies" },
     { icon: <BuildingOfficeIcon /> , text: "Assign Office", url: "/assign-office" },
     { icon: <TicketIcon />, text: "E-Tags", url: "/etags" },
@@ -57,8 +55,7 @@ const sidebarConfig = {
     { icon: <CircleStackIcon />, text: "Receptionists", url: "/receptionists" },
   ],
   tenant: [
-    { icon: <HomeIcon />, text: "Home", url: "/home" },
-    { icon: <ChartBarIcon />, text: "Dashboard", url: "/" },
+    { icon: <HomeIcon />, text: "Dashboard", url: "/" },
     { icon: <UserGroupIcon />, text: "Employees", url: "/employees" },
     { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
     { icon: <ClipboardDocumentCheckIcon />, text: "Evaluations", url: "/evaluations" },
