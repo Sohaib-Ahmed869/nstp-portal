@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 const localizer = momentLocalizer(moment);
@@ -6,6 +6,9 @@ import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { CalendarDateRangeIcon } from '@heroicons/react/20/solid';
+import { AdminService } from '../../services';
+import { TowerContext } from '../../context/TowerContext';
+import showToast from '../../util/toast';
 
 /**
 |--------------------------------------------------
@@ -51,11 +54,51 @@ export const MeetingRoomBooking = () => {
 
     ]);
 
+    const { tower } = useContext(TowerContext);
+
     useEffect(() => {
         //Api call here to fetch data and populate the above states initially
-        setTimeout(() => {
-            setLoading(false)
-        }, 2000)
+
+        async function fetchData() {
+            try{
+
+                const roomsResponse = await AdminService.getRooms(tower.id);
+                console.log(roomsResponse);
+                if (roomsResponse.error) {
+                    console.log("Error fetching rooms: ", roomsResponse.error);
+                    showToast(false, roomsResponse.message);
+                    return;
+                }
+
+                console.log("Rooms: ", roomsResponse.data.rooms);
+
+                // set rooms
+
+                const bookingsResponse = await AdminService.getRoomBookings(tower.id);
+                console.log(bookingsResponse);
+                
+                if (bookingsResponse.error) {
+                    console.log("Error fetching room bookings: ", bookingsResponse.error);
+                    showToast(false, bookingsResponse.message);
+                    return;
+                }
+                
+                console.log("Room bookings: ", bookingsResponse.data.bookings);
+                
+                // setMeetingRoomSchedule(response.data);
+            } catch (error) {
+                console.log("Error fetching room bookings: ", error);
+                showToast(false, error.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchData();
+
+        // setTimeout(() => {
+        //     setLoading(false)
+        // }, 2000)
     }, [])
 
     useEffect(() => {

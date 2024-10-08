@@ -45,7 +45,6 @@ export const MeetingRoomBooking = () => {
         async function fetchData() {
             try{
                 const roomsResponse = await TenantService.getRooms();
-                console.log("Rooms response: ", roomsResponse);
                 if(roomsResponse.error) {
                     console.log(roomsResponse.message);
                     return;
@@ -53,16 +52,24 @@ export const MeetingRoomBooking = () => {
                 console.log("Rooms: ", roomsResponse.data.rooms);
 
                 // set rooms
-                
-                const bookingsResponse = await TenantService.getAllBookings();
-                console.log("Bookings response: ", bookingsResponse);
-                if(bookingsResponse.error) {
-                    console.log(bookingsResponse.message);
+
+                const allBookings = await TenantService.getAllRoomBookings();
+                if(allBookings.error) {
+                    console.log(allBookings.message);
                     return;
                 }
-                console.log("Bookings: ", bookingsResponse.data.bookings);
+                console.log("All bookings: ", allBookings.data.bookings);
 
-                // set bookings
+                // set all bookings
+                
+                const tenantBookingsResponse = await TenantService.getRoomBookings();
+                if(tenantBookingsResponse.error) {
+                    console.log(tenantBookingsResponse.message);
+                    return;
+                }
+                console.log("Bookings: ", tenantBookingsResponse.data.bookings);
+
+                // set tenant bookings
 
             } catch (error) {
                 console.log("Error fetching rooms: ", error);
@@ -73,11 +80,6 @@ export const MeetingRoomBooking = () => {
         }
 
         fetchData();
-
-        // setTimeout(() => {
-        //     setLoading(false);
-        //     setCalendarLoading(false);
-        // }, 2000);
     }, []);
 
     useEffect(() => {

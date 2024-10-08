@@ -7,6 +7,7 @@ import NSTPLoader from '../../components/NSTPLoader';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { CalendarDateRangeIcon } from '@heroicons/react/20/solid';
 import MeetingRoomBookingTable from '../../components/MeetingRoomBookingTable';
+import { ReceptionistService } from '../../services';
 
 const MeetingRoomBooking = () => {
 
@@ -45,9 +46,35 @@ const MeetingRoomBooking = () => {
 
     useEffect(() => {
         //Api call here to fetch data and populate the above states initially
-        setTimeout(() => {
-            setLoading(false)
-        }, 2000)
+        async function fetchData() {
+            try {
+                const roomsResponse = await ReceptionistService.getRooms();
+                console.log(roomsResponse);
+                if (roomsResponse.error) {
+                    console.log("Error fetching rooms: ", roomsResponse.error);
+                    return;
+                }
+
+                console.log("Rooms: ", roomsResponse.data.rooms);
+
+
+                const bookingsResponse = await ReceptionistService.getRoomBookings();
+                console.log(bookingsResponse);
+                if (bookingsResponse.error) {
+                    console.log("Error fetching room bookings: ", bookingsResponse.error);
+                    return;
+                }
+
+                console.log("Room bookings: ", bookingsResponse.data.bookings);
+    
+            } catch (error) {
+                console.log("Error fetching room bookings: ", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        fetchData();
     }, [])
 
     useEffect(() => {

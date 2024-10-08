@@ -190,6 +190,31 @@ const ReceptionistService = {
       return await handleResponse(error.response);
     }
   },
+
+  getRooms: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/receptionist/rooms`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  getRoomBookings: async () => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/receptionist/room/bookings`,
+        {
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default ReceptionistService;
