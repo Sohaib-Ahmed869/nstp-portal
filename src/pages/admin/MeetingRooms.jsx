@@ -75,34 +75,42 @@ const MeetingRooms = () => {
         try {
             setLoading(true);
 
-            const roomsResponse = await AdminService.getRooms(tower.id);
-            console.log("Rooms response:", roomsResponse);  
+            const roomsResponse = await AdminService.getRooms(tower.id);  
             if(roomsResponse.error) {
                 showToast(false, roomsResponse.message);
                 return;
             }
 
-            console.log("Rooms response:", roomsResponse.data);
+            const mappedData = roomsResponse.data.rooms.map(room => ({
+                id: room._id,
+                name: room.name,
+                floor: room.floor,
+                startTime: room.time_start,
+                endTime: room.time_end,
+                photoUrl: getRandomPhotoUrl(),
+                type: room.type, //this is currently the ID , it should be the Name
+            }));
 
-
-            // // Dummy data for meeting rooms
-            // const dummyRooms = [
-            //     { id: "1", name: "Room A", floor: 1, startTime: "11:20", endTime: "12:00", photoUrl: getRandomPhotoUrl() },
-            //     { id: "2", name: "Room B", floor: 4, startTime: "09:00", endTime: "03:00", photoUrl: getRandomPhotoUrl() },
-            // ];
-            // setMeetingRooms(dummyRooms);
-
+            setMeetingRooms(mappedData);
             
             const roomTypesResponse = await AdminService.getRoomTypes(tower.id);
-            console.log("Room types response:", roomTypesResponse);
             if(roomTypesResponse.error) {
                 showToast(false, roomTypesResponse.message);
                 return;
             }
+            console.log("Room types response:", roomTypesResponse);
+            const mappedData2 = roomTypesResponse.data.roomTypes.map(type => ({
+                id: type._id,
+                name: type.name,
+                capacity: type.capacity,
+                rate_list: type.rate_list,
+            }));
 
+
+            setRoomTypes(mappedData2);
             console.log("Room types response:", roomTypesResponse.data);
             
-            // Dummy data for room types
+            // Dummy data for room types (keep this here for reference please don't delete yet. 10/8/24)
             // const dummyRoomTypes = [
             //     {
             //         id: "1",
