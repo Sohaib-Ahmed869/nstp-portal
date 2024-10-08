@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { InformationCircleIcon, XCircleIcon, CalendarDaysIcon, AdjustmentsHorizontalIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 
@@ -12,7 +12,11 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
     const [filterStatus, setFilterStatus] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 10;
+    const rowsPerPage = 5;
+
+    useEffect(() => {
+        setSortField('dateBooked');
+    }, [meetingRoomSchedule]);
 
     const cancelMeeting = (meetingId) => {
         setModalLoading(true);
@@ -52,6 +56,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
+
     const filteredData = dashboardComponent ? meetingRoomSchedule : meetingRoomSchedule.filter(row => {
         return (filterStatus === '' || row.status === filterStatus) &&
             (role !== 'receptionist' || row.company?.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -188,7 +193,8 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
                                     <th onClick={() => handleSortChange('roomNo')}>Room {sortField === 'roomNo' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
                                     <th onClick={() => handleSortChange('status')}>Status {sortField === 'status' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
                                     {role === 'receptionist' && <th onClick={() => handleSortChange('company')}>Company {sortField === 'company' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>}
-                                    <th onClick={() => handleSortChange('date')}>Date {sortField === 'date' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
+                                    <th onClick={() => handleSortChange('dateBooked')}>Booked on {sortField === 'dateBooked' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
+                                    <th onClick={() => handleSortChange('dateBooking')}>Booked for {sortField === 'dateBooking' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
                                     <th onClick={() => handleSortChange('time')}>Time {sortField === 'time' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
                                     <th>Actions</th>
                                 </tr>
@@ -208,7 +214,8 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
                                             </div>
                                         </td>
                                         {role === 'receptionist' && <td>{row.company}</td>}
-                                        <td>{row.date}</td>
+                                        <td>{row.dateBooked}</td>
+                                        <td>{row.dateBooking}</td>
                                         <td>{row.time}</td>
                                         <td>
                                             {row.status === 'Pending' ? (

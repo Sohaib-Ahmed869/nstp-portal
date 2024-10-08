@@ -8,6 +8,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { CalendarDateRangeIcon } from '@heroicons/react/20/solid';
 import MeetingRoomBookingTable from '../../components/MeetingRoomBookingTable';
 import { ReceptionistService } from '../../services';
+import { formatDate } from '../../util/date'
 
 const MeetingRoomBooking = () => {
 
@@ -56,7 +57,13 @@ const MeetingRoomBooking = () => {
                 }
 
                 console.log("Rooms: ", roomsResponse.data.rooms);
+                const mappedRooms = roomsResponse.data.rooms.map(room => ({
+                    value: room._id,
+                    label: room.name,
+                }));
 
+                setRoomOptions(mappedRooms);
+                //other fields include floor, time_end, time_start (both in 24hr), type id
 
                 const bookingsResponse = await ReceptionistService.getRoomBookings();
                 console.log(bookingsResponse);
@@ -64,16 +71,56 @@ const MeetingRoomBooking = () => {
                     console.log("Error fetching room bookings: ", bookingsResponse.error);
                     return;
                 }
-
                 console.log("Room bookings: ", bookingsResponse.data.bookings);
-    
+                
+                const mappedBookings = bookingsResponse.data.bookings.map(booking => {
+                    const startTime = new Date(booking.time_start);
+                    const endTime = new Date(booking.time_end);
+                
+                    const formatTime = (date) => {
+                        const hours = date.getUTCHours().toString().padStart(2, '0');
+                        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                        return `${hours}:${minutes}`;
+                    };
+                
+                    const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
+                    const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
+                
+                    return {
+                        bookingId: booking._id,
+                        roomNo: booking.room_name || "Room",  //musa return this
+                        company: booking.tenant_name || "Tennant", //musa return this
+                        status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
+                        dateBooked: formatDate(booking.date_initiated),
+                        time: formattedTime,
+                        dateBooking: dateBooking,
+                    };
+                });
+                console.log("mapped bookings, ", mappedBookings);
+                setMeetingRoomSchedule(mappedBookings);
+                
+                const approvedBookings = bookingsResponse.data.bookings.filter(booking => booking.status_booking === 'approved').map(booking => {
+                    const startTime = new Date(booking.time_start);
+                    const endTime = new Date(booking.time_end);
+                
+                    return {
+                        title: booking.tenant_name || "Tennant",
+                        start: startTime,
+                        end: endTime,
+                    };
+                });
+                
+                setEvents(prevEvents => [...prevEvents, ...approvedBookings]);
+
+                
+
             } catch (error) {
                 console.log("Error fetching room bookings: ", error);
             } finally {
                 setLoading(false);
             }
         }
-        
+
         fetchData();
     }, [])
 
@@ -83,19 +130,19 @@ const MeetingRoomBooking = () => {
         // Simulate an API call to fetch events for the selected room
         // selectedRoom state can be used in api call
         const fetchEvents = async () => {
-            setCalendarLoading(true);
-            // Simulate API call delay
-            setTimeout(() => {
-                const fetchedEvents = [
-                    { title: 'Hexler', start: new Date(2024, 8, 1, 10, 0), end: new Date(2024, 8, 1, 12, 0) },
-                    { title: 'InnoTech', start: new Date(2024, 8, 5, 14, 0), end: new Date(2024, 8, 5, 15, 0) },
-                    { title: 'PinkFly', start: new Date(2024, 9, 11, 14, 0), end: new Date(2024, 9, 11, 15, 0) },
-                    { title: 'Zanbeel', start: new Date(2024, 8, 7, 14, 0), end: new Date(2024, 8, 7, 15, 0) },
-                    { title: 'Vyro', start: new Date(2024, 9, 12, 9, 0), end: new Date(2024, 9, 12, 10, 0) },
-                ];
-                setEvents(fetchedEvents);
-                setCalendarLoading(false);
-            }, 2000);
+            // setCalendarLoading(true);
+            // // Simulate API call delay
+            // setTimeout(() => {
+            //     const fetchedEvents = [
+            //         { title: 'Hexler', start: new Date(2024, 8, 1, 10, 0), end: new Date(2024, 8, 1, 12, 0) },
+            //         { title: 'InnoTech', start: new Date(2024, 8, 5, 14, 0), end: new Date(2024, 8, 5, 15, 0) },
+            //         { title: 'PinkFly', start: new Date(2024, 9, 11, 14, 0), end: new Date(2024, 9, 11, 15, 0) },
+            //         { title: 'Zanbeel', start: new Date(2024, 8, 7, 14, 0), end: new Date(2024, 8, 7, 15, 0) },
+            //         { title: 'Vyro', start: new Date(2024, 9, 12, 9, 0), end: new Date(2024, 9, 12, 10, 0) },
+            //     ];
+            //     setEvents(fetchedEvents);
+            //     setCalendarLoading(false);
+            // }, 2000);
         };
 
         fetchEvents();
