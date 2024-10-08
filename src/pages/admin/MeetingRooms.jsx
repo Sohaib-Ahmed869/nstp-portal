@@ -329,8 +329,8 @@ const MeetingRooms = () => {
                 modalLoading={modalLoading}
             />
 
-            <div className={`flex gap-5 max-md:flex-col max-[1105px]:flex-col  ${loading && "hidden"} w-full`}>
-                <div className={`w-full  max-md:w-3/5 bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg `}>
+            <div className={`flex gap-5 lg:flex-row flex-col max-[1105px]:flex-col  ${loading && "hidden"} w-full`}>
+                <div className={`w-full  lg:w-3/5 bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg `}>
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-5">
                         <div className="flex gap-3 items-center mb-3">
                             <svg xmlns="http://www.w3.org/2000/svg" width="3em" height="3em" viewBox="0 0 32 32">
