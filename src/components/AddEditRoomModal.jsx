@@ -1,17 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import FloatingLabelInput from './FloatingLabelInput';
 
-const AddEditRoomModal = ({ isEditMode, newRoom, setNewRoom, roomTypes, errors, modalLoading, handleSubmit, resetForm }) => {
+const AddEditRoomModal = ({ isEditMode, newRoom, setNewRoom, roomTypes, errors, setErrors, modalLoading, handleSubmit, resetForm }) => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewRoom(prevRoom => ({ ...prevRoom, [name]: value }));
+    };
+
+    const validateTimeFormat = (time) => {
+        const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/; // Regex for 24-hour format HH:MM
+        return timeRegex.test(time);
+    };
+
+    const handleFormSubmit = (e) => {
+        e.preventDefault();
+        let valid = true;
+        let newErrors = {};
+
+        if (!validateTimeFormat(newRoom.startTime)) {
+            newErrors.startTime = 'Please enter a valid time in 24-hour format (HH:MM)';
+            valid = false;
+        }
+
+        if (!validateTimeFormat(newRoom.endTime)) {
+            newErrors.endTime = 'Please enter a valid time in 24-hour format (HH:MM)';
+            valid = false;
+        }
+
+        setErrors(newErrors);
+
+        if (valid) {
+            handleSubmit(e);
+        }
     };
 
     return (
         <dialog id="add_room_form" className="modal">
             <div className="modal-box">
                 <h3 className="font-bold text-lg mb-4">{isEditMode ? 'Edit Room' : 'Add New Room'}</h3>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleFormSubmit}>
                     <FloatingLabelInput
                         name="name"
                         type="text"
@@ -32,22 +59,22 @@ const AddEditRoomModal = ({ isEditMode, newRoom, setNewRoom, roomTypes, errors, 
                     />
                     <FloatingLabelInput
                         name="startTime"
-                        type="time"
+                        type="text"
                         id="start_time"
                         label="Opening Time"
                         value={newRoom.startTime}
                         onChange={handleInputChange}
-                        error={errors.startTime}
                     />
+                    {errors.startTime && <p className="text-error text-sm mt-1">{errors.startTime}</p>}
                     <FloatingLabelInput
                         name="endTime"
-                        type="time"
+                        type="text"
                         id="end_time"
                         label="Closing Time"
                         value={newRoom.endTime}
                         onChange={handleInputChange}
-                        error={errors.endTime}
                     />
+                    {errors.endTime && <p className="text-error text-sm mt-1">{errors.endTime}</p>}
                     <select
                         name="roomType"
                         value={newRoom.roomType}
