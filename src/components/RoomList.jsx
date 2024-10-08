@@ -12,12 +12,22 @@ const getRandomPhotoUrl = () => {
     return DUMMY_PHOTO_URLS[Math.floor(Math.random() * DUMMY_PHOTO_URLS.length)];
 };
 
-
-
-const RoomList = ({ rooms, onEdit, onDelete }) => {
+const RoomList = ({ rooms, onEdit, roomTypes, onDelete }) => {
     const [expandedRoomId, setExpandedRoomId] = React.useState(null);
+    const [expandedRoomTypeName, setExpandedRoomTypeName] = React.useState(null);
 
     const toggleExpand = (roomId) => {
+        console.log(roomTypes);
+        console.log("rooms" ,rooms);
+        console.log(expandedRoomId);
+        //find the selected roomid's room type from the rooms array
+        const roomType = rooms.find(room => room.id === roomId)?.type;
+        console.log(roomType);
+        //find the room type name from the roomTypes array
+        const roomTypeName = roomTypes.find(type => type.id === roomType)?.name;
+        console.log(roomTypeName);
+        //set the expanded room type name
+        setExpandedRoomTypeName(roomTypeName);
         setExpandedRoomId(expandedRoomId === roomId ? null : roomId);
     };
 
@@ -44,6 +54,7 @@ const RoomList = ({ rooms, onEdit, onDelete }) => {
                         <div className="flex flex-col">
                             <div>
                                 <p>Room timings: {room.startTime} - {room.endTime}</p>
+                                <p>Type of room: {expandedRoomTypeName} </p>
                             </div>
                             <div className="flex gap-2 mt-3">
                                 <Link to="/admin/bookings" className="btn btn-primary text-base-100">

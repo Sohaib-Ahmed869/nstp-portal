@@ -142,17 +142,17 @@ const MeetingRooms = () => {
                 showToast(true, response.message);
 
                 // add new room to the list
-                // const newRoomReturned = {
-                //     id: response.data.room._id,
-                //     name: response.data.room.name,
-                //     floor: response.data.room.floor,
-                //     startTime: response.data.room.time_start,
-                //     endTime: response.data.room.time_end,
-                //     photoUrl: getRandomPhotoUrl(),
-                //     roomType: response.data.room.type,
-                // }
+                const newRoomReturned = {
+                    id: response.data.room._id,
+                    name: response.data.room.name,
+                    floor: response.data.room.floor,
+                    startTime: response.data.room.time_start,
+                    endTime: response.data.room.time_end,
+                    photoUrl: getRandomPhotoUrl(),
+                    roomType: response.data.room.type,
+                }
 
-                // setMeetingRooms(prevRooms => [...prevRooms, newRoomWithId]);
+                setMeetingRooms(prevRooms => [...prevRooms, newRoomReturned]);
             }
 
             resetRoomForm();
@@ -251,7 +251,7 @@ const MeetingRooms = () => {
             startTime: '',
             endTime: '',
             seatingCapacity: '',
-            roomType: '',
+            roomType: '', //this is the id
         });
         setIsEditMode(false);
         setCurrentRoomId(null);
@@ -330,7 +330,7 @@ const MeetingRooms = () => {
             />
 
             <div className={`flex gap-5 max-md:flex-col max-[1105px]:flex-col  ${loading && "hidden"} w-full`}>
-                <div className={`w-full  md:w-3/5 bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg `}>
+                <div className={`w-full  max-md:w-3/5 bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg `}>
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-5">
                         <div className="flex gap-3 items-center mb-3">
                             <svg xmlns="http://www.w3.org/2000/svg" width="3em" height="3em" viewBox="0 0 32 32">
@@ -373,6 +373,7 @@ const MeetingRooms = () => {
                                 room.name.toLowerCase().includes(roomSearchQuery.toLowerCase()) ||
                                 room.type?.toLowerCase().includes(roomSearchQuery.toLowerCase())
                             )}
+                            roomTypes={roomTypes}
                             onEdit={(room) => {
                                 setNewRoom(room);
                                 setIsEditMode(true);

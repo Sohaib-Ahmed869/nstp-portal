@@ -5,6 +5,7 @@ const AddEditRoomModal = ({ isEditMode, newRoom, setNewRoom, roomTypes, errors, 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewRoom(prevRoom => ({ ...prevRoom, [name]: value }));
+        console.log("newroom", newRoom);
     };
 
     const validateTimeFormat = (time) => {
@@ -77,7 +78,7 @@ const AddEditRoomModal = ({ isEditMode, newRoom, setNewRoom, roomTypes, errors, 
                     {errors.endTime && <p className="text-error text-sm mt-1">{errors.endTime}</p>}
                     <select
                         name="roomType"
-                        value={newRoom.roomType}
+                        value={newRoom.type}
                         onChange={handleInputChange}
                         className="select select-bordered w-full mb-4"
                     >
