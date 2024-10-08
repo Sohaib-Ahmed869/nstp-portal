@@ -42,7 +42,7 @@ const RoomTypeList = ({ roomTypes, onEdit, onDelete }) => {
                             <div className="mt-3">
                                 <h2 className="font-semibold">Rates:</h2>
                                 <div className="overflow-x-auto">
-                                    <table className="table w-2/3">
+                                    <table className="table w-4/5">
                                         <thead>
                                             <tr>
                                                 <th>Rate Type</th>

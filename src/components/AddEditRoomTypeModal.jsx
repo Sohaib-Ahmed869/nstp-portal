@@ -121,8 +121,9 @@ const AddEditRoomTypeModal = ({
                         <button type="button" className="btn" onClick={() => { resetForm(); document.getElementById('add_room_type_form').close() }}>
                             Cancel
                         </button>
-                        <button type="submit" className={`btn btn-primary ${modalLoading ? 'loading' : ''}`} disabled={modalLoading}>
-                            {isEditMode ? 'Update' : 'Create'}
+                        <button type="submit" className={`btn btn-primary ${modalLoading  && "btn-disabled"}`} >
+                            { modalLoading && <span className="loading loading-spinner"></span>}
+                            { modalLoading ? "Please wait..." : isEditMode ? 'Update' : 'Create'}
                         </button>
                     </div>
                 </form>
