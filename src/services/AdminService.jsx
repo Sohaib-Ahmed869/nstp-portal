@@ -535,6 +535,39 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },
+
+  addRoomType: async (towerId, room) => {
+    try {
+      console.log(room);
+      const rateList = room.rate_list.map((category) => ({
+        category: category.category,
+        rates: category.rates.map((rate) => ({
+          rate_type: rate.rate_type,
+          rate: rate.rate,
+        })),
+      }));
+
+      console.log(rateList);
+      const response = await axios.post(
+        `${BASE_URL}/admin/room-type/add`,
+        {
+          towerId,
+          name: room.name,
+          capacity: room.capacity,
+          rateList: rateList,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AdminService;

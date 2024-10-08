@@ -154,15 +154,13 @@ const MeetingRooms = () => {
                     )
                 );
             } else {
-                // const response = await AdminService.addRoom(tower.id, newRoom);
-
 
                 // const newRoomWithId = { ...newRoom, id: Date.now().toString() };
                 // setMeetingRooms(prevRooms => [...prevRooms, newRoomWithId]);
             }
 
-            // resetRoomForm();
-            // document.getElementById('add_room_form').close();
+            resetRoomForm();
+            document.getElementById('add_room_form').close();
         } catch (error) {
             console.error("Error submitting room data:", error);
             setErrors({ submit: "Failed to submit room data. Please try again." });
@@ -187,8 +185,18 @@ const MeetingRooms = () => {
                     )
                 );
             } else {
-                const newRoomTypeWithId = { ...newRoomType, id: Date.now().toString() };
-                setRoomTypes(prevTypes => [...prevTypes, newRoomTypeWithId]);
+                const response = await AdminService.addRoomType(tower.id, newRoomType);
+                console.log("Add room response:", response);
+                if(response.error) {
+                    showToast(false, response.message);
+                    return;
+                }
+
+                console.log("Add room response:", response.data);
+
+                // add new room type to the list
+
+                showToast(true, response.message);
             }
 
             resetRoomTypeForm();
