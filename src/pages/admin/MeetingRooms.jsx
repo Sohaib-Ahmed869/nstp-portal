@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
 import { PlusCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
@@ -9,6 +9,9 @@ import RoomTypeList from '../../components/RoomTypeList';
 import AddEditRoomModal from '../../components/AddEditRoomModal.jsx';
 import AddEditRoomTypeModal from '../../components/AddEditRoomTypeModal';
 import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
+import { AdminService } from '../../services';
+import { TowerContext } from '../../context/TowerContext.jsx';
+import showToast from '../../util/toast.jsx';
 
 const DUMMY_PHOTO_URLS = [
     "https://media.istockphoto.com/id/1363105039/photo/businesspeople-do-video-conference-call-with-big-wall-tv-in-office-meeting-room-diverse-team.jpg?s=612x612&w=0&k=20&c=o7UjhyG3YmLj7jTtSdMkN-K_tE4HSfAq9wWdhiRDFAA=",
@@ -19,7 +22,6 @@ const DUMMY_PHOTO_URLS = [
 const getRandomPhotoUrl = () => {
     return DUMMY_PHOTO_URLS[Math.floor(Math.random() * DUMMY_PHOTO_URLS.length)];
 };
-
 
 const MeetingRooms = () => {
     const [loading, setLoading] = useState(true);
@@ -63,54 +65,75 @@ const MeetingRooms = () => {
         ],
     });
 
+    const { tower } = useContext(TowerContext);
+
     useEffect(() => {
         fetchData();
     }, []);
 
     const fetchData = async () => {
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            setLoading(true);
 
-            // Dummy data for meeting rooms
-            const dummyRooms = [
-                { id: "1", name: "Room A", floor: 1, startTime: "11:20", endTime: "12:00", photoUrl: getRandomPhotoUrl() },
-                { id: "2", name: "Room B", floor: 4, startTime: "09:00", endTime: "03:00", photoUrl: getRandomPhotoUrl() },
-            ];
-            setMeetingRooms(dummyRooms);
+            const roomsResponse = await AdminService.getRooms(tower.id);
+            console.log("Rooms response:", roomsResponse);  
+            if(roomsResponse.error) {
+                showToast(false, roomsResponse.message);
+                return;
+            }
 
+            console.log("Rooms response:", roomsResponse.data);
+
+
+            // // Dummy data for meeting rooms
+            // const dummyRooms = [
+            //     { id: "1", name: "Room A", floor: 1, startTime: "11:20", endTime: "12:00", photoUrl: getRandomPhotoUrl() },
+            //     { id: "2", name: "Room B", floor: 4, startTime: "09:00", endTime: "03:00", photoUrl: getRandomPhotoUrl() },
+            // ];
+            // setMeetingRooms(dummyRooms);
+
+            
+            const roomTypesResponse = await AdminService.getRoomTypes(tower.id);
+            console.log("Room types response:", roomTypesResponse);
+            if(roomTypesResponse.error) {
+                showToast(false, roomTypesResponse.message);
+                return;
+            }
+
+            console.log("Room types response:", roomTypesResponse.data);
+            
             // Dummy data for room types
-            const dummyRoomTypes = [
-                {
-                    id: "1",
-                    name: "Conference Room",
-                    capacity: 50,
-                    rate_list: [
-                        {
-                            category: "company",
-                            rates: [
-                                { rate_type: "per_hour", rate: 100 },
-                                { rate_type: "per_day", rate: 1200 },
-                                { rate_type: "under_4_hours", rate: 500 },
-                            ],
-                        },
-                        {
-                            category: "startup",
-                            rates: [
-                                { rate_type: "per_hour", rate: 80 },
-                                { rate_type: "per_day", rate: 1000 },
-                                { rate_type: "under_4_hours", rate: 400 },
-                            ],
-                        },
-                    ],
-                },
-                // Add more dummy room types as needed
-            ];
-            setRoomTypes(dummyRoomTypes);
+            // const dummyRoomTypes = [
+            //     {
+            //         id: "1",
+            //         name: "Conference Room",
+            //         capacity: 50,
+            //         rate_list: [
+            //             {
+            //                 category: "company",
+            //                 rates: [
+            //                     { rate_type: "per_hour", rate: 100 },
+            //                     { rate_type: "per_day", rate: 1200 },
+            //                     { rate_type: "under_4_hours", rate: 500 },
+            //                 ],
+            //             },
+            //             {
+            //                 category: "startup",
+            //                 rates: [
+            //                     { rate_type: "per_hour", rate: 80 },
+            //                     { rate_type: "per_day", rate: 1000 },
+            //                     { rate_type: "under_4_hours", rate: 400 },
+            //                 ],
+            //             },
+            //         ],
+            //     },
+            //     // Add more dummy room types as needed
+            // ];
+            // setRoomTypes(dummyRoomTypes);
 
-            setLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
+        } finally {
             setLoading(false);
         }
     };
@@ -122,7 +145,7 @@ const MeetingRooms = () => {
 
         try {
             // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            // await new Promise(resolve => setTimeout(resolve, 2000));
 
             if (isEditMode) {
                 setMeetingRooms(prevRooms =>
@@ -131,12 +154,15 @@ const MeetingRooms = () => {
                     )
                 );
             } else {
-                const newRoomWithId = { ...newRoom, id: Date.now().toString() };
-                setMeetingRooms(prevRooms => [...prevRooms, newRoomWithId]);
+                // const response = await AdminService.addRoom(tower.id, newRoom);
+
+
+                // const newRoomWithId = { ...newRoom, id: Date.now().toString() };
+                // setMeetingRooms(prevRooms => [...prevRooms, newRoomWithId]);
             }
 
-            resetRoomForm();
-            document.getElementById('add_room_form').close();
+            // resetRoomForm();
+            // document.getElementById('add_room_form').close();
         } catch (error) {
             console.error("Error submitting room data:", error);
             setErrors({ submit: "Failed to submit room data. Please try again." });

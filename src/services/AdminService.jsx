@@ -507,6 +507,34 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },
+
+  getRoomTypes: async (towerId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/room-types`,
+        {
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  getRooms: async (towerId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/rooms`,
+        {
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AdminService;
