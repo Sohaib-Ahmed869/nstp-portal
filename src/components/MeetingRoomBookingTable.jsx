@@ -176,7 +176,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
                                 <option value="All">All</option>
                                 <option value="Approved">Approved</option>
                                 <option value="Pending">Pending</option>
-                                <option value="Unapproved">Unapproved</option>
+                                <option value="Rejected">Rejected</option>
                             </select>
                         </div>
 
@@ -206,7 +206,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
                                         <td>
                                             <div className={`rounded-md text-center p-1 ${row.status === 'Approved'
                                                 ? 'bg-lime-200 text-lime-900'
-                                                : row.status === 'Unapproved'
+                                                : row.status === 'Rejected'
                                                     ? 'bg-red-300 text-red-800'
                                                     : 'bg-yellow-100 text-yellow-700'
                                                 }`}>
@@ -248,7 +248,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
                                                         Cancel
                                                     </button>
                                                 )
-                                            ) : row.status === 'Unapproved' && role !== 'receptionist' ? (
+                                            ) : row.status === 'Rejected' && role !== 'receptionist' ? (
                                                 <button
                                                     className="btn btn-sm btn-outline btn-neutral"
                                                     onClick={() => {
