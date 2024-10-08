@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
-import { PlusCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { PlusCircleIcon, MagnifyingGlassIcon, RectangleGroupIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
 import RoomList from '../../components/RoomList';
@@ -75,8 +75,8 @@ const MeetingRooms = () => {
         try {
             setLoading(true);
 
-            const roomsResponse = await AdminService.getRooms(tower.id);  
-            if(roomsResponse.error) {
+            const roomsResponse = await AdminService.getRooms(tower.id);
+            if (roomsResponse.error) {
                 showToast(false, roomsResponse.message);
                 return;
             }
@@ -92,9 +92,9 @@ const MeetingRooms = () => {
             }));
 
             setMeetingRooms(mappedData);
-            
+
             const roomTypesResponse = await AdminService.getRoomTypes(tower.id);
-            if(roomTypesResponse.error) {
+            if (roomTypesResponse.error) {
                 showToast(false, roomTypesResponse.message);
                 return;
             }
@@ -105,39 +105,8 @@ const MeetingRooms = () => {
                 capacity: type.capacity,
                 rate_list: type.rate_list,
             }));
-
-
             setRoomTypes(mappedData2);
             console.log("Room types response:", roomTypesResponse.data);
-            
-            // Dummy data for room types (keep this here for reference please don't delete yet. 10/8/24)
-            // const dummyRoomTypes = [
-            //     {
-            //         id: "1",
-            //         name: "Conference Room",
-            //         capacity: 50,
-            //         rate_list: [
-            //             {
-            //                 category: "company",
-            //                 rates: [
-            //                     { rate_type: "per_hour", rate: 100 },
-            //                     { rate_type: "per_day", rate: 1200 },
-            //                     { rate_type: "under_4_hours", rate: 500 },
-            //                 ],
-            //             },
-            //             {
-            //                 category: "startup",
-            //                 rates: [
-            //                     { rate_type: "per_hour", rate: 80 },
-            //                     { rate_type: "per_day", rate: 1000 },
-            //                     { rate_type: "under_4_hours", rate: 400 },
-            //                 ],
-            //             },
-            //         ],
-            //     },
-            //     // Add more dummy room types as needed
-            // ];
-            // setRoomTypes(dummyRoomTypes);
 
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -195,7 +164,7 @@ const MeetingRooms = () => {
             } else {
                 const response = await AdminService.addRoomType(tower.id, newRoomType);
                 console.log("Add room response:", response);
-                if(response.error) {
+                if (response.error) {
                     showToast(false, response.message);
                     return;
                 }
@@ -205,6 +174,18 @@ const MeetingRooms = () => {
                 // add new room type to the list
 
                 showToast(true, response.message);
+
+                const newRoomTypeReturned = {
+                    id: response.data.roomType._id,
+                    name: response.data.roomType.name,
+                    capacity: response.data.roomType.capacity,
+                    rate_list: response.data.roomType.rate_list,
+                }
+                //add to list
+                setRoomTypes(prevTypes => [...prevTypes, newRoomTypeReturned]);
+                
+
+
             }
 
             resetRoomTypeForm();
@@ -330,20 +311,23 @@ const MeetingRooms = () => {
                 modalLoading={modalLoading}
             />
 
-            <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"}`}>
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-5">
-                    <h1 className="text-2xl font-bold mb-3 md:mb-0">Meeting Room Management</h1>
-                    <div className='flex md:flex-col lg:flex-row sm:flex-row gap-2'>
-                        <button
-                            className="btn btn-secondary text-white"
-                            onClick={() => {
-                                setIsEditMode(false);
-                                document.getElementById("add_room_type_form").showModal();
-                            }}
-                        >
-                            <PlusCircleIcon className="size-6" />
-                            Add New Room Type
-                        </button>
+            <div className={`flex gap-5 max-md:flex-col max-[1105px]:flex-col  ${loading && "hidden"} w-full`}>
+                <div className={`w-full  md:w-3/5 bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg `}>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-5">
+                        <div className="flex gap-3 items-center mb-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="3em" height="3em" viewBox="0 0 32 32">
+                                <path fill="#87b37a" d="M10 30H8v-3H4v3H2v-3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2zm20 0h-2v-3h-4v3h-2v-3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2zm-10 0h-2v-3h-4v3h-2v-3a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx={16} cy={22} r={2} fill="#87b37a"></circle>
+                                <circle cx={6} cy={22} r={2} fill="#87b37a"></circle>
+                                <circle cx={26} cy={22} r={2} fill="#87b37a"></circle>
+                                <circle cx={21} cy={18} r={2} fill="#87b37a"></circle>
+                                <circle cx={11} cy={18} r={2} fill="#87b37a"></circle>
+                                <path fill="#87b37a" d="M26 14H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2M6 4v8h20V4Z"></path>
+                            </svg>
+
+                            <h1 className="text-2xl font-bold  md:mb-0">Meeting Rooms</h1>
+                        </div>
+
                         <button
                             className="btn btn-primary text-white"
                             onClick={() => {
@@ -355,12 +339,8 @@ const MeetingRooms = () => {
                             Add New Room
                         </button>
                     </div>
-                </div>
-
-                <div className="flex flex-col xl:flex-row gap-5">
-                    <div className="flex-1">
-                        <h2 className="text-xl font-semibold mb-3">Meeting Rooms</h2>
-                        <div className="relative w-full md:max-w-xs mb-5">
+                    <div className="">
+                        <div className="relative w-full mb-5">
                             <input
                                 type="text"
                                 placeholder="Search rooms..."
@@ -387,9 +367,28 @@ const MeetingRooms = () => {
                             }}
                         />
                     </div>
-                    <div className="flex-1">
-                        <h2 className="text-xl font-semibold mb-3">Room Types</h2>
-                        <div className="relative w-full md:max-w-xs mb-5">
+
+                </div>
+
+                <div className=" flex-grow bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ">
+                    <div className="w-full flex flex-col">
+                        <div className="flex flex-col md:flex-row md:justify-between gap-3 mb-5">
+                            <div className="flex flex-row gap-3 items-center  mb-3">
+                                <RectangleGroupIcon className="size-8 text-primary" />
+                                <h1 className="text-2xl font-bold md:mb-0">Meeting Room Types</h1>
+                            </div>
+                            <button
+                                className="btn btn-secondary text-white"
+                                onClick={() => {
+                                    setIsEditMode(false);
+                                    document.getElementById("add_room_type_form").showModal();
+                                }}
+                            >
+                                <PlusCircleIcon className="size-6" />
+                                Add New Room Type
+                            </button>
+                        </div>
+                        <div className="relative w-full mb-5">
                             <input
                                 type="text"
                                 placeholder="Search room types..."
@@ -414,9 +413,11 @@ const MeetingRooms = () => {
                                 document.getElementById('delete_room_type_modal').showModal();
                             }}
                         />
+
                     </div>
                 </div>
             </div>
+
         </Sidebar>
     );
 };
