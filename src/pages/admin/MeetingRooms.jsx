@@ -323,9 +323,9 @@ const MeetingRooms = () => {
             />
 
             <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"}`}>
-                <div className="flex flex-col md:flex-row items-center justify-between mb-5">
-                    <h1 className="text-2xl font-bold">Meeting Room Management</h1>
-                    <div className='flex flex-col lg:flex-row gap-2'>
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-5">
+                    <h1 className="text-2xl font-bold mb-3 md:mb-0">Meeting Room Management</h1>
+                    <div className='flex md:flex-col lg:flex-row sm:flex-row gap-2'>
                         <button
                             className="btn btn-secondary text-white"
                             onClick={() => {
@@ -349,7 +349,7 @@ const MeetingRooms = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col xl:flex-row gap-5">
                     <div className="flex-1">
                         <h2 className="text-xl font-semibold mb-3">Meeting Rooms</h2>
                         <div className="relative w-full md:max-w-xs mb-5">
