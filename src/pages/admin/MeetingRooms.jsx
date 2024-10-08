@@ -280,6 +280,7 @@ const MeetingRooms = () => {
                 setNewRoom={setNewRoom}
                 roomTypes={roomTypes}
                 errors={errors}
+                setErrors={setErrors}
                 modalLoading={modalLoading}
                 handleSubmit={handleRoomSubmit}
                 resetForm={resetRoomForm}
@@ -290,6 +291,7 @@ const MeetingRooms = () => {
                 newRoomType={newRoomType}
                 setNewRoomType={setNewRoomType}
                 errors={errors}
+                setErrors={setErrors}
                 modalLoading={modalLoading}
                 handleSubmit={handleRoomTypeSubmit}
                 resetForm={resetRoomTypeForm}
