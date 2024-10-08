@@ -313,10 +313,41 @@ const TenantService = {
     }
   },
 
-  initiateBookingRequest: async (bookingData) => {
-    
+  getRooms: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/tenant/rooms`, {
+        withCredentials: true,
+      });
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
   },
 
+  getBookings: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/tenant/rooms/booking`, {
+        withCredentials: true,
+      });
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  getAllBookings: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/tenant/rooms/booking/all`, {
+        withCredentials: true,
+      });
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default TenantService;

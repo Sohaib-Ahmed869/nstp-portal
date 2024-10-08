@@ -568,6 +568,32 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },
+
+  addRoom: async (towerId, room) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/admin/room/add`,
+        {
+          towerId,
+          name: room.name,
+          typeId: room.roomType,
+          floor: room.floor,
+          timeStart: room.startTime,
+          timeEnd: room.endTime,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AdminService;

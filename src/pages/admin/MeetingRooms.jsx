@@ -39,7 +39,6 @@ const MeetingRooms = () => {
         floor: '',
         startTime: '',
         endTime: '',
-        seatingCapacity: '',
         roomType: '',
     });
     const [newRoomType, setNewRoomType] = useState({
@@ -140,8 +139,9 @@ const MeetingRooms = () => {
                 }
 
                 console.log("Add room response:", response.data);
+                showToast(true, response.message);
 
-                // // add new room to the list
+                // add new room to the list
                 // const newRoomReturned = {
                 //     id: response.data.room._id,
                 //     name: response.data.room.name,
@@ -149,10 +149,9 @@ const MeetingRooms = () => {
                 //     startTime: response.data.room.time_start,
                 //     endTime: response.data.room.time_end,
                 //     photoUrl: getRandomPhotoUrl(),
-                //     type: response.data.room.type_name,
+                //     roomType: response.data.room.type,
                 // }
 
-                // const newRoomWithId = { ...newRoom, id: Date.now().toString() };
                 // setMeetingRooms(prevRooms => [...prevRooms, newRoomWithId]);
             }
 
@@ -203,9 +202,6 @@ const MeetingRooms = () => {
                 }
                 //add to list
                 setRoomTypes(prevTypes => [...prevTypes, newRoomTypeReturned]);
-                
-
-
             }
 
             resetRoomTypeForm();

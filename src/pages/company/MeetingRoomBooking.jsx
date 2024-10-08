@@ -7,6 +7,7 @@ import NSTPLoader from '../../components/NSTPLoader';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { CalendarDateRangeIcon, PlusCircleIcon, InformationCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import MeetingRoomBookingTable from '../../components/MeetingRoomBookingTable';
+import { TenantService } from '../../services';
 
 export const MeetingRoomBooking = () => {
     const [events, setEvents] = useState([
@@ -41,10 +42,42 @@ export const MeetingRoomBooking = () => {
     const [newBooking, setNewBooking] = useState({ date: '', startTime: '', endTime: '', roomId: '' });
 
     useEffect(() => {
-        setTimeout(() => {
-            setLoading(false);
-            setCalendarLoading(false);
-        }, 2000);
+        async function fetchData() {
+            try{
+                const roomsResponse = await TenantService.getRooms();
+                console.log("Rooms response: ", roomsResponse);
+                if(roomsResponse.error) {
+                    console.log(roomsResponse.message);
+                    return;
+                }
+                console.log("Rooms: ", roomsResponse.data.rooms);
+
+                // set rooms
+                
+                const bookingsResponse = await TenantService.getAllBookings();
+                console.log("Bookings response: ", bookingsResponse);
+                if(bookingsResponse.error) {
+                    console.log(bookingsResponse.message);
+                    return;
+                }
+                console.log("Bookings: ", bookingsResponse.data.bookings);
+
+                // set bookings
+
+            } catch (error) {
+                console.log("Error fetching rooms: ", error);
+            } finally {
+                setLoading(false);
+            }
+            
+        }
+
+        fetchData();
+
+        // setTimeout(() => {
+        //     setLoading(false);
+        //     setCalendarLoading(false);
+        // }, 2000);
     }, []);
 
     useEffect(() => {
