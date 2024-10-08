@@ -13,13 +13,7 @@ import { formatDate } from '../../util/date'
 const MeetingRoomBooking = () => {
 
     //these events are approved meetings with respect to a particular room
-    const [events, setEvents] = useState([
-        { title: 'Hexler', start: new Date(2024, 8, 1, 10, 0), end: new Date(2024, 8, 1, 12, 0) },
-        { title: 'InnoTech', start: new Date(2024, 8, 5, 14, 0), end: new Date(2024, 8, 5, 15, 0) },
-        { title: 'PinkFly', start: new Date(2024, 9, 11, 14, 0), end: new Date(2024, 9, 11, 15, 0) },
-        { title: 'Zanbeel', start: new Date(2024, 8, 7, 14, 0), end: new Date(2024, 8, 7, 15, 0) },
-        { title: 'Vyro', start: new Date(2024, 9, 12, 9, 0), end: new Date(2024, 9, 12, 10, 0) },
-    ]);
+    const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [calendarLoading, setCalendarLoading] = useState(true);
     const [selectedRoom, setSelectedRoom] = useState('1');
@@ -32,18 +26,7 @@ const MeetingRoomBooking = () => {
     ]);
 
     //this is the overall schedule of all requests for rooms which may be pending or approved or unapproved
-    const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([
-        { bookingId: "1", roomNo: 'MT-234', company: 'HexlerTech', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
-        { bookingId: "2", roomNo: 'MS-224', company: 'HexlerTech', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-        { bookingId: "3", roomNo: 'MS-234', company: 'HexlerTech', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-        { bookingId: "5", roomNo: 'MS-444', company: 'InnoSolution', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-        { bookingId: "6", roomNo: 'MS-994', company: 'HexlerTech', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-        { bookingId: "7c", roomNo: 'MS-214', company: 'PinkFly', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-        { bookingId: "8", roomNo: 'MT-214', company: 'Zambeel Tecch', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
-        { bookingId: "9h", roomNo: 'MS-334', company: 'HexlerTech', status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-        { bookingId: "10", roomNo: 'MS-334', company: 'HexlerTech', status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-
-    ]);
+    const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([ ]);
 
     useEffect(() => {
         //Api call here to fetch data and populate the above states initially
