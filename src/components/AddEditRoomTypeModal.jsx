@@ -50,7 +50,8 @@ const AddEditRoomTypeModal = ({
         </form>
         <h3 className="font-bold text-lg mb-4">{isEditMode ? 'Edit Room Type' : 'Add New Room Type'}</h3>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <FloatingLabelInput
+            <div className="flex gap-4">
+                <FloatingLabelInput
             label="Room Type Name"
             name="name"
             value={newRoomType.name}
@@ -64,7 +65,8 @@ const AddEditRoomTypeModal = ({
             value={newRoomType.capacity}
             onChange={handleInputChange}
             error={errors.capacity}
-          />
+          /></div>
+         
           
           <div className="overflow-x-auto">
     <table className="table w-full">

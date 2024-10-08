@@ -33,7 +33,7 @@ const RoomList = ({ rooms, onEdit, onDelete }) => {
                     </div>
                     <div className='flex items-center gap-3 mb-3'>
                         <img
-                            src={getRandomPhotoUrl()}
+                            src={room.photoUrl}
                             alt="Meeting Room"
                             className="size-20 rounded-full object-cover"
                         />
