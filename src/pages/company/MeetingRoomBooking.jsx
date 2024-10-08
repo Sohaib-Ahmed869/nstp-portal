@@ -80,11 +80,6 @@ export const MeetingRoomBooking = () => {
         }
 
         fetchData();
-
-        // setTimeout(() => {
-        //     setLoading(false);
-        //     setCalendarLoading(false);
-        // }, 2000);
     }, []);
 
     useEffect(() => {

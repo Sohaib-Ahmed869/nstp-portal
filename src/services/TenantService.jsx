@@ -348,6 +348,46 @@ const TenantService = {
       return await handleResponse(error.response);
     }
   },
+
+  requestRoomBooking: async (bookingBody) => {
+    try {
+      const date = new Date(bookingBody.date);
+      // start time and end time should have the date given in the date field
+      let startTime = new Date(bookingBody.startTime);
+      startTime.setFullYear(date.getFullYear());
+      startTime.setMonth(date.getMonth());
+      startTime.setDate(date.getDate());
+
+      console.log("🚀 ~ requestRoomBooking ~ startTime", startTime);
+
+      let endTime = new Date(bookingBody.endTime);
+      endTime.setFullYear(date.getFullYear());
+      endTime.setMonth(date.getMonth());
+      endTime.setDate(date.getDate());
+
+      console.log("🚀 ~ requestRoomBooking ~ endTime", endTime);
+
+      const response = await axios.post(
+        `${BASE_URL}/tenant/room/bookings/request`,
+        {
+          roomId: bookingBody.roomId,
+          timeStart: startTime,
+          timeEnd: endTime,
+          reasonBooking: bookingBody.reason,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default TenantService;
