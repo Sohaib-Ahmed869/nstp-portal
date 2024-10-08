@@ -325,9 +325,9 @@ const TenantService = {
     }
   },
 
-  getBookings: async () => {
+  getRoomBookings: async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/tenant/rooms/booking`, {
+      const response = await axios.get(`${BASE_URL}/tenant/room/bookings`, {
         withCredentials: true,
       });
 
@@ -337,9 +337,9 @@ const TenantService = {
     }
   },
 
-  getAllBookings: async () => {
+  getAllRoomBookings: async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/tenant/rooms/booking/all`, {
+      const response = await axios.get(`${BASE_URL}/tenant/room/bookings/all`, {
         withCredentials: true,
       });
 

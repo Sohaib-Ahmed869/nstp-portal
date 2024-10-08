@@ -594,6 +594,21 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },
+
+  getRoomBookings: async (towerId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/room/bookings`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AdminService;
