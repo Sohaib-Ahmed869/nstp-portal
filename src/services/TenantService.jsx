@@ -312,6 +312,11 @@ const TenantService = {
       return await handleResponse(error.response);
     }
   },
+
+  initiateBookingRequest: async (bookingData) => {
+    
+  },
+
 };
 
 export default TenantService;

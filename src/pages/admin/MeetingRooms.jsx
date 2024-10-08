@@ -132,6 +132,26 @@ const MeetingRooms = () => {
                 );
             } else {
 
+                const response = await AdminService.addRoom(tower.id, newRoom);
+                console.log("Add room response:", response);
+                if (response.error) {
+                    showToast(false, response.message);
+                    return;
+                }
+
+                console.log("Add room response:", response.data);
+
+                // // add new room to the list
+                // const newRoomReturned = {
+                //     id: response.data.room._id,
+                //     name: response.data.room.name,
+                //     floor: response.data.room.floor,
+                //     startTime: response.data.room.time_start,
+                //     endTime: response.data.room.time_end,
+                //     photoUrl: getRandomPhotoUrl(),
+                //     type: response.data.room.type_name,
+                // }
+
                 // const newRoomWithId = { ...newRoom, id: Date.now().toString() };
                 // setMeetingRooms(prevRooms => [...prevRooms, newRoomWithId]);
             }
@@ -153,7 +173,7 @@ const MeetingRooms = () => {
 
         try {
             // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            // await new Promise(resolve => setTimeout(resolve, 2000));
 
             if (isEditMode) {
                 setRoomTypes(prevTypes =>
