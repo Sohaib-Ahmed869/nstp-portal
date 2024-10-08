@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
-import { PlusCircleIcon, PencilIcon, ChevronRightIcon, MagnifyingGlassIcon, TrashIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
+import { PlusCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
+import RoomList from '../../components/RoomList';
+import RoomTypeList from '../../components/RoomTypeList';
+import AddEditRoomModal from '../../components/AddEditRoomModal.jsx';
+import AddEditRoomTypeModal from '../../components/AddEditRoomTypeModal';
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 
 const DUMMY_PHOTO_URLS = [
     "https://media.istockphoto.com/id/1363105039/photo/businesspeople-do-video-conference-call-with-big-wall-tv-in-office-meeting-room-diverse-team.jpg?s=612x612&w=0&k=20&c=o7UjhyG3YmLj7jTtSdMkN-K_tE4HSfAq9wWdhiRDFAA=",
@@ -11,357 +16,363 @@ const DUMMY_PHOTO_URLS = [
     "https://t4.ftcdn.net/jpg/00/80/91/11/360_F_80911186_RoBCsyLrNTrG7Y1EOyCsaCJO5DyHgTox.jpg",
 ]
 
+const getRandomPhotoUrl = () => {
+    return DUMMY_PHOTO_URLS[Math.floor(Math.random() * DUMMY_PHOTO_URLS.length)];
+};
+
+
 const MeetingRooms = () => {
     const [loading, setLoading] = useState(true);
     const [meetingRooms, setMeetingRooms] = useState([]);
-    const [expandedRoomId, setExpandedRoomId] = useState(null);
+    const [roomTypes, setRoomTypes] = useState([]);
     const [modalLoading, setModalLoading] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [currentRoomId, setCurrentRoomId] = useState(null);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [currentRoomTypeId, setCurrentRoomTypeId] = useState(null);
+    const [roomSearchQuery, setRoomSearchQuery] = useState('');
+    const [roomTypeSearchQuery, setRoomTypeSearchQuery] = useState('');
     const [errors, setErrors] = useState({});
-
-    // State for form fields
     const [newRoom, setNewRoom] = useState({
         name: '',
         floor: '',
         startTime: '',
         endTime: '',
         seatingCapacity: '',
+        roomType: '',
+    });
+    const [newRoomType, setNewRoomType] = useState({
+        name: '',
+        capacity: '',
+        rate_list: [
+            {
+                category: 'company',
+                rates: [
+                    { rate_type: 'per_hour', rate: '' },
+                    { rate_type: 'per_day', rate: '' },
+                    { rate_type: 'under_4_hours', rate: '' },
+                ],
+            },
+            {
+                category: 'startup',
+                rates: [
+                    { rate_type: 'per_hour', rate: '' },
+                    { rate_type: 'per_day', rate: '' },
+                    { rate_type: 'under_4_hours', rate: '' },
+                ],
+            },
+        ],
     });
 
-    const validateTime = (time) => {
-        const regex = /^([01]?\d|2[0-3]?):?([0-5]?\d?)$/;
-        return regex.test(time);
-    };
+    useEffect(() => {
+        fetchData();
+    }, []);
 
-    const isCompleteTime = (time) => {
-        const completeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-        return completeRegex.test(time);
-    };
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
+    const fetchData = async () => {
+        try {
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
-        if ((name === 'startTime' || name === 'endTime') && !validateTime(value)) {
-            setErrors((prevErrors) => ({
-                ...prevErrors,
-                [name]: 'Invalid time format',
-            }));
-            return;
-        }
+            // Dummy data for meeting rooms
+            const dummyRooms = [
+                { id: "1", name: "Room A", floor: 1, startTime: "11:20", endTime: "12:00", photoUrl: getRandomPhotoUrl() },
+                { id: "2", name: "Room B", floor: 4, startTime: "09:00", endTime: "03:00", photoUrl: getRandomPhotoUrl() },
+            ];
+            setMeetingRooms(dummyRooms);
 
-        if ((name === 'startTime' || name === 'endTime') && isCompleteTime(value)) {
-            setErrors((prevErrors) => ({
-                ...prevErrors,
-                [name]: '',
-            }));
-        }
-
-        setNewRoom((prevRoom) => ({
-            ...prevRoom,
-            [name]: value,
-        }));
-    };
-
-
-    // Function to handle form submission for editing a room
-    const saveEditedRoom = () => {
-        setModalLoading(true);
-        setTimeout(() => {
-            setMeetingRooms((prevRooms) =>
-                prevRooms.map((room) =>
-                    room.id === currentRoomId
-                        ? { ...room, ...newRoom }
-                        : room
-                )
-            );
-
-            setModalLoading(false);
-            document.getElementById('add_room_form').close();
-            resetForm();
-        }, 2000);
-    };
-
-    // Function to handle form submission for adding a new room
-    const handleSubmit = () => {
-        setModalLoading(true);
-        setTimeout(() => {
-            console.log(newRoom);
-            // Append to the meeting rooms array
-            setMeetingRooms((prevRooms) => [
-                ...prevRooms,
+            // Dummy data for room types
+            const dummyRoomTypes = [
                 {
-                    id: (prevRooms.length + 1).toString(),
-                    name: newRoom.name,
-                    type: newRoom.type,
-                    floor: newRoom.floor,
-                    startTime: newRoom.startTime,
-                    endTime: newRoom.endTime,
-                    seatingCapacity: newRoom.seatingCapacity,
-                    photoUrl: getRandomPhotoUrl(),
+                    id: "1",
+                    name: "Conference Room",
+                    capacity: 50,
+                    rate_list: [
+                        {
+                            category: "company",
+                            rates: [
+                                { rate_type: "per_hour", rate: 100 },
+                                { rate_type: "per_day", rate: 1200 },
+                                { rate_type: "under_4_hours", rate: 500 },
+                            ],
+                        },
+                        {
+                            category: "startup",
+                            rates: [
+                                { rate_type: "per_hour", rate: 80 },
+                                { rate_type: "per_day", rate: 1000 },
+                                { rate_type: "under_4_hours", rate: 400 },
+                            ],
+                        },
+                    ],
                 },
-            ]);
+                // Add more dummy room types as needed
+            ];
+            setRoomTypes(dummyRoomTypes);
 
-            setModalLoading(false);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            setLoading(false);
+        }
+    };
+
+    const handleRoomSubmit = async (e) => {
+        e.preventDefault();
+        setModalLoading(true);
+        console.log("Submitting room data:", newRoom);
+
+        try {
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            if (isEditMode) {
+                setMeetingRooms(prevRooms =>
+                    prevRooms.map(room =>
+                        room.id === currentRoomId ? { ...room, ...newRoom } : room
+                    )
+                );
+            } else {
+                const newRoomWithId = { ...newRoom, id: Date.now().toString() };
+                setMeetingRooms(prevRooms => [...prevRooms, newRoomWithId]);
+            }
+
+            resetRoomForm();
             document.getElementById('add_room_form').close();
-            resetForm();
-        }, 2000);
+        } catch (error) {
+            console.error("Error submitting room data:", error);
+            setErrors({ submit: "Failed to submit room data. Please try again." });
+        } finally {
+            setModalLoading(false);
+        }
     };
 
-    // Function to handle form cancellation
-    const handleCancel = () => {
-        resetForm();
-        document.getElementById('add_room_form').close();
+    const handleRoomTypeSubmit = async (e) => {
+        e.preventDefault();
+        setModalLoading(true);
+        console.log("Submitting room type data:", newRoomType);
+
+        try {
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            if (isEditMode) {
+                setRoomTypes(prevTypes =>
+                    prevTypes.map(type =>
+                        type.id === currentRoomTypeId ? { ...type, ...newRoomType } : type
+                    )
+                );
+            } else {
+                const newRoomTypeWithId = { ...newRoomType, id: Date.now().toString() };
+                setRoomTypes(prevTypes => [...prevTypes, newRoomTypeWithId]);
+            }
+
+            resetRoomTypeForm();
+            document.getElementById('add_room_type_form').close();
+        } catch (error) {
+            console.error("Error submitting room type data:", error);
+            setErrors({ submit: "Failed to submit room type data. Please try again." });
+        } finally {
+            setModalLoading(false);
+        }
     };
 
+    const handleDeleteRoom = async (roomId) => {
+        setModalLoading(true);
+        try {
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            setMeetingRooms(prevRooms => prevRooms.filter(room => room.id !== roomId));
+            document.getElementById('delete_room_modal').close();
+        } catch (error) {
+            console.error("Error deleting room:", error);
+            setErrors({ delete: "Failed to delete room. Please try again." });
+        } finally {
+            setModalLoading(false);
+        }
+    };
 
-    // Function to reset form fields
-    const resetForm = () => {
+    const handleDeleteRoomType = async (roomTypeId) => {
+        setModalLoading(true);
+        try {
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            setRoomTypes(prevTypes => prevTypes.filter(type => type.id !== roomTypeId));
+            document.getElementById('delete_room_type_modal').close();
+        } catch (error) {
+            console.error("Error deleting room type:", error);
+            setErrors({ delete: "Failed to delete room type. Please try again." });
+        } finally {
+            setModalLoading(false);
+        }
+    };
+
+    const resetRoomForm = () => {
         setNewRoom({
             name: '',
             floor: '',
             startTime: '',
             endTime: '',
             seatingCapacity: '',
+            roomType: '',
         });
         setIsEditMode(false);
         setCurrentRoomId(null);
+        setErrors({});
     };
 
-
-    // Function to handle edit button click
-    const handleEdit = (roomId) => {
-        const roomToEdit = meetingRooms.find(room => room.id === roomId);
-        setNewRoom({
-            name: roomToEdit.name,
-            floor: roomToEdit.floor,
-            startTime: roomToEdit.startTime,
-            endTime: roomToEdit.endTime,
-            seatingCapacity: roomToEdit.seatingCapacity,
+    const resetRoomTypeForm = () => {
+        setNewRoomType({
+            name: '',
+            capacity: '',
+            rate_list: [
+                {
+                    category: 'company',
+                    rates: [
+                        { rate_type: 'per_hour', rate: '' },
+                        { rate_type: 'per_day', rate: '' },
+                        { rate_type: 'under_4_hours', rate: '' },
+                    ],
+                },
+                {
+                    category: 'startup',
+                    rates: [
+                        { rate_type: 'per_hour', rate: '' },
+                        { rate_type: 'per_day', rate: '' },
+                        { rate_type: 'under_4_hours', rate: '' },
+                    ],
+                },
+            ],
         });
-        setIsEditMode(true);
-        setCurrentRoomId(roomId);
-        document.getElementById('add_room_form').showModal();
+        setIsEditMode(false);
+        setCurrentRoomTypeId(null);
+        setErrors({});
     };
-
-    const handleDelete = (roomId) => {
-        setModalLoading(true);
-        setTimeout(() => {
-            setMeetingRooms((prevRooms) => prevRooms.filter(room => room.id !== roomId));
-            setModalLoading(false);
-            document.getElementById('delete_room_modal').close();
-        }, 2000);
-
-        console.log(`Delete room with id: ${roomId}`);
-    };
-
-    const toggleExpand = (roomId) => {
-        setExpandedRoomId(expandedRoomId === roomId ? null : roomId);
-    };
-
-    const filteredRooms = meetingRooms.filter(room =>
-        room.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        room.type.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    const getRandomPhotoUrl = () => {
-        return DUMMY_PHOTO_URLS[Math.floor(Math.random() * DUMMY_PHOTO_URLS.length)];
-    };
-
-
-    useEffect(() => {
-        // Api call here to fetch data and populate the above states
-        // Dummy data for meeting rooms with photo URLs
-        setMeetingRooms([
-            { id: "1", name: "Room A", floor: 1, startTime: "11:20", endTime: "12:00", seatingCapacity: 50, photoUrl: getRandomPhotoUrl() },
-            { id: "2", name: "Room B", floor: 4, startTime: "09:00", endTime: "03:00", seatingCapacity: 10, photoUrl: getRandomPhotoUrl() },
-        ]);
-
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000);
-    }, []);
 
     return (
         <Sidebar>
             {loading && <NSTPLoader />}
 
-            {/* Add/Edit Room Modal */}
-            <dialog id="add_room_form" className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg mb-4">{isEditMode ? 'Edit Room' : 'Add New Room'}</h3>
-                    <FloatingLabelInput
-                        name="name"
-                        type="text"
-                        id="room_name"
-                        label="Room Name"
-                        value={newRoom.name}
-                        onChange={handleInputChange}
-                    />
-                    <FloatingLabelInput
-                        name="floor"
-                        type="number"
-                        id="room_floor"
-                        label="Floor"
-                        value={newRoom.floor}
-                        onChange={handleInputChange}
-                    />
-                    <div className="flex gap-4">
-                        <div className="flex w-1/2 flex-col">
-                            <FloatingLabelInput
-                                name="startTime"
-                                type="text"
-                                id="start_time"
-                                label="Opening Time (HH:MM)"
-                                value={newRoom.startTime}
-                                onChange={handleInputChange}
-                            />
-                            {errors.startTime && <p className="text-red-500 -mt-5 text-sm">{errors.startTime}</p>}
-                        </div>
-                        <div className="flex flex-col w-1/2">
-                            <FloatingLabelInput
-                                name="endTime"
-                                type="text"
-                                id="end_time"
-                                label="Closing Time (HH:MM)"
-                                value={newRoom.endTime}
-                                onChange={handleInputChange}
-                            />
-                            {errors.endTime && <p className="text-red-500 -mt-5 text-sm">{errors.endTime}</p>}
-                        </div>
-                    </div>
-                    <FloatingLabelInput
-                        name="seatingCapacity"
-                        type="number"
-                        id="seating_capacity"
-                        label="Seating Capacity"
-                        value={newRoom.seatingCapacity}
-                        onChange={handleInputChange}
-                    />
-                    <div className="modal-action">
-                        <button className="btn" onClick={handleCancel}>Cancel</button>
-                        <button
-                            className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
-                            onClick={isEditMode ? saveEditedRoom : handleSubmit}
-                        >
-                            {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}
-                        </button>
-                    </div>
-                </div>
-            </dialog>
+            <AddEditRoomModal
+                isEditMode={isEditMode}
+                newRoom={newRoom}
+                setNewRoom={setNewRoom}
+                roomTypes={roomTypes}
+                errors={errors}
+                modalLoading={modalLoading}
+                handleSubmit={handleRoomSubmit}
+                resetForm={resetRoomForm}
+            />
 
-            {/** confirmation modal for deletion of room */}
-            <dialog id="delete_room_modal" className="modal">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg mb-3">Delete Room</h3>
-                    <p>Are you sure you want to delete this room?</p>
-                    <div role="alert" className="alert my-2">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6 shrink-0 stroke-current"
-                            fill="none"
-                            viewBox="0 0 24 24">
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
-                        <span>Warning: This action may result in unexpected behaviour or consequences</span>
-                    </div>
-                    <div className="modal-action">
-                        <button className="btn btn-outline" onClick={() => document.getElementById('delete_room_modal').close()}>Cancel</button>
-                        <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={() => { handleDelete(currentRoomId); }}>
-                            {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}
-                        </button>
-                    </div>
-                </div>
-            </dialog>
+            <AddEditRoomTypeModal
+                isEditMode={isEditMode}
+                newRoomType={newRoomType}
+                setNewRoomType={setNewRoomType}
+                errors={errors}
+                modalLoading={modalLoading}
+                handleSubmit={handleRoomTypeSubmit}
+                resetForm={resetRoomTypeForm}
+            />
 
-            {/* Main Page Content */}
+            <DeleteConfirmationModal
+                id="delete_room_modal"
+                title="Delete Room"
+                message="Are you sure you want to delete this room?"
+                onConfirm={() => handleDeleteRoom(currentRoomId)}
+                modalLoading={modalLoading}
+            />
+
+            <DeleteConfirmationModal
+                id="delete_room_type_modal"
+                title="Delete Room Type"
+                message="Are you sure you want to delete this room type?"
+                onConfirm={() => handleDeleteRoomType(currentRoomTypeId)}
+                modalLoading={modalLoading}
+            />
+
             <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"}`}>
-                {/* Header + add new room btn */}
-                <div className="flex flex-row items-center justify-between">
-                    <h1 className="text-2xl font-bold">Meeting Rooms</h1>
-                    <button
-                        className="btn btn-primary text-white"
-                        onClick={() => {
-                            setIsEditMode(false);
-                            document.getElementById("add_room_form").showModal();
-                        }}
-                    >
-                        <PlusCircleIcon className="size-6" />
-                        Add New Room
-                    </button>
-                </div>
-                <hr className="my-5 text-gray-200" />
-
-                <div className="relative w-full md:max-w-xs mb-5">
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="input input-bordered w-full pl-10"
-                    />
-                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
-                </div>
-                <div className="flex flex-col gap-5">
-                    {filteredRooms.map((room) => (
-                        <div
-                            key={room.id}
-                            className={`relative card p-5 rounded-lg transition-all duration-300 ${expandedRoomId === room.id ? 'transform scale-95' : ''}`}
+                <div className="flex flex-col md:flex-row items-center justify-between mb-5">
+                    <h1 className="text-2xl font-bold">Meeting Room Management</h1>
+                    <div className='flex flex-col lg:flex-row gap-2'>
+                        <button
+                            className="btn btn-secondary text-white"
+                            onClick={() => {
+                                setIsEditMode(false);
+                                document.getElementById("add_room_type_form").showModal();
+                            }}
                         >
-                            <div className="absolute top-0 p-3 rounded-tr-md rounded-br-md right-0 h-full bg-primary flex items-center justify-center cursor-pointer" onClick={() => toggleExpand(room.id)}>
-                                <ChevronRightIcon className={`size-6 text-base-100 transition-transform duration-300 ${expandedRoomId === room.id ? 'rotate-180' : ''}`} />
-                            </div>
-                            <div className='flex items-center gap-3 mb-3'>
-                                <img
-                                    src={room.photoUrl}
-                                    alt="Meeting Room"
-                                    className="size-20 rounded-full object-cover"
-                                />
-                                <h1 className='text-xl font-semibold border-r border-r-gray-200 pr-4 ml-3'>{room.name}</h1>
-                                <p className='text-gray-500'>{"Floor " + room.floor}</p>
-                            </div>
-                            {expandedRoomId === room.id && (
-                                <div className="flex flex-col">
-                                    <div>
-                                        <p>Room timings: {room.startTime} - {room.endTime}</p>
-                                        <p>Seating capacity: {room.seatingCapacity}</p>
-                                    </div>
-                                    <div className="flex gap-2 mt-3">
-                                        <Link to="/admin/bookings" className="btn btn-primary text-base-100">
-                                            <CalendarDaysIcon className='size-5' />
-                                            View Bookings
-                                        </Link>
-                                        <button
-                                            className='btn btn-outline btn-secondary text-white'
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleEdit(room.id);
-                                            }}
-                                        >
-                                            <PencilIcon className='size-5' />
-                                            Edit
-                                        </button>
+                            <PlusCircleIcon className="size-6" />
+                            Add New Room Type
+                        </button>
+                        <button
+                            className="btn btn-primary text-white"
+                            onClick={() => {
+                                setIsEditMode(false);
+                                document.getElementById("add_room_form").showModal();
+                            }}
+                        >
+                            <PlusCircleIcon className="size-6" />
+                            Add New Room
+                        </button>
+                    </div>
+                </div>
 
-                                        <button
-                                            className='btn btn-outline btn-error text-white'
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                document.getElementById('delete_room_modal').showModal();
-                                                setCurrentRoomId(room.id);
-                                            }}
-                                        >
-                                            <TrashIcon className='size-5' />
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
+                <div className="flex flex-col gap-5">
+                    <div className="flex-1">
+                        <h2 className="text-xl font-semibold mb-3">Meeting Rooms</h2>
+                        <div className="relative w-full md:max-w-xs mb-5">
+                            <input
+                                type="text"
+                                placeholder="Search rooms..."
+                                value={roomSearchQuery}
+                                onChange={(e) => setRoomSearchQuery(e.target.value)}
+                                className="input input-bordered w-full pl-10"
+                            />
+                            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                         </div>
-                    ))}
+                        <RoomList
+                            rooms={meetingRooms.filter(room =>
+                                room.name.toLowerCase().includes(roomSearchQuery.toLowerCase()) ||
+                                room.type?.toLowerCase().includes(roomSearchQuery.toLowerCase())
+                            )}
+                            onEdit={(room) => {
+                                setNewRoom(room);
+                                setIsEditMode(true);
+                                setCurrentRoomId(room.id);
+                                document.getElementById("add_room_form").showModal();
+                            }}
+                            onDelete={(roomId) => {
+                                setCurrentRoomId(roomId);
+                                document.getElementById('delete_room_modal').showModal();
+                            }}
+                        />
+                    </div>
+                    <div className="flex-1">
+                        <h2 className="text-xl font-semibold mb-3">Room Types</h2>
+                        <div className="relative w-full md:max-w-xs mb-5">
+                            <input
+                                type="text"
+                                placeholder="Search room types..."
+                                value={roomTypeSearchQuery}
+                                onChange={(e) => setRoomTypeSearchQuery(e.target.value)}
+                                className="input input-bordered w-full pl-10"
+                            />
+                            <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+                        </div>
+                        <RoomTypeList
+                            roomTypes={roomTypes.filter(type =>
+                                type.name.toLowerCase().includes(roomTypeSearchQuery.toLowerCase())
+                            )}
+                            onEdit={(roomType) => {
+                                setNewRoomType(roomType);
+                                setIsEditMode(true);
+                                setCurrentRoomTypeId(roomType.id);
+                                document.getElementById("add_room_type_form").showModal();
+                            }}
+                            onDelete={(roomTypeId) => {
+                                setCurrentRoomTypeId(roomTypeId);
+                                document.getElementById('delete_room_type_modal').showModal();
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
         </Sidebar>
