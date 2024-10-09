@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { InformationCircleIcon, XCircleIcon, CalendarDaysIcon, AdjustmentsHorizontalIcon, MagnifyingGlassIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
+import { InformationCircleIcon, XCircleIcon, CalendarDaysIcon, AdjustmentsHorizontalIcon, MagnifyingGlassIcon, ExclamationCircleIcon, HandThumbUpIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
 import { TenantService, ReceptionistService } from '../services';
 import showToast from '../util/toast';
@@ -8,7 +8,6 @@ import { AuthContext } from '../context/AuthContext';
 
 const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComponent = false, setMeetingRoomSchedule }) => {
     const [meetingToCancel, setMeetingToCancel] = useState();
-    const [approveLoading, setApproveLoading] = useState(false);
     const [meetingCancellationReason, setMeetingCancellationReason] = useState("The meeting was not approved because the room was already booked for the same time slot.");
     const [modalLoading, setModalLoading] = useState(false);
     const [sortField, setSortField] = useState(null);
@@ -21,9 +20,6 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
 
     const { role } = useContext(AuthContext);
 
-    useEffect(() => {
-        setSortField('dateBooked');
-    }, [meetingRoomSchedule]);
 
     const cancelMeeting = async (meetingId) => {
         setModalLoading(true);
@@ -36,7 +32,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                 response = await ReceptionistService.cancelRoomBooking(meetingId);
             }
 
-            if(response.error) {
+            if (response.error) {
                 console.log(response.error);
                 showToast(false, response.error);
             }
@@ -46,26 +42,17 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
             // filter out the cancelled meeting from the list
 
             showToast(true, response.message);
-            } catch (error) {
+            //Close the form meeting_cancellation
+            setMeetingRoomSchedule(prevSchedule => prevSchedule.filter(booking => booking.id !== meetingId));
+
+        } catch (error) {
             console.error(error);
             showToast(false, "An error occurred while trying to cancel the meeting. Please try again later.");
         } finally {
             setModalLoading(false);
             document.getElementById('meeting_cancellation').close();
+            window.location.reload();
         }
-        
-        
-        // // Simulate API call with timer
-        // setTimeout(() => {
-        //     console.log(`Cancelling meeting with ID: ${meetingId}`);
-        //     setModalLoading(false);
-        //     document.getElementById('meeting_cancellation').close();
-        // }, 2000);
-    };
-
-    const fetchReasonForCancellation = (bookingId) => {
-        document.getElementById('meeting_unapproved_reason').showModal();
-        
     };
 
     const handleSortChange = (field) => {
@@ -116,39 +103,83 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
         console.log(response.data.booking);
         showToast(true, response.message);
         setModalLoading(false);
-        document.getElementById('meeting_cancellation').close();
+        !approval ? document.getElementById('meeting_rejection').close() : document.getElementById('confirm_approve_meeting').close();
         //update the meetingRoomSchedule
         //the boking with the meetingId should be updated with the new status , "Rejected" or "Approved" based on approval being true or false
-        setMeetingRoomSchedule( meetingRoomSchedule.map((booking) => {
-            if (booking.id === meetingId) {
-                booking.status = approval ? "Approved" : "Rejected";
-            }
-            return booking;
-        }))
+        setMeetingRoomSchedule(prevSchedule => 
+            prevSchedule.map((booking) => {
+                if (booking.id === meetingId) {
+                    return {
+                        ...booking,
+                        status: approval ? "Approved" : "Rejected"
+                    };
+                }
+                return booking;
+            })
+        );
+        window.location.reload();
     }
 
     return (
-        <>    {/* modal with confirmation for meeting room cancellation */}
+        <>    {/* modal with confirmation for meeting room rejecting request*/}
+            <dialog
+                id="meeting_rejection"
+                className="modal modal-bottom sm:modal-middle"
+            >
+                <div className="modal-box">
+                    <div className="flex gap-3">
+                        <ExclamationCircleIcon className="h-6 w-6 text-error" />
+                        <h3 className="font-bold text-lg">
+                            Are you sure you want to cancel this booking?
+                        </h3>
+                    </div>
+                    <p className="py-4">Please click "Yes" if you wish to cancel it.</p>
+                    {
+                        role == "receptionist" && (
+                            <>
+                                <p>Please provide the reason to the tenant for rejecting their booking request.</p>
+                                <textarea rows={5} className="input input-bordered w-full mt-2" value={reasonForRejection} onChange={(e) => setReasonForRejection(e.target.value)} placeholder="Reason for rejection"></textarea>
+                            </>
+                        )
+                    }
+                    <div className="modal-action">
+                        <button
+                            className={`btn mr-2 ${modalLoading && "btn-disabled"}`}
+                            onClick={() => {
+                                setMeetingToCancel(null);
+                                document.getElementById("meeting_rejection").close();
+                            }}
+                        >
+                            Close
+                        </button>
+                        <button
+                            className={`btn btn-error text-base-100 ${modalLoading && "btn-disabled"}`}
+                            onClick={() => { handleRoomBooking(meetingToCancel, false); }}
+                        >
+                            {modalLoading && (
+                                <span className="loading loading-spinner"></span>
+                            )}
+                            {modalLoading ? "Please wait..." : "Confirm"}
+                        </button>
+                    </div>
+                </div>
+            </dialog>
+
+            {/** cancel meeting (tenant can cancel pending to delete it, receptionist can cancel approved to make it rejected) */}
             <dialog
                 id="meeting_cancellation"
                 className="modal modal-bottom sm:modal-middle"
             >
                 <div className="modal-box">
-                   <div className="flex gap-3">
-                    <ExclamationCircleIcon className="h-6 w-6 text-error" />
-                     <h3 className="font-bold text-lg">
-                         Are you sure you want to cancel this booking?
-                     </h3>
-                   </div>
-                    <p className="py-4">Please click "Yes" if you wish to cancel it.</p>
-                    {
-                        role == "receptionist" && (
-                            <>
-                            <p>Please provide the reason to the tenant for rejecting their booking request.</p>
-                            <textarea rows={5} className="input input-bordered w-full mt-2" value={reasonForRejection} onChange={(e) => setReasonForRejection(e.target.value)} placeholder="Reason for rejection"></textarea>
-                            </>
-                        )
-                    }
+                    <div className="flex gap-3">
+                        <ExclamationCircleIcon className="h-6 w-6 text-error" />
+                        <h3 className="font-bold text-lg">
+                            Are you sure you want to cancel this booking?
+                        </h3>
+                    </div>
+                    <p className="py-4">Please click "Confirm" if you wish to cancel it.</p>
+
+
                     <div className="modal-action">
                         <button
                             className={`btn mr-2 ${modalLoading && "btn-disabled"}`}
@@ -161,7 +192,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                         </button>
                         <button
                             className={`btn btn-error text-base-100 ${modalLoading && "btn-disabled"}`}
-                            onClick={() => {  handleRoomBooking(meetingToCancel, false); }}
+                            onClick={() => { cancelMeeting(meetingToCancel); }}
                         >
                             {modalLoading && (
                                 <span className="loading loading-spinner"></span>
@@ -171,6 +202,45 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                     </div>
                 </div>
             </dialog>
+
+            {/** cancel meeting (tenant can cancel pending to delete it, receptionist can cancel approved to make it rejected) */}
+            <dialog
+                id="confirm_approve_meeting"
+                className="modal modal-bottom sm:modal-middle"
+            >
+                <div className="modal-box">
+                    <div className="flex gap-3">
+                        <HandThumbUpIcon className="h-6 w-6 text-primary" />
+                        <h3 className="font-bold text-lg">
+                            Approve this meeting request?
+                        </h3>
+                    </div>
+                    <p className="py-4">Please click "Confirm" if you wish to approve it.</p>
+
+
+                    <div className="modal-action">
+                        <button
+                            className={`btn mr-2 ${modalLoading && "btn-disabled"}`}
+                            onClick={() => {
+                                setMeetingToCancel(null);
+                                document.getElementById("confirm_approve_meeting").close();
+                            }}
+                        >
+                            Close
+                        </button>
+                        <button
+                            className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
+                            onClick={() => { handleRoomBooking(meetingToCancel, true); }}
+                        >
+                            {modalLoading && (
+                                <span className="loading loading-spinner"></span>
+                            )}
+                            {modalLoading ? "Please wait..." : "Confirm"}
+                        </button>
+                    </div>
+                </div>
+            </dialog>
+
 
             {/* modal with reason for unapproved meeting */}
             <dialog
@@ -262,13 +332,14 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                                         <td>{row.dateBooking}</td>
                                         <td>{row.time}</td>
                                         <td>
-                                            {row.status === 'Pending' ? (
-                                                role === 'receptionist' ? (
+                                            {(row.status === 'Pending' && role === "receptionist") ?
+                                                (
                                                     <>
                                                         <button
-                                                            className={`btn btn-sm btn-outline btn-primary mr-2 ${approveLoading && 'btn-disabled'} `}
+                                                            className={`btn btn-sm btn-outline btn-primary mr-2 `}
                                                             onClick={() => {
-                                                                handleRoomBooking(row.bookingId, true);
+                                                                setMeetingToCancel(row.bookingId); //just reusing the state not actually cancelling it
+                                                                document.getElementById('confirm_approve_meeting').showModal();
                                                             }}>
                                                             Approve
                                                         </button>
@@ -276,36 +347,38 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                                                             className="btn btn-sm btn-outline btn-error"
                                                             onClick={() => {
                                                                 setMeetingToCancel(row.bookingId);
-                                                                document.getElementById('meeting_cancellation').showModal();
+                                                                document.getElementById('meeting_rejection').showModal();
                                                             }}>
                                                             Reject
                                                         </button>
                                                     </>
 
-                                                ) : (
-                                                    <button
-                                                        className="btn btn-sm btn-outline btn-error"
-                                                        onClick={() => {
-                                                            setMeetingToCancel(row.bookingId);
-                                                            document.getElementById('meeting_cancellation').showModal();
-                                                        }}>
-                                                        <XCircleIcon className="h-5 w-5" />
-                                                        Cancel
-                                                    </button>
-                                                )
-                                            ) : row.status === 'Rejected' && role !== 'receptionist' ? (
-                                                <button
-                                                    className="btn btn-sm btn-outline btn-neutral"
-                                                    onClick={() => {
-                                                        fetchReasonForCancellation(row.bookingId);
-                                                        setMeetingCancellationReason(row.reasonDecline || "Unknown");
-                                                    }}>
-                                                    <InformationCircleIcon className="h-5 w-5" />
-                                                    Reason
-                                                </button>
-                                            ) : (
-                                                <></>
-                                            )}
+                                                ) :
+                                                ((row.status === "Approved" && role === "receptionist") || (row.status === "Pending" && role === "tenant")) ?
+                                                    (
+                                                        <button
+                                                            className="btn btn-sm btn-outline btn-error"
+                                                            onClick={() => {
+                                                                setMeetingToCancel(row.bookingId);
+                                                                document.getElementById('meeting_cancellation').showModal();
+                                                            }}>
+                                                            <XCircleIcon className="h-5 w-5" />
+                                                            Cancel
+                                                        </button>
+                                                    )
+                                                    : row.status === 'Rejected' && role !== 'receptionist' ? (
+                                                        <button
+                                                            className="btn btn-sm btn-outline btn-neutral"
+                                                            onClick={() => {
+                                                                setMeetingCancellationReason(row.reasonDecline || "Unknown");
+                                                                document.getElementById('meeting_unapproved_reason').showModal();
+                                                           }}>
+                                                            <InformationCircleIcon className="h-5 w-5" />
+                                                            Reason
+                                                        </button>
+                                                    ) : (
+                                                        <></>
+                                                    )}
                                         </td>
                                     </tr>
                                 ))}
@@ -318,13 +391,13 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                 {!dashboardComponent && meetingRoomSchedule.length > rowsPerPage && (
                     <div className="flex justify-between mt-4">
                         <button
-                            className="btn btn-ghost"
+                            className="btn btn-outline"
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1}>
                             Previous
                         </button>
                         <button
-                            className="btn btn-ghost"
+                            className="btn btn-outline"
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === Math.ceil(filteredData.length / rowsPerPage)}
                         >

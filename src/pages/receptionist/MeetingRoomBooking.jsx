@@ -9,6 +9,7 @@ import { CalendarDateRangeIcon } from '@heroicons/react/20/solid';
 import MeetingRoomBookingTable from '../../components/MeetingRoomBookingTable';
 import { ReceptionistService } from '../../services';
 import { formatDate } from '../../util/date'
+import { PresentationChartLineIcon } from '@heroicons/react/24/outline';
 
 const MeetingRoomBooking = () => {
     //these events are approved meetings with respect to a particular room
@@ -139,9 +140,9 @@ const MeetingRoomBooking = () => {
             <div className={`bg-base-100 mt-5  ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && 'hidden'}`}>
 
                 {/* Header (Title, toggles etc) */}
-                <div className="flex items-center justify-between">
-                    <h1 className='text-2xl font-semibold mb-5 '>Meeting Room Booking Schedule</h1>
-
+                <div className="flex items-center mb-5 gap-3">
+                    <PresentationChartLineIcon className="size-11 text-primary" />
+                    <h1 className='text-2xl font-semibold '>Meeting Room Booking Schedule</h1>
                 </div>
                 <hr className="my-5 text-gray-200"></hr>
 

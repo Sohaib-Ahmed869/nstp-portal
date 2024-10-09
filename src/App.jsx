@@ -8,6 +8,7 @@ import ErrorPage from './pages/ErrorPage.jsx';
 
 // Admin Pages
 import AdminHome from './pages/admin/AdminHome.jsx';
+import Clearance from './pages/admin/Clearance.jsx';
 import CompanyAddition from './pages/admin/CompanyAddition.jsx';
 import Companies from './pages/admin/Companies.jsx';
 import CardRequests from './pages/CardRequests.jsx';
@@ -69,6 +70,7 @@ function App() {
             <Route path="companies/:companyId" element={<Company role="admin" />} />
             <Route path="etags" element={<Etags />} />
             <Route path="work-permits" element={<WorkPermit role="admin" />} />
+            <Route path="clearance" element={<Clearance />} />
             <Route path="bookings" element={<AdminMeetingRoomBooking />} />
             <Route path="meeting-rooms" element={<MeetingRooms />} />
             <Route path="cards" element={<CardRequests />} />
