@@ -14,44 +14,7 @@ import showToast from "../../util/toast";
 
 const Clearance = () => {
   const [loading, setLoading] = useState(true);
-  const [clearanceRequests, setClearanceRequests] = useState([
-    // {
-    //   id: "1",
-    //   tenantName: "Hexler Tech",
-    //   dateRequested: "2021-10-10",
-    //   status: "Pending",
-    //   applicantName: "John Doe",
-    //   applicantCnic: "12345-1234567-1",
-    //   applicantDesignation: "0333-1234567",
-    //   officeNumber: "123",
-    //   vacatingDate: "2021-10-15",
-    //   reasonForLeaving: "Moving to a new office",
-    // },
-    // {
-    //   id: "2",
-    //   tenantName: "Hexler Tech",
-    //   dateRequested: "2021-10-10",
-    //   status: "Pending",
-    //   applicantName: "John Doe",
-    //   applicantCnic: "12345-1234567-1",
-    //   applicantDesignation: "0333-1234567",
-    //   officeNumber: "123",
-    //   vacatingDate: "2021-10-15",
-    //   reasonForLeaving: "Moving to a new office",
-    // },
-    // {
-    //   id: "3",
-    //   tenantName: "Hexler Tech",
-    //   dateRequested: "2021-10-10",
-    //   status: "Pending",
-    //   applicantName: "John Doe",
-    //   applicantCnic: "12345-1234567-1",
-    //   applicantDesignation: "0333-1234567",
-    //   officeNumber: "123",
-    //   vacatingDate: "2021-10-15",
-    //   reasonForLeaving: "Moving to a new office",
-    // },
-  ]);
+  const [clearanceRequests, setClearanceRequests] = useState([]);
   const [expandedRequestId, setExpandedRequestId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
@@ -78,7 +41,7 @@ const Clearance = () => {
             applicantName: request.applicant_name,
             applicantCnic: request.applicant_cnic,
             applicantDesignation: request.applicant_designation,
-            officeNumber: request.officeNumber,
+            officeNumber: request.office,
             vacatingDate: new Date(request.date_vacate).toISOString().split('T')[0],
             reasonForLeaving: request.reason,
             etags: request.etags,   
@@ -186,8 +149,9 @@ const Clearance = () => {
                         <p className="text-lg font-semibold">
                             Applicant: {request.applicantName}
                         </p>
+                        <p />
                         <p className="text-md">CNIC: {request.applicantCnic}</p>
-                        <p className="text-md">Contact: {request.applicantDesignation}</p>
+                        <p className="text-md">Designation: {request.applicantDesignation}</p>
                         <p className="text-md">
                             Office Number: {request.officeNumber}
                         </p>

@@ -425,6 +425,7 @@ const TenantService = {
           applicantName: clearanceBody.applicantName,
           applicantDesignation: clearanceBody.applicantDesignation,
           applicantCnic: clearanceBody.applicantCnic,
+          office: clearanceBody.officeNumber,
           dateVacate: clearanceBody.vacatingDate,
           reason: clearanceBody.reasonForLeaving,
         },
