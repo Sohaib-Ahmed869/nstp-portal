@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
-import { NewspaperIcon, MagnifyingGlassIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { NewspaperIcon, MagnifyingGlassIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon, CheckIcon } from '@heroicons/react/24/outline';
 
 const Clearance = () => {
     const [loading, setLoading] = useState(false);
+    const [approvingClearanceId, setApprovingClearanceId] = useState(null);
     const [clearanceRequests, setClearanceRequests] = useState([
         { id: "1", tenantName: "Hexler Tech", dateRequested: "2021-10-10", status: "Pending", applicantName: "John Doe", applicantCnic: "12345-1234567-1", applicantContact: "0333-1234567", officeNumber: "123", vacatingDate: "2021-10-15", reasonForLeaving: "Moving to a new office" },
         { id: "2", tenantName: "Hexler Tech", dateRequested: "2021-10-10", status: "Pending", applicantName: "John Doe", applicantCnic: "12345-1234567-1", applicantContact: "0333-1234567", officeNumber: "123", vacatingDate: "2021-10-15", reasonForLeaving: "Moving to a new office" },
@@ -72,10 +73,18 @@ const Clearance = () => {
                                     <p className="text-lg font-semibold">{request.tenantName}</p>
                                     <p className="text-sm text-gray-600">Requested on {request.dateRequested}</p>
                                 </div>
-                                <button className="btn mt-3 md:mt-0 btn-sm btn-primary text-base-100" onClick={() => toggleDetails(request.id)}>
-                                    { expandedRequestId === request.id ? <ChevronUpIcon className="size-4" /> : <ChevronDownIcon className="size-4" /> }
-                                    {expandedRequestId === request.id ? 'Hide Details' : 'View Details'}
-                                </button>
+                                <div className="flex flex-col sm:flex-row gap-3 mt-3 md:mt-0 ">
+                                   {   request.status === 'Pending' && 
+                                    <button className={`btn btn-sm btn-secondary btn-outline ${approvingClearanceId==request.id && "btn-disabled"}`} onClick={() => {setApprovingClearanceId(request.id); }}>
+                                        { approvingClearanceId==request.id ? <span className="loading loading-spinner"></span> : <CheckIcon className="size-4" />}
+                                        { approvingClearanceId==request.id ? 'Please wait...' : 'Approve Clearance Request' }
+                                    </button>}
+                                    <button className="btn btn-sm btn-primary text-base-100" onClick={() => toggleDetails(request.id)}>
+                                        { expandedRequestId === request.id ? <ChevronUpIcon className="size-4" /> : <ChevronDownIcon className="size-4" /> }
+                                        {expandedRequestId === request.id ? 'Hide Details' : 'View Details'}
+                                    </button>
+
+                                </div>
                             </div>
                             {expandedRequestId === request.id && (
                                 <div className="mt-5 pt-5 border-t-primary border-t-2 grid grid-cols-1 md:grid-cols-2 gap-3">

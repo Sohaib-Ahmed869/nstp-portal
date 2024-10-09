@@ -55,16 +55,16 @@ const sidebarConfig = {
   ],
   tenant: [
     { icon: <HomeIcon />, text: "Dashboard", url: "/" },
+    { icon: <RocketLaunchIcon />, text: "Profile", url: "/profile" },
     { icon: <UserGroupIcon />, text: "Employees", url: "/employees" },
     { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
-    { icon: <ClipboardDocumentCheckIcon />, text: "Evaluations", url: "/evaluations" },
-    { icon: <TruckIcon />, text: "Parking", url: "/parking" },
     { icon: <TicketIcon />, text: "Gate Passes", url: "/gate-passes" },
     { icon: <WrenchIcon />, text: "Work Permits", url: "/work-permits" },
     { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: "/lost-and-found" },
     { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },
     { icon: <ExclamationTriangleIcon />, text: "Occurences", url: "/occurences" },
-    { icon: <RocketLaunchIcon />, text: "Profile", url: "/profile" },
+    { icon: <TruckIcon />, text: "Parking", url: "/parking" },
+    { icon: <ClipboardDocumentCheckIcon />, text: "Evaluations", url: "/evaluations" },
   ],
 };
 
