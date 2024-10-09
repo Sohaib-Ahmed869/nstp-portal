@@ -96,6 +96,17 @@ const AuthService = {
       return { error: error.response.data.message };
     }
   },
+
+  logout: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/auth/logout`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AuthService;

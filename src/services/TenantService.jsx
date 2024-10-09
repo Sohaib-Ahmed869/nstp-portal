@@ -26,6 +26,17 @@ const TenantService = {
     }
   },
 
+  getProfile: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/tenant/profile`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
   addEmployee: async (empBody) => {
     try {
       console.log("🚀 ~ addEmployee ~ employee", empBody);

@@ -68,15 +68,12 @@ const sidebarConfig = {
   ],
 };
 
-
 const getSidebarItems = (role) => {
   return sidebarConfig[role]?.map(item => ({
     ...item,
     url: `/${role}${item.url}`
   })) || [];
 };
-
-
 
 const Sidebar = ({ children }) => {
   const [isExpanded, setIsExpanded] = useState(false);

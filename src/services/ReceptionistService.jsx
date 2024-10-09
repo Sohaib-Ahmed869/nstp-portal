@@ -15,6 +15,17 @@ const handleResponse = async (response) => {
 };
 
 const ReceptionistService = {
+  getDashboard: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/receptionist/dashboard`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
   addLostAndFound: async (item, description, image) => {
     try {
       const response = await axios.post(
@@ -244,7 +255,7 @@ const ReceptionistService = {
         `${BASE_URL}/receptionist/room/bookings/cancel`,
         {
           bookingId,
-          reasonCancel
+          reasonCancel,
         },
         {
           headers: {

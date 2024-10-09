@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import NSTPLoader from '../components/NSTPLoader';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { AuthService } from '../services';
+import showToast from '../util/toast';
 
 const Logout = () => {
   const [loading, setLoading] = useState(true);
@@ -9,12 +11,25 @@ const Logout = () => {
   const { logout } = useContext(AuthContext);
 
   useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-      logout();
-      // Navigate to the login page or home page after logout
-      navigate('/');
-    }, 1200);
+
+    async function logoutUser() {
+      try {
+        const response = await AuthService.logout();
+        console.log("🚀 ~ logoutUser ~ response", response);
+        if (response.error) {
+          console.error(response.error);
+        }
+        logout();
+        showToast(true, response.message);
+        navigate('/');
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    logoutUser();
   }, [navigate]);
 
   return (

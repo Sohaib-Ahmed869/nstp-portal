@@ -231,41 +231,42 @@ const togglePasswordVisibility = (field) => {
     },
   ]
   const [dropdownOpen, setDropdownOpen] = useState({});
-const handlePasswordInputChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData((prevData) => ({
-        ...prevData,
-        [name]: value
-    }));
-};
-const changePassword = (e) => {
-  setModalLoading(true);
-    e.preventDefault();
-    console.log(passwordData);
+  const handlePasswordInputChange = (e) => {
+      const { name, value } = e.target;
+      setPasswordData((prevData) => ({
+          ...prevData,
+          [name]: value
+      }));
+  };
+  
+  const changePassword = (e) => {
+    setModalLoading(true);
+      e.preventDefault();
+      console.log(passwordData);
 
-    //api call here to change passwrod
+      //api call here to change passwrod
 
-    // Clear the fields
-    setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-    });
-    // Close the modal
-    document.getElementById('change-password-modal').close();
-    showToast(true, "Password changed successfully.");
-    setModalLoading(false);
-};
-const handleCancelPassword = () => {
-    // Clear the fields
-    setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-    });
-    // Close the modal
-    document.getElementById('change-password-modal').close();
-};
+      // Clear the fields
+      setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+      });
+      // Close the modal
+      document.getElementById('change-password-modal').close();
+      showToast(true, "Password changed successfully.");
+      setModalLoading(false);
+  };
+  const handleCancelPassword = () => {
+      // Clear the fields
+      setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+      });
+      // Close the modal
+      document.getElementById('change-password-modal').close();
+  };
   const toggleDropdown = (id) => {
     setDropdownOpen((prev) => ({
       ...prev,
@@ -336,6 +337,69 @@ const handleCancelPassword = () => {
           } else {
             showToast(false, response.error);
             console.log("Error fetching company data:", response.error);
+          }
+        } else {
+          // fetch for tenant
+          const response = await TenantService.getProfile();
+          if (!response.error) {
+            const fetchedData = response.data.tenant;
+
+            // Calculate contract end date (one month after joining date)
+            const contractStartDate = new Date(fetchedData.dateJoining);
+            const contractEndDate = new Date(contractStartDate);
+            contractEndDate.setMonth(contractEndDate.getMonth() + 1); //PLACEHOLDER
+
+            // Calculate contract duration and elapsed time
+            const totalContractDuration = contractEndDate - contractStartDate;
+            const elapsedTime = new Date() - contractStartDate;
+            const contractDurationPercentage = Math.min(
+              Math.floor((elapsedTime / totalContractDuration) * 100),
+              100
+            );
+
+            // Format dates
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            const formattedJoiningDate = contractStartDate.toLocaleDateString('en-GB', options);
+            const formattedContractStartDate = contractStartDate.toLocaleDateString('en-GB', options);
+            const formattedContractEndDate = contractEndDate.toLocaleDateString('en-GB', options);
+
+            // Map the fetched data to the existing state structure
+            const consolidatedData = {
+              name: fetchedData.registration.organizationName,
+              type: fetchedData.registration.category,
+              category: fetchedData.industrySector.category,
+              rentalSpaceSqft: fetchedData.industrySector.rentalSpaceSqFt + " sq ft",
+              companyHeadquarters: fetchedData.companyProfile.companyHeadquarters,
+              contactPerson: fetchedData.contactInfo.applicantName,
+              contactEmail: fetchedData.contactInfo.applicantEmail,
+              contactPhone: fetchedData.contactInfo.applicantPhone,
+              joiningDate: formattedJoiningDate,
+              contractStartDate: formattedContractStartDate,
+              offices: fetchedData.offices,
+              companyResourceComposition: fetchedData.companyResourceComposition,
+              contractEndDate: formattedContractEndDate,
+
+              totalEmployees: fetchedData.employees,
+              activeEmployees: fetchedData.activeEmployees,
+              cardsNotIssued: fetchedData.cardsNotIssued,
+              cardsIssued: fetchedData.cardsIssued,
+              interns: {
+                nustian: fetchedData.nustianInterns,
+                nonNustian: fetchedData.nonNustianInterns,
+                total: fetchedData.nustianInterns + fetchedData.nonNustianInterns,
+              },
+              gatePasses: fetchedData.gatepasses,
+              workPermits: fetchedData.workpermits,
+              eTags: fetchedData.etags,
+              violations: fetchedData.violations,
+              contractDuration: contractDurationPercentage,
+              employees: fetchedData.employees
+            };
+
+            setCompanyData(consolidatedData);
+          } else {
+            showToast(false, response.error);
+            console.log("Error fetching tenant data:", response.error);
           }
         }
       } catch (error) {
