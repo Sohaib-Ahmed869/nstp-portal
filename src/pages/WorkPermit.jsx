@@ -63,6 +63,8 @@ const WorkPermit = ({ role }) => {
                     return;
                 }
 
+                console.log("RESPONSE RESONSE", response)
+
                 const mappedData = response.data.workPermits.map(permit => ({
                     key: permit._id,
                     id: permit._id,
@@ -73,7 +75,7 @@ const WorkPermit = ({ role }) => {
                     detailedInfo: permit.detailed_information,
                     equipment: permit.equipment,
                     description: permit.description,
-                    tenant: permit.tenant,
+                    tenant: role != "tenant" ? permit.tenant_name : permit.tenant,
                     reasonDecline: permit.reason_decline,
                 }));
                 setWorkPermits(mappedData);

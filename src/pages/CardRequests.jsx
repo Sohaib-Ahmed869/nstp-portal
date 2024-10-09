@@ -5,6 +5,7 @@ import NSTPLoader from '../components/NSTPLoader';
 import { TowerContext } from '../context/TowerContext';
 import AdminService from '../services/AdminService';
 import showToast from '../util/toast';
+import { AuthContext } from '../context/AuthContext';
 
 const CardRequests = () => {
     const [loading, setLoading] = useState(true);
@@ -20,7 +21,7 @@ const CardRequests = () => {
     const itemsPerPage = 10;
     const [cardRequests, setCardRequests] = useState([]);
     const [reasonForRejection, setReasonForRejection] = useState('');
-
+const { role } = useContext(AuthContext);
     useEffect(() => {
         // api call here to fetch card requests info
         async function fetchCardRequests() {
