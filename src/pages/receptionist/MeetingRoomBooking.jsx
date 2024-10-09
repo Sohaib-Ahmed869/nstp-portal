@@ -188,7 +188,7 @@ const MeetingRoomBooking = () => {
                     </div>
 
                 </div >
-                <MeetingRoomBookingTable meetingRoomSchedule={meetingRoomSchedule} role={"receptionist"} />
+                <MeetingRoomBookingTable meetingRoomSchedule={meetingRoomSchedule} role={"receptionist"} setMeetingRoomSchedule={setMeetingRoomSchedule} />
 
             </div>
         </Sidebar>

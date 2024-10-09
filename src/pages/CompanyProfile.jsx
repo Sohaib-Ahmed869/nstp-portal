@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import Sidebar from '../components/Sidebar';
 import { useParams } from 'react-router-dom';
 import { UserGroupIcon,LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon } from '@heroicons/react/24/outline';
-import sampleCompanyLogo from '../assets/samplecompanylogo.png'
+import nstpLogo from '../assets/nstplogocolored.png'
 import ReactApexChart from 'react-apexcharts';
 import { getPieChartOptions } from '../util/charts';
 import EmployeeStats from '../components/EmployeeStats';
@@ -635,7 +635,7 @@ const handleCancelPassword = () => {
 
         {/* Header with company info, description, logo and join date */}
         <div className="flex max-sm:flex-col justify-start items-start gap-5">
-          <img src={sampleCompanyLogo} alt="Company Logo" className="size-48  rounded-lg ring-1 ring-gray-200" />
+          <img src={nstpLogo} alt="Company Logo" className="size-48  rounded-lg ring-1 ring-gray-200" />
 
           <div className="">
             <h1 className="text-4xl font-semibold text-primary">{companyData.name}</h1>

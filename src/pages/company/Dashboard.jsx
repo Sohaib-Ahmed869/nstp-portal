@@ -15,6 +15,7 @@ import EmployeeStats from '../../components/EmployeeStats';
 import ComplaintModal from '../../components/ComplaintModal';
 import EmployeeProfileModal from '../../components/EmployeeProfileModal';
 import { TenantService } from '../../services';
+import { formatDate } from '../../util/date';
 
 //Categories of types of complaints
 const CATEGORIES = ['General', 'Service'];
@@ -62,76 +63,8 @@ const Dashboard = () => {
         "date_issued": "2024-09-09T16:48:50.533Z"
       }
     },
-    {
-      "_id": "66df2a84c84208453e73701a",
-      "tenant_id": "66d97748124403bf36e695e8",
-      "tenant_name": "Hexlertech",
-      "email": "musaharoon.2003@gmail.com",
-      "name": "Musa Haroon Satti",
-      "photo": "https://randomuser.me/api/portraits/men/25.jpg",
-      "designation": "Full Stack Developer",
-      "cnic": "6110166894528",
-      "dob": "2024-09-05",
-      "address": "F/10-1 Street 11 House 29",
-      "date_joining": "2024-10-04",
-      "employee_type": "Contract",
-      "contract_duration": "6 Months",
-      "status_employment": true,
-      "is_nustian": false,
-      "__v": 0,
-      "etags": 1,
-      "card": {
-        "_id": "66df2a84c84208453e73701b",
-        "tenant_id": "66d97748124403bf36e695e8",
-        "employee_id": "66df2a84c84208453e73701a",
-        "is_issued": false,
-        "is_requested": true,
-        "is_returned": false,
-        "__v": 0,
-        "date_requested": "2024-09-09T17:06:10.755Z"
-      }
-    },
-    {
-      "_id": "123f2a84c84208453e73701a",
-      "tenant_id": "66d91238124403bf36e695e8",
-      "tenant_name": "Hexlertech",
-      "email": "haadiya@gmail.com",
-      "name": "Haadiya Sajid",
-      "photo": "https://randomuser.me/api/portraits/women/25.jpg",
-      "designation": "Full Stack Developer",
-      "cnic": "6110112394528",
-      "dob": "2024-09-05",
-      "address": "F/10-1 Street 11 House 29",
-      "date_joining": "2024-10-04",
-      "employee_type": "Contract",
-      "contract_duration": "6 Months",
-      "status_employment": true,
-      "is_nustian": false,
-      "__v": 0,
-      "etags": 1,
-      "card": {
-        "_id": "66df2a84c84208453e73701b",
-        "tenant_id": "66d97748124403bf36e695e8",
-        "employee_id": "66df2a84c84208453e73701a",
-        "is_issued": false,
-        "is_requested": true,
-        "is_returned": false,
-        "__v": 0,
-        "date_requested": "2024-09-09T17:06:10.755Z"
-      }
-    }
-
   ]);
-  const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([
-    { bookingId: "abc", roomNo: 'MT-234', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
-    { bookingId: "awc", roomNo: 'MS-234', status: 'Pending', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-    { bookingId: "ahc", roomNo: 'MT-214', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
-    { bookingId: "abh", roomNo: 'MS-334', status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-    { bookingId: "abh", roomNo: 'MS-334', status: 'Unapproved', date: '12/13/2024', time: '11:00 PM - 1:00 AM' },
-  ]);
-
-
-
+  const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([]);
   const [eTags, setETags] = useState({ issued: 10, pending: 20 }); //total = pending + approved
   const [gatePasses, setGatePasses] = useState({ issued: 28, pending: 3 }); //total = pending + approved
   const [employeeStats, setEmployeeStats] = useState({ total: 100, active: 80, issued: 10, unissued: 70 });
@@ -149,14 +82,67 @@ const Dashboard = () => {
           return;
         }
         console.log("Dashboard data: ", response.data.dashboard);
-        // setChartData(response.data.complaints);
-        // setEmployeeTableData(response.data.employees);
-        // setMeetingRoomSchedule(response.data.meetingRoomSchedule);
-        // setETags(response.data.eTags);
-        // setGatePasses(response.data.gatePasses);
-        // setEmployeeStats(response.data.employeeStats);
-        // setInternStats(response.data.internStats);
+        //map employeetabledata to all the same fields but just call the formatDate on the date_joinin
+        const mappedEmpTableData = response.data.dashboard.employees.map(employee => ({
+          ...employee,
+          date_joining: formatDate(employee.date_joining),
+        }));
+        setEmployeeTableData(mappedEmpTableData);
+        setEmployeeStats({
+          total: response.data.dashboard.employeeData.total,
+          active: response.data.dashboard.employeeData.active,
+          issued: response.data.dashboard.cards.issued,
+          unissued: response.data.dashboard.cards.notIssued,
+        })
+        setGatePasses({issued: response.data.dashboard.gatePasses.issued, pending: response.data.dashboard.gatePasses.pending});
+        setInternStats(response.data.dashboard.interns);
+        setETags( {issued : response.data.dashboard.etags.issued, pending: response.data.dashboard.etags.pending});
+        //meeting room schedule format :    { bookingId: "abc", roomNo: 'MT-234', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
+        // response.data.dashboard.bookings format: 
+      //   {
+      //     "_id": "6705617cfc1bd01299b450c1",
+      //     "tower": "66f7b5ee7c51cd5775306b61",
+      //     "tenant_id": "66f7b251d42fec9018e6046b",
+      //     "room_id": "6705459a61f543dc3b1341fd",
+      //     "time_start": "2024-10-09T09:00:00.000Z",
+      //     "time_end": "2024-10-09T17:00:00.000Z",
+      //     "reason_booking": "I need room",
+      //     "status_booking": "rejected",
+      //     "is_cancelled": true,
+      //     "date_initiated": "2024-10-08T16:44:44.886Z",
+      //     "createdAt": "2024-10-08T16:44:44.896Z",
+      //     "updatedAt": "2024-10-08T18:13:23.588Z",
+      //     "__v": 0,
+      //     "handled_by": "66fad929a314143ac0a13c08",
+      //     "cancelled_by": "66fad929a314143ac0a13c08",
+      //     "reason_decline": "I dont like you"
+      // }
+      const mappedSchedule = response.data.dashboard.bookings.map(booking => {  
+        const startTime = new Date(booking.time_start);
+        const endTime = new Date(booking.time_end);
+        const formatTime = (date) => {
+          const hours = date.getUTCHours().toString().padStart(2, '0');
+          const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+          return `${hours}:${minutes}`;
+        };
+        const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
+        const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
+        return {
+          bookingId: booking._id,
+          roomNo: booking.room_name || "Room",  //musa return this
+          company: booking.tenant_id || "Tennant", //musa return this
+          roomId: booking.room_id,
+          time_start: booking.time_start,
+          time_end: booking.time_end,
+          status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
+          dateBooked: formatDate(booking.date_initiated),
+          time: formattedTime,
+          dateBooking: dateBooking,
+        };
+      });
+      setMeetingRoomSchedule(mappedSchedule);
 
+        // setChartData(response.data.complaints);
       } catch (error) {
         console.log("Error fetching data: ", error);
       } finally {

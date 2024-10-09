@@ -215,6 +215,49 @@ const ReceptionistService = {
       return await handleResponse(error.response);
     }
   },
+
+  handleRoomBoooking: async (bookingId, approval, reasonDecline) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/receptionist/room/bookings/approval`,
+        {
+          bookingId,
+          approval,
+          reasonDecline,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  cancelRoomBooking: async (bookingId, reasonCancel) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/receptionist/room/bookings/cancel`,
+        {
+          bookingId,
+          reasonCancel
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default ReceptionistService;

@@ -340,6 +340,7 @@ export const MeetingRoomBooking = () => {
         <MeetingRoomBookingTable
           meetingRoomSchedule={meetingRoomSchedule}
           role="company"
+          setMeetingRoomSchedule={setMeetingRoomSchedule}
         />
       </div>
 

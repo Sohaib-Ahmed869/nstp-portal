@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { InformationCircleIcon, XCircleIcon, CalendarDaysIcon, AdjustmentsHorizontalIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { InformationCircleIcon, XCircleIcon, CalendarDaysIcon, AdjustmentsHorizontalIcon, MagnifyingGlassIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
-import { TenantService } from '../services';
+import { TenantService, ReceptionistService } from '../services';
 import showToast from '../util/toast';
 import { AuthContext } from '../context/AuthContext';
 
 
-const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComponent = false }) => {
+const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComponent = false, setMeetingRoomSchedule }) => {
     const [meetingToCancel, setMeetingToCancel] = useState();
+    const [approveLoading, setApproveLoading] = useState(false);
     const [meetingCancellationReason, setMeetingCancellationReason] = useState("The meeting was not approved because the room was already booked for the same time slot.");
     const [modalLoading, setModalLoading] = useState(false);
     const [sortField, setSortField] = useState(null);
@@ -15,6 +16,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
     const [filterStatus, setFilterStatus] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [reasonForRejection, setReasonForRejection] = useState('');
     const rowsPerPage = 5;
 
     const { role } = useContext(AuthContext);
@@ -27,19 +29,23 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
         setModalLoading(true);
         console.log(role);
         try {
-            if(role == 'tenant') {
-                const response = await TenantService.cancelRoomBooking(meetingId);
-                if(response.error) {
-                    console.log(response.error);
-                    showToast(false, response.message);
-                }
-
-                console.log(response.data.booking);
-
-                // filter out the cancelled meeting from the list
-
-                showToast(true, response.message);
+            let response;
+            if (role == 'tenant') {
+                response = await TenantService.cancelRoomBooking(meetingId);
+            } else if (role == 'receptionist') {
+                response = await ReceptionistService.cancelRoomBooking(meetingId);
             }
+
+            if(response.error) {
+                console.log(response.error);
+                showToast(false, response.message);
+            }
+
+            console.log(response.data.booking);
+
+            // filter out the cancelled meeting from the list
+
+            showToast(true, response.message);
             } catch (error) {
             console.error(error);
             showToast(false, "An error occurred while trying to cancel the meeting. Please try again later.");
@@ -98,23 +104,28 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
 
     const paginatedData = dashboardComponent ? sortedData : sortedData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
-
-    const approveMeeting = (meetingId) => {
+    const handleRoomBooking = async (meetingId, approval) => {
+        setModalLoading(true);
         // Simulate API call with timer
-        console.log(`Approving meeting with ID: ${meetingId}`);
-        setTimeout(() => {
-            console.log(`Meeting with ID: ${meetingId} has been approved.`);
-        }, 2000);
-    }
+        const response = approval ? await ReceptionistService.handleRoomBoooking(meetingId, approval) : await ReceptionistService.handleRoomBoooking(meetingId, approval, reasonForRejection);
+        if (response.error) {
+            console.error(response.error);
+            showToast(false, response.message);
+        }
 
-    const unapproveMeeting = (meetingId) => {
-        // Simulate API call with timer
-        console.log(`Unapproving meeting with ID: ${meetingId}`);
-        setTimeout(() => {
-            console.log(`Meeting with ID: ${meetingId} has been unapproved.`);
-        }, 2000);
+        console.log(response.data.booking);
+        showToast(true, response.message);
+        setModalLoading(false);
+        document.getElementById('meeting_cancellation').close();
+        //update the meetingRoomSchedule
+        //the boking with the meetingId should be updated with the new status , "Rejected" or "Approved" based on approval being true or false
+        setMeetingRoomSchedule( meetingRoomSchedule.map((booking) => {
+            if (booking.id === meetingId) {
+                booking.status = approval ? "Approved" : "Rejected";
+            }
+            return booking;
+        }))
     }
-
 
     return (
         <>    {/* modal with confirmation for meeting room cancellation */}
@@ -123,10 +134,21 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                 className="modal modal-bottom sm:modal-middle"
             >
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">
-                        Are you sure you want to cancel this booking?
-                    </h3>
+                   <div className="flex gap-3">
+                    <ExclamationCircleIcon className="h-6 w-6 text-error" />
+                     <h3 className="font-bold text-lg">
+                         Are you sure you want to cancel this booking?
+                     </h3>
+                   </div>
                     <p className="py-4">Please click "Yes" if you wish to cancel it.</p>
+                    {
+                        role == "receptionist" && (
+                            <>
+                            <p>Please provide the reason to the tenant for rejecting their booking request.</p>
+                            <textarea rows={5} className="input input-bordered w-full mt-2" value={reasonForRejection} onChange={(e) => setReasonForRejection(e.target.value)} placeholder="Reason for rejection"></textarea>
+                            </>
+                        )
+                    }
                     <div className="modal-action">
                         <button
                             className={`btn mr-2 ${modalLoading && "btn-disabled"}`}
@@ -138,8 +160,8 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                             Close
                         </button>
                         <button
-                            className={`btn btn-primary ${modalLoading && "btn-disabled"}`}
-                            onClick={() => { cancelMeeting(meetingToCancel) }}
+                            className={`btn btn-error text-base-100 ${modalLoading && "btn-disabled"}`}
+                            onClick={() => {  handleRoomBooking(meetingToCancel, false); }}
                         >
                             {modalLoading && (
                                 <span className="loading loading-spinner"></span>
@@ -244,18 +266,19 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                                                 role === 'receptionist' ? (
                                                     <>
                                                         <button
-                                                            className="btn btn-sm btn-outline btn-primary mr-2"
+                                                            className={`btn btn-sm btn-outline btn-primary mr-2 ${approveLoading && 'btn-disabled'} `}
                                                             onClick={() => {
-                                                                approveMeeting(row.bookingId);
+                                                                handleRoomBooking(row.bookingId, true);
                                                             }}>
                                                             Approve
                                                         </button>
                                                         <button
                                                             className="btn btn-sm btn-outline btn-error"
                                                             onClick={() => {
-                                                                unapproveMeeting(row.bookingId);
+                                                                setMeetingToCancel(row.bookingId);
+                                                                document.getElementById('meeting_cancellation').showModal();
                                                             }}>
-                                                            Unapprove
+                                                            Reject
                                                         </button>
                                                     </>
 
