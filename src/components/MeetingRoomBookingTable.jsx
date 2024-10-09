@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { InformationCircleIcon, XCircleIcon, CalendarDaysIcon, AdjustmentsHorizontalIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { Link } from 'react-router-dom';
+import { TenantService } from '../services';
+import showToast from '../util/toast';
+import { AuthContext } from '../context/AuthContext';
 
 
-const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent = false }) => {
+const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComponent = false }) => {
     const [meetingToCancel, setMeetingToCancel] = useState();
     const [meetingCancellationReason, setMeetingCancellationReason] = useState("The meeting was not approved because the room was already booked for the same time slot.");
     const [modalLoading, setModalLoading] = useState(false);
@@ -14,18 +17,44 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 5;
 
+    const { role } = useContext(AuthContext);
+
     useEffect(() => {
         setSortField('dateBooked');
     }, [meetingRoomSchedule]);
 
-    const cancelMeeting = (meetingId) => {
+    const cancelMeeting = async (meetingId) => {
         setModalLoading(true);
-        // Simulate API call with timer
-        setTimeout(() => {
-            console.log(`Cancelling meeting with ID: ${meetingId}`);
+        console.log(role);
+        try {
+            if(role == 'tenant') {
+                const response = await TenantService.cancelRoomBooking(meetingId);
+                if(response.error) {
+                    console.log(response.error);
+                    showToast(false, response.message);
+                }
+
+                console.log(response.data.booking);
+
+                // filter out the cancelled meeting from the list
+
+                showToast(true, response.message);
+            }
+            } catch (error) {
+            console.error(error);
+            showToast(false, "An error occurred while trying to cancel the meeting. Please try again later.");
+        } finally {
             setModalLoading(false);
             document.getElementById('meeting_cancellation').close();
-        }, 2000);
+        }
+        
+        
+        // // Simulate API call with timer
+        // setTimeout(() => {
+        //     console.log(`Cancelling meeting with ID: ${meetingId}`);
+        //     setModalLoading(false);
+        //     document.getElementById('meeting_cancellation').close();
+        // }, 2000);
     };
 
     const fetchReasonForCancellation = (bookingId) => {

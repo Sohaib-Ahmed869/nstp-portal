@@ -14,6 +14,7 @@ import {
 import MeetingRoomBookingTable from "../../components/MeetingRoomBookingTable";
 import { TenantService } from "../../services";
 import { formatDate } from '../../util/date';
+import showToast from "../../util/toast";
 
 export const MeetingRoomBooking = () => {
     const [events, setEvents] = useState([
@@ -72,15 +73,21 @@ export const MeetingRoomBooking = () => {
                 const mappedBookings = allBookings.data.bookings.map(booking => {
                     const startTime = new Date(booking.time_start);
                     const endTime = new Date(booking.time_end);
-                
+
+                    console.log("booking time start: ", startTime);
+                    console.log("booking time end: ", endTime);
+
                     const formatTime = (date) => {
-                        const hours = date.getUTCHours().toString().padStart(2, '0');
-                        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                        const hours = date.getHours().toString().padStart(2, '0'); // Use getHours for local time
+                        const minutes = date.getMinutes().toString().padStart(2, '0'); // Use getMinutes for local time
                         return `${hours}:${minutes}`;
                     };
-                
+
                     const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
                     const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
+
+                    console.log("formatted time: ", formattedTime);
+                    console.log("date booking: ", dateBooking);
                 
                     return {
                         bookingId: booking._id,
@@ -109,15 +116,21 @@ export const MeetingRoomBooking = () => {
                 const mappedTenantBookings = tenantBookingsResponse.data.bookings.map(booking => {
                     const startTime = new Date(booking.time_start);
                     const endTime = new Date(booking.time_end);
-                
+
+                    console.log("booking time start: ", startTime);
+                    console.log("booking time end: ", endTime);
+
                     const formatTime = (date) => {
-                        const hours = date.getUTCHours().toString().padStart(2, '0');
-                        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                        const hours = date.getHours().toString().padStart(2, '0'); // Use getHours for local time
+                        const minutes = date.getMinutes().toString().padStart(2, '0'); // Use getMinutes for local time
                         return `${hours}:${minutes}`;
                     };
-                
+
                     const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
                     const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
+
+                    console.log("formatted time: ", formattedTime);
+                    console.log("date booking: ", dateBooking);
                 
                     return {
                         bookingId: booking._id,
@@ -183,16 +196,39 @@ export const MeetingRoomBooking = () => {
     setSelectedRoom(e.target.value);
   };
 
-    const cancelMeeting = (meetingId) => {
+    const cancelMeeting = async (meetingId) => {
         setModalLoading(true);
-        setTimeout(() => {
-            console.log(`Cancelling meeting with ID: ${meetingId}`);
-            setMeetingRoomSchedule(prevSchedule =>
-                prevSchedule.filter(meeting => meeting.bookingId !== meetingId)
-            );
-            setModalLoading(false);
-            document.getElementById('meeting_cancellation').close();
-        }, 2000);
+        try{
+          const response = await TenantService.cancelRoomBooking(meetingId);
+          console.log(response);
+          if (response.error) {
+            console.log(response.message);
+            showToast(false, response.message);
+          }
+
+          console.log("Meeting cancelled: ", response.data.booking);
+          setMeetingRoomSchedule(prevSchedule =>
+            prevSchedule.filter(meeting => meeting.bookingId !== meetingId)
+          );
+          
+          showToast(true, response.message);
+
+        } catch (error) {
+          console.log("Error cancelling meeting: ", error);
+        } finally {
+          setModalLoading(false);
+          document.getElementById('meeting_cancellation').close();
+        }
+
+
+        // setTimeout(() => {
+        //     console.log(`Cancelling meeting with ID: ${meetingId}`);
+        //     setMeetingRoomSchedule(prevSchedule =>
+        //         prevSchedule.filter(meeting => meeting.bookingId !== meetingId)
+        //     );
+        //     setModalLoading(false);
+        //     document.getElementById('meeting_cancellation').close();
+        // }, 2000);
     };
 
   const handleNewBookingChange = (e) => {
@@ -207,9 +243,11 @@ export const MeetingRoomBooking = () => {
         console.log(response);
         if (response.error) {
             console.log(response.message);
+            showToast(false, response.message);
         }
 
         console.log("New booking submitted: ", response.data.booking);
+        showToast(true, response.message);
 
     } catch (error) {
         console.log("Error submitting new booking: ", error);
@@ -305,33 +343,7 @@ export const MeetingRoomBooking = () => {
         />
       </div>
 
-            {/* Modal for meeting cancellation */}
-            <dialog id="meeting_cancellation" className="modal modal-bottom sm:modal-middle">
-                <div className="modal-box">
-                    <h3 className="font-bold text-lg">Are you sure you want to cancel this booking?</h3>
-                    <p className="py-4">Please click "Yes" if you wish to cancel it.</p>
-                    <div className="modal-action">
-                        <button
-                            className={`btn mr-2 ${modalLoading && "btn-disabled"}`}
-                            onClick={() => {
-                                setMeetingToCancel(null);
-                                document.getElementById("meeting_cancellation").close();
-                            }}
-                        >
-                            Close
-                        </button>
-                        <button
-                            className={`btn btn-primary ${modalLoading && "btn-disabled"}`}
-                            onClick={() => { cancelMeeting(meetingToCancel) }}
-                        >
-                            {modalLoading && (
-                                <span className="loading loading-spinner"></span>
-                            )}
-                            {modalLoading ? "Please wait..." : "Confirm"}
-                        </button>
-                    </div>
-                </div>
-            </dialog>
+        
 
       {/* Modal for new booking */}
       <dialog

@@ -362,30 +362,28 @@ const TenantService = {
 
   requestRoomBooking: async (bookingBody) => {
     try {
-      console.log("🚀 ~ requestRoomBooking ~ bookingBody", bookingBody);
+      const { date, startTime, endTime } = bookingBody;
 
-      const date = new Date(bookingBody.date);
-      // start time and end time should have the date given in the date field
-      let startTime = new Date(bookingBody.startTime);
-      startTime.setFullYear(date.getFullYear());
-      startTime.setMonth(date.getMonth());
-      startTime.setDate(date.getDate());
+      // Combine date with startTime and endTime
+      const startDate = new Date(`${date}T${startTime}:00`);
+      const endDate = new Date(`${date}T${endTime}:00`);
 
-      console.log("🚀 ~ requestRoomBooking ~ startTime", startTime);
+      console.log("🚀 ~ requestRoomBooking ~ startDate", startDate);
+      console.log("🚀 ~ requestRoomBooking ~ endDate", endDate);
 
-      let endTime = new Date(bookingBody.endTime);
-      endTime.setFullYear(date.getFullYear());
-      endTime.setMonth(date.getMonth());
-      endTime.setDate(date.getDate());
+      // // If you need the dates in ISO string format
+      // const startDateString = startDate.toISOString();
+      // const endDateString = endDate.toISOString();
 
-      console.log("🚀 ~ requestRoomBooking ~ endTime", endTime);
+      // console.log("🚀 ~ requestRoomBooking ~ startDateString", startDateString);
+      // console.log("🚀 ~ requestRoomBooking ~ endDateString", endDateString);
 
       const response = await axios.post(
         `${BASE_URL}/tenant/room/bookings/request`,
         {
           roomId: bookingBody.roomId,
-          timeStart: startTime,
-          timeEnd: endTime,
+          timeStart: startDate,
+          timeEnd: endDate,
           reasonBooking: bookingBody.reason,
         },
         {
@@ -396,6 +394,23 @@ const TenantService = {
         }
       );
 
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  cancelRoomBooking: async (bookingId) => {
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/tenant/room/bookings/${bookingId}/cancel`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
       return await handleResponse(response);
     } catch (error) {
       return await handleResponse(error.response);
