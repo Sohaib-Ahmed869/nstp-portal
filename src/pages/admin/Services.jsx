@@ -70,7 +70,7 @@ const Services = () => {
       console.log(response);
       if (response.error) {
         console.log(response.error);
-        showToast(false, response.message);
+        showToast(false, response.error);
         return;
       }
 
@@ -122,7 +122,7 @@ const Services = () => {
       console.log(response);
       if (response.error) {
         console.log(response.error);
-        showToast(false, response.message);
+        showToast(false, response.error);
         return;
       }
 
@@ -171,7 +171,7 @@ const Services = () => {
         const response = await AdminService.getServices(tower.id);
         if (response.error) {
           console.log(response.error);
-        //   showToast(false, response.message);
+        //   showToast(false, response.error);
           return;
         }
 
@@ -227,7 +227,7 @@ const Services = () => {
         console.log(response);
         if (response.error) {
             console.log(response.error);
-            showToast(false, response.message);
+            showToast(false, response.error);
             return;
         }
 

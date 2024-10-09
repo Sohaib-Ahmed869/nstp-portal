@@ -10,7 +10,7 @@ import NSTPLoader from '../components/NSTPLoader';
 import EmployeeProfileModal from '../components/EmployeeProfileModal';
 import FloatingLabelInput from '../components/FloatingLabelInput';
 import showToast from '../util/toast';
-import { AdminService } from '../services';
+import { AdminService, TenantService } from '../services';
 import { TowerContext } from '../context/TowerContext'
 
 
@@ -349,16 +349,39 @@ const handleCancelPassword = () => {
     fetchCompanyData();
   }, [companyId, tower.id]);
 
-  const handleEndTenure = () => {
+  const submitClearanceForm = async () => {
     setModalLoading(true);
-    // Simulate an API call
-    setTimeout(() => {
-      console.log('Form Data:', formData);
-      setModalLoading(false);
-      showToast(true);
 
+    try {
+      const response = await TenantService.initiateClearanceForm(formData);
+      console.log("Response:", response);
+      if (response.error) {
+        console.error("Error submitting clearance form:", response.error);
+        showToast(false, response.error);
+        return;
+      }
+
+      console.log("Clearance form submitted successfully:", response.data.clearance);
+      showToast(true, response.message);
+
+
+    } catch (error) {
+      console.error("Error submitting clearance form:", error);
+      showToast(false, "An error occurred while submitting clearance form.");
+    } finally {
+      setModalLoading(false);
       document.getElementById('tenure-end-modal').close();
-    }, 2000);
+    }
+
+
+    // Simulate an API call
+    // setTimeout(() => {
+    //   console.log('Form Data:', formData);
+    //   setModalLoading(false);
+    //   showToast(true);
+
+    //   document.getElementById('tenure-end-modal').close();
+    // }, 2000);
   };
 
   //handle change for clearnace form
@@ -411,7 +434,7 @@ const handleCancelPassword = () => {
       {/*end tenure confirmation modal */}
       <dialog id="tenure-end-modal" className="modal">
         <div className="modal-box min-w-3xl max-w-3xl">
-          <h3 className="font-bold text-lg mb-3">End Tenure Form</h3>
+          <h3 className="font-bold text-lg mb-3">Clearance Form</h3>
 
           <form className='grid grid-cols-2 gap-3'>
             <FloatingLabelInput
@@ -485,7 +508,7 @@ const handleCancelPassword = () => {
               className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
               onClick={(e) => {
                 e.preventDefault();
-                handleEndTenure();
+                submitClearanceForm();
               }}
             >
               {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}

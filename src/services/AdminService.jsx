@@ -609,6 +609,21 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },
+
+  getClearanceRequests: async (towerId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/clearances`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AdminService;

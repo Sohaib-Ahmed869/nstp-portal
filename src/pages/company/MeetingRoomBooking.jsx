@@ -206,7 +206,7 @@ export const MeetingRoomBooking = () => {
           console.log(response);
           if (response.error) {
             console.log(response.message);
-            showToast(false, response.message);
+            showToast(false, response.error);
           }
 
           console.log("Meeting cancelled: ", response.data.booking);
@@ -236,7 +236,7 @@ export const MeetingRoomBooking = () => {
         console.log(response);
         if (response.error) {
             console.log(response.message);
-            showToast(false, response.message);
+            showToast(false, response.error);
         }
 
         console.log("New booking submitted: ", response.data.booking);

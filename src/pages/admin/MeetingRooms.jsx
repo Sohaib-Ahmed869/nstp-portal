@@ -134,7 +134,7 @@ const MeetingRooms = () => {
                 const response = await AdminService.addRoom(tower.id, newRoom);
                 console.log("Add room response:", response);
                 if (response.error) {
-                    showToast(false, response.message);
+                    showToast(false, response.error);
                     return;
                 }
 
@@ -184,7 +184,7 @@ const MeetingRooms = () => {
                 const response = await AdminService.addRoomType(tower.id, newRoomType);
                 console.log("Add room response:", response);
                 if (response.error) {
-                    showToast(false, response.message);
+                    showToast(false, response.error);
                     return;
                 }
 

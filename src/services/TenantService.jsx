@@ -416,6 +416,30 @@ const TenantService = {
       return await handleResponse(error.response);
     }
   },
+
+  initiateClearanceForm: async (clearanceBody) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/tenant/clearance/initiate`,
+        {
+          applicantName: clearanceBody.applicantName,
+          applicantDesignation: clearanceBody.applicantDesignation,
+          applicantCnic: clearanceBody.applicantCnic,
+          dateVacate: clearanceBody.vacatingDate,
+          reason: clearanceBody.reasonForLeaving,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default TenantService;
