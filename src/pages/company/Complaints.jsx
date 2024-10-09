@@ -103,7 +103,7 @@ export const Complaints = () => {
             console.log("🚀 ~ handleCancel ~ response", response);
             if (response.error) {
                 console.error(response.error);
-                showToast(false, response.message);
+                showToast(false, response.error);
                 return;
             }
             showToast(true, response.message);

@@ -56,7 +56,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
             try {
                 const response = await AdminService.handleComplaint(id, true, null);
                 if (response.error) {
-                    showToast(false, response.message);
+                    showToast(false, response.error);
                     return;
                 }
 
@@ -79,7 +79,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
             try {
                 const response = await ReceptionistService.handleComplaint(id, true, null);
                 if (response.error) {
-                    showToast(false, response.message);
+                    showToast(false, response.error);
                     return;
                 }
 

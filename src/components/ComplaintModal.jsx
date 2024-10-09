@@ -54,7 +54,7 @@ const ComplaintModal = ({ addNewComplaint }) => {
                 const response = await TenantService.getServices();
                 console.log(response);
                 if(response.error){
-                    showToast(false, response.message);
+                    showToast(false, response.error);
                     return;
                 }
                 const mappedData = response.data.services.map(service => {

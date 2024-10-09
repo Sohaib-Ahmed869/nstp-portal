@@ -38,7 +38,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
 
             if(response.error) {
                 console.log(response.error);
-                showToast(false, response.message);
+                showToast(false, response.error);
             }
 
             console.log(response.data.booking);
@@ -110,7 +110,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
         const response = approval ? await ReceptionistService.handleRoomBoooking(meetingId, approval) : await ReceptionistService.handleRoomBoooking(meetingId, approval, reasonForRejection);
         if (response.error) {
             console.error(response.error);
-            showToast(false, response.message);
+            showToast(false, response.error);
         }
 
         console.log(response.data.booking);
