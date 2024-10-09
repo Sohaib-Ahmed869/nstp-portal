@@ -123,7 +123,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                     {selectedComplaintId && (
                         <div>
                             <p className="mt-3 text-2xl"><strong className="text-primary">Subject:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).subject || complaints.find(complaint => complaint.id === selectedComplaintId).serviceType}</p>
-                            {role !== "tenant" && <p className="mt-3"><strong className="text-primary">From: </strong> {complaints.find(complaint => complaint.id === selectedComplaintId).tenantName?.registration?.organizationName}</p>}
+                            {role !== "tenant" && <p className="mt-3"><strong className="text-primary">From: </strong> {complaints.find(complaint => complaint.id === selectedComplaintId).tenantName?.registration?.organizationName }</p>}
                             <p className="mt-3"><strong className="text-primary">Description:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).description}</p>
                             <p className="mt-3"><strong className="text-primary">Urgency:</strong> {getUrgencyLabel(complaints.find(complaint => complaint.id === selectedComplaintId).urgency)}</p>                <p className="mt-3"><strong className="text-primary">Status:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).isResolved ? "Resolved" : "Pending"}</p>
                             <p className="mt-3"><strong className="text-primary">Date Initiated:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).date}</p>

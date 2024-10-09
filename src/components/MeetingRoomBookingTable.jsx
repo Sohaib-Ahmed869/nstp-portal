@@ -310,7 +310,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                                     <th onClick={() => handleSortChange('dateBooked')}>Booked on {sortField === 'dateBooked' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
                                     <th onClick={() => handleSortChange('dateBooking')}>Booked for {sortField === 'dateBooking' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
                                     <th onClick={() => handleSortChange('time')}>Time {sortField === 'time' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</th>
-                                    <th>Actions</th>
+                                    {!dashboardComponent && <th>Actions</th>}
                                 </tr>
                             </thead>
                             <tbody>
@@ -331,7 +331,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                                         <td>{row.dateBooked}</td>
                                         <td>{row.dateBooking}</td>
                                         <td>{row.time}</td>
-                                        <td>
+                                       {!dashboardComponent && <td>
                                             {(row.status === 'Pending' && role === "receptionist") ?
                                                 (
                                                     <>
@@ -379,7 +379,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                                                     ) : (
                                                         <></>
                                                     )}
-                                        </td>
+                                        </td>}
                                     </tr>
                                 ))}
                             </tbody>
