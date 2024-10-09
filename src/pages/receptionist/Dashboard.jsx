@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { getChartOptions } from "../../util/charts";
 import MeetingRoomBookingTable from "../../components/MeetingRoomBookingTable";
 import { ReceptionistService } from "../../services";
+import { formatDate } from "../../util/date";
 
 //Categories of types of complaints
 const CATEGORIES = ["General", "Service"];
@@ -134,6 +135,26 @@ export const Dashboard = () => {
         }
 
         console.log("🚀 ~ fetchData ~ response", response.data.dashboard);
+        const dashboardData = response.data.dashboard;
+        setGateEntryStats({
+          completed: dashboardData.gatePasses.completed,
+          pending: dashboardData.gatePasses.pending,
+        });
+        setMeetingRoomBookingStats({
+          completed: dashboardData.bookings.completed,
+          pending: dashboardData.bookings.pending,
+        });
+        setMeetingRoomSchedule(
+         dashboardData.allBookings.map((booking) => ({
+          bookingId: booking._id,
+          roomNo: booking.room_name || "Room",
+          company: booking.tenant_name || "Tennant",
+          dateBooked: formatDate(booking.date_initiated).split(',')[0] +  formatDate(booking.date_initiated).split(',')[1],
+          dateBooking: formatDate(booking.time_start).split(',')[0] + formatDate(booking.time_start).split(',')[1],
+          time: `${new Date(booking.time_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(booking.time_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+          status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
+         })))
+
       } catch (error) {
         console.error(error);
       } finally {
