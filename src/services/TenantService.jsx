@@ -15,6 +15,17 @@ const handleResponse = async (response) => {
 };
 
 const TenantService = {
+  getDashboard: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/tenant/dashboard`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
   addEmployee: async (empBody) => {
     try {
       console.log("🚀 ~ addEmployee ~ employee", empBody);
@@ -351,6 +362,8 @@ const TenantService = {
 
   requestRoomBooking: async (bookingBody) => {
     try {
+      console.log("🚀 ~ requestRoomBooking ~ bookingBody", bookingBody);
+
       const date = new Date(bookingBody.date);
       // start time and end time should have the date given in the date field
       let startTime = new Date(bookingBody.startTime);

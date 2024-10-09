@@ -14,6 +14,7 @@ import NewsFeed from '../../components/NewsFeed';
 import EmployeeStats from '../../components/EmployeeStats';
 import ComplaintModal from '../../components/ComplaintModal';
 import EmployeeProfileModal from '../../components/EmployeeProfileModal';
+import { TenantService } from '../../services';
 
 //Categories of types of complaints
 const CATEGORIES = ['General', 'Service'];
@@ -140,12 +141,30 @@ const Dashboard = () => {
 
   useEffect(() => {
     setLoading(true);
-    //Add api call here to fetch data from backend and populate the states.
-    //Simulate api call with timer to show loader.
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-    // setLoading(false);
+    async function fetchData() {
+      try {
+        const response = await TenantService.getDashboard();
+        if (response.error) {
+          console.log("Error fetching data: ", response.error);
+          return;
+        }
+        console.log("Dashboard data: ", response.data.dashboard);
+        // setChartData(response.data.complaints);
+        // setEmployeeTableData(response.data.employees);
+        // setMeetingRoomSchedule(response.data.meetingRoomSchedule);
+        // setETags(response.data.eTags);
+        // setGatePasses(response.data.gatePasses);
+        // setEmployeeStats(response.data.employeeStats);
+        // setInternStats(response.data.internStats);
+
+      } catch (error) {
+        console.log("Error fetching data: ", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
   }, []);
 
   useEffect(() => {
