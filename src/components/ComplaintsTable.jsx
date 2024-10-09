@@ -188,7 +188,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                             </td>
                                         )
                                     }
-                                    {role != "tenant" && <td>{complaint?.tenantName?.registration?.organizationName}</td>}
+                                    {role != "tenant" && <td>{complaint?.tenantName}</td>}
                                     <td>{complaint.subject ? truncateText(complaint.subject, 25) : complaint.serviceType}</td>
                                     <td>{truncateText(complaint.description || " - ", 60)}</td>
                                     <td >

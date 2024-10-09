@@ -75,7 +75,7 @@ export const Complaints = ({ role }) => {
                         return;
                     }
     
-                    console.log(response.data.complaints);
+                    console.log("!! ",response.data.complaints);
                     const complaints = response.data.complaints;
     
                     const servicesComplaints = complaints.map(complaint => ({
