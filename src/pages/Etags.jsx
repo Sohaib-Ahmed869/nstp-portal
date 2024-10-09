@@ -6,7 +6,7 @@ import { formatDate } from '../util/date';
 import Sidebar from '../components/Sidebar';
 import showToast from '../util/toast';
 import NSTPLoader from '../components/NSTPLoader';
-import AdminService from '../services/AdminService';
+import {AdminService, TenantService } from '../services';
 
 const formatHeaderText = (text) => {
     return text
@@ -55,6 +55,7 @@ const Etags = () => {
                 }
                 else if (role === "tenant") {
                     //CCALL TENANTN SERVICE HERE!
+                    response = await TenantService.getEtagAllocations();
                 }
                 console.log("🚀 ~ fetchEtagRequests ~ response", response);
                 if (response.error) {
@@ -203,9 +204,9 @@ const Etags = () => {
     const filteredData = etagRequests.filter((request) => {
         return (
             (filter === 'All' || (filter === 'Pending' && !request.issued) || (filter === 'Issued' && request.issued) || (filter === 'Rejected' && request.reasonDecline)) &&
-            (request.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                request.employeeName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                request.employeeCnic.includes(searchQuery))
+            (request.companyName?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+                request.employeeName?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
+                request.employeeCnic?.includes(searchQuery))
         );
     });
 
