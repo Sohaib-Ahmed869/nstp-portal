@@ -624,6 +624,8 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },
+
+  
 };
 
 export default AdminService;
