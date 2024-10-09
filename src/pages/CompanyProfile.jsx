@@ -200,13 +200,13 @@ const togglePasswordVisibility = (field) => {
   });
 
   const actions = role == "admin" ? [
-    {
-      text: 'End Tenure',
-      icon: XCircleIcon,
-      onClick: () => {
-        document.getElementById('tenure-end-modal').showModal();
-      },
-    },
+    // {
+    //   text: 'End Tenure',
+    //   icon: XCircleIcon,
+    //   onClick: () => {
+    //     document.getElementById('tenure-end-modal').showModal();
+    //   },
+    // },
     {
       text: 'Send Evaluation/Feedback',
       icon: ChatBubbleLeftRightIcon,
@@ -222,13 +222,13 @@ const togglePasswordVisibility = (field) => {
         document.getElementById('tenure-end-modal').showModal();
       },
     },
-    {
-      text: 'Change Password',
-      icon: LockClosedIcon,
-      onClick: () => {
-        document.getElementById('change-password-modal').showModal();
-      },
-    },
+    // {
+    //   text: 'Change Password',
+    //   icon: LockClosedIcon,
+    //   onClick: () => {
+    //     document.getElementById('change-password-modal').showModal();
+    //   },
+    // },
   ]
   const [dropdownOpen, setDropdownOpen] = useState({});
   const handlePasswordInputChange = (e) => {

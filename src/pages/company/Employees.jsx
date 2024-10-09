@@ -722,7 +722,7 @@ const Employees = () => {
                                 Request E-Tag
                               </button>
                             </li>
-                            <li>
+                            {/* <li>
                               <button
                                 className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
                                 onClick={() => {
@@ -738,7 +738,7 @@ const Employees = () => {
                                 <PencilSquareIcon className="h-5 w-5 mr-2" />
                                 Edit Profile
                               </button>
-                            </li>
+                            </li> */}
                             {row.card_num == undefined && (
                               <li>
                                 <button
