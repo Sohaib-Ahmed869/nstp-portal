@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from "react";
 import {
   ArrowLeftStartOnRectangleIcon,
   Bars3Icon,
-  ChartBarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   HomeIcon,
@@ -10,7 +9,6 @@ import {
   ClipboardDocumentCheckIcon,
   RocketLaunchIcon,
   WrenchScrewdriverIcon,
-  TrophyIcon,
   CalendarDaysIcon,
   ChatBubbleLeftEllipsisIcon,
   PuzzlePieceIcon,
@@ -27,7 +25,6 @@ import { SidebarItem } from "./SidebarItem";
 import { AuthContext } from '../context/AuthContext';
 
 import nstpPng from '../assets/nstplogowhite.png'
-import { ChatBubbleBottomCenterIcon } from "@heroicons/react/16/solid";
 
 
 const sidebarConfig = {
@@ -46,7 +43,7 @@ const sidebarConfig = {
     { icon: <BuildingOfficeIcon /> , text: "Assign Office", url: "/assign-office" },
     { icon: <TicketIcon />, text: "E-Tags", url: "/etags" },
     { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: "/work-permits" },
-    { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
+    // { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
     { icon: <PresentationChartLineIcon />, text: "Meeting Rooms", url: "/meeting-rooms" },
     { icon: <IdentificationIcon />, text: "Cards", url: "/cards" },
     { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },

@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import NSTPLoader from '../components/NSTPLoader';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const Logout = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
 
   useEffect(() => {
-    // Simulate API call with a timeout of 2 seconds
     setTimeout(() => {
       setLoading(false);
+      logout();
       // Navigate to the login page or home page after logout
       navigate('/');
-    }, 2000);
+    }, 1200);
   }, [navigate]);
 
   return (

@@ -11,7 +11,6 @@ import { ReceptionistService } from '../../services';
 import { formatDate } from '../../util/date'
 
 const MeetingRoomBooking = () => {
-
     //these events are approved meetings with respect to a particular room
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -46,6 +45,7 @@ const MeetingRoomBooking = () => {
                 }));
 
                 setRoomOptions(mappedRooms);
+                setSelectedRoom(mappedRooms[0].value);
                 //other fields include floor, time_end, time_start (both in 24hr), type id
 
                 const bookingsResponse = await ReceptionistService.getRoomBookings();
@@ -73,6 +73,9 @@ const MeetingRoomBooking = () => {
                         bookingId: booking._id,
                         roomNo: booking.room_name || "Room",  //musa return this
                         company: booking.tenant_name || "Tennant", //musa return this
+                        roomId: booking.room_id,
+                        time_start: booking.time_start,
+                        time_end: booking.time_end,
                         status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
                         dateBooked: formatDate(booking.date_initiated),
                         time: formattedTime,
@@ -82,18 +85,6 @@ const MeetingRoomBooking = () => {
                 console.log("mapped bookings, ", mappedBookings);
                 setMeetingRoomSchedule(mappedBookings);
                 
-                const approvedBookings = bookingsResponse.data.bookings.filter(booking => booking.status_booking === 'approved').map(booking => {
-                    const startTime = new Date(booking.time_start);
-                    const endTime = new Date(booking.time_end);
-                
-                    return {
-                        title: booking.tenant_name || "Tennant",
-                        start: startTime,
-                        end: endTime,
-                    };
-                });
-                
-                setEvents(prevEvents => [...prevEvents, ...approvedBookings]);
 
                 
 
@@ -108,27 +99,32 @@ const MeetingRoomBooking = () => {
     }, [])
 
     useEffect(() => {
-
+        setCalendarLoading(true)
         console.log("Selected room: ", selectedRoom);
-        // Simulate an API call to fetch events for the selected room
-        // selectedRoom state can be used in api call
-        const fetchEvents = async () => {
-            // setCalendarLoading(true);
-            // // Simulate API call delay
-            // setTimeout(() => {
-            //     const fetchedEvents = [
-            //         { title: 'Hexler', start: new Date(2024, 8, 1, 10, 0), end: new Date(2024, 8, 1, 12, 0) },
-            //         { title: 'InnoTech', start: new Date(2024, 8, 5, 14, 0), end: new Date(2024, 8, 5, 15, 0) },
-            //         { title: 'PinkFly', start: new Date(2024, 9, 11, 14, 0), end: new Date(2024, 9, 11, 15, 0) },
-            //         { title: 'Zanbeel', start: new Date(2024, 8, 7, 14, 0), end: new Date(2024, 8, 7, 15, 0) },
-            //         { title: 'Vyro', start: new Date(2024, 9, 12, 9, 0), end: new Date(2024, 9, 12, 10, 0) },
-            //     ];
-            //     setEvents(fetchedEvents);
-            //     setCalendarLoading(false);
-            // }, 2000);
-        };
 
-        fetchEvents();
+        //out of meeting room schedule get those rooms whose roomId == selectedRoom
+        const thisRoomBookings = meetingRoomSchedule.filter(booking => booking.roomId === selectedRoom);
+        console.log("THIS room's bookings", thisRoomBookings);
+
+        //get the approved bookings only
+        const approvedBookings = thisRoomBookings.filter(booking => booking.status === 'Approved').map(booking => {
+            const startTime = new Date(booking.time_start);
+            const endTime = new Date(booking.time_end);
+        
+            return {
+                title: booking.tenant_name || "Tennant",
+                start: startTime,
+                end: endTime,
+            };
+        });
+        
+        console.log("setting events", approvedBookings);
+        setEvents(approvedBookings);
+
+        setTimeout(() => {
+            setCalendarLoading(false);
+        }, 1000);
+
     }, [selectedRoom]);
 
 

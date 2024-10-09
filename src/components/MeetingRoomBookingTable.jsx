@@ -29,15 +29,8 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
     };
 
     const fetchReasonForCancellation = (bookingId) => {
-        setMeetingCancellationReason("Fetching reason for meeting cancellation...");
         document.getElementById('meeting_unapproved_reason').showModal();
-        // Simulate API call with timer
-        setTimeout(() => {
-            document.getElementById('meeting_unapproved_reason').close();
-            console.log("Fetching reason for meeting cancellation for booking ID: ", bookingId);
-            setMeetingCancellationReason("The meeting was not approved because the room was already booked for the same time slot.");
-            document.getElementById('meeting_unapproved_reason').showModal();
-        }, 1000);
+        
     };
 
     const handleSortChange = (field) => {
@@ -134,7 +127,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
                 className="modal modal-bottom sm:modal-middle"
             >
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">This meeting was not approved.</h3>
+                    <h3 className="font-bold text-lg">The receptionist provided the following reason for rejecting this booking request:</h3>
                     <p className="py-4">{meetingCancellationReason}</p>
                     <div className="modal-action">
                         <form method="dialog">
@@ -253,6 +246,7 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, role, dashboardComponent
                                                     className="btn btn-sm btn-outline btn-neutral"
                                                     onClick={() => {
                                                         fetchReasonForCancellation(row.bookingId);
+                                                        setMeetingCancellationReason(row.reasonDecline || "Unknown");
                                                     }}>
                                                     <InformationCircleIcon className="h-5 w-5" />
                                                     Reason
