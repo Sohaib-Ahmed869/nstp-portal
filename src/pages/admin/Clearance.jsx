@@ -45,6 +45,7 @@ const Clearance = () => {
                     applicantCnic: request.applicant_cnic,
                     applicantDesignation: request.applicant_designation,
                     officeNumber: request.office,
+                    is_cleared: request.is_cleared,
                     vacatingDate: new Date(request.date_vacate).toISOString().split('T')[0],
                     reasonForLeaving: request.reason,
                     etags: request.etags,
@@ -83,6 +84,33 @@ const Clearance = () => {
         const dateB = new Date(b.dateRequested);
         return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
     });
+
+    const handleClearance = async (clearanceId) => {
+        console.log("Approving clearance for: ", clearanceId)
+        
+        try {
+            const response = await AdminService.handleClearanceRequest(clearanceId);
+            console.log("🚀 ~ handleClearance ~ response", response);
+            if (response.error) {
+                console.error(response.error);
+                showToast(false, response.error);
+            } else {
+                setClearanceRequests((prevRequests) =>
+                    prevRequests.map((request) =>
+                        request.id === clearanceId
+                ? { ...request, is_cleared: true }
+                : request
+                ));
+
+                showToast(true, response.message);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setApprovingClearanceId(null);
+        }
+
+    };
 
     return (
         <Sidebar>
@@ -134,7 +162,7 @@ const Clearance = () => {
                                 <div className="flex flex-col items-center sm:flex-row gap-3 mt-3 md:mt-0 ">
                                     { request.is_cleared ? <div className="badge badge-secondary p-3 "> <CheckBadgeIcon className="size-5 mr-3" /> Cleared </div> :
                                         <button
-                                            className={`btn btn-sm btn-secondary btn-outline ${approvingClearanceId == request.id && "btn-disabled"}`} onClick={() => { setApprovingClearanceId(request.id); }}>
+                                            className={`btn btn-sm btn-secondary btn-outline ${approvingClearanceId == request.id && "btn-disabled"}`} onClick={() => { setApprovingClearanceId(request.id); handleClearance(request.id) }}>
                                             {approvingClearanceId == request.id ? <span className="loading loading-spinner"></span> : <CheckIcon className="size-4" />}
                                             {approvingClearanceId == request.id ? 'Please wait...' : 'Approve Clearance Request'}
                                         </button>

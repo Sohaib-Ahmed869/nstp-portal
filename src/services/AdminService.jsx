@@ -625,7 +625,26 @@ const AdminService = {
     }
   },
 
-  
+  handleClearanceRequest: async (clearanceId) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/admin/clearance/resolve`,
+        {
+          clearanceId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },  
 };
 
 export default AdminService;
