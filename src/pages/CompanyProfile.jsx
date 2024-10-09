@@ -378,6 +378,8 @@ const handleCancelPassword = () => {
       console.log("company ID: ", companyId); //send feedback to this company
       setModalLoading(false);
       document.getElementById('evaluation-feedback-modal').close();
+      showToast(true, "Feedback sent successfully.");
+      setFeedback("");
     }, 2000);
   }
 
