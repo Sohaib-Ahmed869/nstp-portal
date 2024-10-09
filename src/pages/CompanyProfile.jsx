@@ -280,7 +280,7 @@ const togglePasswordVisibility = (field) => {
           const response = await AdminService.getTenant(tower.id, companyId);
           if (!response.error) {
             const fetchedData = response.data.tenant;
-
+            console.log("FETC", fetchedData)
             // Calculate contract end date (one month after joining date)
             const contractStartDate = new Date(fetchedData.dateJoining);
             const contractEndDate = new Date(contractStartDate);
@@ -330,7 +330,8 @@ const togglePasswordVisibility = (field) => {
               eTags: fetchedData.etags,
               violations: fetchedData.violations,
               contractDuration: contractDurationPercentage,
-              employees: fetchedData.employees
+              employees: fetchedData.employees,
+              meetingMinutes: fetchedData.meetingMinutes,
             };
 
             setCompanyData(consolidatedData);
@@ -343,6 +344,7 @@ const togglePasswordVisibility = (field) => {
           const response = await TenantService.getProfile();
           if (!response.error) {
             const fetchedData = response.data.tenant;
+            console.log("FETC", fetchedData)
 
             // Calculate contract end date (one month after joining date)
             const contractStartDate = new Date(fetchedData.dateJoining);
@@ -393,7 +395,8 @@ const togglePasswordVisibility = (field) => {
               eTags: fetchedData.etags,
               violations: fetchedData.violations,
               contractDuration: contractDurationPercentage,
-              employees: fetchedData.employees
+              employees: fetchedData.employees,
+              
             };
 
             setCompanyData(consolidatedData);
@@ -750,6 +753,13 @@ const togglePasswordVisibility = (field) => {
               <div className="">Contract start: {companyData.contractStartDate}</div>
               <div className="">Contract end: {companyData.contractEndDate}</div>
             </div>
+            
+            <div className="flex flex-row gap-3 mt-5 items-center p-3 border-primary border-opacity-30 rounded-lg border">
+              <ClockIcon className="h-6 w-6 text-secondary" />
+              <h2 className="text-xl font-bold ">Meeting Minutes</h2>
+              <p className="text-lg">{companyData.meetingMinutes} minutes</p>
+            </div>
+
           </div>
         </div>
 
