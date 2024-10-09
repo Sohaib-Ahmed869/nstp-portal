@@ -45,7 +45,7 @@ import {AuthContext} from './context/AuthContext';
 const ProtectedRoute = ({ allowedRoles, redirectPath = '/unauthorized' }) => {
   const { role } = useContext(AuthContext);
   
-  if (!allowedRoles.includes(role)) {
+  if (!role || role == "" || !allowedRoles.includes(role)) {
     return <Navigate to={redirectPath} replace />;
   }
 

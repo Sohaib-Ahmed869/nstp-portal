@@ -8,10 +8,15 @@ const Unauthorized = () => {
   return (
     <div className="flex flex-col items-center justify-center w-screen h-screen bg-primary text-white">
       <h1 className="text-5xl font-bold flex flex-row mb-2">4 <FaceFrownIcon className="size-12"></FaceFrownIcon> 3</h1>
-      <p className="text-lg">That means you aren't allowed to access this page. <br /> Contact tech team if you think this is a mistake.</p>
-      <button className="btn btn-secondary dark:bg-base-100 dark:text-white mt-5" onClick={() => navigate(-1)}>
-        Go Back
-      </button>
+      <p className="text-lg text-center">That means you aren't allowed to access this page. <br /> You may be logged out. <br /> Contact tech team if you think this is a mistake.</p>
+     <div className="flex gap-3">
+       <button className="btn btn-secondary btn-outline dark:bg-base-100 dark:text-white mt-5" onClick={() => navigate('/')}>
+         Go to Login
+       </button>
+       <button className="btn btn-secondary dark:bg-base-100 dark:text-white mt-5" onClick={() => navigate(-1)}>
+         Go Back
+       </button>
+     </div>
     </div>
   )
 }

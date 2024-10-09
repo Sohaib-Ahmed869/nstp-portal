@@ -13,88 +13,27 @@ import {
 } from "@heroicons/react/24/outline";
 import MeetingRoomBookingTable from "../../components/MeetingRoomBookingTable";
 import { TenantService } from "../../services";
+import { formatDate } from '../../util/date';
 
 export const MeetingRoomBooking = () => {
-  const [events, setEvents] = useState([
-    {
-      title: "Booked",
-      start: new Date(2024, 8, 1, 10, 0),
-      end: new Date(2024, 8, 1, 12, 0),
-    },
-    {
-      title: "Booked",
-      start: new Date(2024, 8, 5, 14, 0),
-      end: new Date(2024, 8, 5, 15, 0),
-    },
-    {
-      title: "Booked",
-      start: new Date(2024, 9, 11, 14, 0),
-      end: new Date(2024, 9, 11, 15, 0),
-    },
-    {
-      title: "Booked",
-      start: new Date(2024, 8, 7, 14, 0),
-      end: new Date(2024, 8, 7, 15, 0),
-    },
-    {
-      title: "Booked",
-      start: new Date(2024, 9, 12, 9, 0),
-      end: new Date(2024, 9, 12, 10, 0),
-    },
-  ]);
-  const [loading, setLoading] = useState(true);
-  const [calendarLoading, setCalendarLoading] = useState(true);
-  const [selectedRoom, setSelectedRoom] = useState("1");
-  const [roomOptions, setRoomOptions] = useState([
-    { value: "1", label: "Meeting Room 1" },
-    { value: "2", label: "Meeting Room 2" },
-    { value: "3", label: "Meeting Room 3" },
-    { value: "4", label: "Auditorium 1" },
-    { value: "5", label: "Auditorium 2" },
-  ]);
+    const [events, setEvents] = useState([
+    //    { title: 'Booked', start: new Date(2024, 8, 1, 10, 0), end: new Date(2024, 8, 1, 12, 0) },
+    ]);
+    const [loading, setLoading] = useState(true);
+    const [calendarLoading, setCalendarLoading] = useState(true);
+    const [selectedRoom, setSelectedRoom] = useState('1');
+    const [roomOptions, setRoomOptions] = useState([
+    //    { value: '1', label: 'Meeting Room 1' }  
+    ]);
 
-  const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([
-    {
-      bookingId: "1",
-      roomNo: "MT-234",
-      status: "Approved",
-      date: "12/12/2024",
-      time: "12:00 PM - 1:00 PM",
-    },
-    {
-      bookingId: "2",
-      roomNo: "MS-224",
-      status: "Pending",
-      date: "12/13/2024",
-      time: "11:00 AM - 12:00 PM",
-    },
-    {
-      bookingId: "3",
-      roomNo: "MS-234",
-      status: "Pending",
-      date: "12/14/2024",
-      time: "2:00 PM - 3:00 PM",
-    },
-    {
-      bookingId: "4",
-      roomNo: "MS-444",
-      status: "Approved",
-      date: "12/15/2024",
-      time: "10:00 AM - 11:00 AM",
-    },
-    {
-      bookingId: "5",
-      roomNo: "MS-994",
-      status: "Unapproved",
-      date: "12/16/2024",
-      time: "3:00 PM - 4:00 PM",
-    },
-  ]);
+    const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([
+     //   { bookingId: "1", roomNo: 'MT-234', status: 'Approved', date: '12/12/2024', time: '12:00 PM - 1:00 PM' },
+      ]);
 
   const [modalLoading, setModalLoading] = useState(false);
   const [meetingToCancel, setMeetingToCancel] = useState(null);
-  const [meetingCancellationReason, setMeetingCancellationReason] =
-    useState("");
+  const [allBookings, setAllBookings] =
+    useState([]);
   const [newBooking, setNewBooking] = useState({
     date: "",
     startTime: "",
@@ -112,96 +51,149 @@ export const MeetingRoomBooking = () => {
         }
         console.log("Rooms: ", roomsResponse.data.rooms);
 
-        // set rooms
+                const mappedRooms = roomsResponse.data.rooms.map(room => ({
+                    value: room._id,
+                    label: room.name,
+                }));
 
-        const allBookings = await TenantService.getAllRoomBookings();
-        if (allBookings.error) {
-          console.log(allBookings.message);
-          return;
+                setRoomOptions(mappedRooms);
+                setSelectedRoom(mappedRooms[0].value);
+                console.log("set selected room to" , mappedRooms[0].value);
+
+                const allBookings = await TenantService.getAllRoomBookings();
+                if(allBookings.error) {
+                    console.log(allBookings.message);
+                    return;
+                }
+                console.log("All bookings: ", allBookings.data.bookings);
+                
+
+                // mapping all bookings to the right format
+                const mappedBookings = allBookings.data.bookings.map(booking => {
+                    const startTime = new Date(booking.time_start);
+                    const endTime = new Date(booking.time_end);
+                
+                    const formatTime = (date) => {
+                        const hours = date.getUTCHours().toString().padStart(2, '0');
+                        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                        return `${hours}:${minutes}`;
+                    };
+                
+                    const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
+                    const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
+                
+                    return {
+                        bookingId: booking._id,
+                        roomNo: booking.room_name || "Room",  //musa return this
+                        company: booking.tenant_name || "Booked", //musa return this
+                        companyId: booking.tenant_id,
+                        roomId: booking.room_id,
+                        time_start: booking.time_start,
+                        time_end: booking.time_end,
+                        status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
+                        dateBooked: formatDate(booking.date_initiated),
+                        time: formattedTime,
+                        dateBooking: dateBooking,
+                    };
+                });
+                console.log("mapped bookings, ", mappedBookings);
+                setAllBookings(mappedBookings); 
+                
+                const tenantBookingsResponse = await TenantService.getRoomBookings();
+                if(tenantBookingsResponse.error) {
+                    console.log(tenantBookingsResponse.message);
+                    return;
+                }
+                console.log("!!! Bookings: ", tenantBookingsResponse.data.bookings);
+                     //   { bookingId: "1", roomNo: 'MT-234', status: 'Approved', date: '12/12/2024', time: '12:00 PM - 1:00 PM' },
+                const mappedTenantBookings = tenantBookingsResponse.data.bookings.map(booking => {
+                    const startTime = new Date(booking.time_start);
+                    const endTime = new Date(booking.time_end);
+                
+                    const formatTime = (date) => {
+                        const hours = date.getUTCHours().toString().padStart(2, '0');
+                        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+                        return `${hours}:${minutes}`;
+                    };
+                
+                    const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
+                    const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
+                
+                    return {
+                        bookingId: booking._id,
+                        roomNo: booking.room_name || "Room",  //musa return this
+                        company: booking.tenant_name || "Self", //musa return this
+                        companyId: booking.tenant_id,
+                        roomId: booking.room_id,
+                        time_start: booking.time_start,
+                        time_end: booking.time_end,
+                        reasonDecline: booking.reason_decline,
+                        status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
+                        dateBooked: formatDate(booking.date_initiated),
+                        time: formattedTime,
+                        dateBooking: dateBooking,
+                    };
+                });
+                console.log("!!! mapped tenant bookings", mappedTenantBookings);
+                setMeetingRoomSchedule(mappedTenantBookings);
+                // set tenant bookings
+
+            } catch (error) {
+                console.log("Error fetching rooms: ", error);
+            } finally {
+                setLoading(false);
+            }
+            
         }
-        console.log("All bookings: ", allBookings.data.bookings);
-
-        // set all bookings
-
-        const tenantBookingsResponse = await TenantService.getRoomBookings();
-        if (tenantBookingsResponse.error) {
-          console.log(tenantBookingsResponse.message);
-          return;
-        }
-        console.log("Bookings: ", tenantBookingsResponse.data.bookings);
-
-        // set tenant bookings
-      } catch (error) {
-        console.log("Error fetching rooms: ", error);
-      } finally {
-        setLoading(false);
-      }
-    }
 
     fetchData();
   }, []);
 
-  useEffect(() => {
-    console.log("Selected room: ", selectedRoom);
-    setCalendarLoading(true);
-    setTimeout(() => {
-      const fetchedEvents = [
-        {
-          title: "Booked 1:00PM",
-          start: new Date(2024, 8, 1, 10, 0),
-          end: new Date(2024, 8, 1, 12, 0),
-        },
-        {
-          title: "Booked",
-          start: new Date(2024, 8, 5, 14, 0),
-          end: new Date(2024, 8, 5, 15, 0),
-        },
-        {
-          title: "Booked",
-          start: new Date(2024, 9, 11, 14, 0),
-          end: new Date(2024, 9, 11, 15, 0),
-        },
-        {
-          title: "Booked",
-          start: new Date(2024, 8, 7, 14, 0),
-          end: new Date(2024, 8, 7, 15, 0),
-        },
-        {
-          title: "Booked",
-          start: new Date(2024, 9, 12, 9, 0),
-          end: new Date(2024, 9, 12, 10, 0),
-        },
-      ];
-      setEvents(fetchedEvents);
-      setCalendarLoading(false);
-    }, 1000);
-  }, [selectedRoom]);
+    useEffect(() => {
+        console.log("Selected room: ", selectedRoom);
+        setCalendarLoading(true);
+        
+                //out of the mapped bookings, get the ones for the current room (room_id matches the selected room)
+                const roomBookings = allBookings.filter(booking => booking.roomId === selectedRoom);
+                console.log("THIS Room;s bookings: ", roomBookings);
+
+                //getting the approved bookings out of the above room bookings (to dipslay in caldenar)
+                const approvedBookings =roomBookings.filter(booking => booking.status === 'Approved').map(booking => {
+                    const startTime = new Date(booking.time_start);
+                    const endTime = new Date(booking.time_end);
+                
+                    return {
+                        title: booking.tenant_name || "Booked",
+                        start: startTime,
+                        end: endTime,
+                    };
+                });
+
+                console.log("setting the events to this : ", approvedBookings);
+
+                setEvents(approvedBookings);
+                
+
+        setTimeout(() => {
+            setCalendarLoading(false);
+        }, 900);
+    }, [selectedRoom]);
 
   const handleRoomChange = (e) => {
     setSelectedRoom(e.target.value);
   };
 
-  const cancelMeeting = (meetingId) => {
-    setModalLoading(true);
-    setTimeout(() => {
-      console.log(`Cancelling meeting with ID: ${meetingId}`);
-      setMeetingRoomSchedule((prevSchedule) =>
-        prevSchedule.filter((meeting) => meeting.bookingId !== meetingId)
-      );
-      setModalLoading(false);
-      document.getElementById("meeting_cancellation").close();
-    }, 2000);
-  };
-
-  const fetchReasonForCancellation = (bookingId) => {
-    setMeetingCancellationReason("Fetching reason for meeting cancellation...");
-    document.getElementById("meeting_unapproved_reason").showModal();
-    setTimeout(() => {
-      setMeetingCancellationReason(
-        "The meeting was not approved because the room was already booked for the requested time slot."
-      );
-    }, 1000);
-  };
+    const cancelMeeting = (meetingId) => {
+        setModalLoading(true);
+        setTimeout(() => {
+            console.log(`Cancelling meeting with ID: ${meetingId}`);
+            setMeetingRoomSchedule(prevSchedule =>
+                prevSchedule.filter(meeting => meeting.bookingId !== meetingId)
+            );
+            setModalLoading(false);
+            document.getElementById('meeting_cancellation').close();
+        }, 2000);
+    };
 
   const handleNewBookingChange = (e) => {
     setNewBooking({ ...newBooking, [e.target.name]: e.target.value });
@@ -313,56 +305,33 @@ export const MeetingRoomBooking = () => {
         />
       </div>
 
-      {/* Modal for meeting cancellation */}
-      <dialog
-        id="meeting_cancellation"
-        className="modal modal-bottom sm:modal-middle"
-      >
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">
-            Are you sure you want to cancel this booking?
-          </h3>
-          <p className="py-4">Please click "Yes" if you wish to cancel it.</p>
-          <div className="modal-action">
-            <button
-              className={`btn mr-2 ${modalLoading && "btn-disabled"}`}
-              onClick={() => {
-                setMeetingToCancel(null);
-                document.getElementById("meeting_cancellation").close();
-              }}
-            >
-              Close
-            </button>
-            <button
-              className={`btn btn-primary ${modalLoading && "btn-disabled"}`}
-              onClick={() => {
-                cancelMeeting(meetingToCancel);
-              }}
-            >
-              {modalLoading && (
-                <span className="loading loading-spinner"></span>
-              )}
-              {modalLoading ? "Please wait..." : "Confirm"}
-            </button>
-          </div>
-        </div>
-      </dialog>
-
-      {/* Modal for unapproved meeting reason */}
-      <dialog
-        id="meeting_unapproved_reason"
-        className="modal modal-bottom sm:modal-middle"
-      >
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">This meeting was not approved.</h3>
-          <p className="py-4">{meetingCancellationReason}</p>
-          <div className="modal-action">
-            <form method="dialog">
-              <button className="btn mr-2">Close</button>
-            </form>
-          </div>
-        </div>
-      </dialog>
+            {/* Modal for meeting cancellation */}
+            <dialog id="meeting_cancellation" className="modal modal-bottom sm:modal-middle">
+                <div className="modal-box">
+                    <h3 className="font-bold text-lg">Are you sure you want to cancel this booking?</h3>
+                    <p className="py-4">Please click "Yes" if you wish to cancel it.</p>
+                    <div className="modal-action">
+                        <button
+                            className={`btn mr-2 ${modalLoading && "btn-disabled"}`}
+                            onClick={() => {
+                                setMeetingToCancel(null);
+                                document.getElementById("meeting_cancellation").close();
+                            }}
+                        >
+                            Close
+                        </button>
+                        <button
+                            className={`btn btn-primary ${modalLoading && "btn-disabled"}`}
+                            onClick={() => { cancelMeeting(meetingToCancel) }}
+                        >
+                            {modalLoading && (
+                                <span className="loading loading-spinner"></span>
+                            )}
+                            {modalLoading ? "Please wait..." : "Confirm"}
+                        </button>
+                    </div>
+                </div>
+            </dialog>
 
       {/* Modal for new booking */}
       <dialog

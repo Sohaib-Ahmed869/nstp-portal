@@ -17,7 +17,7 @@ const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
-        setRole('');
+        setRole(null);
         setPermissions([]);
         localStorage.removeItem('userRole');
         localStorage.removeItem('userPermissions');
