@@ -131,13 +131,16 @@ export const MeetingRoomBooking = () => {
 
                     console.log("formatted time: ", formattedTime);
                     console.log("date booking: ", dateBooking);
+
+                    //get the room name from mappedRooms
+                    const roomName = mappedRooms.find(room => room.value === booking.room_id);
                 
                     return {
                         bookingId: booking._id,
-                        roomNo: booking.room_name || "Room",  //musa return this
                         company: booking.tenant_name || "Self", //musa return this
                         companyId: booking.tenant_id,
                         roomId: booking.room_id,
+                        roomNo: roomName.label, //roomname to display
                         time_start: booking.time_start,
                         time_end: booking.time_end,
                         reasonDecline: booking.reason_decline,
@@ -219,16 +222,6 @@ export const MeetingRoomBooking = () => {
           setModalLoading(false);
           document.getElementById('meeting_cancellation').close();
         }
-
-
-        // setTimeout(() => {
-        //     console.log(`Cancelling meeting with ID: ${meetingId}`);
-        //     setMeetingRoomSchedule(prevSchedule =>
-        //         prevSchedule.filter(meeting => meeting.bookingId !== meetingId)
-        //     );
-        //     setModalLoading(false);
-        //     document.getElementById('meeting_cancellation').close();
-        // }, 2000);
     };
 
   const handleNewBookingChange = (e) => {
@@ -249,26 +242,17 @@ export const MeetingRoomBooking = () => {
         console.log("New booking submitted: ", response.data.booking);
         showToast(true, response.message);
 
+        //clear the fields
+        setNewBooking({ date: '', startTime: '', endTime: '', roomId: '' });
+        document.getElementById('new_booking_modal').close();
+        
+
     } catch (error) {
         console.log("Error submitting new booking: ", error);
     } finally {
         setModalLoading(false);
     }
 
-    // setTimeout(() => {
-    //     console.log("Submitting new booking:", newBooking);
-    //     const newMeeting = {
-    //         bookingId: String(meetingRoomSchedule.length + 1),
-    //         roomNo: `MR-${newBooking.roomId}`,
-    //         status: 'Pending',
-    //         date: newBooking.date,
-    //         time: `${newBooking.startTime} - ${newBooking.endTime}`
-    //     };
-    //     setMeetingRoomSchedule(prevSchedule => [...prevSchedule, newMeeting]);
-    //     setModalLoading(false);
-    //     document.getElementById('new_booking_modal').close();
-    //     setNewBooking({ date: '', startTime: '', endTime: '', roomId: '' });
-    // }, 2000);
   };
 
   return (
@@ -343,8 +327,6 @@ export const MeetingRoomBooking = () => {
           setMeetingRoomSchedule={setMeetingRoomSchedule}
         />
       </div>
-
-        
 
       {/* Modal for new booking */}
       <dialog
