@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
 import { ArrowsUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { useNavigate } from 'react-router-dom';
 
 const Evaluations = () => {
     const [evaluations, setEvaluations] = useState([]);
@@ -10,6 +11,7 @@ const Evaluations = () => {
     const [sortOrder, setSortOrder] = useState('asc');
     const [currentPage, setCurrentPage] = useState(1);
     const evaluationsPerPage = 10;
+    const navigate= useNavigate()
 
     useEffect(() => {
         // Simulate API call for 2 seconds before populating states with data
@@ -82,7 +84,9 @@ const Evaluations = () => {
                                     <span className="badge badge-success">Completed</span>
                                 ) : 
                                 (   
-                                    <button className="btn btn-primary">Fill evaluation</button>
+                                    <button className="btn btn-primary" onClick = {
+                                        () => navigate('/evaluations/' + evaluation.id)
+                                    } >Fill evaluation</button>
 
                                 )}
                             
