@@ -247,6 +247,10 @@ const EvaluationForm = () => {
 
       {/* Main Form */}
       <div className="bg-base-100 rounded-lg ring-1 ring-base-200 lg:m-10 md:m-5 max-sm:m-5 max-sm:mx-2 max-sm:p-3 p-10">
+      <div className="flex items-center justify-between">
+                    <p className="text-2xl font-semibold">Performance Evaluation form</p>
+                </div>
+                <hr className="my-5 text-gray-200"></hr>
         <div className="grid gap-5 max-sm:grid-cols-1 md:grid-cols-2">
           {/* Economic Performance Section */}
           <div className="col-span-2 max-sm:col-span-1">
