@@ -15,21 +15,9 @@ const Evaluations = () => {
         // Simulate API call for 2 seconds before populating states with data
         setTimeout(() => {
             setEvaluations([
-                { id: '1', adminName: 'John Doe', description: 'Great company with excellent services. I would recommend them.', date: '2024-12-12' },
-                { id: '2', adminName: 'Jane Smith', description: 'Needs improvement in customer support.', date: '2024-12-13' },
-                { id: '3', adminName: 'Alice Johnson', description: 'Outstanding performance and timely delivery.', date: '2024-12-14' },
-                { id: '4', adminName: 'Bob Brown', description: 'Average experience, could be better. I did not like the attitude of the staff. Also, the quality of the product was not up to the mark. I believe that the company can do better.', date: '2024-12-15' },
-                { id: '5', adminName: 'Charlie Davis', description: 'Exceptional quality and great communication.', date: '2024-12-16' },
-                { id: '6', adminName: 'Charlie Davis', description: 'Exceptional quality and great communication.', date: '2024-12-16' },
-                { id: '7', adminName: 'Charlie Davis', description: 'Exceptional quality and great communication.', date: '2024-12-16' },
-                { id: '8', adminName: 'Charlie Davis', description: 'Exceptional quality and great communication.', date: '2024-12-16' },
-                { id: '89', adminName: 'Charlie Davis', description: 'Exceptional quality and great communication.', date: '2024-12-16' },
-                { id: '9', adminName: 'Charlie Davis', description: 'Exceptional quality and great communication.', date: '2024-12-16' },
-                { id: '99', adminName: 'Charlie Davis', description: 'Exceptional quality and great communication.', date: '2024-12-16' },
-                { id: '999', adminName: 'Charlie Davis', description: 'Exceptional quality and great communication.', date: '2024-12-16' },
-                { id: '597', adminName: 'Charlie Davis', description: 'Exceptional quality and great communication.', date: '2024-12-16' },
-                { id: '655', adminName: 'Charlie Davis', description: 'Exceptional quality and great communication.', date: '2024-12-16' },
+                { id: '1', adminName: 'John Doe', date: '2024-12-12', completed: false, },
             ]);
+            
             setLoading(false);
         }, 2000);
     }, []);
@@ -59,7 +47,7 @@ const Evaluations = () => {
 
             <div className={`bg-base-100 rounded-md shadow-md p-5 lg:p-10 mt-10 ${loading && "hidden"}`}>
                 <div className="flex items-center justify-between">
-                    <p className="text-2xl font-semibold">Feedback and Evaluation</p>
+                    <p className="text-2xl font-semibold">Feedback and Evaluation Requests</p>
                 </div>
                 <hr className="my-5 text-gray-200"></hr>
                 <div className="flex justify-between flex-col md:flex-row md:items-center mb-4">
@@ -81,13 +69,23 @@ const Evaluations = () => {
                         Sort by Date ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
                     </button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4">
                     {currentEvaluations.map((evaluation) => (
-                        <div key={evaluation.id} className="card shadow-lg compact bg-base-100">
-                            <div className="card-body">
-                                <h2 className="card-title">{evaluation.adminName}</h2>
+                        <div key={evaluation.id} className="ring-base-200 ring-1 rounded-lg p-5 shadow-lg bg-base-100 flex">
+                            <div className="w-1/2">
+                                <h2 className="card-title">{evaluation.adminName || "Anonymous Admin"}</h2>
                                 <p>{evaluation.description}</p>
-                                <p className="text-sm text-gray-500">{new Date(evaluation.date).toLocaleDateString()}</p>
+                                <p className="text-sm text-gray-500">{"Date: "+  evaluation.date }</p>
+                            </div>
+                            <div className="flex w-1/2 justify-end items-end">
+                                {evaluation.completed ? (
+                                    <span className="badge badge-success">Completed</span>
+                                ) : 
+                                (   
+                                    <button className="btn btn-primary">Fill evaluation</button>
+
+                                )}
+                            
                             </div>
                         </div>
                     ))}

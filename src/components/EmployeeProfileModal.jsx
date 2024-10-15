@@ -39,6 +39,9 @@ const EmployeeProfileModal = ({ employeeProfileSelected }) => {
               <strong>CNIC:</strong> {employeeProfileSelected?.cnic}
             </p>
             <p className="text-md mb-2">
+              <strong>Father's name:</strong> {employeeProfileSelected?.fatherName || "Sajid Mehmood"}
+            </p>
+            <p className="text-md mb-2">
               <strong>Date of Birth:</strong> {new Date(employeeProfileSelected?.dob).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' })}
             </p>
             <p className="text-md mb-2">
@@ -60,7 +63,10 @@ const EmployeeProfileModal = ({ employeeProfileSelected }) => {
               <strong>Phone:</strong> {employeeProfileSelected?.phone}
             </p>
             <p className="text-md mb-2">
-              <strong>Address:</strong> {employeeProfileSelected?.address}
+              <strong>Temporary Address:</strong> {employeeProfileSelected?.tempAddress || employeeProfileSelected?.address}
+            </p>
+            <p className="text-md mb-2">
+              <strong>Permanent Address:</strong> {employeeProfileSelected?.permAddress || employeeProfileSelected?.address}
             </p>
           </div>
         </div>

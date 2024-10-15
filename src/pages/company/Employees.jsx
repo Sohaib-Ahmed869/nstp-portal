@@ -181,7 +181,7 @@ const Employees = () => {
     e.preventDefault();
     // Handle form submission
     //API call here
-    console.log(formData);
+    console.log("Submittign the form data:  ", formData);
 
     TenantService.addEmployee(formData).then((response) => {
       console.log("🚀 ~ Employee response:", response);
@@ -309,10 +309,12 @@ const Employees = () => {
 
   const employeeFields = [
     { name: "name", type: "text", label: "Name" },
+    { name: "fatherName", type: "text", label: "fatherName" },
     { name: "email", type: "email", label: "Email" },
     { name: "cnic", type: "text", label: "CNIC" },
     { name: "phone", type: "text", label: "Phone" },
-    { name: "address", type: "text", label: "Address" },
+    { name: "permAddress", type: "text", label: "Permanent address" },
+    { name: "tempAddress", type: "text", label: "Temporary address" },
     { name: "designation", type: "text", label: "Designation" },
     { name: "dob", type: "date", label: "DOB" },
     { name: "doj", type: "date", label: "DOJ" },
@@ -381,7 +383,10 @@ const Employees = () => {
       {/* Add new employee popup form */}
       <dialog id="employee_form" className="modal ">
         <div className="modal-box w-11/12 max-w-5xl">
-          <h3 className="font-bold text-lg">Add new employee</h3>
+          <div className="flex gap-2 mb-3 items-center">
+            <UserPlusIcon className="size-6 text-primary" />
+            <h3 className="font-bold text-lg">Add new employee</h3>
+          </div>
           <form onSubmit={handleSubmit} className="py-4">
             <div className="w-full grid grid-cols-2 gap-3">
               {employeeFields.map((field) => {
