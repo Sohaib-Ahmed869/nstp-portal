@@ -645,6 +645,28 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },  
+
+  requestEvaluation: async (tenantId, deadline) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/admin/evaluation/request`,
+        {
+          tenantId,
+          deadline,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AdminService;

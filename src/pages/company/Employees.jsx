@@ -33,7 +33,7 @@ const Employees = () => {
   const [filter, setFilter] = useState("All");
   const [sortField, setSortField] = useState("name");
   const [sortOrder, setSortOrder] = useState("asc");
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({  // fatherName, tempAddress
     name: "",
     photo: "",
     email: "",

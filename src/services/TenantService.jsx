@@ -452,6 +452,76 @@ const TenantService = {
       return await handleResponse(error.response);
     }
   },
+
+  submitEvaluation: async (evaluationBody) => {
+    try {
+      const { economicPerformance, innovationTechnology, nustInteraction, otherDetails } = evaluationBody;
+      const response = await axios.post(
+        `${BASE_URL}/tenant/evaluation/submit`,
+        {
+          evaluationBody: {
+            economicPerformance: {
+              sales_total: economicPerformance.salesTotal,
+              sales_tenants: economicPerformance.salesTenants,
+              sales_exports: economicPerformance.salesExports,
+              earning: economicPerformance.earning,
+              investment_rnd: economicPerformance.investmentRnd,
+              investment_snm: economicPerformance.investmentSnm,
+              investment_hr: economicPerformance.investmentHr,
+              customers_total: economicPerformance.customersTotal,
+              customers_b2b: economicPerformance.customersB2b,
+              investment_raised: economicPerformance.investmentRaised,
+              inverstor_origin: economicPerformance.inverstorOrigin,
+              investor_type: economicPerformance.investorType,
+              investor_name: economicPerformance.investorName,
+              investment_amount: economicPerformance.investmentAmount,
+              employees_total: economicPerformance.employeesTotal,
+              employees_rnd: economicPerformance.employeesRnd,
+              employees_snm: economicPerformance.employeesSnm,
+              employees_hr: economicPerformance.employeesHr,
+              employees_interns: economicPerformance.employeesInterns,
+              employees_support: economicPerformance.employeesSupport,
+              avg_employee_retention: economicPerformance.avgEmployeeRetention,
+              avg_internship_duration: economicPerformance.avgInternshipDuration,
+              avg_salary: economicPerformance.avgSalary,
+            },
+            innovationTechnology: {
+              num_technologies: innovationTechnology.numTechnologies,
+              num_ips_filed: innovationTechnology.numIpsFiled,
+              num_ips_awarded: innovationTechnology.numIpsAwarded,
+              num_ips_owned: innovationTechnology.numIpsOwned,
+              num_technologies_transfers: innovationTechnology.numTechnologiesTransfers,
+              num_research_national: innovationTechnology.numResearchNational,
+              num_research_international: innovationTechnology.numResearchInternational,
+              value_research_international: innovationTechnology.valueResearchInternational,
+              num_collaborations: innovationTechnology.numCollaborations,
+            },
+            nustInteraction: {
+              num_internships: nustInteraction.numInternships,
+              num_jobs: nustInteraction.numJobs,
+              num_placements: nustInteraction.numPlacements,
+              num_research_projects: nustInteraction.numResearchProjects,
+              value_research_projects: nustInteraction.valueResearchProjects,
+              participation_jobfair: nustInteraction.participationJobfair,
+            },
+            otherDetails: {
+              achievements: otherDetails.achievements,
+              comments: otherDetails.comments,
+            },
+          },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default TenantService;
