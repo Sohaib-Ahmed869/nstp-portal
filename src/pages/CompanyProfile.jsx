@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Sidebar from '../components/Sidebar';
 import { useParams } from 'react-router-dom';
-import { UserGroupIcon,LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon,LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import nstpLogo from '../assets/nstplogocolored.png'
 import ReactApexChart from 'react-apexcharts';
 import { getPieChartOptions } from '../util/charts';
@@ -12,6 +12,7 @@ import FloatingLabelInput from '../components/FloatingLabelInput';
 import showToast from '../util/toast';
 import { AdminService, TenantService } from '../services';
 import { TowerContext } from '../context/TowerContext'
+import { ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
 
 
 /**
@@ -24,7 +25,6 @@ import { TowerContext } from '../context/TowerContext'
 const Company = ({ role }) => {
   const { companyId } = useParams();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [feedback, setFeedback] = useState("");
   const { tower } = useContext(TowerContext);
     const [passwordData, setPasswordData] = useState({
       currentPassword: '',
@@ -210,6 +210,13 @@ const togglePasswordVisibility = (field) => {
     {
       text: 'Send Evaluation/Feedback',
       icon: ChatBubbleLeftRightIcon,
+      onClick: () => {
+        document.getElementById('evaluation-feedback-modal').showModal();
+      },
+    },
+    {
+      text: 'Download Icon',
+      icon: ArrowDownTrayIcon,
       onClick: () => {
         document.getElementById('evaluation-feedback-modal').showModal();
       },
@@ -464,12 +471,11 @@ const togglePasswordVisibility = (field) => {
     setModalLoading(true);
     setTimeout(() => {
       //simulate api call here to send feedback
-      console.log(`Feedback: ${feedback}`);
       console.log("company ID: ", companyId); //send feedback to this company
       setModalLoading(false);
       document.getElementById('evaluation-feedback-modal').close();
       showToast(true, "Feedback sent successfully.");
-      setFeedback("");
+     
     }, 2000);
   }
 
@@ -589,12 +595,15 @@ const togglePasswordVisibility = (field) => {
       {/* Feedback modal (type in a text area and send/cancel buttons, with modalloading) */}
       <dialog id="evaluation-feedback-modal" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-xl mb-5">Send Evaluation/Feedback</h3>
-          <textarea rows={10} className="w-full h-32 p-2 input input-bordered" placeholder="Type your feedback here..." value={feedback} onChange={(e) => setFeedback(e.target.value)}></textarea>
+         <div className="flex items-center gap-2 mb-3">
+          <ChatBubbleOvalLeftEllipsisIcon className="size-8 text-primary" />
+           <h3 className="font-bold text-xl mb-5">Request Evaluation/Feedback</h3>
+         </div>
+          <p className="py-4">Are you sure you want to request this company to fill their evaluation form? Please press Confirm if you wish to confirm.</p>
           <div className="modal-action">
             <button className="btn" onClick={() => document.getElementById('evaluation-feedback-modal').close()}>Cancel</button>
             <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={sendFeedback}>
-              {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Sending..." : "Send"}
+              {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Confirm"}
             </button>
           </div>
         </div>
@@ -752,12 +761,13 @@ const togglePasswordVisibility = (field) => {
               </div>
               <div className="">Contract start: {companyData.contractStartDate}</div>
               <div className="">Contract end: {companyData.contractEndDate}</div>
+              <div className="">Total stay: {companyData.totalStay || "12 Months"}</div>
             </div>
             
             <div className="flex flex-row gap-3 mt-5 items-center p-3 border-primary border-opacity-30 rounded-lg border">
               <ClockIcon className="h-6 w-6 text-secondary" />
               <h2 className="text-xl font-bold ">Meeting Minutes</h2>
-              <p className="text-lg">{companyData.meetingMinutes} minutes</p>
+              <p className="text-lg">{companyData.meetingMinutes || " * "} minutes</p>
             </div>
 
           </div>

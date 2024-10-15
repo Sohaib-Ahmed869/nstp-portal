@@ -24,6 +24,7 @@ import { Complaints as CompanyComplaints } from './pages/company/Complaints.jsx'
 import { MeetingRoomBooking as CompanyMeetingRoomBooking } from './pages/company/MeetingRoomBooking.jsx';
 import Evaluations from './pages/company/Evaluations.jsx';
 import Parking from './pages/company/Parking.jsx';
+import EvaluationForm from './pages/company/EvaluationForm.jsx';
 
 // Receptionist Pages
 import { Dashboard as ReceptionistDashboard } from './pages/receptionist/Dashboard.jsx';
@@ -43,6 +44,8 @@ import Unauthorized from './pages/Unauthorized.jsx';
 
 //Context
 import {AuthContext} from './context/AuthContext';
+
+//Protected Route
 const ProtectedRoute = ({ allowedRoles, redirectPath = '/unauthorized' }) => {
   const { role } = useContext(AuthContext);
   
@@ -53,10 +56,12 @@ const ProtectedRoute = ({ allowedRoles, redirectPath = '/unauthorized' }) => {
   return <Outlet />;
 };
 
+//Render
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
@@ -88,6 +93,7 @@ function App() {
             <Route path="employees" element={<Employees />} />
             <Route path="bookings" element={<CompanyMeetingRoomBooking />} />
             <Route path="evaluations" element={<Evaluations />} />
+            <Route path="evaluations/:id" element={<EvaluationForm />} />
             <Route path="parking" element={<Parking />} />
             <Route path="profile" element={<Company role="tenant" />} />
             <Route path="etags" element={<Etags />} />
@@ -112,6 +118,7 @@ function App() {
           </Route>
         </Route>
 
+        {/* Error Route (404 page) */}
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
