@@ -453,59 +453,84 @@ const TenantService = {
     }
   },
 
-  submitEvaluation: async (evaluationBody) => {
+  getEvaluations: async () => {
     try {
-      const { economicPerformance, innovationTechnology, nustInteraction, otherDetails } = evaluationBody;
-      const response = await axios.post(
+      const response = await axios.get(`${BASE_URL}/tenant/evaluations`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  getEvaluation: async (evaluationId) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/tenant/evaluations/${evaluationId}`, {
+        withCredentials: true,
+      });
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  submitEvaluation: async (evaluationId, evaluationBody) => {
+    try {
+      const { economicPerformance, innovationTechnologyTransfer, interactionWithNUST, otherDetails } = evaluationBody;
+      console.log("🚀 ~ submitEvaluation ~ evaluationId", evaluationId);
+      console.log("🚀 ~ submitEvaluation ~ evaluationBody", evaluationBody);
+      const response = await axios.put(
         `${BASE_URL}/tenant/evaluation/submit`,
         {
+          evaluationId,
           evaluationBody: {
-            economicPerformance: {
-              sales_total: economicPerformance.salesTotal,
-              sales_tenants: economicPerformance.salesTenants,
-              sales_exports: economicPerformance.salesExports,
-              earning: economicPerformance.earning,
-              investment_rnd: economicPerformance.investmentRnd,
-              investment_snm: economicPerformance.investmentSnm,
-              investment_hr: economicPerformance.investmentHr,
-              customers_total: economicPerformance.customersTotal,
-              customers_b2b: economicPerformance.customersB2b,
-              investment_raised: economicPerformance.investmentRaised,
-              inverstor_origin: economicPerformance.inverstorOrigin,
-              investor_type: economicPerformance.investorType,
+            economic_performance: {
+              sales_total: economicPerformance.totalSales,
+              sales_tenants: economicPerformance.salesToNSTPTenants,
+              sales_exports: economicPerformance.salesToExportCustomers,
+              earning: economicPerformance.earningEBITDA,
+              investment_rnd: economicPerformance.investmentInRD,
+              investment_snm: economicPerformance.investmentInSalesMarketing,
+              investment_hr: economicPerformance.investmentInHRD,
+              customers_total: economicPerformance.totalCustomers,
+              customers_b2b: economicPerformance.b2bCustomers,
+              investment_raised: economicPerformance.raisedInvestment == "Yes"? true : false,
+              inverstor_origin: economicPerformance.investorOrigin,
+              investor_type: economicPerformance.typeOfInvestor,
               investor_name: economicPerformance.investorName,
               investment_amount: economicPerformance.investmentAmount,
-              employees_total: economicPerformance.employeesTotal,
-              employees_rnd: economicPerformance.employeesRnd,
-              employees_snm: economicPerformance.employeesSnm,
-              employees_hr: economicPerformance.employeesHr,
-              employees_interns: economicPerformance.employeesInterns,
-              employees_support: economicPerformance.employeesSupport,
-              avg_employee_retention: economicPerformance.avgEmployeeRetention,
-              avg_internship_duration: economicPerformance.avgInternshipDuration,
-              avg_salary: economicPerformance.avgSalary,
+              employees_total: economicPerformance.totalEmployees,
+              employees_rnd: economicPerformance.employeesInRD,
+              employees_snm: economicPerformance.employeesInMarketingSales,
+              employees_hr: economicPerformance.employeesInAdminFinanceHR,
+              employees_interns: economicPerformance.interns,
+              employees_support: economicPerformance.supportStaff,
+              avg_employee_retention: economicPerformance.averageEmployeeRetention,
+              avg_internship_duration: economicPerformance.averageInternshipDuration,
+              avg_salary: economicPerformance.averageSalarySkilled,
             },
-            innovationTechnology: {
-              num_technologies: innovationTechnology.numTechnologies,
-              num_ips_filed: innovationTechnology.numIpsFiled,
-              num_ips_awarded: innovationTechnology.numIpsAwarded,
-              num_ips_owned: innovationTechnology.numIpsOwned,
-              num_technologies_transfers: innovationTechnology.numTechnologiesTransfers,
-              num_research_national: innovationTechnology.numResearchNational,
-              num_research_international: innovationTechnology.numResearchInternational,
-              value_research_international: innovationTechnology.valueResearchInternational,
-              num_collaborations: innovationTechnology.numCollaborations,
+            innovation_technology: {
+              num_technologies: innovationTechnologyTransfer.technologiesDeveloped,
+              num_ips_filed: innovationTechnologyTransfer.IPsFiled,
+              num_ips_awarded: innovationTechnologyTransfer.IPsAwarded,
+              num_ips_owned: innovationTechnologyTransfer.totalIPsOwned,
+              num_technologies_transfers: innovationTechnologyTransfer.technologyTransfers,
+              num_research_national: innovationTechnologyTransfer.nationalResearchProjects,
+              num_research_international: innovationTechnologyTransfer.internationalResearchProjects,
+              value_research_international: innovationTechnologyTransfer.valueInternationalResearchProjects,
+              num_collaborations: innovationTechnologyTransfer.collaborationsWithNSTP,
             },
-            nustInteraction: {
-              num_internships: nustInteraction.numInternships,
-              num_jobs: nustInteraction.numJobs,
-              num_placements: nustInteraction.numPlacements,
-              num_research_projects: nustInteraction.numResearchProjects,
-              value_research_projects: nustInteraction.valueResearchProjects,
-              participation_jobfair: nustInteraction.participationJobfair,
+            nust_interaction: {
+              num_internships: interactionWithNUST.internshipsOffered,
+              num_jobs: interactionWithNUST.jobsOffered,
+              num_placements: interactionWithNUST.facultyPlacements,
+              num_research_projects: interactionWithNUST.researchProjects,
+              value_research_projects: interactionWithNUST.valueResearchProjects,
+              participation_jobfair: interactionWithNUST.participatedInJobFair === "Yes"? true : false,
             },
-            otherDetails: {
-              achievements: otherDetails.achievements,
+            other_details: {
+              achievements: otherDetails.keyAchievements,
               comments: otherDetails.comments,
             },
           },

@@ -208,7 +208,7 @@ const togglePasswordVisibility = (field) => {
     //   },
     // },
     {
-      text: 'Send Evaluation/Feedback',
+      text: 'Request Evaluation',
       icon: ChatBubbleLeftRightIcon,
       onClick: () => {
         document.getElementById('evaluation-feedback-modal').showModal();
@@ -467,16 +467,35 @@ const togglePasswordVisibility = (field) => {
     }));
   };
 
-  const sendFeedback = () => {
+  const sendFeedback = async () => {
     setModalLoading(true);
-    setTimeout(() => {
-      //simulate api call here to send feedback
-      console.log("company ID: ", companyId); //send feedback to this company
+    const deadline = new Date("2024-10-10T09:00:00.000Z");
+    try {
+      const response = await AdminService.requestEvaluation(companyId, deadline);
+      if(response.error){
+        console.error("Error requesting evaluation:", response.error);
+        showToast(false, response.error);
+        return;
+      }
+      console.log("Evaluation requested successfully:", response.message);
+      showToast(true, response.message);
+
+    } catch (error) {
+      console.error("Error sending feedback:", error);
+      showToast(false, "An error occurred while sending feedback.");
+    } finally {
       setModalLoading(false);
       document.getElementById('evaluation-feedback-modal').close();
-      showToast(true, "Feedback sent successfully.");
+    }
+
+    // setTimeout(() => {
+    //   //simulate api call here to send feedback
+    //   console.log("company ID: ", companyId); //send feedback to this company
+    //   setModalLoading(false);
+    //   document.getElementById('evaluation-feedback-modal').close();
+    //   showToast(true, "Feedback sent successfully.");
      
-    }, 2000);
+    // }, 2000);
   }
 
   return (
