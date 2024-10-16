@@ -20,7 +20,8 @@ import {
   ExclamationTriangleIcon,
   WrenchIcon,
   CircleStackIcon,
-  NewspaperIcon
+  NewspaperIcon,
+  PencilSquareIcon
 } from "@heroicons/react/24/outline";
 import { SidebarItem } from "./SidebarItem";
 import { AuthContext } from '../context/AuthContext';
@@ -41,7 +42,7 @@ const sidebarConfig = {
   admin: [
     { icon: <HomeIcon />, text: "Dashboard", url: "/" },
     { icon: <UserGroupIcon />, text: "Companies", url: "/companies" },
-    { icon: <BuildingOfficeIcon /> , text: "Assign Office", url: "/assign-office" },
+    // { icon: <BuildingOfficeIcon /> , text: "Assign Office", url: "/assign-office" }, // this to be removed frm flow
     { icon: <TicketIcon />, text: "E-Tags", url: "/etags" },
     { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: "/work-permits" },
     // { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
@@ -51,6 +52,7 @@ const sidebarConfig = {
     { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },
     { icon: <CircleStackIcon />, text: "Receptionists", url: "/receptionists" },
     { icon: <NewspaperIcon />, text: "Clearance Requests", url: "/clearance" },
+    { icon: <PencilSquareIcon />, text: "Blogs", url: "/blogs" },
     { icon: <RocketLaunchIcon />, text: "Opportunities", url: "/opportunities" },
   ],
   tenant: [

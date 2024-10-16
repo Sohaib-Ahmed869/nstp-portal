@@ -44,6 +44,9 @@ import Unauthorized from './pages/Unauthorized.jsx';
 
 //Context
 import {AuthContext} from './context/AuthContext';
+import Blogs from './pages/admin/Blogs.jsx';
+import Blog from './pages/admin/Blog.jsx';
+import CreateBlog from './pages/admin/CreateBlog.jsx';
 
 //Protected Route
 const ProtectedRoute = ({ allowedRoles, redirectPath = '/unauthorized' }) => {
@@ -83,6 +86,9 @@ function App() {
             <Route path="services" element={<Services />} />
             <Route path="assign-office" element={<ApproveOffice />} />
             <Route path="receptionists" element={<Performance />} />
+            <Route path="blogs" element={<Blogs />} />
+            <Route path="blogs/create" element={<CreateBlog />} />
+            <Route path="blogs/:id" element={<Blog />} />
           </Route>
         </Route>
 

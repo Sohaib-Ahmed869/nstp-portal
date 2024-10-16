@@ -1,0 +1,72 @@
+import React, { useEffect, useState } from 'react'
+import Sidebar from '../../components/Sidebar';
+import NSTPLoader from '../../components/NSTPLoader';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+
+const Blog = () => {
+    const [blog, setBlog] = useState({});
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setTimeout(() => {
+            setLoading(false);
+            setBlog({
+                id: 1,
+                date: '2022-05-25',
+                title: 'Blog 1',
+                content: [
+                    {
+                        type: "para",
+                        content: "This is the  paragraph 1 content of blog 1"
+                    },
+                    {
+                        type: "image",
+                        content: "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg"
+                    },
+                    {
+                        type: "para",
+                        content: "This is the  paragraph 2 content of blog 1"
+                    },
+                    {
+                        type: "para",
+                        content: "This is the  paragraph 3 content of blog 1"
+                    }
+                ]
+            });
+        }
+
+            , 2000);
+    }
+        , []);
+
+    return (
+        <Sidebar>
+            {loading && <NSTPLoader />}
+
+            <div className={`bg-base-100 rounded-lg ring-1 ring-base-200 lg:m-10 md:m-5 max-sm:m-5 max-sm:mx-2 max-sm:p-3 p-10 ${loading && "hidden"}`}>
+                <div className="flex flex-col items-start gap-3">
+                    <button className="btn btn-secondary " onClick={() => window.history.back()}>
+                        <ArrowLeftIcon className="h-5 w-5" />
+                        Go back
+                    </button>
+                    <p className="text-3xl font-semibold">{blog.title}</p>
+                    <p className="text-gray-500 text-sm">{"Posted on " + blog.date}</p>
+                </div>
+                <hr className="my-5 text-gray-200"></hr>
+                <div>
+                    {blog?.content?.map((item, index) => {
+                        if (item.type === 'para') {
+                            return <p key={index} className="text-lg my-5">{item.content}</p>
+                        }
+                        if (item.type === 'image') {
+                            return <img key={index} src={item.content} className="w-full h-auto" alt="Blog Image" />
+                        }
+                    })}
+                </div>
+            </div>
+
+        </Sidebar>
+    )
+}
+
+export default Blog

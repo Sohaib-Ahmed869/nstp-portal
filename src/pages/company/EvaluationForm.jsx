@@ -75,7 +75,7 @@ const EvaluationForm = () => {
           [field]: value,
         },
       };
-  
+
       // Handle visibility of investment-related fields
       if (section === 'economicPerformance' && field === 'raisedInvestment' && value === 'No') {
         updatedState.economicPerformance.investorOrigin = '';
@@ -83,7 +83,7 @@ const EvaluationForm = () => {
         updatedState.economicPerformance.investorName = '';
         updatedState.economicPerformance.investmentAmount = '';
       }
-  
+
       return updatedState;
     });
   };
@@ -94,7 +94,7 @@ const EvaluationForm = () => {
       if (section === 'economicPerformance' && investmentFields.includes(name) && formData.economicPerformance.raisedInvestment !== 'Yes') {
         return null;
       }
-  
+
       return (
         <div
           key={name}
@@ -115,26 +115,26 @@ const EvaluationForm = () => {
               </label>
             </div>
           ) : type === 'radio' ? (
-           <div className="flex flex-col">
-            {<p className="font-bold">{labelName}</p>}
-             <div className="flex flex-row flex-wrap gap-2">
-               {options && options.split(', ').map((option, idx) => (
-                 <div key={idx} className="form-control">
-                   <label className="label cursor-pointer">
-                     <input
-                       type="radio"
-                       name={name}
-                       value={option}
-                       checked={formData[section][name] === option}
-                       onChange={(e) => handleChange(section, name, option)}
-                       className="radio checked:bg-primary mr-2"
-                     />
-                     <span className="label-text">{option}</span>
-                   </label>
-                 </div>
-               ))}
-             </div>
-           </div>
+            <div className="flex flex-col">
+              {<p className="font-bold">{labelName}</p>}
+              <div className="flex flex-row flex-wrap gap-2">
+                {options && options.split(', ').map((option, idx) => (
+                  <div key={idx} className="form-control">
+                    <label className="label cursor-pointer">
+                      <input
+                        type="radio"
+                        name={name}
+                        value={option}
+                        checked={formData[section][name] === option}
+                        onChange={(e) => handleChange(section, name, option)}
+                        className="radio checked:bg-primary mr-2"
+                      />
+                      <span className="label-text">{option}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
           ) : (
             <FloatingLabelInput
               name={name}
@@ -152,7 +152,7 @@ const EvaluationForm = () => {
 
   const validateFormData = () => {
     const missingFields = [];
-  
+
     // Check required fields in economicPerformance section
     const requiredFields = [
       'totalSales', 'salesToNSTPTenants', 'salesToExportCustomers', 'earningEBITDA',
@@ -161,15 +161,15 @@ const EvaluationForm = () => {
       'employeesInMarketingSales', 'employeesInAdminFinanceHR', 'interns', 'supportStaff',
       'averageEmployeeRetention', 'averageInternshipDuration', 'averageSalarySkilled'
     ];
-    if(formData.otherDetails.undertaking === false){
-        missingFields.push('Undertaking not ticked');
-     }
+    if (formData.otherDetails.undertaking === false) {
+      missingFields.push('Undertaking not ticked');
+    }
     requiredFields.forEach(field => {
       if (!formData.economicPerformance[field]) {
         missingFields.push(`Economic Performance: ${field}`);
       }
     });
-  
+
     // Check investment-related fields if raisedInvestment is 'Yes'
     if (formData.economicPerformance.raisedInvestment === 'Yes') {
       investmentFields.forEach(field => {
@@ -178,9 +178,9 @@ const EvaluationForm = () => {
         }
       });
     }
-  
+
     // Add similar validation for other sections if needed
-  
+
     return missingFields;
   };
   useEffect(() => {
@@ -193,9 +193,9 @@ const EvaluationForm = () => {
 
   const handleSubmit = async () => {
     console.log(formData);
-   
-       
-    
+
+
+
 
     console.log('evaluation id', id);
     const missingFields = validateFormData();
@@ -247,10 +247,10 @@ const EvaluationForm = () => {
 
       {/* Main Form */}
       <div className="bg-base-100 rounded-lg ring-1 ring-base-200 lg:m-10 md:m-5 max-sm:m-5 max-sm:mx-2 max-sm:p-3 p-10">
-      <div className="flex items-center justify-between">
-                    <p className="text-2xl font-semibold">Performance Evaluation form</p>
-                </div>
-                <hr className="my-5 text-gray-200"></hr>
+        <div className="flex items-center justify-between">
+          <p className="text-2xl font-semibold">Performance Evaluation form</p>
+        </div>
+        <hr className="my-5 text-gray-200"></hr>
         <div className="grid gap-5 max-sm:grid-cols-1 md:grid-cols-2">
           {/* Economic Performance Section */}
           <div className="col-span-2 max-sm:col-span-1">
@@ -336,14 +336,14 @@ const EvaluationForm = () => {
             { name: 'keyAchievements', type: 'text', labelName: 'Key achievements during the assessment period', longText: true },
             { name: 'comments', type: 'text', labelName: 'Comments/suggestions', longText: true },
             { name: 'undertaking', type: 'boolean', labelName: 'I hereby certify that the information provided is true and accurate *' },
-            ])}
+          ])}
         </div>
         <div className="flex justify-end mt-5">
           <button className="btn btn-primary" onClick={handleSubmit}>Submit</button>
         </div>
-        </div>
-        </Sidebar>
-    );
+      </div>
+    </Sidebar>
+  );
 }
 
 export default EvaluationForm;
