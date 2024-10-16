@@ -3,8 +3,9 @@ import Sidebar from '../../components/Sidebar';
 import { useParams } from 'react-router-dom';
 import { CheckBadgeIcon, ChartBarIcon, RocketLaunchIcon, BuildingOffice2Icon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
+import { TenantService } from '../../services';
+import showToast from '../../util/toast';
 const investmentFields = ['investorOrigin', 'typeOfInvestor', 'investorName', 'investmentAmount'];
-
 
 const EMPTY_FORM_DATA = {
   economicPerformance: {
@@ -65,6 +66,30 @@ const EvaluationForm = () => {
   const [loading, setLoading] = useState(false);
   const [submitModalTitle, setSubmitModalTitle] = useState('');
   const [submitModalText, setSubmitModalText] = useState('');
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await TenantService.getEvaluation(id);
+        if (response.error) {
+          console.log(response.error);
+          return;
+        }
+        console.log(response.data.evaluation);
+        const evaluation = response.data.evaluation;
+
+        // map data to state
+
+      } catch (error) {
+        console.error('Error fetching evaluation:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+
+  }, []);
 
   const handleChange = (section, field, value) => {
     setFormData((prevState) => {
@@ -193,16 +218,22 @@ const EvaluationForm = () => {
 
   const handleSubmit = async () => {
     console.log(formData);
-
-
-
-
     console.log('evaluation id', id);
     const missingFields = validateFormData();
     if (missingFields.length === 0) {
       setLoading(true);
       try {
         // API call to be added later
+        const response = await TenantService.submitEvaluation(id, formData);
+        if (response.error) {
+          console.log(response.error);
+          showToast(false, response.error);
+          return;
+        }
+
+        console.log(response.message);
+        showToast(true, response.message);
+
         setSubmitModalTitle('Form Submitted');
         setSubmitModalText('Your evaluation form has been submitted successfully.');
         document.getElementById('submit-modal').showModal();

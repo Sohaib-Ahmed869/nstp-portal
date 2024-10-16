@@ -3,6 +3,7 @@ import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
 import { ArrowsUpDownIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
+import { TenantService } from '../../services';
 
 const Evaluations = () => {
     const [evaluations, setEvaluations] = useState([]);
@@ -15,13 +16,41 @@ const Evaluations = () => {
 
     useEffect(() => {
         // Simulate API call for 2 seconds before populating states with data
-        setTimeout(() => {
-            setEvaluations([
-                { id: '1', adminName: 'John Doe', date: '2024-12-12', completed: false, },
-            ]);
+        async function fetchData() {
+            try {
+                const response = await TenantService.getEvaluations();
+                console.log(response);
+                if (response.error) {
+                    console.log(response.error);
+                    return
+                }
+
+                console.log(response.data.evaluations);
+                // map data to state
+                const evaluations = response.data.evaluations.map((evaluation) => ({
+                    id: evaluation._id,
+                    adminName: evaluation.admin.name,
+                    deadline: new Date(evaluation.deadline).toLocaleString(),
+                    completed: evaluation.is_submitted,
+                }));
+
+                setEvaluations(evaluations);
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        fetchData();
+        
+        // setTimeout(() => {
+        //     setEvaluations([
+        //         { id: '1', adminName: 'John Doe', deadline: '2024-12-12', completed: false, },
+        //     ]);
             
-            setLoading(false);
-        }, 2000);
+        //     setLoading(false);
+        // }, 2000);
     }, []);
 
     const filteredEvaluations = evaluations
@@ -31,9 +60,9 @@ const Evaluations = () => {
         )
         .sort((a, b) => {
             if (sortOrder === 'asc') {
-                return new Date(a.date) - new Date(b.date);
+                return new Date(a.deadline) - new Date(b.deadline);
             } else {
-                return new Date(b.date) - new Date(a.date);
+                return new Date(b.deadline) - new Date(a.deadline);
             }
         });
 
@@ -68,7 +97,7 @@ const Evaluations = () => {
                         onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
                     >
                         <ArrowsUpDownIcon className="h-5 w-5" />
-                        Sort by Date ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
+                        Sort by Deadline ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
                     </button>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -77,7 +106,7 @@ const Evaluations = () => {
                             <div className="w-1/2">
                                 <h2 className="card-title">{evaluation.adminName || "Anonymous Admin"}</h2>
                                 <p>{evaluation.description}</p>
-                                <p className="text-sm text-gray-500">{"Date: "+  evaluation.date }</p>
+                                <p className="text-sm text-gray-500">{"Deadline: "+  evaluation.deadline }</p>
                             </div>
                             <div className="flex w-1/2 justify-end items-end">
                                 {evaluation.completed ? (
@@ -85,7 +114,7 @@ const Evaluations = () => {
                                 ) : 
                                 (   
                                     <button className="btn btn-primary" onClick = {
-                                        () => navigate('/evaluations/' + evaluation.id)
+                                        () => navigate('' + evaluation.id)
                                     } >Fill evaluation</button>
 
                                 )}
