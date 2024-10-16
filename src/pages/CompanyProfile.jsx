@@ -45,6 +45,7 @@ const calculateDuration = (startDate, endDate) => {
 const Company = ({ role }) => {
   const { companyId } = useParams();
   const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [deadline, setDeadline] = useState(null);
   const { tower } = useContext(TowerContext);
     const [passwordData, setPasswordData] = useState({
       currentPassword: '',
@@ -489,9 +490,11 @@ const togglePasswordVisibility = (field) => {
 
   const sendFeedback = async () => {
     setModalLoading(true);
-    const deadline = new Date("2024-10-10T09:00:00.000Z");
+    // const deadline = new Date("2024-10-10T09:00:00.000Z");
+    console.log("Deadline:", deadline);
+    //deadline gona be in the format, 11:59 of the same date
     try {
-      const response = await AdminService.requestEvaluation(companyId, deadline);
+      const response = await AdminService.requestEvaluation(companyId, deadline+"T23:59:00.000Z");
       if(response.error){
         console.error("Error requesting evaluation:", response.error);
         showToast(false, response.error);
@@ -507,15 +510,6 @@ const togglePasswordVisibility = (field) => {
       setModalLoading(false);
       document.getElementById('evaluation-feedback-modal').close();
     }
-
-    // setTimeout(() => {
-    //   //simulate api call here to send feedback
-    //   console.log("company ID: ", companyId); //send feedback to this company
-    //   setModalLoading(false);
-    //   document.getElementById('evaluation-feedback-modal').close();
-    //   showToast(true, "Feedback sent successfully.");
-     
-    // }, 2000);
   }
 
   return (
@@ -636,9 +630,15 @@ const togglePasswordVisibility = (field) => {
         <div className="modal-box">
          <div className="flex items-center gap-2 mb-3">
           <ChatBubbleOvalLeftEllipsisIcon className="size-8 text-primary" />
-           <h3 className="font-bold text-xl mb-5">Request Evaluation/Feedback</h3>
+           <h3 className="font-bold text-xl">Request Evaluation/Feedback</h3>
          </div>
-          <p className="py-4">Are you sure you want to request this company to fill their evaluation form? Please press Confirm if you wish to confirm.</p>
+          <p className="pb-4">Please enter deadline date and press confirm. The deadline will be 23:59 of the entered date.</p>
+         <div className="flex gap-2 my-3 items-center">
+           <p className="text-base font-bold">Deadline</p>
+           <input type="date" placeholder='Deadline' className="input input-bordered w-full" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+           
+         </div>
+
           <div className="modal-action">
             <button className="btn" onClick={() => document.getElementById('evaluation-feedback-modal').close()}>Cancel</button>
             <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={sendFeedback}>

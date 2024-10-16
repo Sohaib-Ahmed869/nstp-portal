@@ -55,8 +55,8 @@ const Evaluations = () => {
 
     const filteredEvaluations = evaluations
         .filter((evaluation) =>
-            evaluation.adminName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            evaluation.description.toLowerCase().includes(searchQuery.toLowerCase())
+            evaluation.adminName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            evaluation.description?.toLowerCase().includes(searchQuery.toLowerCase())
         )
         .sort((a, b) => {
             if (sortOrder === 'asc') {

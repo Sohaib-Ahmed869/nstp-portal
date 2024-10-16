@@ -6,6 +6,7 @@ import FloatingLabelInput from '../../components/FloatingLabelInput';
 import { TenantService } from '../../services';
 import showToast from '../../util/toast';
 import EvaluationGrid from '../../components/EvaluationGrid';
+import NSTPLoader from '../../components/NSTPLoader';
 const investmentFields = ['investorOrigin', 'typeOfInvestor', 'investorName', 'investmentAmount'];
 
 const EMPTY_FORM_DATA = {
@@ -64,7 +65,8 @@ const EMPTY_FORM_DATA = {
 const EvaluationForm = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState(EMPTY_FORM_DATA);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); //THIS IS NOT PAGE LOADING
+  const [pageLoading, setPageLoading] = useState(true);
   const [submitModalTitle, setSubmitModalTitle] = useState('');
   const [submitModalText, setSubmitModalText] = useState('');
   const [viewingEvaluation, setViewingEvaluation] = useState({});
@@ -72,6 +74,7 @@ const EvaluationForm = () => {
   useEffect(() => {
     async function fetchData() {
       try {
+      setPageLoading(true);
         const response = await TenantService.getEvaluation(id);
         if (response.error) {
           console.log(response.error);
@@ -89,7 +92,7 @@ const EvaluationForm = () => {
       } catch (error) {
         console.error('Error fetching evaluation:', error);
       } finally {
-        setLoading(false);
+        setPageLoading(false);
       }
     };
     
@@ -260,6 +263,8 @@ const EvaluationForm = () => {
 
   return (
     <Sidebar>
+
+      {pageLoading && <NSTPLoader />}
       {/* Loading Modal */}
       <dialog id="loading-modal" className="modal">
         <div className="modal-box">
@@ -283,7 +288,7 @@ const EvaluationForm = () => {
       </dialog>
 
       {/* Main Form */}
-      <div className="bg-base-100 rounded-lg ring-1 ring-base-200 lg:m-10 md:m-5 max-sm:m-5 max-sm:mx-2 max-sm:p-3 p-10">
+      <div className={`bg-base-100 rounded-lg ring-1 ring-base-200 lg:m-10 md:m-5 max-sm:m-5 max-sm:mx-2 max-sm:p-3 p-10 ${pageLoading && "hidden"}`}>
         <div className="flex items-center justify-between">
           <p className="text-2xl font-semibold">Performance Evaluation form</p>
         </div>
