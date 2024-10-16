@@ -14,6 +14,26 @@ import { AdminService, TenantService } from '../services';
 import { TowerContext } from '../context/TowerContext'
 import { ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
 
+const CONTRACT_DURATION_THRESHOLD = 90 ; // after 90% of contract duration, the radial progress will become red
+
+const calculateDuration = (startDate, endDate) => {
+  let years = endDate.getFullYear() - startDate.getFullYear();
+  let months = endDate.getMonth() - startDate.getMonth();
+  let days = endDate.getDate() - startDate.getDate();
+
+  if (days < 0) {
+      months -= 1;
+      days += new Date(endDate.getFullYear(), endDate.getMonth(), 0).getDate();
+  }
+
+  if (months < 0) {
+      years -= 1;
+      months += 12;
+  }
+
+  return `${years} years, ${months} months, and ${days} days`;
+};
+
 
 /**
 |--------------------------------------------------
@@ -780,7 +800,7 @@ const togglePasswordVisibility = (field) => {
               </div>
               <div className="">Contract start: {companyData.contractStartDate}</div>
               <div className="">Contract end: {companyData.contractEndDate}</div>
-              <div className="">Total stay: {companyData.totalStay || "12 Months"}</div>
+              
             </div>
             
             <div className="flex flex-row gap-3 mt-5 items-center p-3 border-primary border-opacity-30 rounded-lg border">
@@ -869,10 +889,11 @@ const togglePasswordVisibility = (field) => {
               </span>
               <p className="mb-3 mt-1 font-bold"> Contract complete </p>
               <span className="mt-2 block">Contract start: {companyData.contractStartDate}</span>
-              <span className="">Contract end: {companyData.contractEndDate}</span>
+              <span className="mt-2 block">Contract end: {companyData.contractEndDate}</span>
+              <span className="mt-2 block">Total Stay: {calculateDuration(new Date(companyData.joiningDate), new Date())}</span>
             </div>
             <div>
-              <div className="radial-progress bg-neutral mt-10 lg:mt-0 text-primary" style={{ "--value": `${companyData.contractDuration}`, "--size": "7rem", "--thickness": "13px" }} role="progressbar">
+              <div className={`radial-progress bg-neutral mt-10 lg:mt-0 ${companyData.contractDuration >= CONTRACT_DURATION_THRESHOLD ? "text-error":"text-primary"}`} style={{ "--value": `${companyData.contractDuration}`, "--size": "7rem", "--thickness": "13px" }} role="progressbar">
                 {companyData.contractDuration}%
               </div>
             </div>
@@ -950,7 +971,7 @@ const togglePasswordVisibility = (field) => {
                     >
                       View Profile
                     </button>
-                    <button
+                   { role == "tenant" && <button
                       className="btn btn-error text-base-100"
                       onClick={() => {
                         setSelectedEmployee(employee);
@@ -958,7 +979,7 @@ const togglePasswordVisibility = (field) => {
                       }}
                     >
                       Terminate
-                    </button>
+                    </button>}
                   </div>
                 </div>
               </div>

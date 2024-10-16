@@ -11,3 +11,8 @@
   background-color: #76a06b !important;
   border-color: #76a06b !important;
 }
+
+.textarea-blog {
+  overflow: hidden;
+  resize: none; /* Prevent manual resizing */
+}

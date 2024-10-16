@@ -83,6 +83,11 @@ const CreateBlog = () => {
         
     };
 
+    const adjustTextareaHeight = (e) => {
+        e.target.style.height = 'auto'; // Reset the height
+        e.target.style.height = `${e.target.scrollHeight}px`; // Set the height to the scroll height
+    };
+
     return (
         <Sidebar>
             <div className="bg-base-100 rounded-lg ring-1 ring-base-200 lg:m-10 md:m-5 max-sm:m-5 max-sm:mx-2 max-sm:p-3 p-10">
@@ -102,11 +107,15 @@ const CreateBlog = () => {
                             {item.type === 'para' ? (
                                 <div className="space-y-2">
                                     <textarea
-                                        className="w-full min-h-[100px] p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                        placeholder="Enter your paragraph..."
-                                        value={item.content}
-                                        onChange={(e) => updateParagraph(item.id, e.target.value)}
-                                    />
+    className="textarea-blog w-full min-h-[100px] p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+    placeholder="Enter your paragraph..."
+    value={item.content}
+    onChange={(e) => {
+        updateParagraph(item.id, e.target.value);
+        adjustTextareaHeight(e);
+    }}
+    onInput={adjustTextareaHeight} // Ensure height is adjusted on input
+/>
                                 </div>
                             ) : (
                                 <div className="w-full aspect-video relative">

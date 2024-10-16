@@ -5,6 +5,7 @@ import { CheckBadgeIcon, ChartBarIcon, RocketLaunchIcon, BuildingOffice2Icon, Do
 import FloatingLabelInput from '../../components/FloatingLabelInput';
 import { TenantService } from '../../services';
 import showToast from '../../util/toast';
+import EvaluationGrid from '../../components/EvaluationGrid';
 const investmentFields = ['investorOrigin', 'typeOfInvestor', 'investorName', 'investmentAmount'];
 
 const EMPTY_FORM_DATA = {
@@ -66,6 +67,7 @@ const EvaluationForm = () => {
   const [loading, setLoading] = useState(false);
   const [submitModalTitle, setSubmitModalTitle] = useState('');
   const [submitModalText, setSubmitModalText] = useState('');
+  const [viewingEvaluation, setViewingEvaluation] = useState({});
 
   useEffect(() => {
     async function fetchData() {
@@ -77,6 +79,10 @@ const EvaluationForm = () => {
         }
         console.log(response.data.evaluation);
         const evaluation = response.data.evaluation;
+
+        if(evaluation.is_submitted){
+          setViewingEvaluation(evaluation);
+        }
 
         // map data to state
 
@@ -282,6 +288,10 @@ const EvaluationForm = () => {
           <p className="text-2xl font-semibold">Performance Evaluation form</p>
         </div>
         <hr className="my-5 text-gray-200"></hr>
+        {
+          viewingEvaluation.is_submitted ? 
+          <EvaluationGrid evaluation={viewingEvaluation} /> :
+          <>
         <div className="grid gap-5 max-sm:grid-cols-1 md:grid-cols-2">
           {/* Economic Performance Section */}
           <div className="col-span-2 max-sm:col-span-1">
@@ -372,6 +382,10 @@ const EvaluationForm = () => {
         <div className="flex justify-end mt-5">
           <button className="btn btn-primary" onClick={handleSubmit}>Submit</button>
         </div>
+        </>
+        }
+        
+       
       </div>
     </Sidebar>
   );
