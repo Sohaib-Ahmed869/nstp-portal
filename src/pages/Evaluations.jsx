@@ -70,6 +70,7 @@ const Evaluations = ({role}) => {
     const filteredEvaluations = evaluations
         .filter((evaluation) =>
             evaluation.adminName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             evaluation.tenantName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             evaluation.description?.toLowerCase().includes(searchQuery.toLowerCase())
         )
         .sort((a, b) => {
@@ -85,6 +86,8 @@ const Evaluations = ({role}) => {
     const currentEvaluations = filteredEvaluations.slice(indexOfFirstEvaluation, indexOfLastEvaluation);
 
     const totalPages = Math.ceil(filteredEvaluations.length / evaluationsPerPage);
+
+    console.log("CURRRENT EVALUATIONS", currentEvaluations);
 
     return (
         <Sidebar>
@@ -113,9 +116,9 @@ const Evaluations = ({role}) => {
                         Sort by Deadline ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
                     </button>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-6">
                     {currentEvaluations.map((evaluation) => (
-                        <div key={evaluation.id} className="ring-base-200 ring-1 rounded-lg p-5 shadow-lg bg-base-100 flex">
+                        <div key={evaluation.id} className="ring-base-200 ring-1 rounded-lg p-5 shadow-md bg-base-100 flex">
                             <div className="w-1/2">
                                 <h2 className="card-title">{ role == "tenant" ? evaluation.adminName || "Anonymous Admin" : evaluation.tenantName || "Anonymous Tenant"}</h2>
                                 <p>{evaluation.description}</p>
