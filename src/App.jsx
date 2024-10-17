@@ -87,6 +87,7 @@ function App() {
             <Route path="assign-office" element={<ApproveOffice />} />
             <Route path="receptionists" element={<Performance />} />
             <Route path="evaluations" element={<Evaluations role="admin" />} />
+            <Route path="evaluations/:id" element={<EvaluationForm />} />
             <Route path="blogs" element={<Blogs />} />
             <Route path="blogs/create" element={<CreateBlog />} />
             <Route path="blogs/:id" element={<Blog />} />

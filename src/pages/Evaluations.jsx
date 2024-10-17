@@ -116,9 +116,9 @@ const Evaluations = ({role}) => {
                         Sort by Deadline ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
                     </button>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-6">
                     {currentEvaluations.map((evaluation) => (
-                        <div key={evaluation.id} className="ring-base-200 ring-1 rounded-lg p-5 shadow-lg bg-base-100 flex">
+                        <div key={evaluation.id} className="ring-base-200 ring-1 rounded-lg p-5 shadow-md bg-base-100 flex">
                             <div className="w-1/2">
                                 <h2 className="card-title">{ role == "tenant" ? evaluation.adminName || "Anonymous Admin" : evaluation.tenantName || "Anonymous Tenant"}</h2>
                                 <p>{evaluation.description}</p>
