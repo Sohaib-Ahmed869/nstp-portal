@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../components/Sidebar';
 import NSTPLoader from '../components/NSTPLoader';
 import { ArrowsUpDownIcon, CheckBadgeIcon, ClockIcon, EyeIcon, MagnifyingGlassIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
-import { TenantService } from '../services';
+import { TenantService, AdminService } from '../services';
 import showToast from '../util/toast';
+import { TowerContext } from '../context/TowerContext';
 
 const Evaluations = ({role}) => {
     const [evaluations, setEvaluations] = useState([]);
@@ -14,12 +15,19 @@ const Evaluations = ({role}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const evaluationsPerPage = 10;
     const navigate= useNavigate()
+    const { tower } = useContext(TowerContext);
 
     useEffect(() => {
         // Simulate API call for 2 seconds before populating states with data
         async function fetchData() {
             try {
-                const response = await TenantService.getEvaluations();
+                let response;
+                if(role === "tenant") {
+                    response = await TenantService.getEvaluations();
+                } else {
+                    response = await AdminService.getEvaluations(tower.id);
+                }
+
                 console.log(response);
                 if (response.error) {
                     console.log(response.error);
@@ -35,7 +43,10 @@ const Evaluations = ({role}) => {
                     deadline: new Date(evaluation.deadline).toLocaleString(),
                     completed: evaluation.is_submitted,
                     dateSubmitted: new Date(evaluation.date_submitted).toLocaleString()
+                    
                 }));
+
+                console.log(evaluations);
 
                 setEvaluations(evaluations);
             } catch (error) {
