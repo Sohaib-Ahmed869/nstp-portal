@@ -21,7 +21,8 @@ const Blog = () => {
                     },
                     {
                         type: "image",
-                        content: "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg"
+                        content: "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg",
+                        caption: "Image Caption"
                     },
                     {
                         type: "para",
@@ -59,7 +60,12 @@ const Blog = () => {
                             return <p key={index} className="text-lg my-5">{item.content}</p>
                         }
                         if (item.type === 'image') {
-                            return <img key={index} src={item.content} className="w-full h-auto" alt="Blog Image" />
+                            return (
+                                <div className="flex flex-col items-center">
+                                    <img key={index} src={item.content} className="w-full lg:w-2/3 h-auto rounded-xl" alt="Blog Image" />
+                                    <p className="text-center text-gray-500 font-bold text-md my-2">{item.caption}</p>
+                                </div>
+                            )
                         }
                     })}
                 </div>

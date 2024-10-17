@@ -28,7 +28,8 @@ const Blogs = () => {
                         },
                         {
                             type: "image",
-                            content: "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg"
+                            content: "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg",
+                            caption: "Image Caption"
                         },
                         {
                             type: "para",

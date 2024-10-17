@@ -46,70 +46,6 @@ export const Dashboard = () => {
       date: "12/12/2021",
       time: "12:00 PM - 1:00 PM",
     },
-    {
-      bookingId: "awc",
-      roomNo: "MS-224",
-      company: "HexlerTech",
-      status: "Pending",
-      date: "12/13/2024",
-      time: "11:00 PM - 1:00 AM",
-    },
-    {
-      bookingId: "a4c",
-      roomNo: "MS-234",
-      company: "HexlerTech",
-      status: "Pending",
-      date: "12/13/2024",
-      time: "11:00 PM - 1:00 AM",
-    },
-    {
-      bookingId: "a1c",
-      roomNo: "MS-444",
-      company: "HexlerTech",
-      status: "Pending",
-      date: "12/13/2024",
-      time: "11:00 PM - 1:00 AM",
-    },
-    {
-      bookingId: "a3c",
-      roomNo: "MS-994",
-      company: "HexlerTech",
-      status: "Pending",
-      date: "12/13/2024",
-      time: "11:00 PM - 1:00 AM",
-    },
-    {
-      bookingId: "a9c",
-      roomNo: "MS-214",
-      company: "HexlerTech",
-      status: "Pending",
-      date: "12/13/2024",
-      time: "11:00 PM - 1:00 AM",
-    },
-    {
-      bookingId: "ahc",
-      roomNo: "MT-214",
-      company: "HexlerTech",
-      status: "Approved",
-      date: "12/12/2021",
-      time: "12:00 PM - 1:00 PM",
-    },
-    {
-      bookingId: "abh",
-      roomNo: "MS-334",
-      company: "HexlerTech",
-      status: "Unapproved",
-      date: "12/13/2024",
-      time: "11:00 PM - 1:00 AM",
-    },
-    {
-      bookingId: "abh",
-      roomNo: "MS-334",
-      company: "HexlerTech",
-      status: "Unapproved",
-      date: "12/13/2024",
-      time: "11:00 PM - 1:00 AM",
-    },
   ]);
 
   const [loading, setLoading] = useState(true);
@@ -145,15 +81,15 @@ export const Dashboard = () => {
           pending: dashboardData.bookings.pending,
         });
         setMeetingRoomSchedule(
-         dashboardData.allBookings.map((booking) => ({
-          bookingId: booking._id,
-          roomNo: booking.room_name || "Room",
-          company: booking.tenant_name || "Tennant",
-          dateBooked: formatDate(booking.date_initiated).split(',')[0] +  formatDate(booking.date_initiated).split(',')[1],
-          dateBooking: formatDate(booking.time_start).split(',')[0] + formatDate(booking.time_start).split(',')[1],
-          time: `${new Date(booking.time_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(booking.time_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
-          status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
-         })))
+          dashboardData.allBookings.map((booking) => ({
+            bookingId: booking._id,
+            roomNo: booking.room_name || "Room",
+            company: booking.tenant_name || "Tennant",
+            dateBooked: formatDate(booking.date_initiated).split(',')[0] + formatDate(booking.date_initiated).split(',')[1],
+            dateBooking: formatDate(booking.time_start).split(',')[0] + formatDate(booking.time_start).split(',')[1],
+            time: `${new Date(booking.time_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(booking.time_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+            status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
+          })))
 
       } catch (error) {
         console.error(error);
@@ -194,9 +130,8 @@ export const Dashboard = () => {
     <Sidebar>
       {loading && <NSTPLoader />}
       <div
-        className={`bg-base-100 mt-5  ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${
-          loading && "hidden"
-        }`}
+        className={`bg-base-100 mt-5  ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"
+          }`}
       >
         {/* Header (Title, toggles etc) */}
         <div className="flex items-center justify-between">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
-import { ArrowsUpDownIcon, CheckBadgeIcon, EyeIcon, MagnifyingGlassIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import { ArrowsUpDownIcon, CheckBadgeIcon, ClockIcon, EyeIcon, MagnifyingGlassIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 import { TenantService } from '../../services';
 
@@ -106,12 +106,15 @@ const Evaluations = () => {
                             <div className="w-1/2">
                                 <h2 className="card-title">{evaluation.adminName || "Anonymous Admin"}</h2>
                                 <p>{evaluation.description}</p>
-                                <p className="text-sm text-gray-500">{"Deadline: "+  evaluation.deadline }</p>
+                                <p className="text-sm my-3 text-gray-500">{"Deadline: "+  evaluation.deadline }</p>
+                                {evaluation.completed ? (
+                                    <span className="badge badge-success text-base-100 py-3"> <CheckBadgeIcon className="size-5 mr-1" /> Completed</span>
+                                ) : (
+                                    <span className="badge badge-accent text-base-100 py-3"> <ClockIcon className="size-5 mr-1" /> Pending</span>
+                                ) }
                             </div>
                             <div className="flex w-1/2 justify-end items-center gap-3">
-                                {evaluation.completed && (
-                                    <span className="badge badge-success text-base-100 py-4"> <CheckBadgeIcon className="size-5" /> Completed</span>
-                                ) }
+                               
                                 
                                     <button className="btn btn-primary text-base-100" onClick = {
                                         () => navigate('' + evaluation.id)

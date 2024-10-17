@@ -13,6 +13,7 @@ const SidebarItem = ({
   setSelectedItem,
   selectedItem,
   isExpanded,
+  notif
 }) => {
   const tooltipRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -28,10 +29,14 @@ const SidebarItem = ({
             onMouseLeave={() => setIsHovered(false)}
             className="relative"
           >
-            {React.cloneElement(icon, {
-              className: `h-6 w-6 ${selectedItem == url ? "text-primary" : ""
-                }`,
-            })}
+            <div className="relative">
+              {React.cloneElement(icon, {
+                className: `h-6 w-6 ${selectedItem == url ? "text-primary" : ""}`,
+              })}
+              {notif && (
+                <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
+              )}
+            </div>
             {!isExpanded && isHovered && (
               <TooltipPortal target={document.body}>
                 <div

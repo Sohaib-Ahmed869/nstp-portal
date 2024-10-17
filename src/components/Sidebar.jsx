@@ -66,7 +66,7 @@ const sidebarConfig = {
     { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },
     { icon: <ExclamationTriangleIcon />, text: "Occurences", url: "/occurences" },
     { icon: <TruckIcon />, text: "Parking", url: "/parking" },
-    { icon: <ClipboardDocumentCheckIcon />, text: "Evaluations", url: "/evaluations" },
+    { icon: <ClipboardDocumentCheckIcon />, text: "Evaluations", url: "/evaluations", notif: true },
   ],
 };
 
@@ -82,6 +82,7 @@ const Sidebar = ({ children }) => {
   const [selectedItem, setSelectedItem] = useState("");
   const { role, actions } = useContext(AuthContext);
   const sidebarItems = getSidebarItems(role);
+  const [evalNotif, setEvalNotif] = useState(true)
 
 
   const toggleDrawer = () => {
@@ -95,8 +96,12 @@ const Sidebar = ({ children }) => {
   };
 
   useEffect(() => {
-    setSelectedItem(window.location.pathname);
-
+    //if there are more than  2 slashes , ignore the 3rd slash and the text after it
+    if (window.location.pathname.split("/").length > 3) {
+      setSelectedItem(`/${window.location.pathname.split("/")[1]}/${window.location.pathname.split("/")[2]}`);
+    } else {
+      setSelectedItem(window.location.pathname);
+    }
   }, [selectedItem]);
 
   return (
@@ -146,6 +151,7 @@ const Sidebar = ({ children }) => {
                     setSelectedItem={setSelectedItem}
                     selectedItem={selectedItem}
                     isExpanded={isExpanded}
+                    notif={item.notif}
                   />
                 ))}
               </div>
@@ -162,7 +168,7 @@ const Sidebar = ({ children }) => {
             </ul>
           </nav>
         </div>
-        <div className="flex-grow p-16 pt-0 ml-20 verflow-auto">
+        <div className="flex-grow p-16 xl:px-20 pt-0 ml-20 overflow-auto ">
           {children /* this is where the page content will be rendered. */}
         </div>
       </div>

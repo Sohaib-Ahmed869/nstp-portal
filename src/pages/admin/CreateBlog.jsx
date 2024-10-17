@@ -15,6 +15,8 @@ const CreateBlog = () => {
     const [hasImage, setHasImage] = useState(false);
     const [modalLoading, setModalLoading] = useState(false);
     const [createLoading, setCreateLoading] = useState(false);
+    const [caption, setCaption] = useState('');
+    const [imageUrl, setImageUrl] = useState(''); // State for image URL
 
     const addParagraph = () => {
         const newContent = {
@@ -25,21 +27,38 @@ const CreateBlog = () => {
         setContent([...content, newContent]);
     };
 
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImageUrl(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const addImage = () => {
         setModalLoading(true);
+        if (caption.trim().length === 0) {
+            showToast(false, "Please provide a caption");
+            setModalLoading(false);
+            return;
+        }
         setTimeout(() => {
-            const dummyImageUrl = "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg";
             setContent([...content, {
                 type: "image",
-                content: dummyImageUrl,
+                content: imageUrl, // Use the actual image URL
+                caption,
                 id: Date.now()
             }]);
             setHasImage(true);
+            setCaption('');
+            setImageUrl(''); // Reset image URL
             setModalLoading(false);
             document.getElementById("upload-image-modal").close();
         }, 1000);
         // In real implementation, handle file upload
-
     };
 
     const updateParagraph = (id, value) => {
@@ -80,7 +99,7 @@ const CreateBlog = () => {
             setHasImage(false);
         }, 2000);
         // In real implementation, handle api call to create blog post
-        
+
     };
 
     const adjustTextareaHeight = (e) => {
@@ -97,7 +116,7 @@ const CreateBlog = () => {
                         placeholder="Enter Blog Title"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="w-full text-4xl font-bold border-b-2 border-gray-200 focus:outline-none focus:border-primary mb-8 bg-transparent"
+                        className="w-full text-4xl font-bold border-b-2 border-t-0 border-l-0 border-r-0 border-gray-300 focus:border-none focus:ring-2 focus:rounded-lg focus:ring-primary mb-8 bg-transparent"
                     />
                 </div>
 
@@ -107,23 +126,24 @@ const CreateBlog = () => {
                             {item.type === 'para' ? (
                                 <div className="space-y-2">
                                     <textarea
-    className="textarea-blog w-full min-h-[100px] p-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-    placeholder="Enter your paragraph..."
-    value={item.content}
-    onChange={(e) => {
-        updateParagraph(item.id, e.target.value);
-        adjustTextareaHeight(e);
-    }}
-    onInput={adjustTextareaHeight} // Ensure height is adjusted on input
-/>
+                                        className="textarea-blog focus:border-0 border-gray-200 w-full min-h-[100px] p-4 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                        placeholder="Enter your paragraph..."
+                                        value={item.content}
+                                        onChange={(e) => {
+                                            updateParagraph(item.id, e.target.value);
+                                            adjustTextareaHeight(e);
+                                        }}
+                                        onInput={adjustTextareaHeight} // Ensure height is adjusted on input
+                                    />
                                 </div>
                             ) : (
-                                <div className="w-full aspect-video relative">
+                                <div className="w-full ring-1 ring-gray-200 rounded-lg pt-5 flex flex-col items-center">
                                     <img
                                         src={item.content}
                                         alt="Blog content"
-                                        className="w-full h-full object-cover rounded-lg"
+                                        className="w-full max-w-screen-md  h-auto object-cover rounded-lg"
                                     />
+                                    <p className="text-center font-sm text-gray-500 font-bold my-2">{item.caption}</p>
                                 </div>
                             )}
                             <button
@@ -161,12 +181,12 @@ const CreateBlog = () => {
                         className={`btn btn-primary text-base-100 ${(content.length <= 0 || createLoading) && "btn-disabled"}`}
                         onClick={handleCreate}
                     >
-                       {createLoading ? (
+                        {createLoading ? (
                             <span className="loading loading-spinner"></span>
                         ) : (
                             <CheckBadgeIcon className="h-5 w-5" />
-                       )}
-                       {createLoading ? "Please wait..." : "Create Blog Post"}
+                        )}
+                        {createLoading ? "Please wait..." : "Create Blog Post"}
                     </button>
                 </div>
 
@@ -177,8 +197,8 @@ const CreateBlog = () => {
                 className="modal"
             >
                 <div className="modal-box">
-                    <div className="flex gap-3">
-                        <ArrowUpTrayIcon className="h-6 w-6 text-primary" />
+                    <div className="flex gap-3 items-center">
+                        <PhotoIcon className="size-8 text-primary" />
                         <h3 className="font-bold text-lg">
                             Upload image for this blog
                         </h3>
@@ -187,7 +207,11 @@ const CreateBlog = () => {
 
                     <input
                         type="file"
-                        className="file-input file-input-bordered file-input-primary w-full max-w-xs" />
+                        className="file-input file-input-bordered file-input-primary focus:border-0 w-full max-w-xs"
+                        onChange={handleFileChange} 
+                    />
+
+                    <input type="text" placeholder="Caption (required)" className="mt-3 input input-bordered w-full" value={caption} onChange={(e) => setCaption(e.target.value)} />
 
                     <div className="modal-action">
                         <button
@@ -199,7 +223,7 @@ const CreateBlog = () => {
                             Close
                         </button>
                         <button
-                            className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
+                            className={`btn btn-primary text-base-100 ${(modalLoading || caption.trim().length==0 )&& "btn-disabled"}`}
                             onClick={() => { addImage(); }}
                         >
                             {modalLoading && (
