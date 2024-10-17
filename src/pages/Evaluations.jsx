@@ -59,6 +59,7 @@ const Evaluations = ({role}) => {
     const filteredEvaluations = evaluations
         .filter((evaluation) =>
             evaluation.adminName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             evaluation.tenantName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             evaluation.description?.toLowerCase().includes(searchQuery.toLowerCase())
         )
         .sort((a, b) => {
@@ -74,6 +75,8 @@ const Evaluations = ({role}) => {
     const currentEvaluations = filteredEvaluations.slice(indexOfFirstEvaluation, indexOfLastEvaluation);
 
     const totalPages = Math.ceil(filteredEvaluations.length / evaluationsPerPage);
+
+    console.log("CURRRENT EVALUATIONS", currentEvaluations);
 
     return (
         <Sidebar>
