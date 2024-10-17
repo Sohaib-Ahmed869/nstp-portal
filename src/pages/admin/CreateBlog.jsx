@@ -40,11 +40,7 @@ const CreateBlog = () => {
 
     const addImage = () => {
         setModalLoading(true);
-        if (caption.trim().length === 0) {
-            showToast(false, "Please provide a caption");
-            setModalLoading(false);
-            return;
-        }
+        
         setTimeout(() => {
             setContent([...content, {
                 type: "image",
@@ -211,7 +207,7 @@ const CreateBlog = () => {
                         onChange={handleFileChange} 
                     />
 
-                    <input type="text" placeholder="Caption (required)" className="mt-3 input input-bordered w-full" value={caption} onChange={(e) => setCaption(e.target.value)} />
+                    <input type="text" placeholder="Caption" className="mt-3 input input-bordered w-full" value={caption} onChange={(e) => setCaption(e.target.value)} />
 
                     <div className="modal-action">
                         <button
@@ -223,7 +219,7 @@ const CreateBlog = () => {
                             Close
                         </button>
                         <button
-                            className={`btn btn-primary text-base-100 ${(modalLoading || caption.trim().length==0 )&& "btn-disabled"}`}
+                            className={`btn btn-primary text-base-100 ${(modalLoading )&& "btn-disabled"}`}
                             onClick={() => { addImage(); }}
                         >
                             {modalLoading && (

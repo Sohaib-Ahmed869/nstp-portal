@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { useParams } from 'react-router-dom';
 import { CheckBadgeIcon, ChartBarIcon, RocketLaunchIcon, BuildingOffice2Icon, DocumentTextIcon } from '@heroicons/react/24/outline';
@@ -7,6 +7,7 @@ import { TenantService } from '../../services';
 import showToast from '../../util/toast';
 import EvaluationGrid from '../../components/EvaluationGrid';
 import NSTPLoader from '../../components/NSTPLoader';
+import { AuthContext } from '../../context/AuthContext';
 const investmentFields = ['investorOrigin', 'typeOfInvestor', 'investorName', 'investmentAmount'];
 
 const EMPTY_FORM_DATA = {
@@ -70,6 +71,7 @@ const EvaluationForm = () => {
   const [submitModalTitle, setSubmitModalTitle] = useState('');
   const [submitModalText, setSubmitModalText] = useState('');
   const [viewingEvaluation, setViewingEvaluation] = useState({});
+  const { role } = useContext(AuthContext);
 
   useEffect(() => {
     async function fetchData() {
@@ -246,6 +248,12 @@ const EvaluationForm = () => {
         setSubmitModalTitle('Form Submitted');
         setSubmitModalText('Your evaluation form has been submitted successfully.');
         document.getElementById('submit-modal').showModal();
+
+        //Wait for 2 seconds before redirecting to evaluations page
+        setTimeout(() => {
+          navigate(`/tenant/evaluations`);
+        }, 2000);
+
       } catch (error) {
         console.error('Error submitting form:', error);
         setSubmitModalTitle('Submission Failed');
