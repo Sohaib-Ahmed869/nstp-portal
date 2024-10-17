@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
-const localizer = momentLocalizer(moment);
-import Sidebar from '../../components/Sidebar';
-import NSTPLoader from '../../components/NSTPLoader';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { CalendarDateRangeIcon } from '@heroicons/react/20/solid';
+import moment from 'moment';
+import Sidebar from '../../components/Sidebar';
 import MeetingRoomBookingTable from '../../components/MeetingRoomBookingTable';
+import NSTPLoader from '../../components/NSTPLoader';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import { CalendarDateRangeIcon } from '@heroicons/react/20/solid';
+import { PresentationChartLineIcon } from '@heroicons/react/24/outline';
 import { ReceptionistService } from '../../services';
 import { formatDate } from '../../util/date'
-import { PresentationChartLineIcon } from '@heroicons/react/24/outline';
+
+
 
 const MeetingRoomBooking = () => {
     //these events are approved meetings with respect to a particular room
@@ -19,14 +20,10 @@ const MeetingRoomBooking = () => {
     const [selectedRoom, setSelectedRoom] = useState('1');
     const [roomOptions, setRoomOptions] = useState([
         { value: '1', label: 'Meeting Room 1' }, //value == room id
-        { value: '2', label: 'Meeting Room 2' },
-        { value: '3', label: 'Meeting Room 3' },
-        { value: '4', label: 'Auditorium 1' },
-        { value: '5', label: 'Auditorium 2' },
     ]);
-
     //this is the overall schedule of all requests for rooms which may be pending or approved or unapproved
-    const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([ ]);
+    const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([]);
+    const localizer = momentLocalizer(moment);
 
     useEffect(() => {
         //Api call here to fetch data and populate the above states initially
@@ -56,20 +53,20 @@ const MeetingRoomBooking = () => {
                     return;
                 }
                 console.log("Room bookings: ", bookingsResponse.data.bookings);
-                
+
                 const mappedBookings = bookingsResponse.data.bookings.map(booking => {
                     const startTime = new Date(booking.time_start);
                     const endTime = new Date(booking.time_end);
-                
+
                     const formatTime = (date) => {
                         const hours = date.getUTCHours().toString().padStart(2, '0');
                         const minutes = date.getUTCMinutes().toString().padStart(2, '0');
                         return `${hours}:${minutes}`;
                     };
-                
+
                     const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
                     const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
-                
+
                     return {
                         bookingId: booking._id,
                         roomNo: booking.room_name || "Room",  //musa return this
@@ -85,10 +82,6 @@ const MeetingRoomBooking = () => {
                 });
                 console.log("mapped bookings, ", mappedBookings);
                 setMeetingRoomSchedule(mappedBookings);
-                
-
-                
-
             } catch (error) {
                 console.log("Error fetching room bookings: ", error);
             } finally {
@@ -111,14 +104,14 @@ const MeetingRoomBooking = () => {
         const approvedBookings = thisRoomBookings.filter(booking => booking.status === 'Approved').map(booking => {
             const startTime = new Date(booking.time_start);
             const endTime = new Date(booking.time_end);
-        
+
             return {
                 title: booking.tenant_name || "Tennant",
                 start: startTime,
                 end: endTime,
             };
         });
-        
+
         console.log("setting events", approvedBookings);
         setEvents(approvedBookings);
 
@@ -181,13 +174,10 @@ const MeetingRoomBooking = () => {
                 )}
 
                 <div className='bg-primary rounded-lg bg-opacity-35 p-5 mt-5  flex flex-col lg:flex-row lg:justify-between mb-3'>
-
-
                     <div className='flex gap-2 items-center max-sm:mb-6 '>
                         <CalendarDateRangeIcon className="size-11 text-secondary" />
                         <p className=" text-xl font-bold">Manage Booking Requests</p>
                     </div>
-
                 </div >
                 <MeetingRoomBookingTable meetingRoomSchedule={meetingRoomSchedule} role={"receptionist"} setMeetingRoomSchedule={setMeetingRoomSchedule} />
 

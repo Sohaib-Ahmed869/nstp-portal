@@ -22,7 +22,6 @@ import Dashboard from './pages/company/Dashboard.jsx';
 import Employees from './pages/company/Employees.jsx';
 import { Complaints as CompanyComplaints } from './pages/company/Complaints.jsx';
 import { MeetingRoomBooking as CompanyMeetingRoomBooking } from './pages/company/MeetingRoomBooking.jsx';
-import Evaluations from './pages/company/Evaluations.jsx';
 import Parking from './pages/company/Parking.jsx';
 import EvaluationForm from './pages/company/EvaluationForm.jsx';
 
@@ -33,6 +32,7 @@ import MeetingRoomBooking from './pages/receptionist/MeetingRoomBooking.jsx';
 // Shared Pages (shared between 2 or more roles)
 import Company from './pages/CompanyProfile.jsx';
 import Complaints from './pages/Complaints.jsx';
+import Evaluations from './pages/Evaluations.jsx';
 import GatePasses from './pages/GatePasses.jsx';
 import WorkPermit from './pages/WorkPermit.jsx';
 import LostAndFound from './pages/LostAndFound.jsx';
@@ -86,6 +86,7 @@ function App() {
             <Route path="services" element={<Services />} />
             <Route path="assign-office" element={<ApproveOffice />} />
             <Route path="receptionists" element={<Performance />} />
+            <Route path="evaluations" element={<Evaluations role="admin" />} />
             <Route path="blogs" element={<Blogs />} />
             <Route path="blogs/create" element={<CreateBlog />} />
             <Route path="blogs/:id" element={<Blog />} />
@@ -98,7 +99,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="employees" element={<Employees />} />
             <Route path="bookings" element={<CompanyMeetingRoomBooking />} />
-            <Route path="evaluations" element={<Evaluations />} />
+            <Route path="evaluations" element={<Evaluations role="tenant" />} />
             <Route path="evaluations/:id" element={<EvaluationForm />} />
             <Route path="parking" element={<Parking />} />
             <Route path="profile" element={<Company role="tenant" />} />
