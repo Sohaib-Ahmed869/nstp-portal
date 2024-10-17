@@ -1,13 +1,15 @@
+
 import React, { useState, useEffect, useContext } from 'react';
 import Sidebar from '../../components/Sidebar';
 import { useParams } from 'react-router-dom';
 import { CheckBadgeIcon, ChartBarIcon, RocketLaunchIcon, BuildingOffice2Icon, DocumentTextIcon } from '@heroicons/react/24/outline';
 import FloatingLabelInput from '../../components/FloatingLabelInput';
-import { TenantService } from '../../services';
+import { TenantService, AdminService } from '../../services';
 import showToast from '../../util/toast';
 import EvaluationGrid from '../../components/EvaluationGrid';
 import NSTPLoader from '../../components/NSTPLoader';
 import { AuthContext } from '../../context/AuthContext';
+import { TowerContext } from '../../context/TowerContext';
 const investmentFields = ['investorOrigin', 'typeOfInvestor', 'investorName', 'investmentAmount'];
 
 const EMPTY_FORM_DATA = {
@@ -63,7 +65,7 @@ const EMPTY_FORM_DATA = {
   },
 };
 
-const EvaluationForm = () => {
+const EvaluationForm = ({role}) => {
   const { id } = useParams();
   const [formData, setFormData] = useState(EMPTY_FORM_DATA);
   const [loading, setLoading] = useState(false); //THIS IS NOT PAGE LOADING
@@ -71,13 +73,19 @@ const EvaluationForm = () => {
   const [submitModalTitle, setSubmitModalTitle] = useState('');
   const [submitModalText, setSubmitModalText] = useState('');
   const [viewingEvaluation, setViewingEvaluation] = useState({});
+  const { tower } = useContext(TowerContext);
   const { role } = useContext(AuthContext);
 
   useEffect(() => {
     async function fetchData() {
       try {
       setPageLoading(true);
-        const response = await TenantService.getEvaluation(id);
+        let  response;
+        if(role == "tenant"){
+          response = await TenantService.getEvaluation(id);
+        } else if (role == "admin") {
+          response = await AdminService.getEvaluation(tower.id, id);
+        }
         if (response.error) {
           console.log(response.error);
           return;
