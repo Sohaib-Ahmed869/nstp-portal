@@ -78,7 +78,7 @@ const Evaluations = ({role}) => {
     return (
         <Sidebar>
             {loading && <NSTPLoader />}
-            <div className={`bg-base-100 rounded-md shadow-md p-5 lg:p-10 mt-10 ${loading && "hidden"}`}>
+            <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-14 pb-14 rounded-lg  ${loading && "hidden"}`}>
                 <div className="flex items-center justify-between">
                     <p className="text-2xl font-semibold">Feedback and Evaluation Requests</p>
                 </div>
@@ -106,12 +106,15 @@ const Evaluations = ({role}) => {
                     {currentEvaluations.map((evaluation) => (
                         <div key={evaluation.id} className="ring-base-200 ring-1 rounded-lg p-5 shadow-lg bg-base-100 flex">
                             <div className="w-1/2">
-                                <h2 className="card-title">{evaluation.adminName || "Anonymous Admin"}</h2>
+                                <h2 className="card-title">{ role == "tenant" ? evaluation.adminName || "Anonymous Admin" : evaluation.tenantName || "Anonymous Tenant"}</h2>
                                 <p>{evaluation.description}</p>
                                 <p className="text-sm my-3 text-gray-500">{"Deadline: "+  evaluation.deadline }</p>
-                                { evaluation.completed && <p className="text-sm my-3 text-gray-500">{"Submitted: "+  evaluation.dateSubmitted }</p>}
+                              
                                 {evaluation.completed ? (
-                                    <span className="badge badge-success text-base-100 py-3"> <CheckBadgeIcon className="size-5 mr-1" /> Completed</span>
+                                    <div className="flex gap-3 items-center">
+                                        <span className="badge badge-success text-base-100 py-3"> <CheckBadgeIcon className="size-5 mr-1" /> Completed</span> 
+                                        <p className="text-sm text-gray-500">{"on "+  evaluation.dateSubmitted }</p>
+                                    </div>
                                 ) : (
                                     <span className="badge badge-accent text-base-100 py-3"> <ClockIcon className="size-5 mr-1" /> Pending</span>
                                 ) }
