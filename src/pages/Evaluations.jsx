@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../../components/Sidebar';
-import NSTPLoader from '../../components/NSTPLoader';
+import Sidebar from '../components/Sidebar';
+import NSTPLoader from '../components/NSTPLoader';
 import { ArrowsUpDownIcon, CheckBadgeIcon, ClockIcon, EyeIcon, MagnifyingGlassIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
-import { TenantService } from '../../services';
+import { TenantService } from '../services';
+import showToast from '../util/toast';
 
 const Evaluations = () => {
     const [evaluations, setEvaluations] = useState([]);
@@ -22,6 +23,7 @@ const Evaluations = () => {
                 console.log(response);
                 if (response.error) {
                     console.log(response.error);
+                    showToast(false, response.error);
                     return
                 }
 
@@ -32,6 +34,7 @@ const Evaluations = () => {
                     adminName: evaluation.admin.name,
                     deadline: new Date(evaluation.deadline).toLocaleString(),
                     completed: evaluation.is_submitted,
+                    dateSubmitted: evaluation.date_submitted,
                 }));
 
                 setEvaluations(evaluations);
@@ -75,7 +78,6 @@ const Evaluations = () => {
     return (
         <Sidebar>
             {loading && <NSTPLoader />}
-
             <div className={`bg-base-100 rounded-md shadow-md p-5 lg:p-10 mt-10 ${loading && "hidden"}`}>
                 <div className="flex items-center justify-between">
                     <p className="text-2xl font-semibold">Feedback and Evaluation Requests</p>
@@ -107,25 +109,22 @@ const Evaluations = () => {
                                 <h2 className="card-title">{evaluation.adminName || "Anonymous Admin"}</h2>
                                 <p>{evaluation.description}</p>
                                 <p className="text-sm my-3 text-gray-500">{"Deadline: "+  evaluation.deadline }</p>
+                                { evaluation.completed && <p className="text-sm my-3 text-gray-500">{"Submitted: "+  evaluation.dateSubmitted }</p>}
                                 {evaluation.completed ? (
                                     <span className="badge badge-success text-base-100 py-3"> <CheckBadgeIcon className="size-5 mr-1" /> Completed</span>
                                 ) : (
                                     <span className="badge badge-accent text-base-100 py-3"> <ClockIcon className="size-5 mr-1" /> Pending</span>
                                 ) }
                             </div>
-                            <div className="flex w-1/2 justify-end items-center gap-3">
-                               
-                                
+                            { (role === "tenant" || (role === "admin" && evaluation.completed)) &&
+                             <div className="flex w-1/2 justify-end items-center gap-3">
                                     <button className="btn btn-primary text-base-100" onClick = {
                                         () => navigate('' + evaluation.id)
                                     } >
                                         {evaluation.completed ? <EyeIcon className="size-6" /> : <PencilSquareIcon className="size-6" />}
                                         {evaluation.completed ? "View" : "Fill Evaluation"}
                                     </button>
-
-                            
-                            
-                            </div>
+                            </div>}
                         </div>
                     ))}
                 </div>

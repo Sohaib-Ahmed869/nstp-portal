@@ -21,7 +21,8 @@ import {
   WrenchIcon,
   CircleStackIcon,
   NewspaperIcon,
-  PencilSquareIcon
+  PencilSquareIcon,
+  ClipboardDocumentIcon
 } from "@heroicons/react/24/outline";
 import { SidebarItem } from "./SidebarItem";
 import { AuthContext } from '../context/AuthContext';
@@ -53,6 +54,7 @@ const sidebarConfig = {
     { icon: <CircleStackIcon />, text: "Receptionists", url: "/receptionists" },
     { icon: <NewspaperIcon />, text: "Clearance Requests", url: "/clearance" },
     { icon: <PencilSquareIcon />, text: "Blogs", url: "/blogs" },
+    { icon: <ClipboardDocumentIcon />, text: "Evaluations", url: "/evaluations" },
     { icon: <RocketLaunchIcon />, text: "Opportunities", url: "/opportunities" },
   ],
   tenant: [
@@ -168,7 +170,7 @@ const Sidebar = ({ children }) => {
             </ul>
           </nav>
         </div>
-        <div className="flex-grow p-16 xl:px-20 pt-0 ml-20 overflow-auto ">
+        <div className="flex-grow p-16  xl:px-20 pt-0 ml-20 overflow-auto ">
           {children /* this is where the page content will be rendered. */}
         </div>
       </div>
