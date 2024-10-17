@@ -42,8 +42,8 @@ const Evaluations = ({role}) => {
                     adminName: evaluation.admin.name,
                     deadline: new Date(evaluation.deadline).toLocaleString(),
                     completed: evaluation.is_submitted,
-                    dateSubmitted: new Date(evaluation.date_submitted).toLocaleString()
-                    
+                    dateSubmitted: new Date(evaluation.date_submitted).toLocaleString(),
+                    tenantName: evaluation.tenant_name,
                 }));
 
                 console.log(evaluations);
