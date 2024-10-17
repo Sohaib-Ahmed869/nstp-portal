@@ -682,6 +682,21 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },
+
+  getEvaluation: async (towerId, evaluationId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/evaluations/${evaluationId}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AdminService;
