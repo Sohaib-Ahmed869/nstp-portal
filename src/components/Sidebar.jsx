@@ -30,62 +30,64 @@ import { AuthContext } from '../context/AuthContext';
 import nstpPng from '../assets/nstplogowhite.png'
 
 
-const sidebarConfig = {
-  receptionist: [
-    { icon: <HomeIcon />, text: "Dashboard", url: "/" },
-    { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
-    { icon: <WrenchScrewdriverIcon />, text: "Complaints", url: "/complaints" },
-    { icon: <TicketIcon />, text: "Gate Passes", url: "/gate-passes" },
-    { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: "/work-permits" },
-    { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: "/lost-and-found" },
-    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: "/occurences" },
-  ],
-  admin: [
-    { icon: <HomeIcon />, text: "Dashboard", url: "/" },
-    { icon: <UserGroupIcon />, text: "Companies", url: "/companies" },
-    // { icon: <BuildingOfficeIcon /> , text: "Assign Office", url: "/assign-office" }, // this to be removed frm flow
-    { icon: <TicketIcon />, text: "E-Tags", url: "/etags" },
-    { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: "/work-permits" },
-    // { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
-    { icon: <PresentationChartLineIcon />, text: "Meeting Rooms", url: "/meeting-rooms" },
-    { icon: <WrenchScrewdriverIcon />, text: "Services", url: "/services" },
-    { icon: <IdentificationIcon />, text: "Cards", url: "/cards" },
-    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },
-    { icon: <CircleStackIcon />, text: "Receptionists", url: "/receptionists" },
-    { icon: <NewspaperIcon />, text: "Clearance Requests", url: "/clearance" },
-    { icon: <PencilSquareIcon />, text: "Blogs", url: "/blogs" },
-    { icon: <ClipboardDocumentIcon />, text: "Evaluations", url: "/evaluations" },
-    { icon: <RocketLaunchIcon />, text: "Opportunities", url: "/opportunities" },
-  ],
-  tenant: [
-    { icon: <HomeIcon />, text: "Dashboard", url: "/" },
-    { icon: <RocketLaunchIcon />, text: "Profile", url: "/profile" },
-    { icon: <UserGroupIcon />, text: "Employees", url: "/employees" },
-    { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
-    { icon: <TicketIcon />, text: "Gate Passes", url: "/gate-passes" },
-    { icon: <WrenchIcon />, text: "Work Permits", url: "/work-permits" },
-    { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: "/lost-and-found" },
-    { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },
-    { icon: <ExclamationTriangleIcon />, text: "Occurences", url: "/occurences" },
-    { icon: <TruckIcon />, text: "Parking", url: "/parking" },
-    { icon: <ClipboardDocumentCheckIcon />, text: "Evaluations", url: "/evaluations", notif: true },
-  ],
-};
-
-const getSidebarItems = (role) => {
-  return sidebarConfig[role]?.map(item => ({
-    ...item,
-    url: `/${role}${item.url}`
-  })) || [];
-};
 
 const Sidebar = ({ children }) => {
+  
+  //States
   const [isExpanded, setIsExpanded] = useState(false);
   const [selectedItem, setSelectedItem] = useState("");
-  const { role, actions } = useContext(AuthContext);
-  const sidebarItems = getSidebarItems(role);
-  const [evalNotif, setEvalNotif] = useState(true)
+  const { role, actions, evalRequested } = useContext(AuthContext);
 
+  const sidebarConfig = {
+    receptionist: [
+      { icon: <HomeIcon />, text: "Dashboard", url: "/" },
+      { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
+      { icon: <WrenchScrewdriverIcon />, text: "Complaints", url: "/complaints" },
+      { icon: <TicketIcon />, text: "Gate Passes", url: "/gate-passes" },
+      { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: "/work-permits" },
+      { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: "/lost-and-found" },
+      { icon: <ChatBubbleLeftEllipsisIcon />, text: "Occurences", url: "/occurences" },
+    ],
+    admin: [
+      { icon: <HomeIcon />, text: "Dashboard", url: "/" },
+      { icon: <UserGroupIcon />, text: "Companies", url: "/companies" },
+      // { icon: <BuildingOfficeIcon /> , text: "Assign Office", url: "/assign-office" }, // this to be removed frm flow
+      { icon: <TicketIcon />, text: "E-Tags", url: "/etags" },
+      { icon: <ClipboardDocumentCheckIcon />, text: "Work Permits", url: "/work-permits" },
+      // { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
+      { icon: <PresentationChartLineIcon />, text: "Meeting Rooms", url: "/meeting-rooms" },
+      { icon: <WrenchScrewdriverIcon />, text: "Services", url: "/services" },
+      { icon: <IdentificationIcon />, text: "Cards", url: "/cards" },
+      { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },
+      { icon: <CircleStackIcon />, text: "Receptionists", url: "/receptionists" },
+      { icon: <NewspaperIcon />, text: "Clearance Requests", url: "/clearance" },
+      { icon: <PencilSquareIcon />, text: "Blogs", url: "/blogs" },
+      { icon: <ClipboardDocumentIcon />, text: "Evaluations", url: "/evaluations" },
+      { icon: <RocketLaunchIcon />, text: "Opportunities", url: "/opportunities" },
+    ],
+    tenant: [
+      { icon: <HomeIcon />, text: "Dashboard", url: "/" },
+      { icon: <RocketLaunchIcon />, text: "Profile", url: "/profile" },
+      { icon: <UserGroupIcon />, text: "Employees", url: "/employees" },
+      { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
+      { icon: <TicketIcon />, text: "Gate Passes", url: "/gate-passes" },
+      { icon: <WrenchIcon />, text: "Work Permits", url: "/work-permits" },
+      { icon: <PuzzlePieceIcon />, text: "Lost & Found", url: "/lost-and-found" },
+      { icon: <ChatBubbleLeftEllipsisIcon />, text: "Complaints", url: "/complaints" },
+      { icon: <ExclamationTriangleIcon />, text: "Occurences", url: "/occurences" },
+      { icon: <TruckIcon />, text: "Parking", url: "/parking" },
+      { icon: <ClipboardDocumentCheckIcon />, text: "Evaluations", url: "/evaluations", notif: evalRequested },
+    ],
+  };
+
+  const getSidebarItems = (role) => {
+    return sidebarConfig[role]?.map(item => ({
+      ...item,
+      url: `/${role}${item.url}`
+    })) || [];
+  };
+
+  const sidebarItems = getSidebarItems(role);
 
   const toggleDrawer = () => {
     setIsExpanded(!isExpanded);
@@ -104,6 +106,8 @@ const Sidebar = ({ children }) => {
     } else {
       setSelectedItem(window.location.pathname);
     }
+
+    console.log("Eval requested", evalRequested);
   }, [selectedItem]);
 
   return (

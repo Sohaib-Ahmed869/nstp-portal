@@ -162,7 +162,8 @@ const LoginPage = () => {
         response = await AuthService.tenantLogin(lowerCaseUsername, password);
         isValid = checkResponse(response);
         if (isValid) {
-          login(response.data.role, response.data.towers);
+          console.log(response.data.evalRequested);
+          login(response.data.role, response.data.towers, response.data.evalRequested);
           navigate("/tenant");
         } else {
           return;

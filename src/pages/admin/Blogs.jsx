@@ -52,12 +52,12 @@ const Blogs = () => {
                         },
                         {
                             type: "para",
-                            content: "This is the  paragraph 1 content of blog 1"
+                            content: "Elit aenean elementum consectetur leo semper ipsum leo. Sit porttitor nisi vivamus aenean tellus vendor lorem. Sit nisi. Ipsum lorem aenean vendor semper tellus elementum lorem sed. Lorem. Aenean nisi lorem semper nisi vendor tellus leo. Nisi sed consectetur dolor ipsum aenean. Leo ipsum consectetur. Semper vivamus elit. Lorem vivamus sit elit eiusmod semper vendor sed. Elit sit elementum lorem. Vivamus vendor sit leo semper. Sed. Semper tellus consectetur vivamus tellus aenean. Elementum tellus consectetur elit vivamus. Semper consectetur sit porttitor. Leo eiusmod vivamus. Elementum ipsum tellus elit consectetur semper. Vendor semper vivamus ipsum eiusmod leo. Vivamus vendor tellus aenean."
                         },
 
                         {
                             type: "para",
-                            content: "This is the  paragraph 2 content of blog 1"
+                            content: "Elit aenean elementum consectetur leo semper ipsum leo. Sit porttitor nisi vivamus aenean tellus vendor lorem. Sit nisi. Ipsum lorem aenean vendor semper tellus elementum lorem sed. Lorem. Aenean nisi lorem semper nisi vendor tellus leo. Nisi sed consectetur dolor ipsum aenean. Leo ipsum consectetur. Semper vivamus elit. Lorem vivamus sit elit eiusmod semper vendor sed. Elit sit elementum lorem. Vivamus vendor sit leo semper. Sed. Semper tellus consectetur vivamus tellus aenean. Elem."
                         },
                         {
                             type: "para",

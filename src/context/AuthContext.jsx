@@ -5,26 +5,32 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
     const [role, setRole] = useState(localStorage.getItem('userRole') || '');
     const [permissions, setPermissions] = useState(JSON.parse(localStorage.getItem('userActions')) || []);
+    const [evalRequested, setEvalRequested] = useState(false); //only for tenant
 
     useEffect(() => {
         localStorage.setItem('userRole', role);
         localStorage.setItem('userActions', JSON.stringify(permissions));
+        localStorage.setItem('evalRequested', evalRequested);
     }, [role, permissions]);
 
-    const login = (role, actions = []) => {
+    const login = (role, actions = [], evalRequested) => {
+        console.log("IN LOGIN ATH CONTEXT", evalRequested);
         setRole(role);
         setPermissions(actions);
+        setEvalRequested(evalRequested);
     };
 
     const logout = () => {
         setRole(null);
         setPermissions([]);
+        setEvalRequested(false);
         localStorage.removeItem('userRole');
-        localStorage.removeItem('userPermissions');
+        localStorage.removeItem('userActions');
+        localStorage.removeItem('evalRequested');
     };
 
     return (
-        <AuthContext.Provider value={{ role, permissions, login, logout }}>
+        <AuthContext.Provider value={{ role, permissions, evalRequested, setEvalRequested, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
