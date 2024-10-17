@@ -644,7 +644,7 @@ const AdminService = {
     } catch (error) {
       return await handleResponse(error.response);
     }
-  },  
+  },
 
   requestEvaluation: async (tenantId, deadline) => {
     try {
@@ -658,6 +658,21 @@ const AdminService = {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  getEvaluations: async (towerId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/evaluations`,
+        {
           withCredentials: true,
         }
       );
