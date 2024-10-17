@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { TenantService } from '../services';
 import showToast from '../util/toast';
 
-const Evaluations = () => {
+const Evaluations = ({role}) => {
     const [evaluations, setEvaluations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
@@ -34,7 +34,7 @@ const Evaluations = () => {
                     adminName: evaluation.admin.name,
                     deadline: new Date(evaluation.deadline).toLocaleString(),
                     completed: evaluation.is_submitted,
-                    dateSubmitted: evaluation.date_submitted,
+                    dateSubmitted: new Date(evaluation.date_submitted).toLocaleString()
                 }));
 
                 setEvaluations(evaluations);
