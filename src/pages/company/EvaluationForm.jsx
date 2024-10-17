@@ -65,7 +65,7 @@ const EMPTY_FORM_DATA = {
   },
 };
 
-const EvaluationForm = ({role}) => {
+const EvaluationForm = () => {
   const { id } = useParams();
   const [formData, setFormData] = useState(EMPTY_FORM_DATA);
   const [loading, setLoading] = useState(false); //THIS IS NOT PAGE LOADING

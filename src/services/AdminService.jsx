@@ -709,6 +709,18 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },
+
+  getBlog: async (blogId) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/admin/blogs/${blogId}`, {
+        withCredentials: true,
+      });
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AdminService;

@@ -3,6 +3,7 @@ import Sidebar from '../../components/Sidebar';
 import { PencilSquareIcon, EllipsisVerticalIcon, EyeIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
 import NSTPLoader from '../../components/NSTPLoader';
+import { AdminService } from '../../services';
 
 const Blogs = () => {
 
@@ -14,60 +15,87 @@ const Blogs = () => {
     const navigate = useNavigate()
     useEffect(() => {
         //simulate api call to load blogs
-        setTimeout(() => {
-            setLoading(false);
-            setBlogsList([
-                {
-                    id: 1,
-                    date: '2022-05-25',
-                    title: 'Blog 1',
-                    content: [
-                        {
-                            type: "para",
-                            content: "This is the  paragraph 1 content of blog 1"
-                        },
-                        {
-                            type: "image",
-                            content: "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg",
-                            caption: "Image Caption"
-                        },
-                        {
-                            type: "para",
-                            content: "This is the  paragraph 2 content of blog 1"
-                        },
-                        {
-                            type: "para",
-                            content: "This is the  paragraph 3 content of blog 1"
-                        }
-                    ]
-                },
-                {
-                    id: 2,
-                    date: '2022-05-26',
-                    title: 'Blog 2',
-                    content: [
-                        {
-                            type: "image",
-                            content: "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg"
-                        },
-                        {
-                            type: "para",
-                            content: "Elit aenean elementum consectetur leo semper ipsum leo. Sit porttitor nisi vivamus aenean tellus vendor lorem. Sit nisi. Ipsum lorem aenean vendor semper tellus elementum lorem sed. Lorem. Aenean nisi lorem semper nisi vendor tellus leo. Nisi sed consectetur dolor ipsum aenean. Leo ipsum consectetur. Semper vivamus elit. Lorem vivamus sit elit eiusmod semper vendor sed. Elit sit elementum lorem. Vivamus vendor sit leo semper. Sed. Semper tellus consectetur vivamus tellus aenean. Elementum tellus consectetur elit vivamus. Semper consectetur sit porttitor. Leo eiusmod vivamus. Elementum ipsum tellus elit consectetur semper. Vendor semper vivamus ipsum eiusmod leo. Vivamus vendor tellus aenean."
-                        },
 
-                        {
-                            type: "para",
-                            content: "Elit aenean elementum consectetur leo semper ipsum leo. Sit porttitor nisi vivamus aenean tellus vendor lorem. Sit nisi. Ipsum lorem aenean vendor semper tellus elementum lorem sed. Lorem. Aenean nisi lorem semper nisi vendor tellus leo. Nisi sed consectetur dolor ipsum aenean. Leo ipsum consectetur. Semper vivamus elit. Lorem vivamus sit elit eiusmod semper vendor sed. Elit sit elementum lorem. Vivamus vendor sit leo semper. Sed. Semper tellus consectetur vivamus tellus aenean. Elem."
-                        },
-                        {
-                            type: "para",
-                            content: "This is the  paragraph 3 content of blog 1"
-                        }
-                    ]
-                },
-            ]);
+        async function fetchData() {
+            try {
+                const response = await AdminService.getBlogs();
+                if (response.error) {
+                    console.log(response.error);
+                    return;
+                }
+                console.log(response.data.blogs);
+                const blogs = response.data.blogs.map(blog => ({
+                    id: blog._id,
+                    date: new Date(blog.date).toLocaleDateString(),
+                    title: blog.title,
+                    paragraphs: blog.paragraphs,
+                    image: blog.image,
+                    caption: blog.caption,
+                    imageIndex: blog.image_index,
+                }));
+                // setBlogsList(blogs);
+                setLoading(false);
+            } catch (error) {
+                console.log(error);
+            }
         }
-            , 2000);
+
+        fetchData();
+
+        // setTimeout(() => {
+        //     setLoading(false);
+        //     setBlogsList([
+        //         {
+        //             id: 1,
+        //             date: '2022-05-25',
+        //             title: 'Blog 1',
+        //             content: [
+        //                 {
+        //                     type: "para",
+        //                     content: "This is the  paragraph 1 content of blog 1"
+        //                 },
+        //                 {
+        //                     type: "image",
+        //                     content: "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg",
+        //                     caption: "Image Caption"
+        //                 },
+        //                 {
+        //                     type: "para",
+        //                     content: "This is the  paragraph 2 content of blog 1"
+        //                 },
+        //                 {
+        //                     type: "para",
+        //                     content: "This is the  paragraph 3 content of blog 1"
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             id: 2,
+        //             date: '2022-05-26',
+        //             title: 'Blog 2',
+        //             content: [
+        //                 {
+        //                     type: "image",
+        //                     content: "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg"
+        //                 },
+        //                 {
+        //                     type: "para",
+        //                     content: "Elit aenean elementum consectetur leo semper ipsum leo. Sit porttitor nisi vivamus aenean tellus vendor lorem. Sit nisi. Ipsum lorem aenean vendor semper tellus elementum lorem sed. Lorem. Aenean nisi lorem semper nisi vendor tellus leo. Nisi sed consectetur dolor ipsum aenean. Leo ipsum consectetur. Semper vivamus elit. Lorem vivamus sit elit eiusmod semper vendor sed. Elit sit elementum lorem. Vivamus vendor sit leo semper. Sed. Semper tellus consectetur vivamus tellus aenean. Elementum tellus consectetur elit vivamus. Semper consectetur sit porttitor. Leo eiusmod vivamus. Elementum ipsum tellus elit consectetur semper. Vendor semper vivamus ipsum eiusmod leo. Vivamus vendor tellus aenean."
+        //                 },
+
+        //                 {
+        //                     type: "para",
+        //                     content: "Elit aenean elementum consectetur leo semper ipsum leo. Sit porttitor nisi vivamus aenean tellus vendor lorem. Sit nisi. Ipsum lorem aenean vendor semper tellus elementum lorem sed. Lorem. Aenean nisi lorem semper nisi vendor tellus leo. Nisi sed consectetur dolor ipsum aenean. Leo ipsum consectetur. Semper vivamus elit. Lorem vivamus sit elit eiusmod semper vendor sed. Elit sit elementum lorem. Vivamus vendor sit leo semper. Sed. Semper tellus consectetur vivamus tellus aenean. Elem."
+        //                 },
+        //                 {
+        //                     type: "para",
+        //                     content: "This is the  paragraph 3 content of blog 1"
+        //                 }
+        //             ]
+        //         },
+        //     ]);
+        // }
+        //     , 2000);
 
     }, []);
 
