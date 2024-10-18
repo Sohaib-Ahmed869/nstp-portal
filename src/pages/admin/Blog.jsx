@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-const { AdminService } = require('../../services');
+import { AdminService } from '../../services';
 
 const Blog = () => {
     const [blog, setBlog] = useState({});

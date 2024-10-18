@@ -8,6 +8,7 @@ import {
     ArrowUpTrayIcon
 } from '@heroicons/react/24/outline';
 import showToast from '../../util/toast';
+import { AdminService } from '../../services';
 
 const CreateBlog = () => {
     const [title, setTitle] = useState('');
@@ -17,6 +18,8 @@ const CreateBlog = () => {
     const [createLoading, setCreateLoading] = useState(false);
     const [caption, setCaption] = useState('');
     const [imageUrl, setImageUrl] = useState(''); // State for image URL
+    const [imageIndex, setImageIndex] = useState(0);
+    const [imageFile, setImageFile] = useState(null); // State for image file
 
     const addParagraph = () => {
         const newContent = {
@@ -30,6 +33,7 @@ const CreateBlog = () => {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            setImageFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImageUrl(reader.result);
@@ -39,9 +43,14 @@ const CreateBlog = () => {
     };
 
     const addImage = () => {
+        if (!imageFile || !caption.trim()) {
+            showToast(false, 'Please provide both an image and a caption.');
+            return;
+        }
         setModalLoading(true);
-        
+
         setTimeout(() => {
+            setImageIndex(content.length); // Set image index to the current number of paragraphs
             setContent([...content, {
                 type: "image",
                 content: imageUrl, // Use the actual image URL
@@ -63,14 +72,14 @@ const CreateBlog = () => {
         ));
     };
 
-
     const deleteContent = (id) => {
         setContent(content.filter(item => item.id !== id));
         if (content.find(item => item.id === id).type === 'image') {
             setHasImage(false);
         }
     };
-    const handleCreate = () => {
+
+    const handleCreate = async () => {
         if (title.trim() === '') {
             showToast(false, 'Please enter a title for the blog post');
             return;
@@ -79,23 +88,62 @@ const CreateBlog = () => {
             showToast(false, 'Please add some content to the blog post');
             return;
         }
+        if (content.some(item => item.type === 'para' && item.content.trim() === '')) {
+            showToast(false, 'Paragraphs cannot be empty');
+            return;
+        }
         setCreateLoading(true);
-        const blogPost = {
-            title,
-            content: content.map(({ type, content }) => ({ type, content }))
-        };
-        console.log('Created Blog Post:', blogPost);
-        setTimeout(() => {
-            //Handle successful upload api call
+
+        const formData = new FormData();
+        formData.append('title', title);
+        content.forEach((item, index) => {
+            if (item.type === 'para') {
+                formData.append('paragraphs', item.content);
+            }
+            if (item.type === 'image') {
+                formData.append('image', imageFile);
+                formData.append('caption', item.caption);
+                formData.append('imageIndex', imageIndex);
+            }
+        });
+
+        // Log FormData entries
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
+        try {
+            const response = await AdminService.addBlog(formData);
+            if (response.error) {
+                console.log(response.error);
+                showToast(false, response.error);
+                return;
+            }
+
             setCreateLoading(false);
-            showToast(true, 'Blog post created successfully');
-            //reset the form 
+            showToast(true, response.message);
+        } catch (error) {
+            console.log(error);
+            showToast(false, 'An error occurred. Please try again.');
+        } finally {
             setTitle('');
             setContent([]);
             setHasImage(false);
-        }, 2000);
-        // In real implementation, handle api call to create blog post
+            setImageIndex(0);
+            setCreateLoading(false);
+        }
 
+        // setTimeout(() => {
+        //     // Handle successful upload API call
+        //     setCreateLoading(false);
+        //     showToast(true, 'Blog post created successfully');
+        //     // Reset the form
+        //     setTitle('');
+        //     setContent([]);
+        //     setHasImage(false);
+        //     setImageIndex(0);
+        // }, 2000);
+        // // In real implementation, handle API call to create blog post
     };
 
     const adjustTextareaHeight = (e) => {

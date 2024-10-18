@@ -721,6 +721,22 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },
+
+  addBlog: async (blog) => {
+    // send blog as form data
+    try {
+      const response = await axios.post(`${BASE_URL}/admin/blog/add`, blog, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      });
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AdminService;
