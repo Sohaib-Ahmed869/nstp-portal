@@ -737,6 +737,22 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },
+
+  deleteBlog: async (blogId) => {
+    try {
+      const response = await axios.delete(`${BASE_URL}/admin/blog/delete`, {
+        data: { blogId },
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AdminService;
