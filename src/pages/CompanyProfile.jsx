@@ -345,7 +345,7 @@ const Company = ({ role }) => {
               companyResourceComposition: fetchedData.companyResourceComposition,
               contractEndDate: formattedContractEndDate,
 
-              totalEmployees: fetchedData.employees,
+              totalEmployees: fetchedData.totalEmployees,
               activeEmployees: fetchedData.activeEmployees,
               cardsNotIssued: fetchedData.cardsNotIssued,
               cardsIssued: fetchedData.cardsIssued,
@@ -411,7 +411,7 @@ const Company = ({ role }) => {
               companyResourceComposition: fetchedData.companyResourceComposition,
               contractEndDate: formattedContractEndDate,
 
-              totalEmployees: fetchedData.employees,
+              totalEmployees: fetchedData.totalEmployees,
               activeEmployees: fetchedData.activeEmployees,
               cardsNotIssued: fetchedData.cardsNotIssued,
               cardsIssued: fetchedData.cardsIssued,
@@ -816,7 +816,7 @@ const Company = ({ role }) => {
         {/* First row (employee stats, numerical stats) */}
         <div className="grid md:grid-cols-2 gap-5 mt-5 ">
           <EmployeeStats
-            total={companyData.employees.length}
+            total={companyData.totalEmployees}
             active={companyData.activeEmployees}
             cardsNotIssued={companyData.cardsNotIssued}
             cardsIssued={companyData.cardsIssued}
