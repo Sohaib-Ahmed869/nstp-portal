@@ -212,8 +212,6 @@ const AdminHome = () => {
              <div className="card p-5 col-span-3">
                <ComparativeChart title={"Complaints"} comparisonData={complaintStats} link={"complaints"} />
              </div>
-      
-      
            </div>
       
            {/* Table of companies info */}

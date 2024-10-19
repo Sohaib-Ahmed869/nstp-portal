@@ -187,7 +187,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                     <td>{complaint.dateResolved}</td>
                                     {
                                         complaintType == "services" && (
-                                            <td className="flex items-center">
+                                            <td className="">
                                                 <div className={`badge text-base-100 ${complaint.urgency === 1 ? "badge-primary" : complaint.urgency === 2 ? "badge-secondary" : "badge-error"} flex items-center py-3`} >
                                                     {complaint.urgency === 1 ? "Low" : complaint.urgency === 2 ? "Med" : "High"}
                                                 </div>
@@ -198,7 +198,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                     <td>{complaint.subject ? truncateText(complaint.subject, 25) : complaint.serviceType}</td>
                                     <td>{truncateText(complaint.description || " - ", 60)}</td>
                                     <td >
-                                        <div className={`badge ${complaint.isResolved ? "badge-success text-lime-100" : "badge-error text-red-100"} flex items-center p-3`}>
+                                        <div className={`badge ${complaint.isResolved ? "badge-success text-lime-100" : "badge-error text-red-100"} flex items-center p-3 gap-2`}>
                                             {complaint.isResolved ? <CheckCircleIcon className="size-6" /> : <XCircleIcon className="size-6" />}
                                             {complaint.isResolved ? "Yes" : "No"}
                                         </div>

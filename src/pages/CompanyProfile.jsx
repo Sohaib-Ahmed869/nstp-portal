@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import Sidebar from '../components/Sidebar';
 import { useParams } from 'react-router-dom';
-import { UserGroupIcon,LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon, LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon, ArrowDownTrayIcon, PresentationChartLineIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import nstpLogo from '../assets/nstplogocolored.png'
 import ReactApexChart from 'react-apexcharts';
 import { getPieChartOptions } from '../util/charts';
@@ -13,8 +13,9 @@ import showToast from '../util/toast';
 import { AdminService, TenantService } from '../services';
 import { TowerContext } from '../context/TowerContext'
 import { ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
+import ComparativeChart from '../components/ComparativeChart';
 
-const CONTRACT_DURATION_THRESHOLD = 90 ; // after 90% of contract duration, the radial progress will become red
+const CONTRACT_DURATION_THRESHOLD = 90; // after 90% of contract duration, the radial progress will become red
 
 const calculateDuration = (startDate, endDate) => {
   let years = endDate.getFullYear() - startDate.getFullYear();
@@ -22,13 +23,13 @@ const calculateDuration = (startDate, endDate) => {
   let days = endDate.getDate() - startDate.getDate();
 
   if (days < 0) {
-      months -= 1;
-      days += new Date(endDate.getFullYear(), endDate.getMonth(), 0).getDate();
+    months -= 1;
+    days += new Date(endDate.getFullYear(), endDate.getMonth(), 0).getDate();
   }
 
   if (months < 0) {
-      years -= 1;
-      months += 12;
+    years -= 1;
+    months += 12;
   }
 
   return `${years} years, ${months} months, and ${days} days`;
@@ -47,28 +48,28 @@ const Company = ({ role }) => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [deadline, setDeadline] = useState(null);
   const { tower } = useContext(TowerContext);
-    const [passwordData, setPasswordData] = useState({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
   });
-const [passwordVisibility, setPasswordVisibility] = useState({
+  const [passwordVisibility, setPasswordVisibility] = useState({
     currentPassword: false,
     newPassword: false,
     confirmPassword: false
-});
+  });
 
-const togglePasswordVisibility = (field) => {
+  const togglePasswordVisibility = (field) => {
     setPasswordVisibility((prevVisibility) => ({
-        ...prevVisibility,
-        [field]: !prevVisibility[field]
+      ...prevVisibility,
+      [field]: !prevVisibility[field]
     }));
-};
+  };
 
   const terminateEmployee = async (employeeId) => {
     // add loading state
     console.log(`Terminating employee with ID: ${employeeId}`);
-    try{
+    try {
       const response = await AdminService.terminateEmployee(employeeId);
       if (response.error) {
         console.error("Error terminating employee:", response);
@@ -76,7 +77,7 @@ const togglePasswordVisibility = (field) => {
         return;
       }
       showToast(true, "Employee terminated successfully.");
-      
+
       // remove employee from the list
 
     } catch (error) {
@@ -89,7 +90,7 @@ const togglePasswordVisibility = (field) => {
   };
 
 
-  const [companyData, setCompanyData] = useState({
+  const [companyData, setCompanyData] = useState({ //DONT remove this dummmy state, loading issues otherwise
     name: "Tech Innovators",
     type: "Startup",
     category: "EdTech",
@@ -106,9 +107,9 @@ const togglePasswordVisibility = (field) => {
       nonNustian: 20,
       total: 50
     },
-    gatePasses: 50,
+    gatePasses: { "Received": 20, "Pending": 10 },
     workPermits: 40,
-    eTags: 60,
+    eTags: { "Received": 20, "Pending": 10 },
     vehiclesRegistered: 25,
     gateEntries: 200,
     foreignGateEntries: 15,
@@ -260,40 +261,40 @@ const togglePasswordVisibility = (field) => {
   ]
   const [dropdownOpen, setDropdownOpen] = useState({});
   const handlePasswordInputChange = (e) => {
-      const { name, value } = e.target;
-      setPasswordData((prevData) => ({
-          ...prevData,
-          [name]: value
-      }));
+    const { name, value } = e.target;
+    setPasswordData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
   };
-  
+
   const changePassword = (e) => {
     setModalLoading(true);
-      e.preventDefault();
-      console.log(passwordData);
+    e.preventDefault();
+    console.log(passwordData);
 
-      //api call here to change passwrod
+    //api call here to change passwrod
 
-      // Clear the fields
-      setPasswordData({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
-      });
-      // Close the modal
-      document.getElementById('change-password-modal').close();
-      showToast(true, "Password changed successfully.");
-      setModalLoading(false);
+    // Clear the fields
+    setPasswordData({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+    // Close the modal
+    document.getElementById('change-password-modal').close();
+    showToast(true, "Password changed successfully.");
+    setModalLoading(false);
   };
   const handleCancelPassword = () => {
-      // Clear the fields
-      setPasswordData({
-          currentPassword: '',
-          newPassword: '',
-          confirmPassword: ''
-      });
-      // Close the modal
-      document.getElementById('change-password-modal').close();
+    // Clear the fields
+    setPasswordData({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    });
+    // Close the modal
+    document.getElementById('change-password-modal').close();
   };
   const toggleDropdown = (id) => {
     setDropdownOpen((prev) => ({
@@ -355,13 +356,14 @@ const togglePasswordVisibility = (field) => {
               },
               gatePasses: fetchedData.gatepasses,
               workPermits: fetchedData.workpermits,
-              eTags: fetchedData.etags,
               violations: fetchedData.violations,
               contractDuration: contractDurationPercentage,
               employees: fetchedData.employees,
               meetingMinutes: fetchedData.meetingMinutes,
+              eTags: { "Received": 20, "Pending": 10 }, //change this after api call
+              gatePasses: { "Received": 20, "Pending": 10 },
             };
-
+            console.log("setting company data to: ", consolidatedData)
             setCompanyData(consolidatedData);
           } else {
             showToast(false, response.error);
@@ -420,13 +422,14 @@ const togglePasswordVisibility = (field) => {
               },
               gatePasses: fetchedData.gatepasses,
               workPermits: fetchedData.workpermits,
-              eTags: fetchedData.etags,
               violations: fetchedData.violations,
               contractDuration: contractDurationPercentage,
               employees: fetchedData.employees,
-              
+              meetingMinutes: fetchedData.meetingMinutes,
+              eTags: { "Received": 20, "Pending": 10 }, //after api call change this to fetchedData.etags and the one below it too
+              gatePasses: { "Received": 20, "Pending": 10 }
             };
-
+            console.log("setting company data to: ", consolidatedData)
             setCompanyData(consolidatedData);
           } else {
             showToast(false, response.error);
@@ -494,8 +497,8 @@ const togglePasswordVisibility = (field) => {
     console.log("Deadline:", deadline);
     //deadline gona be in the format, 11:59 of the same date
     try {
-      const response = await AdminService.requestEvaluation(companyId, deadline+"T23:59:00.000Z");
-      if(response.error){
+      const response = await AdminService.requestEvaluation(companyId, deadline + "T23:59:00.000Z");
+      if (response.error) {
         console.error("Error requesting evaluation:", response.error);
         showToast(false, response.error);
         return;
@@ -520,19 +523,19 @@ const togglePasswordVisibility = (field) => {
       {/* Terminate Confirmation Modal */}
       <dialog id="terminate-modal" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Confirm Termination</h3>
-          <p className="py-4">Are you sure you want to terminate {selectedEmployee?.name}?</p>
+          <h3 className="font-bold text-lg">Terminate Employee</h3>
+          <p className="py-4">Are you sure you want to terminate the employee, {selectedEmployee?.name}?</p>
           <div className="modal-action">
+            <button className="btn" onClick={() => document.getElementById('terminate-modal').close()}>Cancel</button>
             <button
-              className="btn btn-error"
+              className="btn btn-error text-base-100"
               onClick={() => {
                 terminateEmployee(selectedEmployee._id);
                 document.getElementById('terminate-modal').close();
               }}
             >
-              Yes
+              Confirm Termination
             </button>
-            <button className="btn" onClick={() => document.getElementById('terminate-modal').close()}>No</button>
           </div>
         </div>
       </dialog>
@@ -628,16 +631,16 @@ const togglePasswordVisibility = (field) => {
       {/* Feedback modal (type in a text area and send/cancel buttons, with modalloading) */}
       <dialog id="evaluation-feedback-modal" className="modal">
         <div className="modal-box">
-         <div className="flex items-center gap-2 mb-3">
-          <ChatBubbleOvalLeftEllipsisIcon className="size-8 text-primary" />
-           <h3 className="font-bold text-xl">Request Evaluation/Feedback</h3>
-         </div>
+          <div className="flex items-center gap-2 mb-3">
+            <ChatBubbleOvalLeftEllipsisIcon className="size-8 text-primary" />
+            <h3 className="font-bold text-xl">Request Evaluation/Feedback</h3>
+          </div>
           <p className="pb-4">Please enter deadline date and press confirm. The deadline will be 23:59 of the entered date.</p>
-         <div className="flex gap-2 my-3 items-center">
-           <p className="text-base font-bold">Deadline</p>
-           <input type="date" placeholder='Deadline' className="input input-bordered w-full" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
-           
-         </div>
+          <div className="flex gap-2 my-3 items-center">
+            <p className="text-base font-bold">Deadline</p>
+            <input type="date" placeholder='Deadline' className="input input-bordered w-full" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
+
+          </div>
 
           <div className="modal-action">
             <button className="btn" onClick={() => document.getElementById('evaluation-feedback-modal').close()}>Cancel</button>
@@ -649,84 +652,84 @@ const togglePasswordVisibility = (field) => {
       </dialog>
 
       {/** Change password modal */}
-<dialog id="change-password-modal" className="modal">
-    <form method="dialog" className="modal-box" onSubmit={changePassword}>
-       <div className="flex items-center">
-        <LockClosedIcon className="size-8 mr-2 text-primary" />
-         <h3 className="font-bold text-lg">Change Password</h3>
-       </div>
-        <p>When your account is first created, your initial password is <strong>nstptenant</strong> </p>
-        <div className="py-4">
+      <dialog id="change-password-modal" className="modal">
+        <form method="dialog" className="modal-box" onSubmit={changePassword}>
+          <div className="flex items-center">
+            <LockClosedIcon className="size-8 mr-2 text-primary" />
+            <h3 className="font-bold text-lg">Change Password</h3>
+          </div>
+          <p>When your account is first created, your initial password is <strong>nstptenant</strong> </p>
+          <div className="py-4">
             <div className="relative mb-4">
-                <input
-                    type={passwordVisibility.currentPassword ? 'text' : 'password'}
-                    name="currentPassword"
-                    placeholder="Current Password"
-                    value={passwordData.currentPassword}
-                    onChange={handlePasswordInputChange}
-                    className="input input-bordered w-full"
-                />
-                <button
-                    type="button"
-                    onClick={() => togglePasswordVisibility('currentPassword')}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
-                >
-                    {passwordVisibility.currentPassword ? (
-                        <EyeSlashIcon className="h-5 w-5" />
-                    ) : (
-                        <EyeIcon className="h-5 w-5" />
-                    )}
-                </button>
+              <input
+                type={passwordVisibility.currentPassword ? 'text' : 'password'}
+                name="currentPassword"
+                placeholder="Current Password"
+                value={passwordData.currentPassword}
+                onChange={handlePasswordInputChange}
+                className="input input-bordered w-full"
+              />
+              <button
+                type="button"
+                onClick={() => togglePasswordVisibility('currentPassword')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+              >
+                {passwordVisibility.currentPassword ? (
+                  <EyeSlashIcon className="h-5 w-5" />
+                ) : (
+                  <EyeIcon className="h-5 w-5" />
+                )}
+              </button>
             </div>
             <div className="relative mb-4">
-                <input
-                    type={passwordVisibility.newPassword ? 'text' : 'password'}
-                    name="newPassword"
-                    placeholder="New Password"
-                    value={passwordData.newPassword}
-                    onChange={handlePasswordInputChange}
-                    className="input input-bordered w-full"
-                />
-                <button
-                    type="button"
-                    onClick={() => togglePasswordVisibility('newPassword')}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
-                >
-                    {passwordVisibility.newPassword ? (
-                        <EyeSlashIcon className="h-5 w-5" />
-                    ) : (
-                        <EyeIcon className="h-5 w-5" />
-                    )}
-                </button>
+              <input
+                type={passwordVisibility.newPassword ? 'text' : 'password'}
+                name="newPassword"
+                placeholder="New Password"
+                value={passwordData.newPassword}
+                onChange={handlePasswordInputChange}
+                className="input input-bordered w-full"
+              />
+              <button
+                type="button"
+                onClick={() => togglePasswordVisibility('newPassword')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+              >
+                {passwordVisibility.newPassword ? (
+                  <EyeSlashIcon className="h-5 w-5" />
+                ) : (
+                  <EyeIcon className="h-5 w-5" />
+                )}
+              </button>
             </div>
             <div className="relative mb-4">
-                <input
-                    type={passwordVisibility.confirmPassword ? 'text' : 'password'}
-                    name="confirmPassword"
-                    placeholder="Confirm New Password"
-                    value={passwordData.confirmPassword}
-                    onChange={handlePasswordInputChange}
-                    className="input input-bordered w-full"
-                />
-                <button
-                    type="button"
-                    onClick={() => togglePasswordVisibility('confirmPassword')}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
-                >
-                    {passwordVisibility.confirmPassword ? (
-                        <EyeSlashIcon className="h-5 w-5" />
-                    ) : (
-                        <EyeIcon className="h-5 w-5" />
-                    )}
-                </button>
+              <input
+                type={passwordVisibility.confirmPassword ? 'text' : 'password'}
+                name="confirmPassword"
+                placeholder="Confirm New Password"
+                value={passwordData.confirmPassword}
+                onChange={handlePasswordInputChange}
+                className="input input-bordered w-full"
+              />
+              <button
+                type="button"
+                onClick={() => togglePasswordVisibility('confirmPassword')}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+              >
+                {passwordVisibility.confirmPassword ? (
+                  <EyeSlashIcon className="h-5 w-5" />
+                ) : (
+                  <EyeIcon className="h-5 w-5" />
+                )}
+              </button>
             </div>
-        </div>
-        <div className="modal-action">
+          </div>
+          <div className="modal-action">
             <button type="button" className="btn" onClick={handleCancelPassword}>Cancel</button>
             <button type="submit" className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}> {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}</button>
-        </div>
-    </form>
-</dialog>
+          </div>
+        </form>
+      </dialog>
 
       {/* View Profile Modal */}
       <EmployeeProfileModal employeeProfileSelected={selectedEmployee} />
@@ -800,48 +803,42 @@ const togglePasswordVisibility = (field) => {
               </div>
               <div className="">Contract start: {companyData.contractStartDate}</div>
               <div className="">Contract end: {companyData.contractEndDate}</div>
-              
             </div>
-            
-            <div className="flex flex-row gap-3 mt-5 items-center p-3 border-primary border-opacity-30 rounded-lg border">
-              <ClockIcon className="h-6 w-6 text-secondary" />
-              <h2 className="text-xl font-bold ">Meeting Minutes</h2>
-              <p className="text-lg">{companyData.meetingMinutes || " * "} minutes</p>
-            </div>
+
+
 
           </div>
         </div>
 
         <hr className="my-5 text-gray-200"></hr>
 
+
+        {/* First row (employee stats, numerical stats) */}
         <div className="grid md:grid-cols-2 gap-5 mt-5 ">
-          {/* Employee Stats */}
           <EmployeeStats
             total={companyData.employees.length}
             active={companyData.activeEmployees}
             cardsNotIssued={companyData.cardsNotIssued}
             cardsIssued={companyData.cardsIssued}
           />
-
           {/* Company Stats grid */}
           <div className="card p-5 grid divide-y divide-x divide-gray-200 grid-cols-1 md:grid-cols-1 lg:grid-cols-2">
-
             <div className="stat">
               <div className="stat-figure text-secondary">
-                <DocumentCheckIcon className="inline-block h-8 w-8" />
+                <PresentationChartLineIcon className="inline-block h-8 w-8" />
               </div>
-              <div className="stat-title">E-tags</div>
-              <div className="stat-value">{companyData.eTags}</div>
-              <div className="stat-desc">Issued</div>
+              <div className="stat-title">Meetings</div>
+              <div className="stat-value">{companyData.meetingMinutes || "0"}</div>
+              <div className="stat-desc">Minutes </div>
             </div>
 
             <div className="stat">
               <div className="stat-figure text-secondary">
-                <BuildingOfficeIcon className="inline-block h-8 w-8" />
+                <CurrencyDollarIcon className="inline-block h-8 w-8" />
               </div>
-              <div className="stat-title">Gate Passes</div>
-              <div className="stat-value">{companyData.gatePasses}</div>
-              <div className="stat-desc">Issued</div>
+              <div className="stat-title">Meetings</div>
+              <div className="stat-value">{companyData.meetingMinutesMoney || "0"}</div>
+              <div className="stat-desc">PKR Outstanding</div>
             </div>
 
             <div className="stat">
@@ -863,7 +860,7 @@ const togglePasswordVisibility = (field) => {
           </div>
         </div>
 
-        {/* second row (4 col stats) */}
+        {/* second row (3 col stats) */}
         <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-5 mt-5 ">
 
           {/* internee stats and piechart */}
@@ -888,12 +885,13 @@ const togglePasswordVisibility = (field) => {
                 <CalendarDateRangeIcon className="size-7" /> {companyData.contractDuration + "%"}
               </span>
               <p className="mb-3 mt-1 font-bold"> Contract complete </p>
-              <span className="mt-2 block">Contract start: {companyData.contractStartDate}</span>
-              <span className="mt-2 block">Contract end: {companyData.contractEndDate}</span>
-              <span className="mt-2 block">Total Stay: {calculateDuration(new Date(companyData.joiningDate), new Date())}</span>
+              <div className=""> <strong>Company Joining Date:  </strong>{companyData.joiningDate}</div>
+              <span className="mt-2 block"><strong> Contract start:  </strong>{companyData.contractStartDate}</span>
+              <span className="mt-2 block"><strong> Contract end: </strong> {companyData.contractEndDate}</span>
+              <span className="mt-2 block"><strong> Total Stay: </strong> {calculateDuration(new Date(companyData.joiningDate), new Date())}</span>
             </div>
             <div>
-              <div className={`radial-progress bg-neutral mt-10 lg:mt-0 ${companyData.contractDuration >= CONTRACT_DURATION_THRESHOLD ? "text-error":"text-primary"}`} style={{ "--value": `${companyData.contractDuration}`, "--size": "7rem", "--thickness": "13px" }} role="progressbar">
+              <div className={`radial-progress bg-neutral mt-10 lg:mt-0 ${companyData.contractDuration >= CONTRACT_DURATION_THRESHOLD ? "text-error" : "text-primary"}`} style={{ "--value": `${companyData.contractDuration}`, "--size": "7rem", "--thickness": "13px" }} role="progressbar">
                 {companyData.contractDuration}%
               </div>
             </div>
@@ -916,10 +914,10 @@ const togglePasswordVisibility = (field) => {
                 <h3 className="text-lg font-semibold">Marketing and Sales</h3>
                 <p>{companyData.companyResourceComposition?.marketingAndSales}%</p>
               </div>
-              <div>
+              {/* <div>
                 <h3 className="text-lg font-semibold">Remaining Predominant Area</h3>
                 <p>{companyData.companyResourceComposition?.remainingPredominantArea}</p>
-              </div>
+              </div> */}
               <div>
                 <h3 className="text-lg font-semibold">Areas of Research</h3>
                 <ul className="list-disc list-inside">
@@ -928,64 +926,74 @@ const togglePasswordVisibility = (field) => {
                   ))}
                 </ul>
               </div>
-              <div>
+              {/* <div>
                 <h3 className="text-lg font-semibold">NUST School to Collaborate</h3>
                 <p>{companyData.companyResourceComposition?.nustSchoolToCollab}</p>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
 
+        {/** 3rd row (comparativeCharts of gatepasses and etags) */}
+        <div className="grid md:grid-cols-2 gap-5 mt-5">
+          <div className="card p-5">
+            <ComparativeChart title="Gate Passes" comparisonData={companyData.gatePasses} />
+          </div>
+          <div className="card p-5">
+            <ComparativeChart title="ETags" comparisonData={companyData.eTags} />
+          </div>
+        </div>
+        <hr className="mt-12 mb-5 text-gray-200"></hr>
         {/* Employees list */}
         <div>
           <h1 className="text-2xl font-semibold mt-5">Employees</h1>
           {companyData.employees.length === 0 ? <div className="text-secondary">No employees found</div>
             :
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
-           
-            {companyData.employees.map((employee) => (
-              <div key={employee._id} className="relative card p-5 flex flex-col gap-5 items-start group">
-                <div className="flex gap-2">
-                  <div className="avatar">
-                    <div className="w-20 rounded-full bg-gray-300">
-                      
-                      { employee.photo ? <img src={employee.photo} alt={employee.name} /> :
-                      <UserCircleIcon className="size-20 text-gray-400" />}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
+
+              {companyData.employees.map((employee) => (
+                <div key={employee._id} className="relative card p-5 flex flex-col gap-5 items-start group">
+                  <div className="flex gap-2">
+                    <div className="avatar">
+                      <div className="w-20 rounded-full bg-gray-300">
+
+                        {employee.photo ? <img src={employee.photo} alt={employee.name} /> :
+                          <UserCircleIcon className="size-20 text-gray-400" />}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h2 className="text-lg font-semibold">{employee.name}</h2>
+                      <p className="text-sm text-gray-500">{employee.designation}</p>
+                      <p className="text-sm text-gray-500">{"Joined on " + new Date(employee.date_joining).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
                     </div>
                   </div>
-
-                  <div>
-                    <h2 className="text-lg font-semibold">{employee.name}</h2>
-                    <p className="text-sm text-gray-500">{employee.designation}</p>
-                    <p className="text-sm text-gray-500">{"Joined on " +  new Date(employee.date_joining).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
+                  <div className="absolute inset-0 bg-base-100 rounded-md bg-opacity-50 backdrop-blur-sm flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="flex gap-2">
+                      <button
+                        className="btn btn-primary text-base-100"
+                        onClick={() => {
+                          setSelectedEmployee(employee);
+                          document.getElementById('employee_profile').showModal();
+                        }}
+                      >
+                        View Profile
+                      </button>
+                      {role == "tenant" && <button
+                        className="btn btn-error text-base-100"
+                        onClick={() => {
+                          setSelectedEmployee(employee);
+                          document.getElementById('terminate-modal').showModal();
+                        }}
+                      >
+                        Terminate
+                      </button>}
+                    </div>
                   </div>
                 </div>
-                <div className="absolute inset-0 bg-base-100 rounded-md bg-opacity-50 backdrop-blur-sm flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="flex gap-2">
-                    <button
-                      className="btn btn-primary text-base-100"
-                      onClick={() => {
-                        setSelectedEmployee(employee);
-                        document.getElementById('employee_profile').showModal();
-                      }}
-                    >
-                      View Profile
-                    </button>
-                   { role == "tenant" && <button
-                      className="btn btn-error text-base-100"
-                      onClick={() => {
-                        setSelectedEmployee(employee);
-                        document.getElementById('terminate-modal').showModal();
-                      }}
-                    >
-                      Terminate
-                    </button>}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-}
+              ))}
+            </div>
+          }
         </div>
       </div>
     </Sidebar>

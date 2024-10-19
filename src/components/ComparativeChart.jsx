@@ -10,6 +10,9 @@ import { Link } from 'react-router-dom';
 |--------------------------------------------------
 */
 const ComparativeChart = ({ title, comparisonData, link }) => {
+  if(!comparisonData || Object.keys(comparisonData).length < 2) {
+    return null;
+  }
   const keys = Object.keys(comparisonData);
   const values = Object.values(comparisonData);
   const total = values.reduce((acc, value) => acc + value, 0);
@@ -44,7 +47,7 @@ const ComparativeChart = ({ title, comparisonData, link }) => {
         </div>
       </div>
 
-      <div className="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+      <div className="relative w-full h-4 bg-base-200 rounded-full overflow-hidden">
         <div
           className="absolute top-0 left-0 h-full bg-primary"
           style={{ width: `${percentages[0]}%` }}
