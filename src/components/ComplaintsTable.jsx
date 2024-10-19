@@ -46,7 +46,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
 
     useEffect(() => {
         setRowsToDisplay(complaints.slice(0, rowsPerPage));
-        console.log("Useeffect", complaints);
+        console.log("Useeffect in complaintstable", complaints);
     }, [complaints]);
 
     const markAsCompleted = async (id) => {
