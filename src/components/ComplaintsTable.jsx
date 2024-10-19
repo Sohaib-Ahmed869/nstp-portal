@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ChatBubbleLeftEllipsisIcon, CheckCircleIcon, CheckIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import { AdminService , ReceptionistService } from '../services';
+import { AdminService, ReceptionistService } from '../services';
 import showToast from '../util/toast';
 import { AuthContext } from '../context/AuthContext';
 import { formatDate } from '../util/date';
@@ -46,7 +46,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
 
     useEffect(() => {
         setRowsToDisplay(complaints.slice(0, rowsPerPage));
-        console.log("Useeffect",complaints);
+        console.log("Useeffect", complaints);
     }, [complaints]);
 
     const markAsCompleted = async (id) => {
@@ -68,7 +68,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                         complaint.id === id ? { ...complaint, isResolved: true, dateResolved: formatDate(response.data.complaint.date_resolved) } : complaint
                     )
                 );
-               
+
 
             } catch (error) {
                 console.error(error);
@@ -123,7 +123,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                     {selectedComplaintId && (
                         <div>
                             <p className="mt-3 text-2xl"><strong className="text-primary">Subject:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).subject || complaints.find(complaint => complaint.id === selectedComplaintId).serviceType}</p>
-                            {role !== "tenant" && <p className="mt-3"><strong className="text-primary">From: </strong> {complaints.find(complaint => complaint.id === selectedComplaintId).tenantName?.registration?.organizationName }</p>}
+                            {role !== "tenant" && <p className="mt-3"><strong className="text-primary">From: </strong> {complaints.find(complaint => complaint.id === selectedComplaintId).tenantName?.registration?.organizationName}</p>}
                             <p className="mt-3"><strong className="text-primary">Description:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).description}</p>
                             <p className="mt-3"><strong className="text-primary">Urgency:</strong> {getUrgencyLabel(complaints.find(complaint => complaint.id === selectedComplaintId).urgency)}</p>                <p className="mt-3"><strong className="text-primary">Status:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).isResolved ? "Resolved" : "Pending"}</p>
                             <p className="mt-3"><strong className="text-primary">Date Initiated:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).date}</p>
@@ -182,13 +182,13 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                     {
                                         complaintType == "services" && (
                                             <td className="flex items-center">
-                                                <div className={`badge ${complaint.urgency === 1 ? "badge-primary" : complaint.urgency === 2 ? "badge-secondary" : "badge-error"} flex items-center py-3`} >
+                                                <div className={`badge text-base-100 ${complaint.urgency === 1 ? "badge-primary" : complaint.urgency === 2 ? "badge-secondary" : "badge-error"} flex items-center py-3`} >
                                                     {complaint.urgency === 1 ? "Low" : complaint.urgency === 2 ? "Med" : "High"}
                                                 </div>
                                             </td>
                                         )
                                     }
-                                    {role == "admin" ? <td>{complaint?.tenantName?.registration?.organizationName }</td> : role == "receptionist" ? <td>{complaint?.tenantName }</td> : null}
+                                    {role == "admin" ? <td>{complaint?.tenantName?.registration?.organizationName}</td> : role == "receptionist" ? <td>{complaint?.tenantName}</td> : null}
                                     <td>{complaint.subject ? truncateText(complaint.subject, 25) : complaint.serviceType}</td>
                                     <td>{truncateText(complaint.description || " - ", 60)}</td>
                                     <td >
@@ -225,7 +225,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                                     )}
                                                 </>
                                             )}
-                                            <button className="btn btn-sm btn-outline btn-secondary" onClick={() => { setSelectedComplaintId(complaint.id); document.getElementById(dialogId).showModal();  }}>
+                                            <button className="btn btn-sm btn-outline btn-secondary" onClick={() => { setSelectedComplaintId(complaint.id); document.getElementById(dialogId).showModal(); }}>
                                                 View
                                             </button>
                                         </div>
