@@ -31,45 +31,24 @@ const Dashboard = () => {
     unresolved: CATEGORIES.map(category => ({ name: category, value: Math.floor(Math.random() * 50) + 1 })),
     received: CATEGORIES.map(category => ({ name: category, value: Math.floor(Math.random() * 50) + 1 }))
   });
-  const [employeeTableData, setEmployeeTableData] = useState([
-    {
-      "_id": "66df197161c2c1ed67fe5c27",
-      "tenant_id": "66d97748124403bf36e695e8",
-      "tenant_name": "Hexlertech",
-      "email": "musa@gmail.com",
-      "name": "Musa Haroon Satti",
-      "photo": "https://randomuser.me/api/portraits/men/21.jpg",
-      "designation": "Full Stack Developer",
-      "cnic": "6110166894529",
-      "dob": "2024-09-06",
-      "address": "F/10-1 Street 11 House 29",
-      "date_joining": "2024-10-11",
-      "employee_type": "Intern",
-      "contract_duration": "",
-      "status_employment": true,
-      "is_nustian": true,
-      "__v": 0,
-      "etags": 1,
-      "card_num": 0,
-      "card": {
-        "_id": "66df197161c2c1ed67fe5c28",
-        "tenant_id": "66d97748124403bf36e695e8",
-        "employee_id": "66df197161c2c1ed67fe5c27",
-        "is_issued": true,
-        "is_requested": false,
-        "is_returned": false,
-        "__v": 0,
-        "card_number": 0,
-        "date_issued": "2024-09-09T16:48:50.533Z"
-      }
-    },
-  ]);
+  const [employeeTableData, setEmployeeTableData] = useState([]);
   const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([]);
   const [eTags, setETags] = useState({ issued: 10, pending: 20 }); //total = pending + approved
   const [gatePasses, setGatePasses] = useState({ issued: 28, pending: 3 }); //total = pending + approved
   const [employeeStats, setEmployeeStats] = useState({ total: 100, active: 80, issued: 10, unissued: 70 });
   const [internStats, setInternStats] = useState({ total: 12, nustian: 3, nonNustian: 9 });
   const [employeeProfileSelected, setEmployeeProfileSelected] = useState(null);
+  const [recentComplaints, setRecentComplaints] = useState([
+    {
+      id: 1,
+      date: "October 7, 2024, 12:30 PM",
+      //dateresolved will be null for pending complaints
+      serviceType: "Plumbing",
+      urgency: 2,
+      isResolved: false, //will be false for pending
+      daysPending: 3, //extra field to calculate, can be calculated on frotnend (dats since date )
+    }
+  ]);
   // **** end of data to be populated from backend ****
 
   useEffect(() => {
@@ -94,53 +73,35 @@ const Dashboard = () => {
           issued: response.data.dashboard.cards.issued,
           unissued: response.data.dashboard.cards.notIssued,
         })
-        setGatePasses({issued: response.data.dashboard.gatePasses.issued, pending: response.data.dashboard.gatePasses.pending});
+        setGatePasses({ issued: response.data.dashboard.gatePasses.issued, pending: response.data.dashboard.gatePasses.pending });
         setInternStats(response.data.dashboard.interns);
-        setETags( {issued : response.data.dashboard.etags.issued, pending: response.data.dashboard.etags.pending});
+        setETags({ issued: response.data.dashboard.etags.issued, pending: response.data.dashboard.etags.pending });
+        //POPULATE RECENT COMPLAINTS HERE, THE FORMAT IS SHOWN ABOVE WITH THE STATE
         //meeting room schedule format :    { bookingId: "abc", roomNo: 'MT-234', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
-        // response.data.dashboard.bookings format: 
-      //   {
-      //     "_id": "6705617cfc1bd01299b450c1",
-      //     "tower": "66f7b5ee7c51cd5775306b61",
-      //     "tenant_id": "66f7b251d42fec9018e6046b",
-      //     "room_id": "6705459a61f543dc3b1341fd",
-      //     "time_start": "2024-10-09T09:00:00.000Z",
-      //     "time_end": "2024-10-09T17:00:00.000Z",
-      //     "reason_booking": "I need room",
-      //     "status_booking": "rejected",
-      //     "is_cancelled": true,
-      //     "date_initiated": "2024-10-08T16:44:44.886Z",
-      //     "createdAt": "2024-10-08T16:44:44.896Z",
-      //     "updatedAt": "2024-10-08T18:13:23.588Z",
-      //     "__v": 0,
-      //     "handled_by": "66fad929a314143ac0a13c08",
-      //     "cancelled_by": "66fad929a314143ac0a13c08",
-      //     "reason_decline": "I dont like you"
-      // }
-      const mappedSchedule = response.data.dashboard.bookings.map(booking => {  
-        const startTime = new Date(booking.time_start);
-        const endTime = new Date(booking.time_end);
-        const formatTime = (date) => {
-          const hours = date.getUTCHours().toString().padStart(2, '0');
-          const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-          return `${hours}:${minutes}`;
-        };
-        const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
-        const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
-        return {
-          bookingId: booking._id,
-          roomNo: booking.room_name || "Room",  //musa return this
-          company: booking.tenant_id || "Tennant", //musa return this
-          roomId: booking.room_id,
-          time_start: booking.time_start,
-          time_end: booking.time_end,
-          status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
-          dateBooked: formatDate(booking.date_initiated),
-          time: formattedTime,
-          dateBooking: dateBooking,
-        };
-      });
-      setMeetingRoomSchedule(mappedSchedule);
+        const mappedSchedule = response.data.dashboard.bookings.map(booking => {
+          const startTime = new Date(booking.time_start);
+          const endTime = new Date(booking.time_end);
+          const formatTime = (date) => {
+            const hours = date.getUTCHours().toString().padStart(2, '0');
+            const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+          };
+          const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
+          const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
+          return {
+            bookingId: booking._id,
+            roomNo: booking.room_name || "Room",  //musa return this
+            company: booking.tenant_id || "Tennant", //musa return this
+            roomId: booking.room_id,
+            time_start: booking.time_start,
+            time_end: booking.time_end,
+            status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
+            dateBooked: formatDate(booking.date_initiated),
+            time: formattedTime,
+            dateBooking: dateBooking,
+          };
+        });
+        setMeetingRoomSchedule(mappedSchedule);
 
         // setChartData(response.data.complaints);
       } catch (error) {
@@ -200,54 +161,39 @@ const Dashboard = () => {
 
         {/* First row */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-7">
-          {/* Complaints section charts */}
-          <div className="md:col-span-3 grid grid-cols-1 gap-4 md:grid-cols-3">
+          {/* Employee and intern stats cards  */}
+          <div className="md:col-span-3 flex flex-col gap-4">
+            {/* Employee stats */}
+            <EmployeeStats
+              total={employeeStats.total}
+              active={employeeStats.active}
+              cardsNotIssued={employeeStats.unissued}
+              cardsIssued={employeeStats.issued}
+            />
 
-            {/* Complaint types legend & button*/}
-            <div className="card p-5 md:col-span-3 h-content flex  flex-col lg:flex-row  lg:items-center justify-start lg:justify-between">
-              <div className="flex flex-col justify-center">
-                <span className="font-bold">Complaint Types</span>
-                <div className="flex flex-row gap-5">
-                  {["bg-primary", "bg-secondary"].map((color, index) => (
-                    <div className="flex flex-row gap-2 items-center">
-                      <div className={`rounded-full ${color} size-4`}></div>
-                      <span>{CATEGORIES[index]}</span>
-                    </div>
-                  ))}
+            {/* Intern stats */}
+            <div className="mt-2 card p-5 flex flex-row justify-between items-start">
+              <div>
+                <span className="font-bold text-4xl flex flex-row items-center gap-2">
+                  <UserGroupIcon className="size-7" /> {internStats.total}
+                </span>
+                <p className="mb-3 mt-1 font-bold"> Internees </p>
+
+                <div className="mb-2 p-2 rounded-md bg-accent text-white">
+                  {internStats.nustian + " NUSTians"}
+                </div>
+                <div className="p-2 rounded-md bg-primary text-white">
+                  {internStats.nonNustian + " Non NUSTians"}
                 </div>
               </div>
-              <div className="flex gap-2 mt-3 lg:mt-0">
-                <button className=' btn btn-primary btn-outline hover:text-white text-white btn-md' onClick={() => document.getElementById('complaint_modal').showModal()}>
-                  <PaperAirplaneIcon className="h-5 w-5" />
-                  Send Complaint
-                </button>
-                <Link to="/tenant/complaints">
-                  <button className='btn btn-primary text-white btn-md' >
-                    <TableCellsIcon className="h-5 w-5" />
-                    View All
-                  </button>
-                </Link>
+              <div id="pie-chart">
+                <ReactApexChart
+                  options={getPieChartOptions(internStats)}
+                  series={getPieChartOptions(internStats).series}
+                  type="pie"
+                  height={220}
+                />
               </div>
-            </div>
-
-            {/* Charts */}
-            <div className="card p-3 flex flex-col items-center justify-center">
-              <p className="font-semibold font-lg mb-3  text-center">
-                Complaints Sent
-              </p>
-              <div id="received-chart"></div>
-            </div>
-            <div className="card p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
-              <p className="font-semibold font-lg mb-3 text-center">
-                Complaints Resolved
-              </p>
-              <div id="resolved-chart"></div>
-            </div>
-            <div className="card p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
-              <p className="font-semibold font-lg mb-3 text-center">
-                Complaints Unresolved
-              </p>
-              <div id="unresolved-chart"></div>
             </div>
           </div>
 
@@ -333,42 +279,46 @@ const Dashboard = () => {
 
         {/* Third row */}
         <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
-          {/* Stats section */}
+          {/* Complaints section */}
           <div className="flex flex-col gap-4 col-span-1 lg:col-span-3 min-h-full">
-            {/* Employee stats */}
-            <EmployeeStats
-              total={employeeStats.total}
-              active={employeeStats.active}
-              cardsNotIssued={employeeStats.unissued}
-              cardsIssued={employeeStats.issued}
-            />
+            <div className="card p-5 h-full">
+              <div className="flex items-center justify-between mb-2">
+                <h1 className="text-2xl font-bold">Recent Complaints</h1>
+                <Link to="complaints" className=' btn btn-primary text-white btn-md'>
+                  <TableCellsIcon className="h-5 w-5" />
+                  View All
+                </Link>
 
-            {/* Intern stats */}
-            <div className="mt-2 card p-5 flex flex-row justify-between items-start">
-              <div>
-                <span className="font-bold text-4xl flex flex-row items-center gap-2">
-                  <UserGroupIcon className="size-7" /> {internStats.total}
-                </span>
-                <p className="mb-3 mt-1 font-bold"> Internees </p>
+              </div>
+              <table className="table w-full my-3">
+                <tbody>
+                  <tr className="bg-base-200">
+                    <th>Date</th>
+                    <th>Service Type</th>
+                    <th>Urgency</th>
+                    <th>Status</th>
+                    <th>Days Pending</th>
+                  </tr>
 
-                <div className="mb-2 p-2 rounded-md bg-accent text-white">
-                  {internStats.nustian + " NUSTians"}
-                </div>
-                <div className="p-2 rounded-md bg-primary text-white">
-                  {internStats.nonNustian + " Non NUSTians"}
-                </div>
-              </div>
-              <div id="pie-chart">
-                <ReactApexChart
-                  options={getPieChartOptions(internStats)}
-                  series={getPieChartOptions(internStats).series}
-                  type="pie"
-                  height={220}
-                />
-              </div>
+                  {recentComplaints.map((complaint, index) => (
+                    <tr key={complaint.id} className="group">
+                      <td className="">{complaint.date}</td>
+                      <td className="">{complaint.serviceType}</td>
+                      <td className="flex items-center">
+                        <div className={`badge text-base-100 ${complaint.urgency === 1 ? "badge-primary" : complaint.urgency === 2 ? "badge-secondary" : "badge-error"} flex items-center py-3`} >
+                          {complaint.urgency === 1 ? "Low" : complaint.urgency === 2 ? "Med" : "High"}
+                        </div>
+                      </td>
+                      <td className="">{complaint.isResolved ? "Resolved" : "Pending"}</td>
+                      <td className="">{complaint.daysPending}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
+          {/** News feed */}
           <div className="col-span-1 lg:col-span-4">
             <NewsFeed />
           </div>
@@ -379,3 +329,52 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+
+// {/* Complaint types legend & button*/}
+// <div className="card p-5 md:col-span-3 h-content flex  flex-col lg:flex-row  lg:items-center justify-start lg:justify-between">
+//   <div className="flex flex-col justify-center">
+//     <span className="font-bold">Complaint Types</span>
+//     <div className="flex flex-row gap-5">
+//       {["bg-primary", "bg-secondary"].map((color, index) => (
+//         <div className="flex flex-row gap-2 items-center">
+//           <div className={`rounded-full ${color} size-4`}></div>
+//           <span>{CATEGORIES[index]}</span>
+//         </div>
+//       ))}
+//     </div>
+//   </div>
+//   <div className="flex gap-2 mt-3 lg:mt-0">
+//     <button className=' btn btn-primary btn-outline hover:text-white text-white btn-md' onClick={() => document.getElementById('complaint_modal').showModal()}>
+//       <PaperAirplaneIcon className="h-5 w-5" />
+//       Send Complaint
+//     </button>
+//     <Link to="/tenant/complaints">
+//       <button className='btn btn-primary text-white btn-md' >
+//         <TableCellsIcon className="h-5 w-5" />
+//         View All
+//       </button>
+//     </Link>
+//   </div>
+// </div>
+
+// {/* Charts */}
+// <div className="card p-3 flex flex-col items-center justify-center">
+//   <p className="font-semibold font-lg mb-3  text-center">
+//     Complaints Sent
+//   </p>
+//   <div id="received-chart"></div>
+// </div>
+// <div className="card p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
+//   <p className="font-semibold font-lg mb-3 text-center">
+//     Complaints Resolved
+//   </p>
+//   <div id="resolved-chart"></div>
+// </div>
+// <div className="card p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
+//   <p className="font-semibold font-lg mb-3 text-center">
+//     Complaints Unresolved
+//   </p>
+//   <div id="unresolved-chart"></div>
+// </div>

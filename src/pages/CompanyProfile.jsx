@@ -442,7 +442,7 @@ const togglePasswordVisibility = (field) => {
     };
 
     fetchCompanyData();
-  }, [companyId, tower.id]);
+  }, [companyId]);
 
   const submitClearanceForm = async () => {
     setModalLoading(true);

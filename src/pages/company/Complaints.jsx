@@ -65,7 +65,7 @@ export const Complaints = () => {
                         description: complaint.description,
                         urgency: complaint.urgency,
                         isResolved: complaint.is_resolved,
-                        dateResolved: complaint.is_resolved ? complaint.date_resolved : '-',
+                        dateResolved: complaint.is_resolved ? formatDate(complaint.date_resolved) : '-',
                     }));
 
                 setGeneralComplaintData(generalComplaints);
