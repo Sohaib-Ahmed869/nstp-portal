@@ -13,6 +13,7 @@ const ErrorPage = () => {
       <p className="text-lg">Page Not Found</p>
       <button className="btn btn-secondary dark:bg-base-100 dark:text-white mt-5" onClick={() => navigate(-1)}>
         Go Back
+       
       </button>
     </div>
   )

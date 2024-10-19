@@ -14,8 +14,6 @@ const Blogs = () => {
     const [dropdownOpen, setDropdownOpen] = useState(null); // state to manage dropdown visibility
     const navigate = useNavigate()
     useEffect(() => {
-        //simulate api call to load blogs
-
         async function fetchData() {
             try {
                 const response = await AdminService.getBlogs();
@@ -24,16 +22,36 @@ const Blogs = () => {
                     return;
                 }
                 console.log(response.data.blogs);
-                const blogs = response.data.blogs.map(blog => ({
-                    id: blog._id,
-                    date: new Date(blog.date).toLocaleDateString(),
-                    title: blog.title,
-                    paragraphs: blog.paragraphs,
-                    image: blog.image,
-                    caption: blog.caption,
-                    imageIndex: blog.image_index,
-                }));
-                // setBlogsList(blogs);
+                const blogs = response.data.blogs.map(blog => {
+                    const content = blog.paragraphs.map((paragraph, index) => ({
+                        type: "para",
+                        content: paragraph
+                    }));
+
+                    // Insert the image at the specified index
+                    content.splice(blog.image_index, 0, {
+                        type: "image",
+                        content: blog.image,
+                        caption: blog.caption
+                    });
+
+                    // Handle invalid date
+                    let formattedDate;
+                    try {
+                        formattedDate = new Date(blog.date_published).toISOString().split('T')[0];
+                    } catch (error) {
+                        console.error('Invalid date:', blog.date_published);
+                        formattedDate = 'Invalid date';
+                    }
+
+                    return {
+                        id: blog._id,
+                        date: formattedDate, // Format date as YYYY-MM-DD
+                        title: blog.title,
+                        content: content
+                    };
+                });
+                setBlogsList(blogs);
                 setLoading(false);
             } catch (error) {
                 console.log(error);
@@ -41,62 +59,6 @@ const Blogs = () => {
         }
 
         fetchData();
-
-        // setTimeout(() => {
-        //     setLoading(false);
-        //     setBlogsList([
-        //         {
-        //             id: 1,
-        //             date: '2022-05-25',
-        //             title: 'Blog 1',
-        //             content: [
-        //                 {
-        //                     type: "para",
-        //                     content: "This is the  paragraph 1 content of blog 1"
-        //                 },
-        //                 {
-        //                     type: "image",
-        //                     content: "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg",
-        //                     caption: "Image Caption"
-        //                 },
-        //                 {
-        //                     type: "para",
-        //                     content: "This is the  paragraph 2 content of blog 1"
-        //                 },
-        //                 {
-        //                     type: "para",
-        //                     content: "This is the  paragraph 3 content of blog 1"
-        //                 }
-        //             ]
-        //         },
-        //         {
-        //             id: 2,
-        //             date: '2022-05-26',
-        //             title: 'Blog 2',
-        //             content: [
-        //                 {
-        //                     type: "image",
-        //                     content: "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg"
-        //                 },
-        //                 {
-        //                     type: "para",
-        //                     content: "Elit aenean elementum consectetur leo semper ipsum leo. Sit porttitor nisi vivamus aenean tellus vendor lorem. Sit nisi. Ipsum lorem aenean vendor semper tellus elementum lorem sed. Lorem. Aenean nisi lorem semper nisi vendor tellus leo. Nisi sed consectetur dolor ipsum aenean. Leo ipsum consectetur. Semper vivamus elit. Lorem vivamus sit elit eiusmod semper vendor sed. Elit sit elementum lorem. Vivamus vendor sit leo semper. Sed. Semper tellus consectetur vivamus tellus aenean. Elementum tellus consectetur elit vivamus. Semper consectetur sit porttitor. Leo eiusmod vivamus. Elementum ipsum tellus elit consectetur semper. Vendor semper vivamus ipsum eiusmod leo. Vivamus vendor tellus aenean."
-        //                 },
-
-        //                 {
-        //                     type: "para",
-        //                     content: "Elit aenean elementum consectetur leo semper ipsum leo. Sit porttitor nisi vivamus aenean tellus vendor lorem. Sit nisi. Ipsum lorem aenean vendor semper tellus elementum lorem sed. Lorem. Aenean nisi lorem semper nisi vendor tellus leo. Nisi sed consectetur dolor ipsum aenean. Leo ipsum consectetur. Semper vivamus elit. Lorem vivamus sit elit eiusmod semper vendor sed. Elit sit elementum lorem. Vivamus vendor sit leo semper. Sed. Semper tellus consectetur vivamus tellus aenean. Elem."
-        //                 },
-        //                 {
-        //                     type: "para",
-        //                     content: "This is the  paragraph 3 content of blog 1"
-        //                 }
-        //             ]
-        //         },
-        //     ]);
-        // }
-        //     , 2000);
-
     }, []);
 
     return (

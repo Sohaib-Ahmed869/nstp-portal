@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import NSTPLoader from '../../components/NSTPLoader';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-const { AdminService } = require('../../services');
+import { AdminService } from '../../services';
 
 const Blog = () => {
     const [blog, setBlog] = useState({});
@@ -11,7 +11,6 @@ const Blog = () => {
     const {id} = useParams();
 
     useEffect(() => {
-
         async function fetchData() {
             try {
                 const response = await AdminService.getBlog(id);
@@ -20,8 +19,30 @@ const Blog = () => {
                     return;
                 }
                 console.log(response.data.blog);
-                const blog = response.data.blog;
-                // setBlog(blog);
+                const blogData = response.data.blog;
+
+                // Transform the blog data
+                const content = blogData.paragraphs.map((paragraph, index) => ({
+                    type: "para",
+                    content: paragraph
+                }));
+
+                // Insert the image at the specified index
+                content.splice(blogData.image_index, 0, {
+                    type: "image",
+                    content: blogData.image,
+                    caption: blogData.caption
+                });
+
+                const transformedBlog = {
+                    id: blogData._id,
+                    date: new Date(blogData.date_published).toISOString().split('T')[0], // Format date as YYYY-MM-DD
+                    title: blogData.title,
+                    content: content
+                };
+
+                // Set the transformed blog data
+                setBlog(transformedBlog);
                 setLoading(false);
             } catch (error) {
                 console.log(error);
@@ -29,38 +50,7 @@ const Blog = () => {
         }
 
         fetchData();
-
-        // setTimeout(() => {
-        //     setLoading(false);
-        //     setBlog({
-        //         id: 1,
-        //         date: '2022-05-25',
-        //         title: 'Blog 1',
-        //         content: [
-                   
-        //             {
-        //                 type: "para",
-        //                 content: "Elit aenean elementum consectetur leo semper ipsum leo. Sit porttitor nisi vivamus aenean tellus vendor lorem. Sit nisi. Ipsum lorem aenean vendor semper tellus elementum lorem sed. Lorem. Aenean nisi lorem semper nisi vendor tellus leo. Nisi sed consectetur dolor ipsum aenean. Leo ipsum consectetur. Semper vivamus elit. Lorem vivamus sit elit eiusmod semper vendor sed. Elit sit elementum lorem. Vivamus vendor sit leo semper. Sed. Semper tellus consectetur vivamus tellus aenean. Elementum tellus consectetur elit vivamus. Semper consectetur sit porttitor. Leo eiusmod vivamus. Elementum ipsum tellus elit consectetur semper. Vendor semper vivamus ipsum eiusmod leo. Vivamus vendor tellus aenean."
-        //             },
-        //             {
-        //                 type: "image",
-        //                 content: "https://static.desygner.com/wp-content/uploads/sites/13/2022/05/04141642/Free-Stock-Photos-01.jpg",
-        //                 caption: "A pile of stones represents balance and serenity."
-        //             },
-        //             {
-        //                 type: "para",
-        //                 content: "Elit aenean elementum consectetur leo semper ipsum leo. Sit porttitor nisi vivamus aenean tellus vendor lorem. Sit nisi. Ipsum lorem aenean vendor semper tellus elementum lorem sed. Lorem. Aenean nisi lorem semper nisi vendor tellus leo. Nisi sed consectetur dolor ipsum aenean. Leo ipsum consectetur. Semper vivamus elit. Lorem vivamus sit elit eiusmod semper vendor sed. Elit sit elementum lorem. Vivamus vendor sit leo semper. Sed. Semper tellus consectetur vivamus tellus aenean. Elem."
-        //             },
-        //             {
-        //                 type: "para",
-        //                 content: "This is the  paragraph 3 content of blog 1"
-        //             }
-        //         ]
-        //     });
-        // }
-
-        //     , 2000);
-    }, []);
+    }, [id]);
 
     return (
         <Sidebar>

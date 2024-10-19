@@ -33,3 +33,5 @@ showToast(true, 'That worked!'); //Success
 showToast(false); //Failure Default msg: An error occurred. Please try later
 showToast(true); //Success Default msg: Action completed successfully
 ```
+
+
