@@ -344,7 +344,7 @@ const togglePasswordVisibility = (field) => {
               companyResourceComposition: fetchedData.companyResourceComposition,
               contractEndDate: formattedContractEndDate,
 
-              totalEmployees: fetchedData.employees,
+              totalEmployees: fetchedData.totalEmployees,
               activeEmployees: fetchedData.activeEmployees,
               cardsNotIssued: fetchedData.cardsNotIssued,
               cardsIssued: fetchedData.cardsIssued,
@@ -409,7 +409,7 @@ const togglePasswordVisibility = (field) => {
               companyResourceComposition: fetchedData.companyResourceComposition,
               contractEndDate: formattedContractEndDate,
 
-              totalEmployees: fetchedData.employees,
+              totalEmployees: fetchedData.totalEmployees,
               activeEmployees: fetchedData.activeEmployees,
               cardsNotIssued: fetchedData.cardsNotIssued,
               cardsIssued: fetchedData.cardsIssued,
@@ -817,7 +817,7 @@ const togglePasswordVisibility = (field) => {
         <div className="grid md:grid-cols-2 gap-5 mt-5 ">
           {/* Employee Stats */}
           <EmployeeStats
-            total={companyData.employees.length}
+            total={companyData.totalEmployees}
             active={companyData.activeEmployees}
             cardsNotIssued={companyData.cardsNotIssued}
             cardsIssued={companyData.cardsIssued}
