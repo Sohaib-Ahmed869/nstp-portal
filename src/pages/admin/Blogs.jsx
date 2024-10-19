@@ -3,7 +3,9 @@ import Sidebar from '../../components/Sidebar';
 import { PencilSquareIcon, EllipsisVerticalIcon, EyeIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
 import NSTPLoader from '../../components/NSTPLoader';
+import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
 import { AdminService } from '../../services';
+import showToast from '../../util/toast';
 
 const Blogs = () => {
 
@@ -61,8 +63,32 @@ const Blogs = () => {
         fetchData();
     }, []);
 
+    const [blogIdToDelete, setBlogIdToDelete] = useState(null);
+    const [modalLoading, setModalLoading] = useState(false);
+
+    const deleteBlog = async (blogId) => {
+        console.log('Deleting blog:', blogId);
+        setModalLoading(true);
+
+        setTimeout(() => {
+            setModalLoading(false);
+            document.getElementById('delete-blog-modal').close();
+            setBlogsList(blogsList.filter(blog => blog.id !== blogId));
+            showToast(true, 'Blog deleted successfully');
+        }, 2000);
+    }
+
     return (
         <Sidebar>
+            {/** Confirmation modal for deletion */}
+            <DeleteConfirmationModal 
+                id={"delete-blog-modal"} 
+                title={"Delete Blog"} 
+                message={"This action cannot be undone. It will also remove the blog from the NSTP website permanently."} 
+                onConfirm={() => deleteBlog(blogIdToDelete)} 
+                modalLoading={modalLoading} 
+            />
+
             {loading && <NSTPLoader />}
             <div className={`bg-base-100 rounded-lg ring-1 ring-base-200 lg:m-10 md:m-5 max-sm:m-5 max-sm:mx-2 max-sm:p-3 p-10 ${loading && "hidden"}`}>
                 <div className="flex items-center justify-between">
@@ -72,7 +98,7 @@ const Blogs = () => {
                         Write New Blog Post</Link>
                 </div>
                 <hr className="my-5 text-gray-200"></hr>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-16">
                     {blogsList.map(blog => (
                         <div key={blog.id} className="card bg-white shadow-md rounded-lg overflow-visible">
                             <img src={blog.content.find(item => item.type === 'image').content} alt="Blog Thumbnail" className="w-full h-48 object-cover rounded-t-lg " />
@@ -96,8 +122,8 @@ const Blogs = () => {
                                                     </button>
                                                 </li>
                                                 <li>
-                                                    <button className="flex items-center gap-2">
-                                                        <TrashIcon className="h-5 w-5" />
+                                                    <button className="flex items-center gap-2" onClick={() => {setBlogIdToDelete(blog.id); document.getElementById('delete-blog-modal').showModal() } }>
+                                                        <TrashIcon className="h-5 w-5" /> 
                                                         Delete
                                                     </button>
                                                 </li>

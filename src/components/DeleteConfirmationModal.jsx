@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 const DeleteConfirmationModal = ({
   id,
@@ -17,15 +17,15 @@ const DeleteConfirmationModal = ({
        </div>
         <p>{message}</p>
         <div className="modal-action">
-          <form method="dialog">
+          <form method="dialog flex items-center">
             <button className="btn mr-2" onClick={() => document.getElementById(id).close()} >Cancel</button>
             <button
               type="button"
-              className={`btn btn-error text-base-100 ${modalLoading ? 'loading' : ''}`}
+              className={`btn btn-error text-base-100 ${modalLoading ? 'btn-disabled' : ''}`}
               onClick={onConfirm}
-              disabled={modalLoading}
             >
-              Delete
+              {modalLoading && <span className="loading loading-sm loading-spinner mr-2"></span>}
+              {modalLoading ? 'Please wait...' : 'Delete'}
             </button>
           </form>
         </div>
