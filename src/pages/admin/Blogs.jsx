@@ -70,12 +70,25 @@ const Blogs = () => {
         console.log('Deleting blog:', blogId);
         setModalLoading(true);
 
-        setTimeout(() => {
-            setModalLoading(false);
-            document.getElementById('delete-blog-modal').close();
+        try {
+
+            const response = await AdminService.deleteBlog(blogId);
+            if (response.error) {
+                console.error(response.error);
+                showToast(false, response.error);
+                return;
+            }
+            
             setBlogsList(blogsList.filter(blog => blog.id !== blogId));
-            showToast(true, 'Blog deleted successfully');
-        }, 2000);
+            showToast(true, response.message);
+
+        } catch (error) {
+            console.error(error);
+            showToast(false, 'Failed to delete blog');
+        } finally {
+            document.getElementById('delete-blog-modal').close();
+            setModalLoading(false);
+        }
     }
 
     return (

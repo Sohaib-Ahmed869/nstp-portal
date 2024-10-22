@@ -415,14 +415,14 @@ const Company = ({ role }) => {
                 nonNustian: fetchedData.nonNustianInterns,
                 total: fetchedData.nustianInterns + fetchedData.nonNustianInterns,
               },
-              gatePasses: fetchedData.gatepasses,
               workPermits: fetchedData.workpermits,
               violations: fetchedData.violations,
               contractDuration: contractDurationPercentage,
               employees: fetchedData.employees,
               meetingMinutes: fetchedData.meetingMinutes,
-              eTags: { "Received": 20, "Pending": 10 }, //change this after api call
-              gatePasses: { "Received": 20, "Pending": 10 },
+              meetingMinutesMoney: fetchedData.meetingMinutesMoney,
+              eTags: fetchedData.etags,
+              gatePasses: fetchedData.gatepasses,
               notes: [
                 {
                   id: "1",
@@ -495,14 +495,14 @@ const Company = ({ role }) => {
                 nonNustian: fetchedData.nonNustianInterns,
                 total: fetchedData.nustianInterns + fetchedData.nonNustianInterns,
               },
-              gatePasses: fetchedData.gatepasses,
               workPermits: fetchedData.workpermits,
               violations: fetchedData.violations,
               contractDuration: contractDurationPercentage,
               employees: fetchedData.employees,
               meetingMinutes: fetchedData.meetingMinutes,
-              eTags: { "Received": 20, "Pending": 10 }, //after api call change this to fetchedData.etags and the one below it too
-              gatePasses: { "Received": 20, "Pending": 10 },
+              meetingMinutesMoney: fetchedData.meetingMinutesMoney,
+              eTags: fetchedData.etags,
+              gatePasses: fetchedData.gatepasses,
               notes: [
                 {
                   id: "1",
