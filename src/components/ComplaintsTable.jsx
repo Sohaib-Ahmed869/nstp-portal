@@ -4,6 +4,8 @@ import { AdminService, ReceptionistService } from '../services';
 import showToast from '../util/toast';
 import { AuthContext } from '../context/AuthContext';
 import { formatDate } from '../util/date';
+import ConfirmationModal from './ConfirmationModal';
+import ChatPopup from './ChatPopup';
 
 /**
 |--------------------------------------------------
@@ -42,7 +44,11 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
     const [rowsToDisplay, setRowsToDisplay] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 5;
+    const [modalLoading, setModalLoading] = useState(false);
     const [selectedComplaintId, setSelectedComplaintId] = useState(null);
+    const [reopenComplaintId, setReopenComplaintId] = useState(null);
+    const [chatHistory, setChatHistory] = useState([]);
+    const [showChat, setShowChat] = useState(false);
     const { role } = useContext(AuthContext);
 
     useEffect(() => {
@@ -69,7 +75,6 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                         complaint.id === id ? { ...complaint, isResolved: true, dateResolved: formatDate(response.data.complaint.date_resolved) } : complaint
                     )
                 );
-
 
             } catch (error) {
                 console.error(error);
@@ -119,8 +124,37 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
         return c.tenantName?.registration?.organizationName || c.tenantName;
     };
 
+
+    const handleReOpenComplaint = (id) => {
+        document.getElementById('confirm-re-open-complaint-modal').close();
+        setRowsToDisplay((prevRows) =>
+            prevRows.map((complaint) =>
+                complaint.id === reopenComplaintId ? { ...complaint, isResolved: false, dateResolved: " - " } : complaint
+            )
+        );
+
+        console.log("rtd", rowsToDisplay)
+        console.log("id" , reopenComplaintId)
+        setShowChat(true);
+        setChatHistory((prevHistory) => [
+            ...prevHistory,
+            {
+                timeStamp: new Date().toISOString(),
+                from: 'staff',
+                message: "Hello, I am here to assist you with your complaint. How may I help you?",
+            }
+        ]);
+    };
+
     return (
         <>
+           <ConfirmationModal 
+                id="confirm-re-open-complaint-modal"
+                title="Re-Open Complaint"
+                message="Are you sure you want to re-open this complaint? This action will revert the complaint to the pending status, and the respective staff will be notified. You will have to initiate a chat."
+                onConfirm={() => handleReOpenComplaint(selectedComplaintId)}
+                modalLoading={modalLoading}
+            />
             <dialog id={dialogId} className="modal">
                 <div className="modal-box w-11/12 max-w-2xl">
                     <h3 className="font-bold text-xl mb-4 flex items-center gap-3">
@@ -142,6 +176,15 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                     </div>
                 </div>
             </dialog>
+
+            {showChat && (
+                <ChatPopup
+                    chatHistory={chatHistory}
+                    setChatHistory={setChatHistory}
+                    onClose={() => setShowChat(false)}
+                    complaintType={complaintType}
+                />
+            )}
 
             <div className="flex items-center bg-primary bg-opacity-15 p-5 rounded-md my-2">
                 <Icon className="size-8 text-primary mr-3" />
@@ -231,9 +274,19 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                                     )}
                                                 </>
                                             )}
+
+                                            {(complaint.isResolved && role == "tenant") && (
+                                                <button className="btn btn-sm btn-outline btn-primary "
+                                                onClick={() => {document.getElementById('confirm-re-open-complaint-modal').showModal(); setReopenComplaintId(complaint.id);}}
+                                                >
+                                                    Re-Open
+                                                </button>
+                                            )}
+
                                             <button className="btn btn-sm btn-outline btn-secondary" onClick={() => { setSelectedComplaintId(complaint.id); document.getElementById(dialogId).showModal(); }}>
                                                 View
                                             </button>
+
                                         </div>
                                     </td>
                                 </tr>

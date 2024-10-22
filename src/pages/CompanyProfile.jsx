@@ -16,7 +16,7 @@ import { ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
 import ComparativeChart from '../components/ComparativeChart';
 import SideDrawer from '../components/SideDrawer';
 
-const MAX_CHAR_COUNT = 400 ; // max characters for notes
+const MAX_CHAR_COUNT = 400; // max characters for notes
 const CONTRACT_DURATION_THRESHOLD = 90; // after 90% of contract duration, the radial progress will become red
 
 const calculateDuration = (startDate, endDate) => {
@@ -361,7 +361,7 @@ const Company = ({ role }) => {
     setDropdownOpen((prev) => ({
       ...prev,
       [id]: false,
-  }));
+    }));
   };
   useEffect(() => {
     const fetchCompanyData = async () => {
@@ -423,7 +423,7 @@ const Company = ({ role }) => {
               meetingMinutesMoney: fetchedData.meetingMinutesMoney,
               eTags: fetchedData.etags,
               gatePasses: fetchedData.gatepasses,
-              notes: [
+              notes: [ //fetching for admin means notes returned
                 {
                   id: "1",
                   adminName: "Admin1",
@@ -596,54 +596,53 @@ const Company = ({ role }) => {
 
   const handleStickyNoteInputChange = (e) => {
     const value = e.target.value;
-    if (value.length <=  MAX_CHAR_COUNT) {
-        setNoteContent(value);
-        setCharCount(value.length);
-        adjustTextareaHeight(e.target);
+    if (value.length <= MAX_CHAR_COUNT) {
+      setNoteContent(value);
+      setCharCount(value.length);
+      adjustTextareaHeight(e.target);
     }
-};
+  };
 
-const adjustTextareaHeight = (textarea) => {
+  const adjustTextareaHeight = (textarea) => {
     textarea.style.height = 'auto'; // Reset the height
     textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to the scroll height
-};
+  };
 
-const postNote = ( ) => {
+  const postNote = () => {
     if (noteContent.trim() === '') {
-        showToast(false, "Note cannot be empty.");
-        return;
+      showToast(false, "Note cannot be empty.");
+      return;
     }
     setModalLoading(true);
     //api call to post note
     console.log("Posting note:", noteContent);
-    
+
     setTimeout(() => {
       // Clear the fields
-    setNoteContent('');
-    setCharCount(0);
-    // Close the modal
-    document.getElementById('add-note-modal').close();
-    showToast(true, "Note posted successfully.");
-    setModalLoading(false);
-    setCompanyData((prevData) => ({
-      ...prevData,
-      notes: [
-        {
-          id: new Date().getTime().toString(),
-          adminName: "Admin7",
-          date: new Date().toISOString().split('T')[0],
-          note: noteContent,
-        },
-        ...prevData.notes
-      ]
-    }));
+      setNoteContent('');
+      setCharCount(0);
+      // Close the modal
+      document.getElementById('add-note-modal').close();
+      showToast(true, "Note posted successfully.");
+      setModalLoading(false);
+      setCompanyData((prevData) => ({
+        ...prevData,
+        notes: [
+          {
+            id: new Date().getTime().toString(),
+            adminName: "Admin7",
+            date: new Date().toISOString().split('T')[0],
+            note: noteContent,
+          },
+          ...prevData.notes
+        ]
+      }));
     }, 2000);
-}
+  }
 
   return (
     <Sidebar>
       {loading && <NSTPLoader />}
-
       {error && <div className="alert alert-error">An error occurred while fetching company data.</div>}
 
       {/** DIALOGS */}
@@ -671,7 +670,6 @@ const postNote = ( ) => {
       <dialog id="tenure-end-modal" className="modal">
         <div className="modal-box min-w-3xl max-w-3xl">
           <h3 className="font-bold text-lg mb-3">Clearance Form</h3>
-
           <form className='grid grid-cols-2 gap-3'>
             <FloatingLabelInput
               name="applicantName"
@@ -750,37 +748,38 @@ const postNote = ( ) => {
               {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}
             </button>
           </div>
-
-
         </div>
       </dialog>
 
       {/* add sticky note modal */}
       <dialog id="add-note-modal" className="modal bg-opacity-0">
-                <div className="modal-box bg-opacity-0 shadow-none">
-                    <h3 className="font-bold text-lg"></h3>
-                    <div className="rounded-2xl shadow-lg bg-yellow-100 border-t-[10px] border-yellow-300 border-opacity-60">
-                        <textarea
-                            rows={5}
-                            placeholder="Type your note here..."
-                            className="my-2 textarea focus:outline-none focus:border-0 focus:ring-0 bg-opacity-0 w-full resize-none"
-                            value={noteContent}
-                            onChange={handleStickyNoteInputChange}
-                            onInput={(e) => adjustTextareaHeight(e.target)}
-                        />
-                    </div>
-                    <p className="text-right text-sm text-white mr-1 mt-1">{charCount}/{ MAX_CHAR_COUNT}</p>
-                    <div className="modal-action">
-                        <button className="btn hover:bg-white shadow-lg" onClick={() => document.getElementById('add-note-modal').close()}>Cancel</button>
-                        <button className={`btn btn-primary bg-light-primary hover:bg-light-primary shadow-lg ${modalLoading && "btn-disabled"}`}
-                          onClick={postNote}
-                        >
-                          {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Post Note"}
-                        </button>
-                    </div>
-                   
-                </div>
-            </dialog>
+        <div className="modal-box bg-opacity-0 shadow-none">
+          <h3 className="font-bold text-lg"></h3>
+          <div className="rounded-2xl shadow-lg bg-yellow-100 border-t-[10px] border-yellow-300 border-opacity-60">
+            <textarea
+              rows={5}
+              placeholder="Type your note here..."
+              className="my-2 textarea focus:outline-none focus:border-0 focus:ring-0 bg-opacity-0 w-full resize-none"
+              value={noteContent}
+              onChange={handleStickyNoteInputChange}
+              onInput={(e) => adjustTextareaHeight(e.target)}
+            />
+          </div>
+
+          <div className="modal-action mt-3 justify-between">
+            <p className="text-right text-sm text-white ml-1 mt-1">{charCount}/{MAX_CHAR_COUNT}</p>
+            <div className="flex gap-2">
+              <button className="btn hover:bg-white shadow-lg" onClick={() => { setNoteContent(''); setCharCount(0); document.getElementById('add-note-modal').close() }}>Cancel</button>
+              <button className={`btn btn-primary bg-light-primary hover:bg-light-primary shadow-lg ${modalLoading && "btn-disabled"}`}
+                onClick={postNote}
+              >
+                {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Post Note"}
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </dialog>
 
       {/* Feedback modal with rejection date*/}
       <dialog id="evaluation-feedback-modal" className="modal">
@@ -793,7 +792,6 @@ const postNote = ( ) => {
           <div className="flex gap-2 my-3 items-center">
             <p className="text-base font-bold">Deadline</p>
             <input type="date" placeholder='Deadline' className="input input-bordered w-full" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
-
           </div>
 
           <div className="modal-action">
@@ -891,7 +889,7 @@ const postNote = ( ) => {
       {/** END DIALOGS */}
 
       {/** MAIN CONTENT */}
-      <SideDrawer drawerContent={companyData.notes}>
+      <SideDrawer drawerContent={companyData.notes || []}>
         <div className={`bg-base-100 rounded-md shadow-md p-5 lg:p-10 mt-10 ${loading && "hidden"}`}>
 
           {/** First row, company info and actions */}
@@ -924,15 +922,12 @@ const postNote = ( ) => {
                   <div className="">Contract start: {companyData.contractStartDate}</div>
                   <div className="">Contract end: {companyData.contractEndDate}</div>
                 </div>
-
-
-
               </div>
             </div>
 
             {/** ACTIONS dropdwon on right */}
             <div className=' order-1 lg:order-2 flex-1 flex lg:flex-col gap-3 justify-end lg:justify-normal lg:mb-0 mb-5 lg:items-end'>
-              <label htmlFor="sticky-notes" className="text-base-100 drawer-button btn-outline btn btn-primary" onClick={() => toggleIfOpen('actions')}  >Admin Notes</label>
+              { role == "admin" && <label htmlFor="sticky-notes" className="text-base-100 drawer-button btn-outline btn btn-primary" onClick={() => toggleIfOpen('actions')}  >Admin Notes</label>}
               <div className="relative">
                 <button
                   className="btn text-base-100 btn-primary"

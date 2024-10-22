@@ -48,6 +48,7 @@ export default {
     require('flowbite/plugin')({
       charts: true,
     }),
+    require('tailwind-scrollbar-hide'),
     require('tailwindcss-animated'),
     function ({ addUtilities }) {
       const newUtilities = {
