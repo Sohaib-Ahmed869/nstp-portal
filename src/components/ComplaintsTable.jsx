@@ -35,6 +35,7 @@ const getUrgencyLabel = (urgency) => {
             return "N/A";
     }
 };
+
 const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortField, sortOrder, handleSortChange, setComplaintIdToDelete, setComplaintTypeToDelete, dialogId }) => {
     const [loading, setLoading] = useState(false);
     const [loadingComplaintId, setLoadingComplaintId] = useState(null);
@@ -169,7 +170,6 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                 </th>
                             )}
                             <th>Description</th>
-
                             <th onClick={() => handleSortChange("isResolved")}>Resolved {sortField === "isResolved" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
 
                             <th>Actions</th>

@@ -70,7 +70,7 @@ export const Dashboard = () => {
           return;
         }
 
-        console.log("🚀 ~ fetchData ~ response", response.data.dashboard);
+        console.log("🚀 ~ fetchData ~ response in receptionist dashboard ", response.data.dashboard);
         const dashboardData = response.data.dashboard;
         setGateEntryStats({
           completed: dashboardData.gatePasses.completed,
@@ -84,7 +84,7 @@ export const Dashboard = () => {
           dashboardData.allBookings.map((booking) => ({
             bookingId: booking._id,
             roomNo: booking.room_name || "Room",
-            company: booking.tenant_name || "Tennant",
+            company: booking.tenant_name || "Tenant",
             dateBooked: formatDate(booking.date_initiated).split(',')[0] + formatDate(booking.date_initiated).split(',')[1],
             dateBooking: formatDate(booking.time_start).split(',')[0] + formatDate(booking.time_start).split(',')[1],
             time: `${new Date(booking.time_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(booking.time_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
