@@ -63,7 +63,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
 
         if (role == "admin") { //means he is an admin, marking general complaint as complete.
             try {
-                const response = await AdminService.handleComplaint(id, true, null);
+                const response = await AdminService.handleComplaint(id, true);
                 if (response.error) {
                     showToast(false, response.error);
                     return;
@@ -85,7 +85,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
             }
         } else if (role == "receptionist") { //means he is a receptionist, marking service complaint as complete.
             try {
-                const response = await ReceptionistService.handleComplaint(id, true, null);
+                const response = await ReceptionistService.handleComplaint(id, true);
                 if (response.error) {
                     showToast(false, response.error);
                     return;

@@ -394,14 +394,13 @@ const AdminService = {
     }
   },
 
-  handleComplaint: async (complaintId, approval, reasonDecline) => {
+  handleComplaint: async (complaintId, approval) => {
     try {
       const response = await axios.put(
         `${BASE_URL}/admin/complaint/resolve`,
         {
           complaintId,
           approval,
-          reasonDecline,
         },
         {
           headers: {
@@ -747,6 +746,43 @@ const AdminService = {
         },
         withCredentials: true,
       });
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  getTenantNotes: async (towerId, tenantId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/tenants/${tenantId}/notes`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  addTenantNote: async (tenantId, note) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/admin/note/add`,
+        {
+          tenantId,
+          note,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
 
       return await handleResponse(response);
     } catch (error) {
