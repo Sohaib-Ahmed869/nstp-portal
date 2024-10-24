@@ -110,6 +110,11 @@ export const getChartOptions = (data) => {
     return {
       series: [internStats.nustian, internStats.nonNustian],
       colors: ["#2a1e5c", "#87b37a"],
+      tooltip: {
+        y: {
+          formatter: (val) => `${val} intern${val > 1 ? "s" : ""}`,
+        },
+      },
       chart: {
         height: 420,
         width: "100%",

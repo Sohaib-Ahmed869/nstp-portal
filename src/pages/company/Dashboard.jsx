@@ -75,6 +75,7 @@ const Dashboard = () => {
         })
         setGatePasses({ issued: response.data.dashboard.gatePasses.issued, pending: response.data.dashboard.gatePasses.pending });
         setInternStats(response.data.dashboard.interns);
+        console.log("!! setting intern stats to, ", response.data.dashboard.interns);
         setETags({ issued: response.data.dashboard.etags.issued, pending: response.data.dashboard.etags.pending });
         //POPULATE RECENT COMPLAINTS HERE, THE FORMAT IS SHOWN ABOVE WITH THE STATE
         //meeting room schedule format :    { bookingId: "abc", roomNo: 'MT-234', status: 'Approved', date: '12/12/2021', time: '12:00 PM - 1:00 PM' },
