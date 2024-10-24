@@ -50,10 +50,18 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
     const { role } = useContext(AuthContext);
     const rowsPerPage = 5;
 
-    
+
 
     useEffect(() => {
         setRowsToDisplay(complaints.slice(0, rowsPerPage));
+
+        //DUMMY - add chatHistory with 2 messages to the last "pending" (isResolved=false) complaint
+        // setRowsToDisplay(
+        //     complaints.map((complaint, index) =>
+        //         index === complaints.length - 1 ? { ...complaint, chatHistory: [{ from: "user", message: "Hello, I have an issue with my service" }, { from: "staff", message: "I'm sorry to hear you've been facing this issue. I will take the action to fix it." }] } : complaint
+        //     )
+        // );
+        //COMEMNT THIS 0UT LATER
         console.log("Complaints table data ", complaints)
     }, [complaints]);
 
@@ -122,7 +130,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
         if (!c) return "";
         return c.tenantName?.registration?.organizationName || c.tenantName;
     };
-    
+
     const handleReOpenComplaint = () => {
         document.getElementById(`confirm-re-open-complaint-modal-${complaintType}`).close();
 
@@ -136,15 +144,15 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                 } : complaint
             ).slice(0, rowsPerPage)
         );
-        
+
         // Show chat popup
         setShowChat(true);
     };
-      
+
 
     return (
         <>
-           <ConfirmationModal 
+            <ConfirmationModal
                 id={`confirm-re-open-complaint-modal-${complaintType}`}
                 title="Re-Open Complaint"
                 message="Are you sure you want to re-open this complaint? This action will revert the complaint to the pending status, and the respective staff will be notified. You will have to initiate a chat."
@@ -177,8 +185,6 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                 <ChatPopup
                     onClose={() => setShowChat(false)}
                     complaintType={complaintType}
-                    rowsToDisplay={rowsToDisplay}
-                    setRowsToDisplay={setRowsToDisplay}
                     complaintSelectedForChat={complaintSelectedForChat}
                     setComplaintSelectedForChat={setComplaintSelectedForChat}
                 />
@@ -247,6 +253,12 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
 
                                     <td>
                                         <div className="flex items-center gap-2">
+
+                                            <button className="btn btn-sm btn-outline btn-secondary" onClick={() => { setSelectedComplaintId(complaint.id); document.getElementById(dialogId).showModal(); }}>
+                                                View Detail
+                                            </button>
+
+
                                             {!complaint.isResolved && (
                                                 <>
                                                     {role != "tenant" ? ( //receptionist and admin can mark their respective complaints as complete
@@ -274,21 +286,29 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                             )}
 
                                             {(complaint.isResolved && role == "tenant") && (
-                                                <button 
-                                                className="btn btn-sm btn-outline btn-primary"
-                                                onClick={() => {
-                                                    console.log("complaint selected for chat", complaint);
-                                                    setComplaintSelectedForChat({...complaint, isResolved: false, dateResolved:null});
-                                                    document.getElementById(`confirm-re-open-complaint-modal-${complaintType}`).showModal();
-                                                }}
-                                            >
-                                                Re-Open
-                                            </button>
+                                                <button
+                                                    className="btn btn-sm btn-outline btn-primary"
+                                                    onClick={() => {
+                                                        console.log("complaint selected for chat", complaint);
+                                                        setComplaintSelectedForChat({ ...complaint, isResolved: false, dateResolved: null });
+                                                        document.getElementById(`confirm-re-open-complaint-modal-${complaintType}`).showModal();
+                                                    }}
+                                                >
+                                                    Re-Open
+                                                </button>
                                             )}
 
-                                            <button className="btn btn-sm btn-outline btn-secondary" onClick={() => { setSelectedComplaintId(complaint.id); document.getElementById(dialogId).showModal(); }}>
-                                                View
-                                            </button>
+                                            {(complaint.chatHistory) && (
+                                                <button
+                                                    className="btn btn-sm btn-outline btn-primary"
+                                                    onClick={() => {
+                                                        setComplaintSelectedForChat(complaint);
+                                                        setShowChat(true);
+                                                    }}
+                                                >
+                                                    View Chat
+                                                </button>
+                                            )}
 
                                         </div>
                                     </td>
