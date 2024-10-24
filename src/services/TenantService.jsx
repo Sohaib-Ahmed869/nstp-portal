@@ -466,9 +466,12 @@ const TenantService = {
 
   getEvaluation: async (evaluationId) => {
     try {
-      const response = await axios.get(`${BASE_URL}/tenant/evaluations/${evaluationId}`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${BASE_URL}/tenant/evaluations/${evaluationId}`,
+        {
+          withCredentials: true,
+        }
+      );
       return await handleResponse(response);
     } catch (error) {
       return await handleResponse(error.response);
@@ -477,7 +480,12 @@ const TenantService = {
 
   submitEvaluation: async (evaluationId, evaluationBody) => {
     try {
-      const { economicPerformance, innovationTechnologyTransfer, interactionWithNUST, otherDetails } = evaluationBody;
+      const {
+        economicPerformance,
+        innovationTechnologyTransfer,
+        interactionWithNUST,
+        otherDetails,
+      } = evaluationBody;
       console.log("🚀 ~ submitEvaluation ~ evaluationId", evaluationId);
       console.log("🚀 ~ submitEvaluation ~ evaluationBody", evaluationBody);
       const response = await axios.put(
@@ -495,7 +503,8 @@ const TenantService = {
               investment_hr: economicPerformance.investmentInHRD,
               customers_total: economicPerformance.totalCustomers,
               customers_b2b: economicPerformance.b2bCustomers,
-              investment_raised: economicPerformance.raisedInvestment == "Yes"? true : false,
+              investment_raised:
+                economicPerformance.raisedInvestment == "Yes" ? true : false,
               inverstor_origin: economicPerformance.investorOrigin,
               investor_type: economicPerformance.typeOfInvestor,
               investor_name: economicPerformance.investorName,
@@ -506,34 +515,67 @@ const TenantService = {
               employees_hr: economicPerformance.employeesInAdminFinanceHR,
               employees_interns: economicPerformance.interns,
               employees_support: economicPerformance.supportStaff,
-              avg_employee_retention: economicPerformance.averageEmployeeRetention,
-              avg_internship_duration: economicPerformance.averageInternshipDuration,
+              avg_employee_retention:
+                economicPerformance.averageEmployeeRetention,
+              avg_internship_duration:
+                economicPerformance.averageInternshipDuration,
               avg_salary: economicPerformance.averageSalarySkilled,
             },
             innovation_technology: {
-              num_technologies: innovationTechnologyTransfer.technologiesDeveloped,
+              num_technologies:
+                innovationTechnologyTransfer.technologiesDeveloped,
               num_ips_filed: innovationTechnologyTransfer.IPsFiled,
               num_ips_awarded: innovationTechnologyTransfer.IPsAwarded,
               num_ips_owned: innovationTechnologyTransfer.totalIPsOwned,
-              num_technologies_transfers: innovationTechnologyTransfer.technologyTransfers,
-              num_research_national: innovationTechnologyTransfer.nationalResearchProjects,
-              num_research_international: innovationTechnologyTransfer.internationalResearchProjects,
-              value_research_international: innovationTechnologyTransfer.valueInternationalResearchProjects,
-              num_collaborations: innovationTechnologyTransfer.collaborationsWithNSTP,
+              num_technologies_transfers:
+                innovationTechnologyTransfer.technologyTransfers,
+              num_research_national:
+                innovationTechnologyTransfer.nationalResearchProjects,
+              num_research_international:
+                innovationTechnologyTransfer.internationalResearchProjects,
+              value_research_international:
+                innovationTechnologyTransfer.valueInternationalResearchProjects,
+              num_collaborations:
+                innovationTechnologyTransfer.collaborationsWithNSTP,
             },
             nust_interaction: {
               num_internships: interactionWithNUST.internshipsOffered,
               num_jobs: interactionWithNUST.jobsOffered,
               num_placements: interactionWithNUST.facultyPlacements,
               num_research_projects: interactionWithNUST.researchProjects,
-              value_research_projects: interactionWithNUST.valueResearchProjects,
-              participation_jobfair: interactionWithNUST.participatedInJobFair === "Yes"? true : false,
+              value_research_projects:
+                interactionWithNUST.valueResearchProjects,
+              participation_jobfair:
+                interactionWithNUST.participatedInJobFair === "Yes"
+                  ? true
+                  : false,
             },
             other_details: {
               achievements: otherDetails.keyAchievements,
               comments: otherDetails.comments,
             },
           },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  updatePassword: async (currentPassword, newPassword) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/tenant/profile/password/update`,
+        {
+          currentPassword,
+          newPassword,
         },
         {
           headers: {
