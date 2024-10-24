@@ -752,6 +752,43 @@ const AdminService = {
       return await handleResponse(error.response);
     }
   },
+
+  getTenantNotes: async (towerId, tenantId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/tenants/${tenantId}/notes`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  addTenantNote: async (tenantId, note) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/admin/note/add`,
+        {
+          tenantId,
+          note,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default AdminService;

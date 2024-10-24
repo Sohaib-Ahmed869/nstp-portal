@@ -272,11 +272,11 @@ const Company = ({ role }) => {
     //   },
     // },
     {
-      text: 'Request Evaluation',
-      icon: ChatBubbleLeftRightIcon,
+      text: 'Add Note',
+      icon: DocumentIcon,
       onClick: () => {
-        document.getElementById('evaluation-feedback-modal').showModal();
-      },
+        document.getElementById('add-note-modal').showModal();
+      }
     },
     {
       text: 'Download Icon',
@@ -292,12 +292,12 @@ const Company = ({ role }) => {
       },
     },
     {
-      text: 'Add Note',
-      icon: DocumentIcon,
+      text: 'Request Evaluation',
+      icon: ChatBubbleLeftRightIcon,
       onClick: () => {
-        document.getElementById('add-note-modal').showModal();
-      }
-    }
+        document.getElementById('evaluation-feedback-modal').showModal();
+      },
+    },
   ] : [
     {
       text: 'Request Clearance',
@@ -363,6 +363,28 @@ const Company = ({ role }) => {
       [id]: false,
     }));
   };
+
+  const fetchAdminNotes = async () => {
+    try {
+      const response = await AdminService.getTenantNotes(tower.id, companyId);
+      if (response.error) {
+        console.error("Error fetching company notes:", response.error);
+        showToast(false, response.error);
+        return false;
+      }
+      console.log("Admin notes:", response.data.notes);
+      // setCompanyData((prevData) => ({
+      //   ...prevData,
+      //   notes: response.data.notes
+      // }));
+      return true;
+    } catch (error) {
+      console.error("Error fetching company notes:", error);
+      showToast(false, "An error occurred while fetching company notes.");
+      return false;
+    }
+  };
+
   useEffect(() => {
     const fetchCompanyData = async () => {
       try {
@@ -608,7 +630,7 @@ const Company = ({ role }) => {
     textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to the scroll height
   };
 
-  const postNote = () => {
+  const postNote = async () => {
     if (noteContent.trim() === '') {
       showToast(false, "Note cannot be empty.");
       return;
@@ -617,27 +639,50 @@ const Company = ({ role }) => {
     //api call to post note
     console.log("Posting note:", noteContent);
 
-    setTimeout(() => {
+    try {
+      const response = await AdminService.addTenantNote(companyId, noteContent);
+      if (response.error) {
+        console.error("Error posting note:", response.error);
+        showToast(false, response.error);
+        return;
+      }
+      console.log("Note posted successfully:", response.data.note);
+      showToast(true, response.message);
+      // fetchAdminNotes();
+
+    } catch (error) {
+      console.error("Error posting note:", error);
+      showToast(false, "An error occurred while posting note.");
+    } finally {
       // Clear the fields
       setNoteContent('');
       setCharCount(0);
       // Close the modal
       document.getElementById('add-note-modal').close();
-      showToast(true, "Note posted successfully.");
       setModalLoading(false);
-      setCompanyData((prevData) => ({
-        ...prevData,
-        notes: [
-          {
-            id: new Date().getTime().toString(),
-            adminName: "Admin7",
-            date: new Date().toISOString().split('T')[0],
-            note: noteContent,
-          },
-          ...prevData.notes
-        ]
-      }));
-    }, 2000);
+    }
+
+    // setTimeout(() => {
+    //   // Clear the fields
+    //   setNoteContent('');
+    //   setCharCount(0);
+    //   // Close the modal
+    //   document.getElementById('add-note-modal').close();
+    //   showToast(true, "Note posted successfully.");
+    //   setModalLoading(false);
+    //   setCompanyData((prevData) => ({
+    //     ...prevData,
+    //     notes: [
+    //       {
+    //         id: new Date().getTime().toString(),
+    //         adminName: "Admin7",
+    //         date: new Date().toISOString().split('T')[0],
+    //         note: noteContent,
+    //       },
+    //       ...prevData.notes
+    //     ]
+    //   }));
+    // }, 2000);
   }
 
   return (
@@ -927,7 +972,7 @@ const Company = ({ role }) => {
 
             {/** ACTIONS dropdwon on right */}
             <div className=' order-1 lg:order-2 flex-1 flex lg:flex-col gap-3 justify-end lg:justify-normal lg:mb-0 mb-5 lg:items-end'>
-              { role == "admin" && <label htmlFor="sticky-notes" className="text-base-100 drawer-button btn-outline btn btn-primary" onClick={() => toggleIfOpen('actions')}  >Admin Notes</label>}
+              { role == "admin" && <label htmlFor="sticky-notes" className="text-base-100 drawer-button btn-outline btn btn-primary" onClick={async() => {await fetchAdminNotes(); toggleIfOpen('actions')}}  >Admin Notes</label>}
               <div className="relative">
                 <button
                   className="btn text-base-100 btn-primary"
