@@ -180,14 +180,13 @@ const ReceptionistService = {
     }
   },
 
-  handleComplaint: async (complaintId, approval, reasonDecline) => {
+  handleComplaint: async (complaintId, approval) => {
     try {
       const response = await axios.put(
         `${BASE_URL}/receptionist/complaint/resolve`,
         {
           complaintId,
           approval,
-          reasonDecline,
         },
         {
           headers: {

@@ -394,14 +394,13 @@ const AdminService = {
     }
   },
 
-  handleComplaint: async (complaintId, approval, reasonDecline) => {
+  handleComplaint: async (complaintId, approval) => {
     try {
       const response = await axios.put(
         `${BASE_URL}/admin/complaint/resolve`,
         {
           complaintId,
           approval,
-          reasonDecline,
         },
         {
           headers: {
