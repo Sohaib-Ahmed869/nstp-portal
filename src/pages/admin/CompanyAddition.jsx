@@ -91,6 +91,16 @@ const CompanyAddition = () => {
     }
   };
 
+  const handleFileChange = (section, field, file) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      [section]: {
+        ...prevState[section],
+        [field]: file,
+      },
+    }));
+  };
+
   const renderFields = (section, fields, index = null) => {
     const data = index !== null ? formData[section][index] : formData[section];
     if (!data) {
@@ -172,7 +182,7 @@ const CompanyAddition = () => {
       .replace(/([A-Z])/g, ' $1') // Add space before capital letters
       .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
   };
-  
+
   const validateFormData = () => {
     const {
       registration,
@@ -182,23 +192,23 @@ const CompanyAddition = () => {
       industrySector,
       companyResourceComposition,
     } = formData;
-  
+
     let missingFields = [];
-  
+
     // Check registration fields
     for (const key in registration) {
       if (registration[key] === "") {
         missingFields.push(`Registration: ${formatKey(key)}`);
       }
     }
-  
+
     // Check contactInfo fields
     for (const key in contactInfo) {
       if (contactInfo[key] === "") {
         missingFields.push(`Contact Info: ${formatKey(key)}`);
       }
     }
-  
+
     // Check stakeholders fields
     for (const stakeholder of stakeholders) {
       for (const key in stakeholder) {
@@ -207,26 +217,26 @@ const CompanyAddition = () => {
         }
       }
     }
-  
+
     // Check companyProfile fields
     for (const key in companyProfile) {
       if (companyProfile[key] === "") {
         missingFields.push(`Company Profile: ${formatKey(key)}`);
       }
     }
-  
+
     // Check industrySector fields
     for (const key in industrySector) {
       if (industrySector[key] === "") {
         missingFields.push(`Industry Sector: ${formatKey(key)}`);
       }
     }
-  
+
     // Additional checks for industrySector
     if (industrySector.rentalSpaceSqFt < 350) {
       missingFields.push("Industry Sector: Rental Space Sq Ft (must be at least 350 Sq Ft)");
     }
-  
+
     // Additional checks for companyProfile
     if (companyProfile.numberOfEmployees < 1) {
       missingFields.push("Company Profile: Number Of Employees (must be at least 1)");
@@ -234,7 +244,7 @@ const CompanyAddition = () => {
     if (companyProfile.yearsInBusiness < 1) {
       missingFields.push("Company Profile: Years In Business (must be at least 1 year)");
     }
-  
+
     // Check companyResourceComposition fields
     for (const key in companyResourceComposition) {
       if (
@@ -245,18 +255,18 @@ const CompanyAddition = () => {
         missingFields.push(`Company Resource Composition: ${formatKey(key)}`);
       }
     }
-  
+
     // Additional checks for companyResourceComposition
     const { management, engineering, marketingAndSales } = companyResourceComposition;
     const total = Number(management) + Number(engineering) + Number(marketingAndSales);
-  
+
     if (total > 100) {
       missingFields.push("Company Resource Composition: Total Percentage (must not exceed 100%)");
     }
-  
+
     return missingFields;
   };
-  
+
   useEffect(() => {
     if (loading) {
       document.getElementById("loading-modal").showModal();
@@ -270,7 +280,7 @@ const CompanyAddition = () => {
     const missingFields = validateFormData();
     if (missingFields.length === 0) {
       setLoading(true);
-  
+
       console.log(
         "🚀 ~ formData ~ ",
         formData.registration,
@@ -280,7 +290,7 @@ const CompanyAddition = () => {
         formData.industrySector,
         formData.companyResourceComposition
       );
-  
+
       try {
         const response = await AdminService.addTenant(
           formData.registration,
@@ -291,7 +301,7 @@ const CompanyAddition = () => {
           formData.companyResourceComposition
         );
         console.log(response);
-  
+
         setSubmitModalTitle("Form Submitted");
         setSubmitModalText(
           "Your form has been submitted successfully. We will get back to you soon."
@@ -357,15 +367,27 @@ const CompanyAddition = () => {
           </div>
           {renderFields("registration", [
             { name: "category", type: "text" },
-            { name: "organizationName", type: "text" },
+            { name: "organizationName", type: "text", },
             { name: "presentAddress", type: "text", longText: true },
             { name: "website", type: "text" },
             { name: "companyEmail", type: "email" },
           ])}
 
+          <div className="flex flex-col gap-2 mb-5">
+            <p className="text-gray-400 text-sm max-md:mt-5"> Upload company logo </p>
+            <input
+              type="file"
+              id="file"
+              name="file"
+              className="file-input file-input-primary file-input-bordered"
+              accept="image/*"
+              onChange={(e) => handleFileChange('registration', 'companyLogo', e.target.files[0])}
+            />
+          </div>
+
           {/** Contact Info Section */}
           <div className="col-span-2 max-sm:col-span-1">
-          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <EnvelopeIcon className="size-6" />
               <h1 className="font-bold text-xl">Contact Information</h1>
             </div>
@@ -381,10 +403,10 @@ const CompanyAddition = () => {
           {/** Stakeholders Section */}
           <div className="col-span-2 max-sm:col-span-1">
             <div className="w-full flex justify-between items-center mt-5">
-            <div className="flex items-center gap-2">
-              <UserGroupIcon className="size-6" />
-              <h1 className="font-bold text-xl">Stakeholder Profiles</h1>
-            </div>
+              <div className="flex items-center gap-2">
+                <UserGroupIcon className="size-6" />
+                <h1 className="font-bold text-xl">Stakeholder Profiles</h1>
+              </div>
               <button
                 onClick={() => {
                   setFormData((prevState) => ({
@@ -499,7 +521,7 @@ const CompanyAddition = () => {
 
           {/** Company Profile Section */}
           <div className="col-span-2 max-sm:col-span-1 mt-5">
-          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <BuildingOffice2Icon className="size-6" />
               <h1 className="font-bold text-xl">Company Profile</h1>
             </div>
@@ -526,7 +548,7 @@ const CompanyAddition = () => {
 
           {/** Industry Sector Section */}
           <div className="col-span-2 max-sm:col-span-1">
-          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <CpuChipIcon className="size-6" />
               <h1 className="font-bold text-xl">Industry Sector</h1>
             </div>
@@ -548,7 +570,7 @@ const CompanyAddition = () => {
 
           {/** Company Resource Composition Section */}
           <div className="col-span-2 max-sm:col-span-1">
-          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <ChartPieIcon className="size-6" />
               <h1 className="font-bold text-xl">Company Resource Composition</h1>
             </div>

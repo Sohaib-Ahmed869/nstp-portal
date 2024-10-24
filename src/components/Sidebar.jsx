@@ -174,7 +174,7 @@ const Sidebar = ({ children }) => {
             </ul>
           </nav>
         </div>
-        <div className="flex-grow p-16  xl:px-20 pt-0 ml-20 overflow-auto ">
+        <div className="flex-grow p-16  xl:px-20 3xl:px-36 pt-0 ml-20 overflow-auto ">
           {children /* this is where the page content will be rendered. */}
         </div>
       </div>
@@ -197,7 +197,7 @@ const Sidebar = ({ children }) => {
               <img src={nstpPng} className="h-11 w-auto m-2" alt="NSTP Logo" />
             </div>
           </div>
-          {/* Page content here */}
+          {/* Page content here for small screens */}
           <div className="p-8">{children}</div>
         </div>
         {/** side drawer for small screens */}
