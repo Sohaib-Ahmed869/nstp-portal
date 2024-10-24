@@ -94,7 +94,13 @@ const ChatPopup = ({ onClose, complaintType, complaintSelectedForChat, setCompla
         }
     };
 
-    const closeModal = (    )   => {
+    const closeChat = (    )   => {
+        
+        setComplaintSelectedForChat((prevComplaint) => ({
+            ...prevComplaint,
+            chatHistory: chatHistory,
+        }));
+        //API CALL HERE TO UPDATE COMPLAINT
         onClose();
     }
 
@@ -104,7 +110,7 @@ const ChatPopup = ({ onClose, complaintType, complaintSelectedForChat, setCompla
             <div className="flex flex-col border-b border-base-200">
                 <div className="flex justify-between items-center p-4">
                     <h3 className="font-bold text-lg">Chat with NSTP</h3>
-                    <button onClick={closeModal}>
+                    <button onClick={closeChat}>
                         <XMarkIcon className="h-5 w-5 text-gray-500" />
                     </button>
                 </div>
