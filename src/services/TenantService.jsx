@@ -609,6 +609,27 @@ const TenantService = {
       return await handleResponse(error.response);
     }
   },
+
+  giveComplaintFeedback: async (complaintId, feedback) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/tenant/complaint/feedback`,
+        {
+          complaintId,
+          feedback,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default TenantService;

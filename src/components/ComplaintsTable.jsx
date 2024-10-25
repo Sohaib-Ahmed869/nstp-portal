@@ -219,6 +219,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                     complaintType={complaintType}
                     complaintSelectedForChat={complaintSelectedForChat}
                     setComplaintSelectedForChat={setComplaintSelectedForChat}
+                    complaintId={complaintSelectedForChat.id}
                 />
             )}
 

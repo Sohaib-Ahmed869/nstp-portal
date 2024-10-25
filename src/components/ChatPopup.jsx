@@ -1,48 +1,86 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { XMarkIcon, PaperAirplaneIcon, ChevronUpIcon, ChevronDownIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/outline';
+import { TenantService, AdminService, ReceptionistService } from '../services';
+import { AuthContext } from '../context/AuthContext';
+import showToast from '../util/toast';
 
-const ChatPopup = ({ onClose, complaintType, complaintSelectedForChat, setComplaintSelectedForChat }) => {
+const ChatPopup = ({ onClose, complaintType, complaintSelectedForChat, setComplaintSelectedForChat, complaintId }) => {
     const [message, setMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [chatHistory, setChatHistory] = useState([]);
     const [isDetailsVisible, setIsDetailsVisible] = useState(true);
     const staffRole = complaintType === "services" ? "Receptionist" : "Admin";
+    const { role } = useContext(AuthContext);
+
+    const chatContainerRef = useRef(null);
+    const detailsRef = useRef(null);
 
     useEffect(() => {
         if (complaintSelectedForChat?.chatHistory) {
-            setChatHistory(complaintSelectedForChat.chatHistory);
+            let chat = complaintSelectedForChat.chatHistory;
+            // sort chat by date
+            chat = chat.sort((a, b) => new Date(a.date) - new Date(b.date));
+            chat = chat.map((chat) => ({
+                timeStamp: new Date(chat.date).toISOString(),
+                from: chat.is_tenant? 'user' : 'staff',
+                message: chat.feedback,
+            }));
+
+            setChatHistory(chat);
         } else {
             setChatHistory([]);
         }
     }, [complaintSelectedForChat]);
 
-    const chatContainerRef = useRef(null);
-    const detailsRef = useRef(null);
+    const handleSendMessage = async () => {
+        const newMessage = message.trim();
+        if (newMessage === '') return;
 
-    const handleSendMessage = () => {
-        if (message.trim() === '') return;
+        let response;
+        if (role === 'tenant') {
+            response = await TenantService.giveComplaintFeedback(complaintId, newMessage);
+        } else if (role === 'admin') {
+            response = await AdminService.giveComplaintFeedback(complaintId, newMessage);
+        } else if (role === 'receptionist') {
+            // response = await ReceptionistService.giveComplaintFeedback(complaintId, newMessage);
+        }
 
-        const newMessage = {
+        if (response.error) {
+            console.error(response.error);
+            showToast(false, response.error);
+            return;
+        }
+
+        const newChatMessage = {
             timeStamp: new Date().toISOString(),
-            from: 'user',
-            message: message.trim(),
+            from: role === 'tenant' ? 'user' : 'staff',
+            message: newMessage,
         };
 
-        setChatHistory((prevHistory) => [...prevHistory, newMessage]);
+        setChatHistory((prevHistory) => [...prevHistory, newChatMessage]);
         setMessage('');
 
-        setTimeout(() => {
-            setIsTyping(true);
-            setTimeout(() => {
-                setIsTyping(false);
-                const responseMessage = {
-                    timeStamp: new Date().toISOString(),
-                    from: 'staff',
-                    message: "I'm sorry to hear you've been facing this issue. I will take the action to fix it.",
-                };
-                setChatHistory((prevHistory) => [...prevHistory, responseMessage]);
-            }, 3000);
-        }, 3000);
+        // const newMessage = {
+        //     timeStamp: new Date().toISOString(),
+        //     from: 'user',
+        //     message: message.trim(),
+        // };
+
+        // setChatHistory((prevHistory) => [...prevHistory, newMessage]);
+        // setMessage('');
+
+        // setTimeout(() => {
+        //     setIsTyping(true);
+        //     setTimeout(() => {
+        //         setIsTyping(false);
+        //         const responseMessage = {
+        //             timeStamp: new Date().toISOString(),
+        //             from: 'staff',
+        //             message: "I'm sorry to hear you've been facing this issue. I will take the action to fix it.",
+        //         };
+        //         setChatHistory((prevHistory) => [...prevHistory, responseMessage]);
+        //     }, 3000);
+        // }, 3000);
     };
 
     const handleKeyPress = (e) => {
@@ -176,12 +214,12 @@ const ChatPopup = ({ onClose, complaintType, complaintSelectedForChat, setCompla
 
                 {/* Chat Messages */}
                 {chatHistory.map((chat, index) => (
-                    <div key={index} className={`chat ${chat.from === 'staff' ? 'chat-start' : 'chat-end'}`}>
-                        <div className={`chat-bubble ${chat.from === 'staff' ? 'chat-bubble-primary bg-opacity-35' : 'chat-bubble-secondary'}`}>
+                    <div key={index} className={`chat ${(chat.from === 'staff' && role == 'tenant') ? 'chat-start' : 'chat-end'}`}>
+                        <div className={`chat-bubble ${(chat.from === 'staff' && role == 'tenant') ? 'chat-bubble-primary bg-opacity-35' : 'chat-bubble-secondary'}`}>
                             {chat.message}
                         </div>
                         <div className="chat-footer opacity-50">
-                            {chat.from === 'staff' ? staffRole : 'You'}
+                            {(chat.from === 'staff' && role == 'tenant') ? staffRole : 'You'}
                             <time className="text-xs ml-2 opacity-50">
                                 {new Date(chat.timeStamp).toLocaleTimeString()}
                             </time>

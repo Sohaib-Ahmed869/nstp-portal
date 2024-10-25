@@ -65,6 +65,7 @@ export const Complaints = ({ role }) => {
                         description: complaint.description,
                         isResolved: complaint.is_resolved,
                         dateResolved: complaint.is_resolved ? (complaint.date_resolved ? formatDate(complaint.date_resolved) : "-") : "-",
+                        chatHistory: complaint.feedback
                     }));
     
                     setGeneralComplaintData(generalComplaints);
@@ -88,6 +89,7 @@ export const Complaints = ({ role }) => {
                         description: complaint.description,
                         isResolved: complaint.is_resolved,
                         dateResolved: complaint.is_resolved ? (complaint.date_resolved ? formatDate(complaint.date_resolved) : "-") : "-",
+                        chatHistory: complaint.feedback
                     }));
     
                     setServicesComplaintData(servicesComplaints);
@@ -224,8 +226,7 @@ export const Complaints = ({ role }) => {
                         handleSortChange={(field) => handleSortChange(field, "general")}
                         setComplaints={setGeneralComplaintData} // this prop is only passed for receptionist to update the data on frontend
                         dialogId={"general-complaint-dialog"}
-
-                        />
+                    />
                 )}
 
                 {/* {typeFilter === "All" && <hr className="mb-6"></hr>} */}
@@ -240,7 +241,7 @@ export const Complaints = ({ role }) => {
                         sortField={servicesSortField}
                         sortOrder={servicesSortOrder}
                         handleSortChange={(field) => handleSortChange(field, "services")}
-                        setComplaints={setServicesComplaintData} //this prop is only passed for receptionist to update the data on frontend
+                        setComplaints={setServicesComplaintData} // this prop is only passed for receptionist to update the data on frontend
                         dialogId={"services-complaint-dialog"}
                     />
                 )}
