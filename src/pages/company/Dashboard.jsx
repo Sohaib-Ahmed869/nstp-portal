@@ -22,6 +22,12 @@ const CATEGORIES = ['General', 'Service'];
 const chartIds = ["resolved-chart", "unresolved-chart", "received-chart"];
 const chartKeys = ["resolved", "unresolved", "received"];
 
+const formatTime = (date) => {
+  const hours = date.getUTCHours().toString().padStart(2, '0');
+  const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+};
+
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   // **** data to be populated from backend ****
@@ -50,6 +56,17 @@ const Dashboard = () => {
   ]);
   // **** end of data to be populated from backend ****
 
+  const mapComplaintsData = (complaints) => {
+    return complaints.map(complaint => ({
+        id: complaint._id,
+        date: formatDate(complaint.date_initiated),
+        serviceType: complaint.service_type ? complaint.service_name : complaint.subject,
+        urgency: complaint.urgency,
+        isResolved: complaint.is_resolved,
+        daysPending: Math.floor((new Date() - new Date(complaint.date_initiated)) / (1000 * 60 * 60 * 24)), // Calculate days pending
+    }));
+};
+
   useEffect(() => {
     setLoading(true);
     async function fetchData() {
@@ -65,6 +82,10 @@ const Dashboard = () => {
           ...employee,
           date_joining: formatDate(employee.date_joining),
         }));
+        
+        const mappedComplaints = mapComplaintsData(response.data.dashboard.complaintsData.oldest);
+        setRecentComplaints(mappedComplaints);
+  
         setEmployeeTableData(mappedEmpTableData);
         setEmployeeStats({
           total: response.data.dashboard.employeeData.total,
@@ -81,11 +102,7 @@ const Dashboard = () => {
         const mappedSchedule = response.data.dashboard.bookings.map(booking => {
           const startTime = new Date(booking.time_start);
           const endTime = new Date(booking.time_end);
-          const formatTime = (date) => {
-            const hours = date.getUTCHours().toString().padStart(2, '0');
-            const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-            return `${hours}:${minutes}`;
-          };
+         
           const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
           const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
           return {
@@ -279,49 +296,52 @@ const Dashboard = () => {
 
         {/* Third row */}
         <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
-          {/* Complaints section */}
-          <div className="flex flex-col gap-4 col-span-1 lg:col-span-3 min-h-full">
+             {/** News feed */}
+             <div className="col-span-1 lg:col-span-3">
+            <NewsFeed />
+          </div>
+
+          {/* Oldest Complaints section */}
+          <div className="flex flex-col gap-4 col-span-1 lg:col-span-4 min-h-full">
             <div className="card p-5 h-full">
               <div className="flex items-center justify-between mb-2">
-                <h1 className="text-2xl font-bold">Recent Complaints</h1>
+                <h1 className="text-2xl font-bold">Pending Complaints</h1>
                 <Link to="complaints" className=' btn btn-primary text-white btn-md'>
                   <TableCellsIcon className="h-5 w-5" />
                   View All
                 </Link>
-
               </div>
-              <table className="table w-full my-3">
-                <tbody>
-                  <tr className="bg-base-200">
-                    <th>Date</th>
-                    <th>Service Type</th>
-                    <th>Urgency</th>
-                    <th>Status</th>
-                    <th>Days Pending</th>
-                  </tr>
-
-                  {recentComplaints.map((complaint, index) => (
-                    <tr key={complaint.id} className="group">
-                      <td className="">{complaint.date}</td>
-                      <td className="">{complaint.serviceType}</td>
-                      <td className="flex items-center">
-                        <div className={`badge text-base-100 ${complaint.urgency === 1 ? "badge-primary" : complaint.urgency === 2 ? "badge-secondary" : "badge-error"} flex items-center py-3`} >
-                          {complaint.urgency === 1 ? "Low" : complaint.urgency === 2 ? "Med" : "High"}
-                        </div>
-                      </td>
-                      <td className="">{complaint.isResolved ? "Resolved" : "Pending"}</td>
-                      <td className="">{complaint.daysPending}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+             <div className="overflow-scroll scrollbar-hide">
+               <table className="table w-full my-3">
+                 <tbody>
+                   <tr className="bg-base-200">
+                     <th>Date</th>
+                     <th>Subject/Type</th>
+                     <th>Urgency</th>
+                     <th>Status</th>
+                     <th>Days Pending</th>
+                   </tr>
+              
+                   {recentComplaints.map((complaint, index) => (
+                     <tr key={complaint.id} className="group">
+                       <td className="">{complaint.date}</td>
+                       <td className="">{complaint.serviceType}</td>
+                       <td className="">
+                         <div className={`badge text-base-100 ${complaint.urgency === 1 ? "badge-primary" : complaint.urgency === 2 ? "badge-secondary" : "badge-error"} flex items-center py-3`} >
+                           {complaint.urgency === 1 ? "Low" : complaint.urgency === 2 ? "Med" : "High"}
+                         </div>
+                       </td>
+                       <td className="">{complaint.isResolved ? "Resolved" : "Pending"}</td>
+                       <td className="">{complaint.daysPending}</td>
+                     </tr>
+                   ))}
+                 </tbody>
+               </table>
+             </div>
             </div>
           </div>
 
-          {/** News feed */}
-          <div className="col-span-1 lg:col-span-4">
-            <NewsFeed />
-          </div>
+       
         </div>
       </div>
     </Sidebar>

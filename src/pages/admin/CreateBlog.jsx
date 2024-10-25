@@ -5,7 +5,8 @@ import {
     TrashIcon,
     CheckBadgeIcon,
     Bars3BottomLeftIcon,
-    ArrowUpTrayIcon
+    ArrowUpTrayIcon,
+    ArrowLeftIcon
 } from '@heroicons/react/24/outline';
 import showToast from '../../util/toast';
 import { AdminService } from '../../services';
@@ -154,7 +155,15 @@ const CreateBlog = () => {
     return (
         <Sidebar>
             <div className="bg-base-100 rounded-lg ring-1 ring-base-200 lg:m-10 md:m-5 max-sm:m-5 max-sm:mx-2 max-sm:p-3 p-10">
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col justify-start items-start">
+                   
+                    <button className="btn btn-secondary mb-10 " onClick={() => window.history.back()}>
+                        <ArrowLeftIcon className="h-5 w-5" />
+                        Go back
+                    </button>
+                    <h1 className="text-3xl font-bold mb-5">Create Blog Post</h1>
+                    <p className=" opacity-55 mb-5">Create a new blog post by adding paragraphs and images. You can only add one image per blog post.</p>
+                    <hr className="w-full border-1 border-gray-300 mb-8" />
                     <input
                         type="text"
                         placeholder="Enter Blog Title"

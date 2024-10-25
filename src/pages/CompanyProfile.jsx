@@ -1,22 +1,29 @@
 import React, { useEffect, useState, useContext } from 'react';
-import Sidebar from '../components/Sidebar';
 import { useParams } from 'react-router-dom';
-import { UserGroupIcon, LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TruckIcon, ChartBarIcon, ClockIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, BanknotesIcon, BuildingOfficeIcon, CalendarDateRangeIcon, XCircleIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon, ArrowDownTrayIcon, PresentationChartLineIcon, CurrencyDollarIcon, DocumentIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon,ChatBubbleOvalLeftEllipsisIcon, LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TrashIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, CalendarDateRangeIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon, ArrowDownTrayIcon, PresentationChartLineIcon, CurrencyDollarIcon, DocumentIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import nstpLogo from '../assets/nstplogocolored.png'
 import ReactApexChart from 'react-apexcharts';
-import { getPieChartOptions } from '../util/charts';
+
+/* Components */
 import EmployeeStats from '../components/EmployeeStats';
+import Sidebar from '../components/Sidebar';
+import ComparativeChart from '../components/ComparativeChart';
 import NSTPLoader from '../components/NSTPLoader';
+import SideDrawer from '../components/SideDrawer';
 import EmployeeProfileModal from '../components/EmployeeProfileModal';
 import FloatingLabelInput from '../components/FloatingLabelInput';
-import showToast from '../util/toast';
+
+/* Services and context */
 import { AdminService, TenantService } from '../services';
 import { TowerContext } from '../context/TowerContext'
-import { ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
-import ComparativeChart from '../components/ComparativeChart';
-import SideDrawer from '../components/SideDrawer';
-import { formatDate } from '../util/date';
 
+/* Utils */
+import { formatDate } from '../util/date';
+import showToast from '../util/toast';
+import { getPieChartOptions } from '../util/charts';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
+
+/* Constants */
 const MAX_CHAR_COUNT = 400; // max characters for notes
 const CONTRACT_DURATION_THRESHOLD = 90; // after 90% of contract duration, the radial progress will become red
 
@@ -41,8 +48,8 @@ const calculateDuration = (startDate, endDate) => {
 
 /**
 |--------------------------------------------------
-| Company profile - admin can view company details, actions: end tenure, terminate employees, give evaluation
-| company can view their own profile, actions: terminate employees, request clearance, 
+| Company profile component - admin can view company details, actions: end tenure, terminate employees, give evaluation
+| company can view their own profile, actions: terminate employees, request clearance,  etc.
 |--------------------------------------------------
 */
 
@@ -267,13 +274,6 @@ const Company = ({ role }) => {
   const [stickyNotes, setStickyNotes] = useState([]);
 
   const actions = role == "admin" ? [
-    // {
-    //   text: 'End Tenure',
-    //   icon: XCircleIcon,
-    //   onClick: () => {
-    //     document.getElementById('tenure-end-modal').showModal();
-    //   },
-    // },
     {
       text: 'Add Note',
       icon: DocumentIcon,
@@ -281,19 +281,33 @@ const Company = ({ role }) => {
         document.getElementById('add-note-modal').showModal();
       }
     },
-    {
-      text: 'Download Icon',
+    companyData.logo ? {
+      text: 'Download Logo',
       icon: ArrowDownTrayIcon,
       onClick: () => {
-        //download the nstpLogo image
         const link = document.createElement('a');
-        link.href = nstpLogo;
+        link.href = companyData.logo;
         link.download = 'company_logo.png';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        showToast(true, "Company logo downloaded");
       },
+    } : null,
+    {
+      text: 'Delete Logo', 
+      icon: TrashIcon,
+      onClick: () => {
+        deleteCompanyLogo();
+      }
     },
+    !companyData.logo ? {
+      text: 'Upload Logo',
+      icon: ArrowUpTrayIcon,
+      onClick: () => {
+        document.getElementById('upload-logo-modal').showModal();
+      }
+    } : null,
     {
       text: 'Request Evaluation',
       icon: ChatBubbleLeftRightIcon,
@@ -301,7 +315,7 @@ const Company = ({ role }) => {
         document.getElementById('evaluation-feedback-modal').showModal();
       },
     },
-  ] : [
+  ].filter(Boolean) : [
     {
       text: 'Request Clearance',
       icon: DocumentCheckIcon,
@@ -316,7 +330,9 @@ const Company = ({ role }) => {
         document.getElementById('change-password-modal').showModal();
       },
     },
-  ]
+  ];
+
+
   const [dropdownOpen, setDropdownOpen] = useState({});
   const handlePasswordInputChange = (e) => {
     const { name, value } = e.target;
@@ -325,6 +341,39 @@ const Company = ({ role }) => {
       [name]: value
     }));
   };
+
+  const confirmDeleteCompanyLogo = async () => {
+    //api call to delete logo
+    setModalLoading(true);
+    console.log("Deleting company logo...");  
+    try {
+      setTimeout (() => 
+        { console.log("meow")
+          setModalLoading(false);
+          setCompanyData((prevData) => ({
+            ...prevData,
+            logo: null
+          }));
+  
+        //api call here
+        showToast(true, "Company logo deleted successfully.");
+        document.getElementById('delete-logo-modal').close()
+
+        }, 2000); //remove this timout wrapper when api call done
+
+    }
+    catch (error) {
+      console.error("Error deleting company logo:", error);
+      showToast(false, "An error occurred while deleting company logo.");
+    }
+    finally {
+      setModalLoading(false);
+    }
+  }
+
+  const deleteCompanyLogo = () => {
+    document.getElementById('delete-logo-modal').showModal();
+  }
 
   const changePassword = async (e) => {   
     e.preventDefault();
@@ -475,6 +524,7 @@ const Company = ({ role }) => {
               name: fetchedData.registration.organizationName,
               type: fetchedData.registration.category,
               category: fetchedData.industrySector.category,
+              logo: fetchedData.registration.logo || nstpLogo,
               rentalSpaceSqft: fetchedData.industrySector.rentalSpaceSqFt + " sq ft",
               companyHeadquarters: fetchedData.companyProfile.companyHeadquarters,
               contactPerson: fetchedData.contactInfo.applicantName,
@@ -967,6 +1017,15 @@ const Company = ({ role }) => {
       {/* View Profile Modal */}
       <EmployeeProfileModal employeeProfileSelected={selectedEmployee} />
 
+      {/** Confirm delete logo modal */}
+      <DeleteConfirmationModal
+        id="delete-logo-modal"
+        title="Delete Company Logo"
+        message="Are you sure you want to delete the company logo? This cannot be undone."
+        onConfirm={confirmDeleteCompanyLogo}
+        modalLoading={modalLoading}
+      />
+
       {/** END DIALOGS */}
 
       {/** MAIN CONTENT */}
@@ -977,8 +1036,13 @@ const Company = ({ role }) => {
           <div className="flex lg:flex-row flex-col ">
             {/* Header with company info, description, logo and join date */}
             <div className=" order-2 lg:order-1 flex max-sm:flex-col justify-start items-start gap-5">
-              <img src={nstpLogo} alt="Company Logo" className="size-48  rounded-lg ring-1 ring-gray-200" />
-
+              { companyData.logo ? 
+              <img src={companyData.logo} alt="Company Logo" className="size-48  rounded-lg ring-1 ring-gray-200" />
+              :
+              <div className="size-48 rounded-lg ring-1 ring-gray-200 bg-gray-200 flex items-center justify-center">
+                <p className="text-sm"> No Logo </p>
+              </div>
+              }
               <div className="">
                 <h1 className="text-4xl font-semibold text-primary">{companyData.name}</h1>
                 <div className='badge badge-secondary mt-2 mb-1'>{companyData.type}</div>
