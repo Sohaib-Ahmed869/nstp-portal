@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { XMarkIcon, PaperAirplaneIcon, ChevronUpIcon, ChevronDownIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, PaperAirplaneIcon, ChevronUpIcon, ChevronDownIcon, ChatBubbleLeftEllipsisIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
 import { TenantService, AdminService, ReceptionistService } from '../services';
 import { AuthContext } from '../context/AuthContext';
 import showToast from '../util/toast';
@@ -214,12 +214,19 @@ const ChatPopup = ({ onClose, complaintType, complaintSelectedForChat, setCompla
 
                 {/* Chat Messages */}
                 {chatHistory.map((chat, index) => (
-                    <div key={index} className={`chat ${(chat.from === 'staff' && role == 'tenant') ? 'chat-start' : 'chat-end'}`}>
-                        <div className={`chat-bubble ${(chat.from === 'staff' && role == 'tenant') ? 'chat-bubble-primary bg-opacity-35' : 'chat-bubble-secondary'}`}>
+                    <div key={index} className={`chat ${((chat.from === 'staff' && role == 'tenant') || (chat.from === "user" && role !== "tenant") ) ? 'chat-start' : 'chat-end'}`}>
+                        <div className={`chat-bubble ${((chat.from === 'staff' && role == 'tenant') || (chat.from === "user" && role !== "tenant") ) ? 'chat-bubble-primary bg-opacity-35' : 'chat-bubble-secondary'}`}>
                             {chat.message}
                         </div>
                         <div className="chat-footer opacity-50">
-                            {(chat.from === 'staff' && role == 'tenant') ? staffRole : 'You'}
+                            {
+                                ((chat.from == "user" && role == "tenant") || (chat.from == "staff" && role != "tenant") ) ? "You" 
+                                :
+                                (chat.from == "staff" && role == "tenant") ? staffRole
+                                :
+                                (chat.from == "user" && role != "tenant") ? "Tenant" : "Anonymous Person"
+
+                            }
                             <time className="text-xs ml-2 opacity-50">
                                 {new Date(chat.timeStamp).toLocaleTimeString()}
                             </time>
@@ -239,17 +246,28 @@ const ChatPopup = ({ onClose, complaintType, complaintSelectedForChat, setCompla
             {/* Message Input */}
             <div className="p-4 border-t border-base-200">
                 <div className="flex items-center">
-                    <input
-                        type="text"
-                        className="input input-bordered w-full mr-2"
-                        placeholder="Type your message..."
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        onKeyPress={handleKeyPress}
-                    />
-                    <button className="btn btn-primary" onClick={handleSendMessage}>
-                        <PaperAirplaneIcon className="h-5 w-5 text-white" />
-                    </button>
+                  { 
+                    complaintSelectedForChat.isResolved ? 
+                    <div className="flex items-center  w-full p-4 bg-primary text-secondary bg-opacity-10 rounded-lg transition-all">
+                       <CheckBadgeIcon className="size-5 mr-2" />
+                        <span className="font-medium ">
+                            This complaint is already resolved
+                        </span>
+                    </div> 
+                    :
+                   <>
+                     <input
+                         type="text"
+                         className="input input-bordered w-full mr-2"
+                         placeholder="Type your message here..."
+                         value={message}
+                         onChange={(e) => setMessage(e.target.value)}
+                         onKeyPress={handleKeyPress}
+                     />
+                     <button className={`btn btn-primary `} onClick={handleSendMessage}>
+                         <PaperAirplaneIcon className="h-5 w-5 text-white" />
+                     </button>
+                   </>}
                 </div>
             </div>
         </div>
