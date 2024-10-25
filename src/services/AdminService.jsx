@@ -56,28 +56,19 @@ const AdminService = {
     }
   },
 
-  addTenant: async (
-    registration,
-    contactInfo,
-    stakeholders,
-    companyProfile,
-    industrySector,
-    companyResourceComposition
-  ) => {
+  addTenant: async (tenant) => {
     try {
+      // print tenant form data
+      console.log("FormData contents:");
+      for (let [key, value] of tenant.entries()) {
+        console.log(`${key}: ${value}`);
+      }
       const response = await axios.post(
         `${BASE_URL}/admin/tenant/add`,
-        {
-          registration,
-          contactInfo,
-          stakeholders,
-          companyProfile,
-          industrySector,
-          companyResourceComposition,
-        },
+        tenant,
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
           withCredentials: true,
         }
@@ -104,8 +95,8 @@ const AdminService = {
 
   assignOffice: async (towerId, tenantId, office) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/admin/office/assign`,
+      const response = await axios.put(
+        `${BASE_URL}/admin/tenant/office/assign`,
         {
           towerId,
           tenantId,
@@ -792,13 +783,16 @@ const AdminService = {
 
   deleteTenantNote: async (tenantId, noteId) => {
     try {
-      const response = await axios.delete(`${BASE_URL}/admin/tenant/note/delete`, {
-        data: { tenantId, noteId },
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      const response = await axios.delete(
+        `${BASE_URL}/admin/tenant/note/delete`,
+        {
+          data: { tenantId, noteId },
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
 
       return await handleResponse(response);
     } catch (error) {
@@ -818,6 +812,61 @@ const AdminService = {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  deleteTenantLogo: async (tenantId) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/admin/tenant/logo/delete`,
+        {
+          tenantId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  uploadTenantLogo: async (formData) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/admin/tenant/logo/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  downloadTenantLogo: async (towerId, tenantId) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/admin/towers/${towerId}/tenants/${tenantId}/logo/download`,
+        {
           withCredentials: true,
         }
       );

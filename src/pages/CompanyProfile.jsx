@@ -273,6 +273,46 @@ const Company = ({ role }) => {
 
   const [stickyNotes, setStickyNotes] = useState([]);
 
+  const downloadLogo = async () => {
+    try {
+      // Fetch the image from Firebase Storage
+      const response = await fetch(companyData.logo, {
+        mode: 'cors', // Ensure CORS is enabled on Firebase Storage
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      // Convert the response to a blob
+      const blob = await response.blob();
+  
+      // Create a Blob URL
+      const url = window.URL.createObjectURL(blob);
+  
+      // Create a temporary anchor element
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${companyData.name}_logo.png`; // Set the desired file name
+  
+      // Append the link to the body
+      document.body.appendChild(link);
+  
+      // Programmatically click the link to trigger the download
+      link.click();
+  
+      // Clean up by removing the link and revoking the Blob URL
+      link.remove();
+      window.URL.revokeObjectURL(url);
+  
+      // Show a success toast/message
+      showToast(true, "Company logo downloaded");
+    } catch (error) {
+      console.error('Download error:', error);
+      showToast(false, "Failed to download logo");
+    }
+  };
+
   const actions = role == "admin" ? [
     {
       text: 'Add Note',
@@ -285,13 +325,15 @@ const Company = ({ role }) => {
       text: 'Download Logo',
       icon: ArrowDownTrayIcon,
       onClick: () => {
-        const link = document.createElement('a');
-        link.href = companyData.logo;
-        link.download = 'company_logo.png';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        showToast(true, "Company logo downloaded");
+        // const link = document.createElement('a');
+        // link.href = companyData.logo;
+        // link.download = `${companyData.name}_logo.png`;
+        // document.body.appendChild(link);
+        // link.click();
+        // document.body.removeChild(link);
+        // showToast(true, "Company logo downloaded");
+
+        downloadLogo();
       },
     } : null,
     {
@@ -525,7 +567,7 @@ const Company = ({ role }) => {
               name: fetchedData.registration.organizationName,
               type: fetchedData.registration.category,
               category: fetchedData.industrySector.category,
-              logo: fetchedData.registration.logo || nstpLogo,
+              logo: fetchedData.registration.companyLogo || nstpLogo,
               rentalSpaceSqft: fetchedData.industrySector.rentalSpaceSqFt + " sq ft",
               companyHeadquarters: fetchedData.companyProfile.companyHeadquarters,
               contactPerson: fetchedData.contactInfo.applicantName,
