@@ -326,23 +326,61 @@ const Company = ({ role }) => {
     }));
   };
 
-  const changePassword = (e) => {
-    setModalLoading(true);
+  const changePassword = async (e) => {   
     e.preventDefault();
     console.log(passwordData);
+    // check empty fields and if new password matches confirm password
+    if (passwordData.currentPassword.trim() === '' || passwordData.newPassword.trim() === '' || passwordData.confirmPassword.trim() === '') {
+      showToast(false, "All fields are required.");
+      return;
+    }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      showToast(false, "New password and confirm password do not match.");
+      return;
+    }
+    //api call here to change 
+    setModalLoading(true);
+    
+    try {
+      const response = await TenantService.updatePassword(passwordData.currentPassword, passwordData.newPassword);
+      if (response.error) {
+        console.error("Error changing password:", response.error);
+        showToast(false, response.error);
+        return;
+      }
+      
+      console.log("Password changed successfully:", response.message);
+      showToast(true, response.message);
+    } catch (error) {
+      console.error("Error changing password:", error);
+      showToast(false, "An error occurred while changing password.");
+    } finally {
+      // Clear the fields
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+      setPasswordVisibility({
+        currentPassword: false,
+        newPassword: false,
+        confirmPassword: false
+      });
+      // Close the modal
+      document.getElementById('change-password-modal').close();
+      setModalLoading(false);
+    }
 
-    //api call here to change passwrod
-
-    // Clear the fields
-    setPasswordData({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    });
-    // Close the modal
-    document.getElementById('change-password-modal').close();
-    showToast(true, "Password changed successfully.");
-    setModalLoading(false);
+    // // Clear the fields
+    // setPasswordData({
+    //   currentPassword: '',
+    //   newPassword: '',
+    //   confirmPassword: ''
+    // });
+    // // Close the modal
+    // document.getElementById('change-password-modal').close();
+    // showToast(true, "Password changed successfully.");
+    // setModalLoading(false);
   };
   const handleCancelPassword = () => {
     // Clear the fields
@@ -351,6 +389,11 @@ const Company = ({ role }) => {
       newPassword: '',
       confirmPassword: ''
     });
+    setPasswordVisibility({
+      currentPassword: false,
+      newPassword: false,
+      confirmPassword: false
+    })
     // Close the modal
     document.getElementById('change-password-modal').close();
   };
