@@ -589,6 +589,26 @@ const TenantService = {
       return await handleResponse(error.response);
     }
   },
+
+  reOpenComplaint: async (complaintId) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/tenant/complaint/reopen`,
+        {
+          complaintId,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default TenantService;

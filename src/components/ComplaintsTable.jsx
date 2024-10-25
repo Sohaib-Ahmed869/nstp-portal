@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ChatBubbleLeftEllipsisIcon, CheckCircleIcon, CheckIcon, ClockIcon, XCircleIcon } from '@heroicons/react/24/outline';
-import { AdminService, ReceptionistService } from '../services';
+import { AdminService, ReceptionistService, TenantService } from '../services';
 import showToast from '../util/toast';
 import { AuthContext } from '../context/AuthContext';
 import { formatDate } from '../util/date';
@@ -131,22 +131,54 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
         return c.tenantName?.registration?.organizationName || c.tenantName;
     };
 
-    const handleReOpenComplaint = () => {
-        document.getElementById(`confirm-re-open-complaint-modal-${complaintType}`).close();
+    const handleReOpenComplaint = async () => {
+        setModalLoading(true);
+        try {
+            const response = await TenantService.reOpenComplaint(complaintSelectedForChat.id);
+            if (response.error) {
+                showToast(false, response.error);
+                return;
+            }
 
-        // Update the row status immediately
-        setRowsToDisplay(
-            rowsToDisplay.map((complaint) =>
-                complaint.id === complaintSelectedForChat?.id ? {
-                    ...complaint,
-                    isResolved: false,
-                    dateResolved: " - "
-                } : complaint
-            ).slice(0, rowsPerPage)
-        );
+            // Update the row status immediately
+            setRowsToDisplay(
+                rowsToDisplay.map((complaint) =>
+                    complaint.id === complaintSelectedForChat?.id ? {
+                        ...complaint,
+                        isResolved: false,
+                        dateResolved: " - ",
+                        status: "pending",
+                        chatHistory: complaintSelectedForChat.chatHistory?.length > 0 ? complaintSelectedForChat.chatHistory : []
+                    } : complaint
+                ).slice(0, rowsPerPage)
+            );
+            
+            showToast(true, response.message);
+            setShowChat(true);
+        } catch (error) {
+            console.error(error);
+            showToast(false, "An error occurred. Please try again later.");
+        } finally {
+            setModalLoading(false);
+            document.getElementById(`confirm-re-open-complaint-modal-${complaintType}`).close();
+        }
 
-        // Show chat popup
-        setShowChat(true);
+
+        // document.getElementById(`confirm-re-open-complaint-modal-${complaintType}`).close();
+
+        // // Update the row status immediately
+        // setRowsToDisplay(
+        //     rowsToDisplay.map((complaint) =>
+        //         complaint.id === complaintSelectedForChat?.id ? {
+        //             ...complaint,
+        //             isResolved: false,
+        //             dateResolved: " - "
+        //         } : complaint
+        //     ).slice(0, rowsPerPage)
+        // );
+
+        // // Show chat popup
+        // setShowChat(true);
     };
 
 
