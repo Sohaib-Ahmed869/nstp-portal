@@ -53,6 +53,7 @@ export const Complaints = () => {
                         isResolved: complaint.is_resolved,
                         dateResolved: complaint.is_resolved ? formatDate(complaint.date_resolved) : '-',
                         description: complaint.description,
+                        chatHistory: complaint.feedback,
                     }));
 
                 const servicesComplaints = response.data.complaints
@@ -66,6 +67,7 @@ export const Complaints = () => {
                         urgency: complaint.urgency,
                         isResolved: complaint.is_resolved,
                         dateResolved: complaint.is_resolved ? formatDate(complaint.date_resolved) : '-',
+                        chatHistory: complaint.feedback,
                     }));
 
                 setGeneralComplaintData(generalComplaints);

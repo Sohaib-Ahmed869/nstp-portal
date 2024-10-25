@@ -1,12 +1,45 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import { AdminService } from '../services';
+import showToast from '../util/toast';
+import { useParams } from 'react-router-dom';
 
-const SideDrawer = ({ children, drawerContent }) => {
+const SideDrawer = ({ children, drawerContent, setDrawerContent }) => {
   const [noteIdToDelete, setNoteIdToDelete] = useState(null);
-  const handleDelete = () => {
+  const [modalLoading, setModalLoading] = useState(false);
+  const { companyId } = useParams();
+  const handleDelete = async () => {
     console.log(noteIdToDelete)
+    setModalLoading(true);
+    
+    try {
+      const response = await AdminService.deleteTenantNote(companyId, noteIdToDelete);
+      console.log(response);
+      if (response.error) {
+        console.log(response.error);
+        showToast(false, response.error);
+        return;
+      }
+
+      console.log(response.message);
+      
+      // remove the note from the drawer content
+      const newDrawerContent = drawerContent.filter((note) => note.id !== noteIdToDelete);
+      setDrawerContent(newDrawerContent);
+      document.getElementById('delete-note-modal').close();
+      showToast(true, response.message);
+      
+    } catch (error) {
+      console.error(error);
+      showToast(false, 'An error occurred. Please try again.');
+    } finally {
+      setNoteIdToDelete(null);
+      setModalLoading(false);
+    }
   }
+
+  useEffect(() => {}, [drawerContent]);
 
   return (
     <div className="drawer drawer-end">
@@ -15,6 +48,7 @@ const SideDrawer = ({ children, drawerContent }) => {
         title="Delete Note"
         message="Are you sure you want to delete this note?"
         onConfirm={handleDelete}
+        modalLoading={modalLoading}
       />
       <input id="sticky-notes" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content">

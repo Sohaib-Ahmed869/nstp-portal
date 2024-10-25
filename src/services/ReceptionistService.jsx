@@ -268,6 +268,27 @@ const ReceptionistService = {
       return await handleResponse(error.response);
     }
   },
+
+  giveComplaintFeedback: async (complaintId, feedback) => {
+    try {
+      const response = await axios.put(
+        `${BASE_URL}/receptionist/complaint/feedback`,
+        {
+          complaintId,
+          feedback,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
 };
 
 export default ReceptionistService;
