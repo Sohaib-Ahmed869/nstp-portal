@@ -771,7 +771,7 @@ const AdminService = {
   addTenantNote: async (tenantId, note) => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/admin/note/add`,
+        `${BASE_URL}/admin/tenant/note/add`,
         {
           tenantId,
           note,
@@ -783,6 +783,22 @@ const AdminService = {
           withCredentials: true,
         }
       );
+
+      return await handleResponse(response);
+    } catch (error) {
+      return await handleResponse(error.response);
+    }
+  },
+
+  deleteTenantNote: async (tenantId, noteId) => {
+    try {
+      const response = await axios.delete(`${BASE_URL}/admin/tenant/note/delete`, {
+        data: { tenantId, noteId },
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
 
       return await handleResponse(response);
     } catch (error) {

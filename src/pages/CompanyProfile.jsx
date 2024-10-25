@@ -970,7 +970,7 @@ const Company = ({ role }) => {
       {/** END DIALOGS */}
 
       {/** MAIN CONTENT */}
-      <SideDrawer drawerContent={stickyNotes}>
+      <SideDrawer drawerContent={stickyNotes} setDrawerContent={setStickyNotes} >
         <div className={`bg-base-100 rounded-md shadow-md p-5 lg:p-10 mt-10 ${loading && "hidden"}`}>
 
           {/** First row, company info and actions */}
