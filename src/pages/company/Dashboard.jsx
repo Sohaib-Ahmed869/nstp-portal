@@ -22,7 +22,6 @@ const CATEGORIES = ['General', 'Service'];
 const chartIds = ["resolved-chart", "unresolved-chart", "received-chart"];
 const chartKeys = ["resolved", "unresolved", "received"];
 
-
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   // **** data to be populated from backend ****

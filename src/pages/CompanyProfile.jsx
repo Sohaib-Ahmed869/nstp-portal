@@ -15,6 +15,7 @@ import { TowerContext } from '../context/TowerContext'
 import { ChatBubbleOvalLeftEllipsisIcon } from '@heroicons/react/24/outline';
 import ComparativeChart from '../components/ComparativeChart';
 import SideDrawer from '../components/SideDrawer';
+import { formatDate } from '../util/date';
 
 const MAX_CHAR_COUNT = 400; // max characters for notes
 const CONTRACT_DURATION_THRESHOLD = 90; // after 90% of contract duration, the radial progress will become red
@@ -60,7 +61,7 @@ const Company = ({ role }) => {
     newPassword: false,
     confirmPassword: false
   });
-
+  const [notesLoading, setNotesLoading] = useState(false);
   const togglePasswordVisibility = (field) => {
     setPasswordVisibility((prevVisibility) => ({
       ...prevVisibility,
@@ -263,6 +264,8 @@ const Company = ({ role }) => {
     reasonForLeaving: ''
   });
 
+  const [stickyNotes, setStickyNotes] = useState([]);
+
   const actions = role == "admin" ? [
     // {
     //   text: 'End Tenure',
@@ -372,11 +375,23 @@ const Company = ({ role }) => {
         showToast(false, response.error);
         return false;
       }
+      //Syntax for note:
+      //{
+      //         id: new Date().getTime().toString(),
+      //         adminName: "Admin7",
+      //         date: new Date().toISOString().split('T')[0],
+      //         note: noteContent,
+      //       },
       console.log("Admin notes:", response.data.notes);
-      // setCompanyData((prevData) => ({
-      //   ...prevData,
-      //   notes: response.data.notes
-      // }));
+      setStickyNotes(response.data.notes.map((note) => ({
+        id: note.id,
+        adminName: note.adminName,
+        date: formatDate(note.date),
+        note: note.note,
+        isEditable: note.isEditable,
+      }))
+      );
+
       return true;
     } catch (error) {
       console.error("Error fetching company notes:", error);
@@ -661,28 +676,6 @@ const Company = ({ role }) => {
       document.getElementById('add-note-modal').close();
       setModalLoading(false);
     }
-
-    // setTimeout(() => {
-    //   // Clear the fields
-    //   setNoteContent('');
-    //   setCharCount(0);
-    //   // Close the modal
-    //   document.getElementById('add-note-modal').close();
-    //   showToast(true, "Note posted successfully.");
-    //   setModalLoading(false);
-    //   setCompanyData((prevData) => ({
-    //     ...prevData,
-    //     notes: [
-    //       {
-    //         id: new Date().getTime().toString(),
-    //         adminName: "Admin7",
-    //         date: new Date().toISOString().split('T')[0],
-    //         note: noteContent,
-    //       },
-    //       ...prevData.notes
-    //     ]
-    //   }));
-    // }, 2000);
   }
 
   return (
@@ -934,7 +927,7 @@ const Company = ({ role }) => {
       {/** END DIALOGS */}
 
       {/** MAIN CONTENT */}
-      <SideDrawer drawerContent={companyData.notes || []}>
+      <SideDrawer drawerContent={stickyNotes}>
         <div className={`bg-base-100 rounded-md shadow-md p-5 lg:p-10 mt-10 ${loading && "hidden"}`}>
 
           {/** First row, company info and actions */}
@@ -972,7 +965,20 @@ const Company = ({ role }) => {
 
             {/** ACTIONS dropdwon on right */}
             <div className=' order-1 lg:order-2 flex-1 flex lg:flex-col gap-3 justify-end lg:justify-normal lg:mb-0 mb-5 lg:items-end'>
-              { role == "admin" && <label htmlFor="sticky-notes" className="text-base-100 drawer-button btn-outline btn btn-primary" onClick={async() => {await fetchAdminNotes(); toggleIfOpen('actions')}}  >Admin Notes</label>}
+              {role == "admin" &&
+                <label htmlFor="sticky-notes"
+                  className={`text-base-100 drawer-button btn-outline btn btn-primary ${notesLoading && "btn-disabled"} `}
+                  onClick={async () => {
+                    setNotesLoading(true);
+                    await fetchAdminNotes();
+                    setNotesLoading(false);
+                    toggleIfOpen('actions')
+                  }} >
+                  {notesLoading && <span className="loading loading-spinner"></span>}
+                  {notesLoading ? "Fetching..." : "Admin Notes"}
+
+                </label>
+              }
               <div className="relative">
                 <button
                   className="btn text-base-100 btn-primary"
