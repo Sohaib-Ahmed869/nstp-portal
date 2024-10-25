@@ -42,7 +42,7 @@ const ChatPopup = ({ onClose, complaintType, complaintSelectedForChat, setCompla
         } else if (role === 'admin') {
             response = await AdminService.giveComplaintFeedback(complaintId, newMessage);
         } else if (role === 'receptionist') {
-            // response = await ReceptionistService.giveComplaintFeedback(complaintId, newMessage);
+            response = await ReceptionistService.giveComplaintFeedback(complaintId, newMessage);
         }
 
         if (response.error) {
