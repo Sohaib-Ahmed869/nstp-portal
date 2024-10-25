@@ -301,7 +301,7 @@ const Company = ({ role }) => {
         deleteCompanyLogo();
       }
     },
-    !companyData.logo ? {
+    !(companyData.logo && companyData.logo!=null) ? {
       text: 'Upload Logo',
       icon: ArrowUpTrayIcon,
       onClick: () => {
@@ -332,6 +332,7 @@ const Company = ({ role }) => {
     },
   ];
 
+  const [logoToUpload, setLogoToUpload] = useState(null);//for uploading logo
 
   const [dropdownOpen, setDropdownOpen] = useState({});
   const handlePasswordInputChange = (e) => {
@@ -771,6 +772,31 @@ const Company = ({ role }) => {
     }
   }
 
+  const uploadCompanyLogo = () => {
+    if (!logoToUpload){ 
+      showToast(false, "Please select a file to upload.");
+      return;
+    }
+    
+    setModalLoading(true);
+    const formData = new FormData();
+    formData.append('companyLogo', logoToUpload);
+    
+   
+    // Perform the upload logic here API CALLLSs
+
+    setTimeout(() => {
+      showToast(true, "Successfully Uploaded Logo");
+      setModalLoading(false);
+      document.getElementById('upload-logo-modal').close();
+      setLogoToUpload(null);
+      setCompanyData((prevData) => ({
+        ...prevData,
+        logo: URL.createObjectURL(logoToUpload)
+      }));
+    }, 2000);
+  };
+
   return (
     <Sidebar>
       {loading && <NSTPLoader />}
@@ -877,6 +903,29 @@ const Company = ({ role }) => {
               }}
             >
               {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}
+            </button>
+          </div>
+        </div>
+      </dialog>
+
+      <dialog id="upload-logo-modal" className="modal">
+        <div className="modal-box">
+          <div className="flex flex-col gap-5">
+          <h3 className="font-bold text-lg flex items-center">
+            <ArrowUpTrayIcon className="size-8 text-primary mr-2" />
+            Upload Company Logo</h3>
+            <input
+              type="file"
+              accept="image/*"
+              className="file-input file-input-bordered"
+              id="logo-upload"
+              onChange={(e) => setLogoToUpload(e.target.files[0])}
+            />
+          </div>
+          <div className="modal-action">
+            <button className="btn" onClick={() => { setLogoToUpload(null); document.getElementById('upload-logo-modal').close()}}>Cancel</button>
+            <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={uploadCompanyLogo}>
+              {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Upload"}
             </button>
           </div>
         </div>
