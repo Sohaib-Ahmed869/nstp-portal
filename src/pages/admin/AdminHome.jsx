@@ -102,7 +102,7 @@ const AdminHome = () => {
   
         setComplaintStats({
           resolved: dashboard.complaints.resolved,
-          recieved: dashboard.complaints.total,
+          pending: dashboard.complaints.pending,
         });
   
         setCompanyTableData(
