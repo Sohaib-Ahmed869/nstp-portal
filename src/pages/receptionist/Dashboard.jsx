@@ -8,6 +8,15 @@ import {
   CalendarDaysIcon,
   TableCellsIcon,
   QuestionMarkCircleIcon,
+  TicketIcon,
+  CheckBadgeIcon,
+  DocumentCheckIcon,
+  ClockIcon,
+  ArrowTrendingUpIcon,
+  ChartBarIcon,
+  InboxArrowDownIcon,
+  DocumentChartBarIcon,
+  ClipboardDocumentCheckIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { getChartOptions } from "../../util/charts";
@@ -59,6 +68,7 @@ export const Dashboard = () => {
     completed: 53,
     pending: 15,
   });
+  const [complaintStats, setComplaintStats] = useState()
 
   useEffect(() => {
     //Api call here to fetch data and populate the above states
@@ -90,7 +100,7 @@ export const Dashboard = () => {
             time: `${new Date(booking.time_start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(booking.time_end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
             status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
           })))
-
+        setComplaintStats(dashboardData.complaints)
       } catch (error) {
         console.error(error);
       } finally {
@@ -162,48 +172,44 @@ export const Dashboard = () => {
             </div>
 
             {/* Complaints section charts */}
-            <div className="flex-1 md:col-span-3 grid grid-cols-1 gap-4 md:grid-cols-3">
-              {/* Complaint types legend & button*/}
-              <div className="card p-5 md:col-span-3 h-contenet flex  flex-col lg:flex-row  lg:items-center justify-start lg:justify-between">
-                <div className="flex flex-col justify-center">
-                  <span className="font-bold">Complaint Types</span>
-                  <div className="flex flex-row gap-5">
-                    {["bg-primary", "bg-secondary"].map((color, index) => (
-                      <div className="flex flex-row gap-2 items-center">
-                        <div className={`rounded-full ${color} size-4`}></div>
-                        <span>{CATEGORIES[index]}</span>
-                      </div>
-                    ))}
+            <div className="flex-1 md:col-span-3 grid grid-cols-1 gap-4 ">
+              <div className="card p-5">
+                <p className="my-2 font-bold">Complaints Statistics</p>
+
+                <div className="mt-5 grid grid-cols-1 xl:grid-cols-2 gap-8">
+                  <div className="stat ring-1 rounded-2xl ring-base-200 ">
+                    <div className="stat-figure text-secondary">
+                      <ClipboardDocumentCheckIcon className="inline-block h-8 w-8" />
+                    </div>
+                    <div className="stat-value">{complaintStats?.resolved}</div>
+                    <div className="stat-desc">Complaints Resolved </div>
+                  </div>
+
+                  <div className="stat ring-1 rounded-2xl ring-base-200 ">
+                    <div className="stat-figure text-secondary">
+                      <ClockIcon className="inline-block h-8 w-8" />
+                    </div>
+                    <div className="stat-value">{complaintStats?.unresolved}</div>
+                    <div className="stat-desc">Complaints Unresolved </div>
+                  </div>
+
+                  <div className="stat ring-1 rounded-2xl ring-base-200 ">
+                    <div className="stat-figure text-secondary">
+                      <InboxArrowDownIcon className="inline-block h-8 w-8" />
+                    </div>
+                    <div className="stat-value">{complaintStats?.recieved}</div>
+                    <div className="stat-desc">Complaints Recieved </div>
+                  </div>
+
+                  <div className="stat ring-1 rounded-2xl ring-base-200 ">
+                    <div className="stat-figure text-secondary">
+                      <DocumentChartBarIcon className="inline-block h-8 w-8" />
+                    </div>
+                    <div className="stat-value">{complaintStats?.mttr || "129"}</div>
+                    <div className="stat-desc">Mean time to Repair </div>
                   </div>
                 </div>
-                <div className="flex gap-2 mt-3 lg:mt-0">
-                  <Link to="complaints">
-                    <button className="btn btn-primary text-white btn-md">
-                      <TableCellsIcon className="h-5 w-5" />
-                      View All
-                    </button>
-                  </Link>
-                </div>
-              </div>
 
-              {/* Charts */}
-              <div className="card flex-1 h-full p-3 flex flex-col items-center justify-center">
-                <p className="font-semibold font-lg mb-3  text-center">
-                  Complaints Sent
-                </p>
-                <div id="received-chart"></div>
-              </div>
-              <div className="card p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
-                <p className="font-semibold font-lg mb-3 text-center">
-                  Complaints Resolved
-                </p>
-                <div id="resolved-chart"></div>
-              </div>
-              <div className="card p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
-                <p className="font-semibold font-lg mb-3 text-center">
-                  Complaints Unresolved
-                </p>
-                <div id="unresolved-chart"></div>
               </div>
             </div>
           </div>
@@ -235,3 +241,51 @@ export const Dashboard = () => {
 };
 
 export default Dashboard;
+
+
+{/**
+|--------------------------------------------------
+| 
+
+<div className="card p-5 md:col-span-3 h-contenet flex  flex-col lg:flex-row  lg:items-center justify-start lg:justify-between">
+<div className="flex flex-col justify-center">
+  <span className="font-bold">Complaint Types</span>
+  <div className="flex flex-row gap-5">
+    {["bg-primary", "bg-secondary"].map((color, index) => (
+      <div className="flex flex-row gap-2 items-center">
+        <div className={`rounded-full ${color} size-4`}></div>
+        <span>{CATEGORIES[index]}</span>
+      </div>
+    ))}
+  </div>
+</div>
+<div className="flex gap-2 mt-3 lg:mt-0">
+  <Link to="complaints">
+    <button className="btn btn-primary text-white btn-md">
+      <TableCellsIcon className="h-5 w-5" />
+      View All
+    </button>
+  </Link>
+</div>
+</div>
+
+<div className="card flex-1 h-full p-3 flex flex-col items-center justify-center">
+<p className="font-semibold font-lg mb-3  text-center">
+  Complaints Sent
+</p>
+<div id="received-chart"></div>
+</div>
+<div className="card p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
+<p className="font-semibold font-lg mb-3 text-center">
+  Complaints Resolved
+</p>
+<div id="resolved-chart"></div>
+</div>
+<div className="card p-3 flex flex-col items-center justify-center mb-4 md:mb-0">
+<p className="font-semibold font-lg mb-3 text-center">
+  Complaints Unresolved
+</p>
+<div id="unresolved-chart"></div>
+</div>
+|--------------------------------------------------
+*/}
