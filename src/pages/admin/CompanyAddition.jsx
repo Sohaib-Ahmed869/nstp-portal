@@ -4,6 +4,8 @@ import { BuildingOffice2Icon, ChartBarSquareIcon, ChartPieIcon, CpuChipIcon, Env
 import FloatingLabelInput from "../../components/FloatingLabelInput";
 import { AdminService } from "../../services";
 
+const COMPANY_CATEGORIES = ['Company', 'Cube 8', 'Hatch 8', 'Startup'];
+
 const EMPTY_FORM_DATA = {
   registration: {
     category: "",
@@ -63,34 +65,33 @@ const CompanyAddition = () => {
 
   const handleChange = (section, field, value, index = null) => {
     if (index !== null) {
-      console.log(`Changing ${section}[${index}].${field} to ${value}`);
+        console.log(`Changing ${section}[${index}].${field} to ${value}`);
     } else {
-      console.log(`Changing ${section}.${field} to ${value}`);
+        console.log(`Changing ${section}.${field} to ${value}`);
     }
 
     if (index !== null) {
-      setFormData((prevState) => {
-        const updatedArray = [...prevState[section]];
-        updatedArray[index] = {
-          ...updatedArray[index],
-          [field]: value,
-        };
-        return {
-          ...prevState,
-          [section]: updatedArray,
-        };
-      });
+        setFormData((prevState) => {
+            const updatedArray = [...prevState[section]];
+            updatedArray[index] = {
+                ...updatedArray[index],
+                [field]: value,
+            };
+            return {
+                ...prevState,
+                [section]: updatedArray,
+            };
+        });
     } else {
-      setFormData((prevState) => ({
-        ...prevState,
-        [section]: {
-          ...prevState[section],
-          [field]: value,
-        },
-      }));
+        setFormData((prevState) => ({
+            ...prevState,
+            [section]: {
+                ...prevState[section],
+                [field]: value,
+            },
+        }));
     }
-  };
-
+};
   const handleFileChange = (section, field, file) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -104,78 +105,101 @@ const CompanyAddition = () => {
   const renderFields = (section, fields, index = null) => {
     const data = index !== null ? formData[section][index] : formData[section];
     if (!data) {
-      console.error(`Section ${section} does not exist in formData`);
-      return null;
+        console.error(`Section ${section} does not exist in formData`);
+        return null;
     }
 
     return fields.map(({ name, type, labelName, longText }) => (
-      <div
-        key={name}
-        className={`col-span-1 ${longText || type == "radio" ? "col-span-2" : ""
-          } max-sm:col-span-1`}
-      >
-        {type === "boolean" ? (
-          <div className="">
-            <label className="flex items-center justify-start gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                name={name}
-                id={`floating_${name}`}
-                checked={data[name]}
-                onChange={(e) =>
-                  handleChange(section, name, e.target.checked, index)
-                }
-                className="checkbox checkbox-primary"
-              />
-              <span className="label-text">
-                {labelName && labelName !== ""
-                  ? labelName
-                  : name
-                    .replace(/([A-Z])/g, " $1")
-                    .replace(/^./, (str) => str.toUpperCase())}
-              </span>
-            </label>
-          </div>
-        ) : type == "radio" ? ( //theres only one radio group on the page, in that case labelName will be a string with comma separated values including the  possible categories of the industry
-          <div className="flex flex-row flex-wrap gap-2">
-            {labelName &&
-              labelName.split(", ").map((category, idx) => (
-                <div key={idx} className="form-control">
-                  <label className="label cursor-pointer">
-                    <input
-                      type="radio"
-                      name={name}
-                      value={category}
-                      checked={data[name] === category}
-                      onChange={(e) =>
-                        handleChange(section, name, category, index)
-                      }
-                      className="radio checked:bg-primary mr-2"
-                    />
-                    <span className="label-text">{category}</span>
-                  </label>
+        <div
+            key={name}
+            className={`col-span-1 ${longText || type == "radio" ? "col-span-2" : ""
+                } max-sm:col-span-1`}
+        >
+            {type === "boolean" ? (
+                <div className="">
+                    <label className="flex items-center justify-start gap-2 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            name={name}
+                            id={`floating_${name}`}
+                            checked={data[name]}
+                            onChange={(e) =>
+                                handleChange(section, name, e.target.checked, index)
+                            }
+                            className="checkbox checkbox-primary"
+                        />
+                        <span className="label-text">
+                            {labelName && labelName !== ""
+                                ? labelName
+                                : name
+                                    .replace(/([A-Z])/g, " $1")
+                                    .replace(/^./, (str) => str.toUpperCase())}
+                        </span>
+                    </label>
                 </div>
-              ))}
-          </div>
-        ) : (
-          <FloatingLabelInput
-            name={name}
-            id={`floating_${name}`}
-            label={
-              labelName && labelName != ""
-                ? labelName
-                : name
-                  .replace(/([A-Z])/g, " $1")
-                  .replace(/^./, (str) => str.toUpperCase())
-            }
-            type={type}
-            value={data[name]}
-            onChange={(e) => handleChange(section, name, e.target.value, index)}
-          />
-        )}
-      </div>
+            ) : type === "radio" ? ( //theres only one radio group on the page, in that case labelName will be a string with comma separated values including the  possible categories of the industry
+                <div className="flex flex-row flex-wrap gap-2">
+                    {labelName &&
+                        labelName.split(", ").map((category, idx) => (
+                            <div key={idx} className="form-control">
+                                <label className="label cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name={name}
+                                        value={category}
+                                        checked={data[name] === category}
+                                        onChange={(e) =>
+                                            handleChange(section, name, category, index)
+                                        }
+                                        className="radio checked:bg-primary mr-2"
+                                    />
+                                    <span className="label-text">{category}</span>
+                                </label>
+                            </div>
+                        ))}
+                </div>
+            ) : name === "category" && section === "registration" ? (
+                <div className="form-control">
+                  <p className="text-sm mb-3 max-md:mt-5"> {labelName && labelName !== ""
+                                ? labelName
+                                : name
+                                    .replace(/([A-Z])/g, " $1")
+                                    .replace(/^./, (str) => str.toUpperCase())} </p>
+                   
+                    <select
+                        name={name}
+                        id={`floating_${name}`}
+                        value={data[name]}
+                        onChange={(e) => handleChange(section, name, e.target.value, index)}
+                        className="select select-bordered"
+                    >
+                        <option value="" disabled>Select a category</option>
+                        {COMPANY_CATEGORIES.map((category, idx) => (
+                            <option key={idx} value={category}>
+                                {category}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            ) : (
+                <FloatingLabelInput
+                    name={name}
+                    id={`floating_${name}`}
+                    label={
+                        labelName && labelName !== ""
+                            ? labelName
+                            : name
+                                .replace(/([A-Z])/g, " $1")
+                                .replace(/^./, (str) => str.toUpperCase())
+                    }
+                    type={type}
+                    value={data[name]}
+                    onChange={(e) => handleChange(section, name, e.target.value, index)}
+                />
+            )}
+        </div>
     ));
-  };
+};
 
   const formatKey = (key) => {
     return key
@@ -372,23 +396,22 @@ const CompanyAddition = () => {
       <div className="bg-base-100 rounded-lg ring-1 ring-base-200 lg:m-10 md:m-5 max-sm:m-5 max-sm:mx-2 max-sm:p-3 p-10">
         <div className="grid gap-5 max-sm:grid-cols-1 md:grid-cols-2">
           {/** Registration Section */}
-          <div className="col-span-2 max-sm:col-span-1">
+          <div className="col-span-2 max-sm:col-span-1 bg-primary bg-opacity-20 p-5 rounded-lg text-secondary">
             <div className="flex items-center gap-2">
               <UserPlusIcon className="size-6" />
               <h1 className="font-bold text-xl">Registration</h1>
             </div>
-            <hr className="my-4"></hr>
           </div>
           {renderFields("registration", [
-            { name: "category", type: "text" },
             { name: "organizationName", type: "text", },
-            { name: "presentAddress", type: "text", longText: true },
+            { name: "presentAddress", type: "text", },
             { name: "website", type: "text" },
             { name: "companyEmail", type: "email" },
+            { name: "category", type: "text" },
           ])}
 
           <div className="flex flex-col gap-2 mb-5">
-            <p className="text-gray-400 text-sm max-md:mt-5"> Upload company logo </p>
+            <p className=" text-sm max-md:mt-5"> Upload company logo </p>
             <input
               type="file"
               id="file"
@@ -401,11 +424,10 @@ const CompanyAddition = () => {
 
           {/** Contact Info Section */}
           <div className="col-span-2 max-sm:col-span-1">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2  bg-primary bg-opacity-20 mt-5 p-5 rounded-lg text-secondary">
               <EnvelopeIcon className="size-6" />
               <h1 className="font-bold text-xl">Contact Information</h1>
             </div>
-            <hr className="my-4"></hr>
           </div>
           {renderFields("contactInfo", [
             { name: "applicantName", type: "text" },
@@ -416,8 +438,8 @@ const CompanyAddition = () => {
 
           {/** Stakeholders Section */}
           <div className="col-span-2 max-sm:col-span-1">
-            <div className="w-full flex justify-between items-center mt-5">
-              <div className="flex items-center gap-2">
+            <div className="w-full flex justify-between gap-3 items-center my-5">
+              <div className="flex flex-1 items-center gap-2 bg-primary bg-opacity-20 p-5 rounded-lg text-secondary">
                 <UserGroupIcon className="size-6" />
                 <h1 className="font-bold text-xl">Stakeholder Profiles</h1>
               </div>
@@ -450,9 +472,9 @@ const CompanyAddition = () => {
                       inline: "nearest",
                     });
                 }}
-                className="btn btn-primary text-white"
+                className="btn btn-primary btn-lg text-white"
               >
-                <UserPlusIcon className="size-5" />
+                <UserPlusIcon className="size-6" />
                 Add
               </button>
             </div>
@@ -461,7 +483,6 @@ const CompanyAddition = () => {
                 "(Note: Details of all Director(s) / Stakeholder(s) are mandatory)"
               }
             </p>
-            <hr className="my-4"></hr>
           </div>
           {/** Map over stakeholders array and render fields for each */}
           {formData.stakeholders.map((stakeholder, index) => (
@@ -534,12 +555,11 @@ const CompanyAddition = () => {
           ))}
 
           {/** Company Profile Section */}
-          <div className="col-span-2 max-sm:col-span-1 mt-5">
+          <div className="col-span-2 max-sm:col-span-1 mt-5 bg-primary bg-opacity-20 p-5 rounded-lg text-secondary mb-3">
             <div className="flex items-center gap-2">
               <BuildingOffice2Icon className="size-6" />
               <h1 className="font-bold text-xl">Company Profile</h1>
             </div>
-            <hr className="my-4"></hr>
           </div>
           {renderFields("companyProfile", [
             {
@@ -561,12 +581,11 @@ const CompanyAddition = () => {
           ])}
 
           {/** Industry Sector Section */}
-          <div className="col-span-2 max-sm:col-span-1">
+          <div className="col-span-2 max-sm:col-span-1 bg-primary bg-opacity-20 p-5 rounded-lg text-secondary mb-3">
             <div className="flex items-center gap-2">
               <CpuChipIcon className="size-6" />
               <h1 className="font-bold text-xl">Industry Sector</h1>
             </div>
-            <hr className="my-4"></hr>
           </div>
           {renderFields("industrySector", [
             { name: "category", type: "radio", labelName: CATEGORIES },
@@ -583,12 +602,11 @@ const CompanyAddition = () => {
           ])}
 
           {/** Company Resource Composition Section */}
-          <div className="col-span-2 max-sm:col-span-1">
+          <div className="col-span-2 max-sm:col-span-1 bg-primary bg-opacity-20 p-5 rounded-lg text-secondary mb-3">
             <div className="flex items-center gap-2">
               <ChartPieIcon className="size-6" />
               <h1 className="font-bold text-xl">Company Resource Composition</h1>
             </div>
-            <hr className="my-4"></hr>
           </div>
           {renderFields("companyResourceComposition", [
             { name: "management", type: "number", labelName: "Management (%)" },
