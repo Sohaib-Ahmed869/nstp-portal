@@ -3,7 +3,8 @@ import { ChatBubbleLeftEllipsisIcon, CheckCircleIcon, CheckIcon, ClockIcon, XCir
 import { AdminService, ReceptionistService, TenantService } from '../services';
 import showToast from '../util/toast';
 import { AuthContext } from '../context/AuthContext';
-import { formatDate } from '../util/date';
+import { formatDate, isWithin72Hours } from '../util/date';
+import { truncateText, getUrgencyLabel } from '../util/util';
 import ConfirmationModal from './ConfirmationModal';
 import ChatPopup from './ChatPopup';
 
@@ -17,26 +18,6 @@ import ChatPopup from './ChatPopup';
 |--------------------------------------------------
 */
 
-// Helper function to truncate text
-const truncateText = (text, maxLength) => {
-    if (text.length > maxLength) {
-        return text.substring(0, maxLength) + '...';
-    }
-    return text;
-};
-
-const getUrgencyLabel = (urgency) => {
-    switch (urgency) {
-        case 3:
-            return "High";
-        case 2:
-            return "Med";
-        case 1:
-            return "Low";
-        default:
-            return "N/A";
-    }
-};
 
 const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortField, sortOrder, handleSortChange, setComplaintIdToDelete, setComplaintTypeToDelete, dialogId }) => {
     const [loading, setLoading] = useState(false);
@@ -50,18 +31,8 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
     const { role } = useContext(AuthContext);
     const rowsPerPage = 5;
 
-
-
     useEffect(() => {
         setRowsToDisplay(complaints.slice(0, rowsPerPage));
-
-        //DUMMY - add chatHistory with 2 messages to the last "pending" (isResolved=false) complaint
-        // setRowsToDisplay(
-        //     complaints.map((complaint, index) =>
-        //         index === complaints.length - 1 ? { ...complaint, chatHistory: [{ from: "user", message: "Hello, I have an issue with my service" }, { from: "staff", message: "I'm sorry to hear you've been facing this issue. I will take the action to fix it." }] } : complaint
-        //     )
-        // );
-        //COMEMNT THIS 0UT LATER
         console.log("Complaints table data ", complaints)
     }, [complaints]);
 
@@ -152,7 +123,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                     } : complaint
                 ).slice(0, rowsPerPage)
             );
-            
+
             showToast(true, response.message);
             setShowChat(true);
         } catch (error) {
@@ -191,6 +162,8 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                 onConfirm={handleReOpenComplaint}
                 modalLoading={modalLoading}
             />
+
+            {/** Displaying complaint details modal */}
             <dialog id={dialogId} className="modal">
                 <div className="modal-box w-11/12 max-w-2xl">
                     <h3 className="font-bold text-xl mb-4 flex items-center gap-3">
@@ -202,7 +175,8 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                             <p className="mt-3 text-2xl"><strong className="text-primary">Subject:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).subject || complaints.find(complaint => complaint.id === selectedComplaintId).serviceType}</p>
                             {role !== "tenant" && <p className="mt-3"><strong className="text-primary">From: </strong> {getTenantName(selectedComplaintId)}</p>}
                             <p className="mt-3"><strong className="text-primary">Description:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).description || "N/A"}</p>
-                            <p className="mt-3"><strong className="text-primary">Urgency:</strong> {getUrgencyLabel(complaints.find(complaint => complaint.id === selectedComplaintId).urgency)}</p>                <p className="mt-3"><strong className="text-primary">Status:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).isResolved ? "Resolved" : "Pending"}</p>
+                            <p className="mt-3"><strong className="text-primary">Urgency:</strong> {getUrgencyLabel(complaints.find(complaint => complaint.id === selectedComplaintId).urgency)}</p>
+                            <p className="mt-3"><strong className="text-primary">Status:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).isResolved ? "Resolved" : "Pending"}</p>
                             <p className="mt-3"><strong className="text-primary">Date Initiated:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).date}</p>
                             <p className="mt-3"><strong className="text-primary">Resolved Date:</strong> {complaints.find(complaint => complaint.id === selectedComplaintId).dateResolved || "N/A"}</p>
                         </div>
@@ -213,6 +187,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                 </div>
             </dialog>
 
+            {/* Chat popup for viewing chat history of re-opened complaints */}
             {showChat && (
                 <ChatPopup
                     onClose={() => setShowChat(false)}
@@ -223,14 +198,20 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                 />
             )}
 
+            {/* Main table title */}
             <div className="flex items-center bg-primary bg-opacity-15 p-5 rounded-md my-2">
                 <Icon className="size-8 text-primary mr-3" />
                 <p className="font-semibold text-xl mr-2">{title}</p>
             </div>
+
+            {/* Table container */}
             <div className="h-full min-h-content overflow-y-auto mt-5">
+                {/* Info */}
                 <p className="my-2 text-gray-500 text-sm">
                     Click on any column header to sort data
                 </p>
+
+                {/* Table */}
                 <table className="table mt-5 min-h-full rounded-lg mb-9">
                     <thead>
                         <tr className="bg-base-200 cursor-pointer">
@@ -318,7 +299,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                                 </>
                                             )}
 
-                                            {(complaint.isResolved && role == "tenant") && (
+                                            {(complaint.isResolved && role == "tenant" && isWithin72Hours(complaint.dateResolved)) && (
                                                 <button
                                                     className="btn btn-sm btn-outline btn-primary"
                                                     onClick={() => {
@@ -350,6 +331,8 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                         )}
                     </tbody>
                 </table>
+
+                {/* Pagination */}
                 {complaints.length > rowsPerPage && (
                     <div className="flex justify-between items-center my-4">
                         <button

@@ -99,7 +99,7 @@ export const Complaints = () => {
         //api call here to cancel complaint
         setCancelLoading(true);
 
-        try{
+        try {
             console.log("Cancelling complaint with id: ", id);
             const response = await TenantService.cancelComplaint(id);
             console.log("🚀 ~ handleCancel ~ response", response);
@@ -181,7 +181,7 @@ export const Complaints = () => {
 
             {/* Main Page Content */}
             <div className={`bg-base-100 mt-5 lg:mt-10 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"}`} >
-                {/* Header + add new emp btn */}
+                {/* Header + add new complaint btn */}
                 <div className="flex flex-row max-sm:flex-col items-center justify-between">
                     <h1 className="text-2xl font-bold">Complaints</h1>
                     <button
@@ -268,6 +268,25 @@ export const Complaints = () => {
 
                     />
                 )}
+
+                {/* Info  */}
+                <div role="alert" className="alert bg-base-200 bg-opacity-15 mt-5  lg:w-1/3">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        className="stroke-primary h-6 w-6 shrink-0">
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                        <h3 className="font-bold">Note: Re-Opening Complaints</h3>
+                        <div className="text-xs">As per NSTP Policy, you can only re-open complaints within 72 hours since resolved date.</div>
+                    </div>
+                </div>
             </div>
         </Sidebar>
     );

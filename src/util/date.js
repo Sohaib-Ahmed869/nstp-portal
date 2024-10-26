@@ -40,3 +40,15 @@ export const getCurrentDateTime = () => {
     });
     return `${formattedDate}, ${formattedTime}`;
 };
+
+
+
+//helper func to calc if complaint can be re opened or not
+export const isWithin72Hours = (dateResolved) => {
+    if (!dateResolved) return false;
+    const resolvedDate = new Date(dateResolved);
+    const currentDate = new Date();
+    const timeDifference = currentDate - resolvedDate;
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+    return hoursDifference <= 72;
+};
