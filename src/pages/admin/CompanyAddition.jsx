@@ -292,22 +292,36 @@ const CompanyAddition = () => {
       );
 
       try {
+        // Create a FormData object
+        const formDataObj = new FormData();
+        formDataObj.append('registration', JSON.stringify(formData.registration));
+        formDataObj.append('contactInfo', JSON.stringify(formData.contactInfo));
+        formDataObj.append('stakeholders', JSON.stringify(formData.stakeholders));
+        formDataObj.append('companyProfile', JSON.stringify(formData.companyProfile));
+        formDataObj.append('industrySector', JSON.stringify(formData.industrySector));
+        formDataObj.append('companyResourceComposition', JSON.stringify(formData.companyResourceComposition));
+        formDataObj.append('companyLogo', formData.registration.companyLogo);
+
         const response = await AdminService.addTenant(
-          formData.registration,
-          formData.contactInfo,
-          formData.stakeholders,
-          formData.companyProfile,
-          formData.industrySector,
-          formData.companyResourceComposition
+          formDataObj
         );
         console.log(response);
+        if (response.error) {
+          console.error(response.error);
+          setSubmitModalTitle("Submission Failed");
+          setSubmitModalText(
+            "An error occurred while submitting the form. Please try again later."
+          );
+          document.getElementById("submit-modal").showModal();
+          return;
+        }
 
         setSubmitModalTitle("Form Submitted");
         setSubmitModalText(
           "Your form has been submitted successfully. We will get back to you soon."
         );
         document.getElementById("submit-modal").showModal();
-        setFormData(EMPTY_FORM_DATA);
+        // setFormData(EMPTY_FORM_DATA);
       } catch (error) {
         console.error("Error submitting form:", error);
         setSubmitModalTitle("Submission Failed");
