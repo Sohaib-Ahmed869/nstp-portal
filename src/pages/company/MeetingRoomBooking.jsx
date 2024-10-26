@@ -15,32 +15,26 @@ import MeetingRoomBookingTable from "../../components/MeetingRoomBookingTable";
 import { TenantService } from "../../services";
 import { formatDate } from '../../util/date';
 import showToast from "../../util/toast";
+import CreateNewBookingModal from "../../components/CreateNewBookingModal";
 
 export const MeetingRoomBooking = () => {
-    const [events, setEvents] = useState([
+  const [events, setEvents] = useState([
     //    { title: 'Booked', start: new Date(2024, 8, 1, 10, 0), end: new Date(2024, 8, 1, 12, 0) },
-    ]);
-    const [loading, setLoading] = useState(true);
-    const [calendarLoading, setCalendarLoading] = useState(true);
-    const [selectedRoom, setSelectedRoom] = useState('1');
-    const [roomOptions, setRoomOptions] = useState([
+  ]);
+  const [loading, setLoading] = useState(true);
+  const [calendarLoading, setCalendarLoading] = useState(true);
+  const [selectedRoom, setSelectedRoom] = useState('1');
+  const [roomOptions, setRoomOptions] = useState([
     //    { value: '1', label: 'Meeting Room 1' }  
-    ]);
+  ]);
 
-    const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([
-     //   { bookingId: "1", roomNo: 'MT-234', status: 'Approved', date: '12/12/2024', time: '12:00 PM - 1:00 PM' },
-      ]);
+  const [meetingRoomSchedule, setMeetingRoomSchedule] = useState([
+    //   { bookingId: "1", roomNo: 'MT-234', status: 'Approved', date: '12/12/2024', time: '12:00 PM - 1:00 PM' },
+  ]);
 
   const [modalLoading, setModalLoading] = useState(false);
   const [meetingToCancel, setMeetingToCancel] = useState(null);
-  const [allBookings, setAllBookings] =
-    useState([]);
-  const [newBooking, setNewBooking] = useState({
-    date: "",
-    startTime: "",
-    endTime: "",
-    roomId: "",
-  });
+  const [allBookings, setAllBookings] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -52,216 +46,186 @@ export const MeetingRoomBooking = () => {
         }
         console.log("Rooms: ", roomsResponse.data.rooms);
 
-                const mappedRooms = roomsResponse.data.rooms.map(room => ({
-                    value: room._id,
-                    label: room.name,
-                }));
+        const mappedRooms = roomsResponse.data.rooms.map(room => ({
+          value: room._id,
+          label: room.name,
+        }));
 
-                setRoomOptions(mappedRooms);
-                setSelectedRoom(mappedRooms[0].value);
-                console.log("set selected room to" , mappedRooms[0].value);
+        setRoomOptions(mappedRooms);
+        setSelectedRoom(mappedRooms[0].value);
+        console.log("set selected room to", mappedRooms[0].value);
 
-                const allBookings = await TenantService.getAllRoomBookings();
-                if(allBookings.error) {
-                    console.log(allBookings.message);
-                    return;
-                }
-                console.log("All bookings: ", allBookings.data.bookings);
-                
-
-                // mapping all bookings to the right format
-                const mappedBookings = allBookings.data.bookings.map(booking => {
-                    const startTime = new Date(booking.time_start);
-                    const endTime = new Date(booking.time_end);
-
-                    console.log("booking time start: ", startTime);
-                    console.log("booking time end: ", endTime);
-
-                    const formatTime = (date) => {
-                        const hours = date.getHours().toString().padStart(2, '0'); // Use getHours for local time
-                        const minutes = date.getMinutes().toString().padStart(2, '0'); // Use getMinutes for local time
-                        return `${hours}:${minutes}`;
-                    };
-
-                    const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
-                    const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
-
-                    console.log("formatted time: ", formattedTime);
-                    console.log("date booking: ", dateBooking);
-                
-                    return {
-                        bookingId: booking._id,
-                        roomNo: booking.room_name || "Room",  //musa return this
-                        company: booking.tenant_name || "Booked", //musa return this
-                        companyId: booking.tenant_id,
-                        roomId: booking.room_id,
-                        time_start: booking.time_start,
-                        time_end: booking.time_end,
-                        status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
-                        dateBooked: formatDate(booking.date_initiated),
-                        time: formattedTime,
-                        dateBooking: dateBooking,
-                    };
-                });
-                console.log("mapped bookings, ", mappedBookings);
-                setAllBookings(mappedBookings); 
-                
-                const tenantBookingsResponse = await TenantService.getRoomBookings();
-                if(tenantBookingsResponse.error) {
-                    console.log(tenantBookingsResponse.message);
-                    return;
-                }
-                console.log("!!! Bookings: ", tenantBookingsResponse.data.bookings);
-                     //   { bookingId: "1", roomNo: 'MT-234', status: 'Approved', date: '12/12/2024', time: '12:00 PM - 1:00 PM' },
-                const mappedTenantBookings = tenantBookingsResponse.data.bookings.map(booking => {
-                    const startTime = new Date(booking.time_start);
-                    const endTime = new Date(booking.time_end);
-
-                    console.log("booking time start: ", startTime);
-                    console.log("booking time end: ", endTime);
-
-                    const formatTime = (date) => {
-                        const hours = date.getHours().toString().padStart(2, '0'); // Use getHours for local time
-                        const minutes = date.getMinutes().toString().padStart(2, '0'); // Use getMinutes for local time
-                        return `${hours}:${minutes}`;
-                    };
-
-                    const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
-                    const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
-
-                    console.log("formatted time: ", formattedTime);
-                    console.log("date booking: ", dateBooking);
-
-                    //get the room name from mappedRooms
-                    const roomName = mappedRooms.find(room => room.value === booking.room_id);
-                
-                    return {
-                        bookingId: booking._id,
-                        company: booking.tenant_name || "Self", //musa return this
-                        companyId: booking.tenant_id,
-                        roomId: booking.room_id,
-                        roomNo: roomName.label, //roomname to display
-                        time_start: booking.time_start,
-                        time_end: booking.time_end,
-                        reasonDecline: booking.reason_decline,
-                        status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
-                        dateBooked: formatDate(booking.date_initiated),
-                        time: formattedTime,
-                        dateBooking: dateBooking,
-                    };
-                });
-                console.log("!!! mapped tenant bookings", mappedTenantBookings);
-                setMeetingRoomSchedule(mappedTenantBookings);
-                // set tenant bookings
-
-            } catch (error) {
-                console.log("Error fetching rooms: ", error);
-            } finally {
-                setLoading(false);
-            }
-            
+        const allBookings = await TenantService.getAllRoomBookings();
+        if (allBookings.error) {
+          console.log(allBookings.message);
+          return;
         }
+        console.log("All bookings: ", allBookings.data.bookings);
+
+
+        // mapping all bookings to the right format
+        const mappedBookings = allBookings.data.bookings.map(booking => {
+          const startTime = new Date(booking.time_start);
+          const endTime = new Date(booking.time_end);
+
+          console.log("booking time start: ", startTime);
+          console.log("booking time end: ", endTime);
+
+          const formatTime = (date) => {
+            const hours = date.getHours().toString().padStart(2, '0'); // Use getHours for local time
+            const minutes = date.getMinutes().toString().padStart(2, '0'); // Use getMinutes for local time
+            return `${hours}:${minutes}`;
+          };
+
+          const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
+          const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
+
+          console.log("formatted time: ", formattedTime);
+          console.log("date booking: ", dateBooking);
+
+          return {
+            bookingId: booking._id,
+            roomNo: booking.room_name || "Room",  //musa return this
+            company: booking.tenant_name || "Booked", //musa return this
+            companyId: booking.tenant_id,
+            roomId: booking.room_id,
+            time_start: booking.time_start,
+            time_end: booking.time_end,
+            status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
+            dateBooked: formatDate(booking.date_initiated),
+            time: formattedTime,
+            dateBooking: dateBooking,
+          };
+        });
+        console.log("mapped bookings, ", mappedBookings);
+        setAllBookings(mappedBookings);
+
+        const tenantBookingsResponse = await TenantService.getRoomBookings();
+        if (tenantBookingsResponse.error) {
+          console.log(tenantBookingsResponse.message);
+          return;
+        }
+        console.log("!!! Bookings: ", tenantBookingsResponse.data.bookings);
+        //   { bookingId: "1", roomNo: 'MT-234', status: 'Approved', date: '12/12/2024', time: '12:00 PM - 1:00 PM' },
+        const mappedTenantBookings = tenantBookingsResponse.data.bookings.map(booking => {
+          const startTime = new Date(booking.time_start);
+          const endTime = new Date(booking.time_end);
+
+          console.log("booking time start: ", startTime);
+          console.log("booking time end: ", endTime);
+
+          const formatTime = (date) => {
+            const hours = date.getHours().toString().padStart(2, '0'); // Use getHours for local time
+            const minutes = date.getMinutes().toString().padStart(2, '0'); // Use getMinutes for local time
+            return `${hours}:${minutes}`;
+          };
+
+          const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
+          const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
+
+          console.log("formatted time: ", formattedTime);
+          console.log("date booking: ", dateBooking);
+
+          //get the room name from mappedRooms
+          const roomName = mappedRooms.find(room => room.value === booking.room_id);
+
+          return {
+            bookingId: booking._id,
+            company: booking.tenant_name || "Self", //musa return this
+            companyId: booking.tenant_id,
+            roomId: booking.room_id,
+            roomNo: roomName.label, //roomname to display
+            time_start: booking.time_start,
+            time_end: booking.time_end,
+            reasonDecline: booking.reason_decline,
+            status: booking.status_booking.charAt(0).toUpperCase() + booking.status_booking.slice(1),
+            dateBooked: formatDate(booking.date_initiated),
+            time: formattedTime,
+            dateBooking: dateBooking,
+          };
+        });
+        console.log("!!! mapped tenant bookings", mappedTenantBookings);
+        setMeetingRoomSchedule(mappedTenantBookings);
+        // set tenant bookings
+
+      } catch (error) {
+        console.log("Error fetching rooms: ", error);
+      } finally {
+        setLoading(false);
+      }
+
+    }
 
     fetchData();
   }, []);
 
-    useEffect(() => {
-        console.log("Selected room: ", selectedRoom);
-        setCalendarLoading(true);
-        
-                //out of the mapped bookings, get the ones for the current room (room_id matches the selected room)
-                const roomBookings = allBookings.filter(booking => booking.roomId === selectedRoom);
-                console.log("THIS Room;s bookings: ", roomBookings);
+  useEffect(() => {
+    console.log("Selected room: ", selectedRoom);
+    setCalendarLoading(true);
 
-                //getting the approved bookings out of the above room bookings (to dipslay in caldenar)
-                const approvedBookings =roomBookings.filter(booking => booking.status === 'Approved').map(booking => {
-                    const startTime = new Date(booking.time_start);
-                    const endTime = new Date(booking.time_end);
-                
-                    return {
-                        title: booking.tenant_name || "Booked",
-                        start: startTime,
-                        end: endTime,
-                    };
-                });
+    //out of the mapped bookings, get the ones for the current room (room_id matches the selected room)
+    const roomBookings = allBookings.filter(booking => booking.roomId === selectedRoom);
+    console.log("THIS Room;s bookings: ", roomBookings);
 
-                console.log("setting the events to this : ", approvedBookings);
+    //getting the approved bookings out of the above room bookings (to dipslay in caldenar)
+    const approvedBookings = roomBookings.filter(booking => booking.status === 'Approved').map(booking => {
+      const startTime = new Date(booking.time_start);
+      const endTime = new Date(booking.time_end);
 
-                setEvents(approvedBookings);
-                
+      return {
+        title: booking.tenant_name || "Booked",
+        start: startTime,
+        end: endTime,
+      };
+    });
 
-        setTimeout(() => {
-            setCalendarLoading(false);
-        }, 900);
-    }, [selectedRoom]);
+    console.log("setting the events to this : ", approvedBookings);
+
+    setEvents(approvedBookings);
+
+
+    setTimeout(() => {
+      setCalendarLoading(false);
+    }, 900);
+  }, [selectedRoom]);
 
   const handleRoomChange = (e) => {
     setSelectedRoom(e.target.value);
   };
 
-    const cancelMeeting = async (meetingId) => {
-        setModalLoading(true);
-        try{
-          const response = await TenantService.cancelRoomBooking(meetingId);
-          console.log(response);
-          if (response.error) {
-            console.log(response.message);
-            showToast(false, response.error);
-          }
-
-          console.log("Meeting cancelled: ", response.data.booking);
-          setMeetingRoomSchedule(prevSchedule =>
-            prevSchedule.filter(meeting => meeting.bookingId !== meetingId)
-          );
-          
-          showToast(true, response.message);
-
-        } catch (error) {
-          console.log("Error cancelling meeting: ", error);
-        } finally {
-          setModalLoading(false);
-          document.getElementById('meeting_cancellation').close();
-        }
-    };
-
-  const handleNewBookingChange = (e) => {
-    setNewBooking({ ...newBooking, [e.target.name]: e.target.value });
-  };
-
-  const submitNewBooking = async () => {
+  const cancelMeeting = async (meetingId) => {
     setModalLoading(true);
+    try {
+      const response = await TenantService.cancelRoomBooking(meetingId);
+      console.log(response);
+      if (response.error) {
+        console.log(response.message);
+        showToast(false, response.error);
+      }
 
-    try{
-        const response = await TenantService.requestRoomBooking(newBooking);
-        console.log(response);
-        if (response.error) {
-            console.log(response.message);
-            showToast(false, response.error);
-        }
+      console.log("Meeting cancelled: ", response.data.booking);
+      setMeetingRoomSchedule(prevSchedule =>
+        prevSchedule.filter(meeting => meeting.bookingId !== meetingId)
+      );
 
-        console.log("New booking submitted: ", response.data.booking);
-        showToast(true, response.message);
-
-        //clear the fields
-        setNewBooking({ date: '', startTime: '', endTime: '', roomId: '' });
-        document.getElementById('new_booking_modal').close();
-        
+      showToast(true, response.message);
 
     } catch (error) {
-        console.log("Error submitting new booking: ", error);
+      console.log("Error cancelling meeting: ", error);
     } finally {
-        setModalLoading(false);
+      setModalLoading(false);
+      document.getElementById('meeting_cancellation').close();
     }
-
   };
+
+
 
   return (
     <Sidebar>
       {loading && <NSTPLoader />}
       <div
-        className={`bg-base-100 mt-5 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${
-          loading && "hidden"
-        }`}
+        className={`bg-base-100 mt-5 ring-1 ring-gray-200 p-5 pb-14 rounded-lg ${loading && "hidden"
+          }`}
       >
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold mb-5">
@@ -329,89 +293,9 @@ export const MeetingRoomBooking = () => {
       </div>
 
       {/* Modal for new booking */}
-      <dialog
-        id="new_booking_modal"
-        className="modal modal-bottom sm:modal-middle"
-      >
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">New Booking Request</h3>
-          <div className="py-4">
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Date</span>
-              </label>
-              <input
-                type="date"
-                name="date"
-                value={newBooking.date}
-                onChange={handleNewBookingChange}
-                className="input input-bordered w-full"
-              />
-            </div>
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Start Time</span>
-              </label>
-              <input
-                type="time"
-                name="startTime"
-                value={newBooking.startTime}
-                onChange={handleNewBookingChange}
-                className="input input-bordered w-full"
-              />
-            </div>
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">End Time</span>
-              </label>
-              <input
-                type="time"
-                name="endTime"
-                value={newBooking.endTime}
-                onChange={handleNewBookingChange}
-                className="input input-bordered w-full"
-              />
-            </div>
-            <div className="form-control w-full">
-              <label className="label">
-                <span className="label-text">Room</span>
-              </label>
-              <select
-                name="roomId"
-                value={newBooking.roomId}
-                onChange={handleNewBookingChange}
-                className="select select-bordered w-full"
-              >
-                <option value="">Select a room</option>
-                {roomOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="modal-action">
-            <button
-              className="btn"
-              onClick={() =>
-                document.getElementById("new_booking_modal").close()
-              }
-            >
-              Close
-            </button>
-            <button
-              className={`btn btn-primary ${modalLoading && "btn-disabled"}`}
-              onClick={submitNewBooking}
-            >
-              {modalLoading && (
-                <span className="loading loading-spinner"></span>
-              )}
-              {modalLoading ? "Submitting..." : "Submit"}
-            </button>
-          </div>
-        </div>
-      </dialog>
+      <CreateNewBookingModal
+        roomOptions={roomOptions}
+      />
     </Sidebar>
   );
 };

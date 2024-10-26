@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { UserGroupIcon, ChatBubbleOvalLeftEllipsisIcon, LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TrashIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, CalendarDateRangeIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon, ArrowDownTrayIcon, PresentationChartLineIcon, CurrencyDollarIcon, DocumentIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
-import nstpLogo from '../assets/nstplogocolored.png'
 import ReactApexChart from 'react-apexcharts';
 
 /* Components */
@@ -670,6 +669,7 @@ const Company = ({ role }) => {
             const consolidatedData = {
               name: fetchedData.registration.organizationName,
               type: fetchedData.registration.category,
+              logo: fetchedData.registration.companyLogo,
               category: fetchedData.industrySector.category,
               rentalSpaceSqft: fetchedData.industrySector.rentalSpaceSqFt + " sq ft",
               companyHeadquarters: fetchedData.companyProfile.companyHeadquarters,
@@ -1331,8 +1331,19 @@ const Company = ({ role }) => {
                 <div className="mb-2 p-2 rounded-md bg-accent text-white">{companyData.interns.nustian + " NUSTians"}</div>
                 <div className="p-2 rounded-md bg-primary text-white">{companyData.interns.nonNustian + " Non NUSTians"}</div>
               </div>
-              <div id="pie-chart">
-                <ReactApexChart options={getPieChartOptions(companyData.interns)} series={getPieChartOptions(companyData.interns).series} type="pie" height={220} />
+              <div id="pie-chart" className="flex items-center justify-center">
+                {companyData.interns.nustian === 0 && companyData.interns.nonNustian === 0 ? (
+                  <div className="flex items-center justify-center m-5 w-[190px] h-[190px] bg-gray-200 rounded-full">
+                    <span className="text-gray-500">No data to show</span>
+                  </div>
+                ) : (
+                  <ReactApexChart
+                    options={getPieChartOptions(companyData.interns)}
+                    series={getPieChartOptions(companyData.interns).series}
+                    type="pie"
+                    height={220}
+                  />
+                )}
               </div>
             </div>
 

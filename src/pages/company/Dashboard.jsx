@@ -58,14 +58,14 @@ const Dashboard = () => {
 
   const mapComplaintsData = (complaints) => {
     return complaints.map(complaint => ({
-        id: complaint._id,
-        date: formatDate(complaint.date_initiated),
-        serviceType: complaint.service_type ? complaint.service_name : complaint.subject,
-        urgency: complaint.urgency,
-        isResolved: complaint.is_resolved,
-        daysPending: Math.floor((new Date() - new Date(complaint.date_initiated)) / (1000 * 60 * 60 * 24)), // Calculate days pending
+      id: complaint._id,
+      date: formatDate(complaint.date_initiated),
+      serviceType: complaint.service_type ? complaint.service_name : complaint.subject,
+      urgency: complaint.urgency,
+      isResolved: complaint.is_resolved,
+      daysPending: Math.floor((new Date() - new Date(complaint.date_initiated)) / (1000 * 60 * 60 * 24)), // Calculate days pending
     }));
-};
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -82,10 +82,10 @@ const Dashboard = () => {
           ...employee,
           date_joining: formatDate(employee.date_joining),
         }));
-        
+
         const mappedComplaints = mapComplaintsData(response.data.dashboard.complaintsData.oldest);
         setRecentComplaints(mappedComplaints);
-  
+
         setEmployeeTableData(mappedEmpTableData);
         setEmployeeStats({
           total: response.data.dashboard.employeeData.total,
@@ -102,7 +102,7 @@ const Dashboard = () => {
         const mappedSchedule = response.data.dashboard.bookings.map(booking => {
           const startTime = new Date(booking.time_start);
           const endTime = new Date(booking.time_end);
-         
+
           const formattedTime = `${formatTime(startTime)} - ${formatTime(endTime)}`;
           const dateBooking = startTime.toISOString().split('T')[0]; // Extract date in YYYY-MM-DD format
           return {
@@ -203,13 +203,19 @@ const Dashboard = () => {
                   {internStats.nonNustian + " Non NUSTians"}
                 </div>
               </div>
-              <div id="pie-chart">
-                <ReactApexChart
-                  options={getPieChartOptions(internStats)}
-                  series={getPieChartOptions(internStats).series}
-                  type="pie"
-                  height={220}
-                />
+              <div id="pie-chart" className="flex items-center justify-center">
+                {internStats.nustian === 0 && internStats.nonNustian === 0 ? (
+                  <div className="flex items-center justify-center m-5 w-[150px] h-[150px] bg-gray-200 rounded-full">
+                    <span className="text-gray-500">No data to show</span>
+                  </div>
+                ) : (
+                  <ReactApexChart
+                    options={getPieChartOptions(internStats)}
+                    series={getPieChartOptions(internStats).series}
+                    type="pie"
+                    height={220}
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -296,52 +302,59 @@ const Dashboard = () => {
 
         {/* Third row */}
         <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
-             {/** News feed */}
-             <div className="col-span-1 lg:col-span-3">
+          {/** News feed */}
+          <div className="col-span-1 lg:col-span-3">
             <NewsFeed />
           </div>
 
           {/* Oldest Complaints section */}
           <div className="flex flex-col gap-4 col-span-1 lg:col-span-4 min-h-full">
             <div className="card p-5 h-full">
-              <div className="flex items-center justify-between mb-2">
+              {/* Header with title and buttons */}
+              <div className="flex lg:flex-row flex-col lg:items-center justify-between mb-2">
                 <h1 className="text-2xl font-bold">Pending Complaints</h1>
-                <Link to="complaints" className=' btn btn-primary text-white btn-md'>
-                  <TableCellsIcon className="h-5 w-5" />
-                  View All
-                </Link>
+                <div className="flex gap-2  mt-3 lg:mt-0 ">
+                  <button className=' btn btn-primary btn-outline hover:text-white text-white btn-md' onClick={() => document.getElementById('complaint_modal').showModal()}>
+                    <PaperAirplaneIcon className="h-5 w-5" />
+                    Send Complaint
+                  </button>
+                  <Link to="complaints" className=' btn btn-primary text-white btn-md'>
+                    <TableCellsIcon className="h-5 w-5" />
+                    View All
+                  </Link>
+                </div>
               </div>
-             <div className="overflow-scroll scrollbar-hide">
-               <table className="table w-full my-3">
-                 <tbody>
-                   <tr className="bg-base-200">
-                     <th>Date</th>
-                     <th>Subject/Type</th>
-                     <th>Urgency</th>
-                     <th>Status</th>
-                     <th>Days Pending</th>
-                   </tr>
-              
-                   {recentComplaints.map((complaint, index) => (
-                     <tr key={complaint.id} className="group">
-                       <td className="">{complaint.date}</td>
-                       <td className="">{complaint.serviceType}</td>
-                       <td className="">
-                         <div className={`badge text-base-100 ${complaint.urgency === 1 ? "badge-primary" : complaint.urgency === 2 ? "badge-secondary" : "badge-error"} flex items-center py-3`} >
-                           {complaint.urgency === 1 ? "Low" : complaint.urgency === 2 ? "Med" : "High"}
-                         </div>
-                       </td>
-                       <td className="">{complaint.isResolved ? "Resolved" : "Pending"}</td>
-                       <td className="">{complaint.daysPending}</td>
-                     </tr>
-                   ))}
-                 </tbody>
-               </table>
-             </div>
+              {/** Table content */}
+              <div className="overflow-scroll scrollbar-hide">
+                <table className="table w-full my-3">
+                  <tbody>
+                    <tr className="bg-base-200">
+                      <th>Date</th>
+                      <th>Subject/Type</th>
+                      <th>Urgency</th>
+                      <th>Status</th>
+                      <th>Days Pending</th>
+                    </tr>
+
+                    {recentComplaints.map((complaint, index) => (
+                      <tr key={complaint.id} className="group">
+                        <td className="">{complaint.date}</td>
+                        <td className="">{complaint.serviceType}</td>
+                        <td className="">
+                          <div className={`badge text-base-100 ${complaint.urgency === 1 ? "badge-primary" : complaint.urgency === 2 ? "badge-secondary" : "badge-error"} flex items-center py-3`} >
+                            {complaint.urgency === 1 ? "Low" : complaint.urgency === 2 ? "Med" : "High"}
+                          </div>
+                        </td>
+                        <td className="">{complaint.isResolved ? "Resolved" : "Pending"}</td>
+                        <td className="">{complaint.daysPending}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-
-       
+          
         </div>
       </div>
     </Sidebar>

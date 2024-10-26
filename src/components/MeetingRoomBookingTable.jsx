@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { TenantService, ReceptionistService } from '../services';
 import showToast from '../util/toast';
 import { AuthContext } from '../context/AuthContext';
+import CreateNewBookingModal from './CreateNewBookingModal';
 
 
 const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComponent = false, setMeetingRoomSchedule }) => {
@@ -258,21 +259,30 @@ const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComp
                 </div>
             </dialog>
 
+            {/* modal for new booking */}
+            <CreateNewBookingModal />
+
             {/** meeting room schedule table */}
             <div className="">
                 <div className="flex justify-between mb-3 items-center">
                     <p className="mb-3 font-bold"> Meeting Room Schedule</p>
                     {dashboardComponent &&
-                        <Link className="btn btn-primary text-white btn-md" to="bookings">
-                            <CalendarDaysIcon className="size-7" /> View All
-                        </Link>
+                       <div className="flex gap-3">
+                         <button className="btn btn-primary btn-outline btn-md"
+                                onClick={() => document.getElementById('new_booking_modal').showModal()}
+                         >
+                             <CalendarDaysIcon className="size-7" /> Book Now
+                         </button>
+                         <Link className="btn btn-primary text-white btn-md" to="bookings">
+                             <CalendarDaysIcon className="size-7" /> View All
+                         </Link>
+                       </div>
                     }
                 </div>
 
                 {/* Sorting, Filtering, and Search Controls */}
                 {!dashboardComponent && (
                     <div className="flex justify-between mb-3 items-center">
-
                         <div className="relative w-full md:max-w-xs">
                             <input
                                 type="text"

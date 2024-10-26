@@ -1,8 +1,8 @@
 export const formatDate = (dateString) => {
-    if(!dateString) return dateString;
+    if (!dateString) return dateString;
     try {
         const date = new Date(dateString);
-        
+
         // Check if the date is valid
         if (isNaN(date.getTime())) {
             throw new Error("Invalid date");
@@ -51,4 +51,17 @@ export const isWithin72Hours = (dateResolved) => {
     const timeDifference = currentDate - resolvedDate;
     const hoursDifference = timeDifference / (1000 * 60 * 60);
     return hoursDifference <= 72;
+};
+
+//Helper func to convert MTTR minutes into hours or days if needed.
+export const formatMTTR = (minutes) => {
+    if (minutes >= 1440) { // 1440 minutes in a day
+        const days = (minutes / 1440).toFixed(1);
+        return { number: days, unit: 'days' };
+    } else if (minutes >= 60) { // 60 minutes in an hour
+        const hours = (minutes / 60).toFixed(1);
+        return { number: hours, unit: 'hours' };
+    } else {
+        return { number: minutes, unit: 'minutes' };
+    }
 };

@@ -174,7 +174,13 @@ export const Dashboard = () => {
             {/* Complaints section charts */}
             <div className="flex-1 md:col-span-3 grid grid-cols-1 gap-4 ">
               <div className="card p-5">
-                <p className="my-2 font-bold">Complaints Statistics</p>
+                <div className="flex justify-between mb-2">
+                  <p className="my-2 font-bold">Complaints Statistics</p>
+                  <button className="btn btn-md text-base-100 btn-primary">
+                    <TableCellsIcon className="h-5 w-5" />
+                    View All
+                  </button>
+                </div>
 
                 <div className="mt-5 grid grid-cols-1 xl:grid-cols-2 gap-8">
                   <div className="stat ring-1 rounded-2xl ring-base-200 ">
