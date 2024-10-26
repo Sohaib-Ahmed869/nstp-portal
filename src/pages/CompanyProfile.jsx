@@ -23,6 +23,8 @@ import showToast from '../util/toast';
 import { getPieChartOptions } from '../util/charts';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
+import { saveAs } from 'file-saver';
+
 /* Constants */
 const MAX_CHAR_COUNT = 400; // max characters for notes
 const CONTRACT_DURATION_THRESHOLD = 90; // after 90% of contract duration, the radial progress will become red
@@ -275,37 +277,39 @@ const Company = ({ role }) => {
 
   const downloadLogo = async () => {
     try {
-      // Fetch the image from Firebase Storage
-      const response = await fetch(companyData.logo, {
-        mode: 'cors', // Ensure CORS is enabled on Firebase Storage
-      });
+      // // Fetch the image from Firebase Storage
+      // const response = await fetch(companyData.logo, {
+      //   mode: 'cors', 
+      // });
+      
+      // console.log("Response:", response);
+      // if (!response.ok) {
+      //   throw new Error('Network response was not ok');
+      // }
   
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+      // // Convert the response to a blob
+      // const blob = await response.blob();
   
-      // Convert the response to a blob
-      const blob = await response.blob();
+      // // Create a Blob URL
+      // const url = window.URL.createObjectURL(blob);
   
-      // Create a Blob URL
-      const url = window.URL.createObjectURL(blob);
+      // // Create a temporary anchor element
+      // const link = document.createElement('a');
+      // link.href = url;
+      // link.download = `${companyData.name}_logo.png`; // Set the desired file name
   
-      // Create a temporary anchor element
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${companyData.name}_logo.png`; // Set the desired file name
+      // // Append the link to the body
+      // document.body.appendChild(link);
   
-      // Append the link to the body
-      document.body.appendChild(link);
+      // // Programmatically click the link to trigger the download
+      // link.click();
   
-      // Programmatically click the link to trigger the download
-      link.click();
+      // // Clean up by removing the link and revoking the Blob URL
+      // link.remove();
+      // window.URL.revokeObjectURL(url);
+
+      saveAs(companyData.logo, `${companyData.username}_logo.png`);
   
-      // Clean up by removing the link and revoking the Blob URL
-      link.remove();
-      window.URL.revokeObjectURL(url);
-  
-      // Show a success toast/message
       showToast(true, "Company logo downloaded");
     } catch (error) {
       console.error('Download error:', error);
@@ -390,19 +394,35 @@ const Company = ({ role }) => {
     setModalLoading(true);
     console.log("Deleting company logo...");  
     try {
-      setTimeout (() => 
-        { console.log("meow")
-          setModalLoading(false);
-          setCompanyData((prevData) => ({
-            ...prevData,
-            logo: null
-          }));
-  
-        //api call here
-        showToast(true, "Company logo deleted successfully.");
-        document.getElementById('delete-logo-modal').close()
 
-        }, 2000); //remove this timout wrapper when api call done
+      const response = await AdminService.deleteTenantLogo(companyId);
+      if(response.error){
+        console.error("Error deleting company logo:", response.error);
+        showToast(false, response.error);
+        return;
+      }
+
+      console.log("Company logo deleted successfully:", response.message);
+      
+      setCompanyData((prevData) => ({
+        ...prevData,
+        logo: null
+      }));
+
+      showToast(true, response.message);
+      // setTimeout (() => 
+      //   { console.log("meow")
+      //     setModalLoading(false);
+      //     setCompanyData((prevData) => ({
+      //       ...prevData,
+      //       logo: null
+      //     }));
+  
+      //   //api call here
+      //   showToast(true, "Company logo deleted successfully.");
+      //   document.getElementById('delete-logo-modal').close()
+
+      //   }, 2000); //remove this timout wrapper when api call done
 
     }
     catch (error) {
@@ -411,6 +431,7 @@ const Company = ({ role }) => {
     }
     finally {
       setModalLoading(false);
+      document.getElementById('delete-logo-modal').close();
     }
   }
 
@@ -567,7 +588,7 @@ const Company = ({ role }) => {
               name: fetchedData.registration.organizationName,
               type: fetchedData.registration.category,
               category: fetchedData.industrySector.category,
-              logo: fetchedData.registration.companyLogo || nstpLogo,
+              logo: fetchedData.registration.companyLogo, // || nstpLogo,
               rentalSpaceSqft: fetchedData.industrySector.rentalSpaceSqFt + " sq ft",
               companyHeadquarters: fetchedData.companyProfile.companyHeadquarters,
               contactPerson: fetchedData.contactInfo.applicantName,
@@ -610,6 +631,7 @@ const Company = ({ role }) => {
                   note: "This is a note from admin2",
                 },
               ],
+              username: fetchedData.username,
             };
             console.log("setting company data to: ", consolidatedData)
             setCompanyData(consolidatedData);
@@ -814,7 +836,7 @@ const Company = ({ role }) => {
     }
   }
 
-  const uploadCompanyLogo = () => {
+  const uploadCompanyLogo = async () => {
     if (!logoToUpload){ 
       showToast(false, "Please select a file to upload.");
       return;
@@ -822,21 +844,47 @@ const Company = ({ role }) => {
     
     setModalLoading(true);
     const formData = new FormData();
-    formData.append('companyLogo', logoToUpload);
+    formData.append('logo', logoToUpload);
+    formData.append('tenantId', companyId);
     
-   
-    // Perform the upload logic here API CALLLSs
+    try {
+      const response = await AdminService.uploadTenantLogo(formData);
+      if (response.error) {
+        console.log(response.error)
+        showToast(false, response.error);
+        return;
+      }
 
-    setTimeout(() => {
-      showToast(true, "Successfully Uploaded Logo");
-      setModalLoading(false);
-      document.getElementById('upload-logo-modal').close();
-      setLogoToUpload(null);
+      console.log("Logo uploaded successfully:", response.message);
+      console.log(response.data.imageUrl)
+      
       setCompanyData((prevData) => ({
         ...prevData,
-        logo: URL.createObjectURL(logoToUpload)
+        logo: response.data.imageUrl
       }));
-    }, 2000);
+      
+      document.getElementById('upload-logo-modal').close();
+      showToast(true, response.message);
+
+    } catch (error) {
+      console.error("Error uploading logo:", error);
+      showToast(false, "An error occurred while uploading logo.");
+    } finally {
+      setModalLoading(false);
+    }
+
+    // Perform the upload logic here API CALLLSs
+
+    // setTimeout(() => {
+    //   showToast(true, "Successfully Uploaded Logo");
+    //   setModalLoading(false);
+    //   document.getElementById('upload-logo-modal').close();
+    //   setLogoToUpload(null);
+    //   setCompanyData((prevData) => ({
+    //     ...prevData,
+    //     logo: URL.createObjectURL(logoToUpload)
+    //   }));
+    // }, 2000);
   };
 
   return (
