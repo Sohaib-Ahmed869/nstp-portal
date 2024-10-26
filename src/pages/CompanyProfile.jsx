@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { useParams } from 'react-router-dom';
-import { UserGroupIcon, ChatBubbleOvalLeftEllipsisIcon, LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TrashIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, CalendarDateRangeIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon, ArrowDownTrayIcon, PresentationChartLineIcon, CurrencyDollarIcon, DocumentIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import React, { useEffect, useState, useContext, useRef } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { UserGroupIcon, ChatBubbleOvalLeftEllipsisIcon, MagnifyingGlassIcon, LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TrashIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, CalendarDateRangeIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon, ArrowDownTrayIcon, PresentationChartLineIcon, CurrencyDollarIcon, DocumentIcon, ArrowUpTrayIcon, CheckBadgeIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import ReactApexChart from 'react-apexcharts';
 
 /* Components */
@@ -59,6 +59,7 @@ const Company = ({ role }) => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [deadline, setDeadline] = useState(null);
   const { tower } = useContext(TowerContext);
+  const [searchQuery, setSearchQuery] = useState('');
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -274,39 +275,17 @@ const Company = ({ role }) => {
 
   const [stickyNotes, setStickyNotes] = useState([]);
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredEmployees = companyData.employees.filter(employee =>
+    employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    employee.designation.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const downloadLogo = async () => {
     try {
-      // // Fetch the image from Firebase Storage
-      // const response = await fetch(companyData.logo, {
-      //   mode: 'cors', 
-      // });
-
-      // console.log("Response:", response);
-      // if (!response.ok) {
-      //   throw new Error('Network response was not ok');
-      // }
-
-      // // Convert the response to a blob
-      // const blob = await response.blob();
-
-      // // Create a Blob URL
-      // const url = window.URL.createObjectURL(blob);
-
-      // // Create a temporary anchor element
-      // const link = document.createElement('a');
-      // link.href = url;
-      // link.download = `${companyData.name}_logo.png`; // Set the desired file name
-
-      // // Append the link to the body
-      // document.body.appendChild(link);
-
-      // // Programmatically click the link to trigger the download
-      // link.click();
-
-      // // Clean up by removing the link and revoking the Blob URL
-      // link.remove();
-      // window.URL.revokeObjectURL(url);
-
       saveAs(companyData.logo, `${companyData.username}_logo.png`);
 
       showToast(true, "Company logo downloaded");
@@ -328,14 +307,6 @@ const Company = ({ role }) => {
       text: 'Download Logo',
       icon: ArrowDownTrayIcon,
       onClick: () => {
-        // const link = document.createElement('a');
-        // link.href = companyData.logo;
-        // link.download = `${companyData.name}_logo.png`;
-        // document.body.appendChild(link);
-        // link.click();
-        // document.body.removeChild(link);
-        // showToast(true, "Company logo downloaded");
-
         downloadLogo();
       },
     } : null,
@@ -377,9 +348,14 @@ const Company = ({ role }) => {
     },
   ];
 
-  const [logoToUpload, setLogoToUpload] = useState(null);//for uploading logo
-
+  //states for uploading logo
+  const [logoToUpload, setLogoToUpload] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const fileInputRef = useRef(null);
+  //dropdwown
   const [dropdownOpen, setDropdownOpen] = useState({});
+
+  //password handling
   const handlePasswordInputChange = (e) => {
     const { name, value } = e.target;
     setPasswordData((prevData) => ({
@@ -448,6 +424,14 @@ const Company = ({ role }) => {
     }
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       showToast(false, "New password and confirm password do not match.");
+      return;
+    }
+    if (passwordData.newPassword.length < 8) {
+      showToast(false, "Password must be at least 8 characters long.");
+      return;
+    }
+    if (passwordData.newPassword === passwordData.currentPassword) {
+      showToast(false, "New password must be different from current password.");
       return;
     }
     //api call here to change 
@@ -835,6 +819,19 @@ const Company = ({ role }) => {
       setModalLoading(false);
     }
   }
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const maxSizeInMB = 2; // 2 MB
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
+    if (file && file.size > maxSizeInBytes) {
+      setErrorMessage(`File size is above ${maxSizeInMB} MB. Please select a smaller file.`);
+      setLogoToUpload(null);
+    } else {
+      setErrorMessage('');
+      setLogoToUpload(file);
+    }
+  };
 
   const uploadCompanyLogo = async () => {
     if (!logoToUpload) {
@@ -1003,18 +1000,35 @@ const Company = ({ role }) => {
           <div className="flex flex-col gap-5">
             <h3 className="font-bold text-lg flex items-center">
               <ArrowUpTrayIcon className="size-8 text-primary mr-2" />
-              Upload Company Logo</h3>
+              Upload Company Logo
+            </h3>
             <input
               type="file"
               accept="image/*"
               className="file-input file-input-bordered"
               id="logo-upload"
-              onChange={(e) => setLogoToUpload(e.target.files[0])}
+              ref={fileInputRef}
+              onChange={handleFileChange}
             />
+            {errorMessage && <p className="text-red-900 bg-red-300 p-3 rounded-xl flex gap-2 items-center"> <ExclamationTriangleIcon className="size-5" /> {errorMessage}</p>}
+            {logoToUpload && !errorMessage && (<p className="text-lime-900 bg-lime-200 p-3 rounded-xl flex gap-2 items-center"> <CheckBadgeIcon className="size-5" /> File selected is under 2MB.</p>)}
           </div>
           <div className="modal-action">
-            <button className="btn" onClick={() => { setLogoToUpload(null); document.getElementById('upload-logo-modal').close() }}>Cancel</button>
-            <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={uploadCompanyLogo}>
+            <button
+              className="btn"
+              onClick={() => {
+                setLogoToUpload(null);
+                setErrorMessage('');
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = ''; // Reset the file input value
+                }
+                document.getElementById('upload-logo-modal').close();
+              }}
+            >
+              Cancel
+            </button>
+
+            <button className={`btn btn-primary ${(errorMessage || modalLoading) && "btn-disabled"}`} onClick={uploadCompanyLogo}>
               {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Upload"}
             </button>
           </div>
@@ -1415,26 +1429,56 @@ const Company = ({ role }) => {
           <hr className="mt-12 mb-5 text-gray-200"></hr>
           {/* Employees list */}
           <div>
-            <h1 className="text-2xl font-semibold mt-5">Employees</h1>
-            {companyData.employees.length === 0 ? <div className="text-secondary">No employees found</div>
-              :
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
+            <div className="flex justify-between items-center mt-5">
+              <h1 className="text-2xl font-semibold ">Employees</h1>
+              <div className="flex gap-3 items-center">
 
-                {companyData.employees.map((employee) => (
+                <div className="relative w-full md:max-w-xs ">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    className="input input-bordered w-full pl-10"
+                  />
+                  <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+                </div>
+                {role == "tenant" && (
+                  <Link to={"/tenant/employees"} className="btn btn-primary text-base-100">
+                    <UserGroupIcon className="size-5" />
+                    View All
+                  </Link>
+                )}
+              </div>
+            </div>
+
+            {companyData.employees.length === 0 ? (
+              <div className="text-secondary">No employees yet.</div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
+                {filteredEmployees.map((employee) => (
                   <div key={employee._id} className="relative card p-5 flex flex-col gap-5 items-start group">
                     <div className="flex gap-2">
                       <div className="avatar">
-                        <div className="w-20 rounded-full bg-gray-300">
-
-                          {employee.photo ? <img src={employee.photo} alt={employee.name} /> :
-                            <UserCircleIcon className="size-20 text-gray-400" />}
+                        <div className="w-20 rounded-full bg-primary bg-opacity-30">
+                          {employee.photo ? (
+                            <img src={employee.photo} alt={employee.name} />
+                          ) : (
+                            <UserCircleIcon className="size-20 text-secondary text-opacity-50" />
+                          )}
                         </div>
                       </div>
-
                       <div>
                         <h2 className="text-lg font-semibold">{employee.name}</h2>
                         <p className="text-sm text-gray-500">{employee.designation}</p>
-                        <p className="text-sm text-gray-500">{"Joined on " + new Date(employee.date_joining).toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' })}</p>
+                        <p className="text-sm text-gray-500">
+                          {"Joined on " +
+                            new Date(employee.date_joining).toLocaleDateString('en-GB', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                            })}
+                        </p>
                       </div>
                     </div>
                     <div className="absolute inset-0 bg-base-100 rounded-md bg-opacity-50 backdrop-blur-sm flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -1448,21 +1492,23 @@ const Company = ({ role }) => {
                         >
                           View Profile
                         </button>
-                        {role == "tenant" && <button
-                          className="btn btn-error text-base-100"
-                          onClick={() => {
-                            setSelectedEmployee(employee);
-                            document.getElementById('terminate-modal').showModal();
-                          }}
-                        >
-                          Terminate
-                        </button>}
+                        {role == "tenant" && (
+                          <button
+                            className="btn btn-error text-base-100"
+                            onClick={() => {
+                              setSelectedEmployee(employee);
+                              document.getElementById('terminate-modal').showModal();
+                            }}
+                          >
+                            Terminate
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            }
+            )}
           </div>
         </div>
       </SideDrawer>
