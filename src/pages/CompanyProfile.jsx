@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
-import { UserGroupIcon,ChatBubbleOvalLeftEllipsisIcon, LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TrashIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, CalendarDateRangeIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon, ArrowDownTrayIcon, PresentationChartLineIcon, CurrencyDollarIcon, DocumentIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon, ChatBubbleOvalLeftEllipsisIcon, LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TrashIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, CalendarDateRangeIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon, ArrowDownTrayIcon, PresentationChartLineIcon, CurrencyDollarIcon, DocumentIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import nstpLogo from '../assets/nstplogocolored.png'
 import ReactApexChart from 'react-apexcharts';
 
@@ -281,35 +281,35 @@ const Company = ({ role }) => {
       // const response = await fetch(companyData.logo, {
       //   mode: 'cors', 
       // });
-      
+
       // console.log("Response:", response);
       // if (!response.ok) {
       //   throw new Error('Network response was not ok');
       // }
-  
+
       // // Convert the response to a blob
       // const blob = await response.blob();
-  
+
       // // Create a Blob URL
       // const url = window.URL.createObjectURL(blob);
-  
+
       // // Create a temporary anchor element
       // const link = document.createElement('a');
       // link.href = url;
       // link.download = `${companyData.name}_logo.png`; // Set the desired file name
-  
+
       // // Append the link to the body
       // document.body.appendChild(link);
-  
+
       // // Programmatically click the link to trigger the download
       // link.click();
-  
+
       // // Clean up by removing the link and revoking the Blob URL
       // link.remove();
       // window.URL.revokeObjectURL(url);
 
       saveAs(companyData.logo, `${companyData.username}_logo.png`);
-  
+
       showToast(true, "Company logo downloaded");
     } catch (error) {
       console.error('Download error:', error);
@@ -340,14 +340,14 @@ const Company = ({ role }) => {
         downloadLogo();
       },
     } : null,
-    {
-      text: 'Delete Logo', 
+    companyData.logo ? {
+      text: 'Delete Logo',
       icon: TrashIcon,
       onClick: () => {
         deleteCompanyLogo();
       }
-    },
-    !(companyData.logo && companyData.logo!=null) ? {
+    } : null,
+    !(companyData.logo && companyData.logo != null) ? {
       text: 'Upload Logo',
       icon: ArrowUpTrayIcon,
       onClick: () => {
@@ -392,18 +392,18 @@ const Company = ({ role }) => {
   const confirmDeleteCompanyLogo = async () => {
     //api call to delete logo
     setModalLoading(true);
-    console.log("Deleting company logo...");  
+    console.log("Deleting company logo...");
     try {
 
       const response = await AdminService.deleteTenantLogo(companyId);
-      if(response.error){
+      if (response.error) {
         console.error("Error deleting company logo:", response.error);
         showToast(false, response.error);
         return;
       }
 
       console.log("Company logo deleted successfully:", response.message);
-      
+
       setCompanyData((prevData) => ({
         ...prevData,
         logo: null
@@ -417,7 +417,7 @@ const Company = ({ role }) => {
       //       ...prevData,
       //       logo: null
       //     }));
-  
+
       //   //api call here
       //   showToast(true, "Company logo deleted successfully.");
       //   document.getElementById('delete-logo-modal').close()
@@ -439,7 +439,7 @@ const Company = ({ role }) => {
     document.getElementById('delete-logo-modal').showModal();
   }
 
-  const changePassword = async (e) => {   
+  const changePassword = async (e) => {
     e.preventDefault();
     console.log(passwordData);
     // check empty fields and if new password matches confirm password
@@ -453,7 +453,7 @@ const Company = ({ role }) => {
     }
     //api call here to change 
     setModalLoading(true);
-    
+
     try {
       const response = await TenantService.updatePassword(passwordData.currentPassword, passwordData.newPassword);
       if (response.error) {
@@ -461,7 +461,7 @@ const Company = ({ role }) => {
         showToast(false, response.error);
         return;
       }
-      
+
       console.log("Password changed successfully:", response.message);
       showToast(true, response.message);
     } catch (error) {
@@ -837,16 +837,16 @@ const Company = ({ role }) => {
   }
 
   const uploadCompanyLogo = async () => {
-    if (!logoToUpload){ 
+    if (!logoToUpload) {
       showToast(false, "Please select a file to upload.");
       return;
     }
-    
+
     setModalLoading(true);
     const formData = new FormData();
     formData.append('logo', logoToUpload);
     formData.append('tenantId', companyId);
-    
+
     try {
       const response = await AdminService.uploadTenantLogo(formData);
       if (response.error) {
@@ -857,12 +857,12 @@ const Company = ({ role }) => {
 
       console.log("Logo uploaded successfully:", response.message);
       console.log(response.data.imageUrl)
-      
+
       setCompanyData((prevData) => ({
         ...prevData,
         logo: response.data.imageUrl
       }));
-      
+
       document.getElementById('upload-logo-modal').close();
       showToast(true, response.message);
 
@@ -1001,9 +1001,9 @@ const Company = ({ role }) => {
       <dialog id="upload-logo-modal" className="modal">
         <div className="modal-box">
           <div className="flex flex-col gap-5">
-          <h3 className="font-bold text-lg flex items-center">
-            <ArrowUpTrayIcon className="size-8 text-primary mr-2" />
-            Upload Company Logo</h3>
+            <h3 className="font-bold text-lg flex items-center">
+              <ArrowUpTrayIcon className="size-8 text-primary mr-2" />
+              Upload Company Logo</h3>
             <input
               type="file"
               accept="image/*"
@@ -1013,7 +1013,7 @@ const Company = ({ role }) => {
             />
           </div>
           <div className="modal-action">
-            <button className="btn" onClick={() => { setLogoToUpload(null); document.getElementById('upload-logo-modal').close()}}>Cancel</button>
+            <button className="btn" onClick={() => { setLogoToUpload(null); document.getElementById('upload-logo-modal').close() }}>Cancel</button>
             <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={uploadCompanyLogo}>
               {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Upload"}
             </button>
@@ -1040,7 +1040,7 @@ const Company = ({ role }) => {
             <p className="text-right text-sm text-white ml-1 mt-1">{charCount}/{MAX_CHAR_COUNT}</p>
             <div className="flex gap-2">
               <button className="btn hover:bg-white shadow-lg" onClick={() => { setNoteContent(''); setCharCount(0); document.getElementById('add-note-modal').close() }}>Cancel</button>
-              <button className={`btn btn-primary bg-light-primary hover:bg-light-primary shadow-lg ${modalLoading && "btn-disabled"}`}
+              <button className={`btn btn-primary bg-light-primary hover:bg-light-primary shadow-lg ${(modalLoading || charCount <= 0) && "btn-disabled"}`}
                 onClick={postNote}
               >
                 {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Post Note"}
@@ -1167,20 +1167,22 @@ const Company = ({ role }) => {
 
       {/** END DIALOGS */}
 
-      {/** MAIN CONTENT */}
-      <SideDrawer drawerContent={stickyNotes} setDrawerContent={setStickyNotes} >
+      {/** Side drawer for sticky notes */}
+      <SideDrawer drawerContent={stickyNotes} setDrawerContent={setStickyNotes}  >
+
+        {/** MAIN CONTENT */}
         <div className={`bg-base-100 rounded-md shadow-md p-5 lg:p-10 mt-10 ${loading && "hidden"}`}>
 
           {/** First row, company info and actions */}
           <div className="flex lg:flex-row flex-col ">
             {/* Header with company info, description, logo and join date */}
             <div className=" order-2 lg:order-1 flex max-sm:flex-col justify-start items-start gap-5">
-              { companyData.logo ? 
-              <img src={companyData.logo} alt="Company Logo" className="size-48  rounded-lg ring-1 ring-gray-200" />
-              :
-              <div className="size-48 rounded-lg ring-1 ring-gray-200 bg-gray-200 flex items-center justify-center">
-                <p className="text-sm"> No Logo </p>
-              </div>
+              {companyData.logo ?
+                <img src={companyData.logo} alt="Company Logo" className="size-48  rounded-lg ring-1 ring-gray-200" />
+                :
+                <div className="size-48 rounded-lg ring-1 ring-gray-200 bg-gray-200 flex items-center justify-center">
+                  <p className="text-sm"> No Logo </p>
+                </div>
               }
               <div className="">
                 <h1 className="text-4xl font-semibold text-primary">{companyData.name}</h1>
@@ -1212,18 +1214,24 @@ const Company = ({ role }) => {
             {/** ACTIONS dropdwon on right */}
             <div className=' order-1 lg:order-2 flex-1 flex lg:flex-col gap-3 justify-end lg:justify-normal lg:mb-0 mb-5 lg:items-end'>
               {role == "admin" &&
-                <label htmlFor="sticky-notes"
-                  className={`text-base-100 drawer-button btn-outline btn btn-primary ${notesLoading && "btn-disabled"} `}
-                  onClick={async () => {
-                    setNotesLoading(true);
-                    await fetchAdminNotes();
-                    setNotesLoading(false);
-                    toggleIfOpen('actions')
-                  }} >
-                  {notesLoading && <span className="loading loading-spinner"></span>}
-                  {notesLoading ? "Fetching..." : "Admin Notes"}
+                (
+                  <>
+                    <button
+                      className={`text-base-100 drawer-button btn-outline btn btn-primary ${notesLoading && "btn-disabled"} `}
+                      onClick={async () => {
+                        setNotesLoading(true);
+                        await fetchAdminNotes();
+                        setNotesLoading(false);
+                        document.getElementById('sticky-notes-label').click();
+                        toggleIfOpen('actions')
+                      }} >
+                      {notesLoading && <span className="loading loading-spinner"></span>}
+                      {notesLoading ? "Fetching..." : "Admin Notes"}
 
-                </label>
+                    </button>
+                    <label id="sticky-notes-label" htmlFor='sticky-notes' className="hidden" ></label>
+                  </>
+                )
               }
               <div className="relative">
                 <button

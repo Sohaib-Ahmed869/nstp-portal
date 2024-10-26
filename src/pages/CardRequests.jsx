@@ -21,7 +21,7 @@ const CardRequests = () => {
     const itemsPerPage = 10;
     const [cardRequests, setCardRequests] = useState([]);
     const [reasonForRejection, setReasonForRejection] = useState('');
-const { role } = useContext(AuthContext);
+    const { role } = useContext(AuthContext);
     useEffect(() => {
         // api call here to fetch card requests info
         async function fetchCardRequests() {
@@ -33,7 +33,7 @@ const { role } = useContext(AuthContext);
                     return;
                 }
                 console.log("🚀 ~ fetchCardRequests ~ response.data.cardAllocations", response.data.cardAllocations);
-                
+
                 // Transform the data to match the expected structure
                 const transformedData = response.data.cardAllocations.map(item => {
                     let expiresOn = " - ";
@@ -42,7 +42,7 @@ const { role } = useContext(AuthContext);
                         const expiresDate = new Date(dateIssued.setMonth(dateIssued.getMonth() + 6));
                         expiresOn = expiresDate.toLocaleString();
                     }
-    
+
                     return {
                         id: item._id,
                         employeeId: item.employee_id._id,
@@ -55,16 +55,16 @@ const { role } = useContext(AuthContext);
                         active: item.is_requested && !item.is_returned,
                     };
                 });
-    
+
                 setCardRequests(transformedData);
-    
+
             } catch (error) {
                 console.error("Error fetching card requests", error);
             } finally {
                 setLoading(false);
             }
         }
-        
+
         fetchCardRequests();
     }, []);
 
@@ -95,8 +95,8 @@ const { role } = useContext(AuthContext);
                 showToast(false, response.error);
                 return;
             }
-            console.log("🚀 ~ handleApproveReject ~ response", response); 
-            showToast(true, response.message);          
+            console.log("🚀 ~ handleApproveReject ~ response", response);
+            showToast(true, response.message);
             setCardRequests((prevRequests) => prevRequests.filter((r) => r.id !== request.id));
         } catch (error) {
             console.error("Error approving/unapproving request", error);
@@ -120,12 +120,12 @@ const { role } = useContext(AuthContext);
     const fetchOldRequests = () => {
         async function fetchOldRequests() {
             setLoadingOldRequests(true);
-            const oldRequests = [ ];
-            try{
+            const oldRequests = [];
+            try {
                 const response = await AdminService.getNonPendingCardAllocations(tower.id);
                 if (response.error) {
                     console.error("Error fetching old requests", response.error);
-                    
+
                     return;
                 }
                 console.log("🚀 ~ fetchOldRequests ~ response.data.cardAllocations", response.data.cardAllocations)
@@ -138,7 +138,7 @@ const { role } = useContext(AuthContext);
                         const expiresDate = new Date(dateIssued.setMonth(dateIssued.getMonth() + 6));
                         expiresOn = expiresDate.toLocaleString();
                     }
-    
+
                     return {
                         id: item._id,
                         employeeId: item.employee_id._id,
@@ -196,7 +196,7 @@ const { role } = useContext(AuthContext);
     });
 
     const paginatedData = sortedData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-    
+
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
     return (
@@ -211,22 +211,22 @@ const { role } = useContext(AuthContext);
                             <HandThumbDownIcon className="size-10 text-error" />
                         }
                         <h3 className="font-bold text-lg">{currentRequest?.action === 'approve' ? 'Approve Request' : 'Reject Request'}</h3>
-                    </div> 
+                    </div>
                     <p className="text-base mt-2">
                         Are you sure you want to {currentRequest?.action} this request?
                     </p>
-                    {currentRequest?.action !== "approve"  ? (
+                    {currentRequest?.action !== "approve" ? (
                         <>
-                        <p> Please provide the reason for rejection: </p>
-                        <textarea
-                            value={reasonForRejection}
-                            onChange={(e) => setReasonForRejection(e.target.value)}
-                            className="textarea textarea-bordered w-full mt-2"
-                            placeholder="Reason for rejection"  
-                            rows={7}
-                        />
+                            <p> Please provide the reason for rejection: </p>
+                            <textarea
+                                value={reasonForRejection}
+                                onChange={(e) => setReasonForRejection(e.target.value)}
+                                className="textarea textarea-bordered w-full mt-2"
+                                placeholder="Reason for rejection"
+                                rows={7}
+                            />
                         </>
-                    ): null}
+                    ) : null}
                     <div className="modal-action">
                         <button className="btn mr-1" onClick={() => document.getElementById('confirmation_modal').close()}>Cancel</button>
                         <button
@@ -235,7 +235,7 @@ const { role } = useContext(AuthContext);
                                 handleApproveReject(currentRequest.request, currentRequest.action)
                             }}
                         >
-                            {modalLoading && <span className="loading loading-spinner"></span>} 
+                            {modalLoading && <span className="loading loading-spinner"></span>}
                             {modalLoading ? "Please wait..." : currentRequest?.action == "approve" ? "Approve" : "Reject"}
                         </button>
                     </div>
@@ -317,7 +317,7 @@ const { role } = useContext(AuthContext);
                                         </td>
                                         <td>
                                             <div className="flex items-center gap-2">
-                                                {(!request.issued && role!== "tenant" )&& (
+                                                {(!request.issued && role !== "tenant") && (
                                                     <>
                                                         <button
                                                             className="btn btn-sm btn-outline btn-success"

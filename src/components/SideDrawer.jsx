@@ -59,7 +59,7 @@ const SideDrawer = ({ children, drawerContent, setDrawerContent }) => {
         <div className="menu bg-opacity-10 text-base-content min-h-full w-[30rem] p-5 pr-10">
           {/** scrollable div for content */}
           <div className="overflow-y-auto h-full">
-            {drawerContent.map((note) => (
+            {drawerContent.length > 0 ? drawerContent.map((note) => (
               <div key={note.id} className="relative rounded-2xl shadow-lg mb-4 bg-yellow-100 border-t-[10px] border-yellow-300 border-opacity-60">
                 {note.isEditable && (
                   <button
@@ -76,7 +76,14 @@ const SideDrawer = ({ children, drawerContent, setDrawerContent }) => {
                   <p className="text-sm">{note.note}</p>
                 </div>
               </div>
-            ))}
+            )) : 
+            <div key="no-notes-info" className="relative rounded-2xl shadow-lg mb-4 bg-base-100 ">
+            <div className="card-body">
+              <p className="font-semibold text-lg">No Notes</p>
+              <p className="text-sm">There are no notes added yet for this particular tenant.</p>
+            </div>
+          </div>
+            }
           </div>
         </div>
       </div>
