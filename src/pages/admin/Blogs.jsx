@@ -3,7 +3,7 @@ import Sidebar from '../../components/Sidebar';
 import { PencilSquareIcon, EllipsisVerticalIcon, EyeIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
 import NSTPLoader from '../../components/NSTPLoader';
-import DeleteConfirmationModal from '../../components/DeleteConfirmationModal';
+import DeleteConfirmationModal from '../../components/modals/DeleteConfirmationModal';
 import { AdminService } from '../../services';
 import showToast from '../../util/toast';
 

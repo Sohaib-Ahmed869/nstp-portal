@@ -5,7 +5,7 @@ import showToast from '../util/toast';
 import { AuthContext } from '../context/AuthContext';
 import { formatDate, isWithin72Hours } from '../util/date';
 import { truncateText, getUrgencyLabel } from '../util/util';
-import ConfirmationModal from './ConfirmationModal';
+import ConfirmationModal from './modals/ConfirmationModal';
 import ChatPopup from './ChatPopup';
 
 /**

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar'
 import NSTPLoader from '../../components/NSTPLoader'
-import ComplaintModal from '../../components/ComplaintModal'
+import ComplaintModal from '../../components/modals/ComplaintModal'
 import ComplaintsTable from '../../components/ComplaintsTable'
 import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, PencilSquareIcon, CogIcon, WrenchScrewdriverIcon, CheckCircleIcon, XCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { TenantService } from '../../services'

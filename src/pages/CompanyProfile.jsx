@@ -9,7 +9,7 @@ import Sidebar from '../components/Sidebar';
 import ComparativeChart from '../components/ComparativeChart';
 import NSTPLoader from '../components/NSTPLoader';
 import SideDrawer from '../components/SideDrawer';
-import EmployeeProfileModal from '../components/EmployeeProfileModal';
+import EmployeeProfileModal from '../components/modals/EmployeeProfileModal';
 import FloatingLabelInput from '../components/FloatingLabelInput';
 
 /* Services and context */
@@ -20,7 +20,7 @@ import { TowerContext } from '../context/TowerContext'
 import { formatDate } from '../util/date';
 import showToast from '../util/toast';
 import { getPieChartOptions } from '../util/charts';
-import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
+import DeleteConfirmationModal from '../components/modals/DeleteConfirmationModal';
 
 import { saveAs } from 'file-saver';
 

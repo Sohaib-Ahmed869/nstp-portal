@@ -1,5 +1,5 @@
 import React from 'react';
-import FloatingLabelInput from './FloatingLabelInput';
+import FloatingLabelInput from '../FloatingLabelInput';
 import { BuildingOfficeIcon, ClipboardDocumentListIcon, ListBulletIcon, NewspaperIcon } from '@heroicons/react/24/outline';
 import { PresentationChartBarIcon } from '@heroicons/react/24/outline';
 

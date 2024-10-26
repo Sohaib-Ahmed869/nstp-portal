@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
-import FloatingLabelInput from './FloatingLabelInput';
+import FloatingLabelInput from '../FloatingLabelInput';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import showToast from '../util/toast';
-import { TenantService } from '../services';
-import { getCurrentDateTime } from '../util/date';
-import { ICONS_ARRAY } from '../util/service';
+import showToast from '../../util/toast';
+import { TenantService } from '../../services';
+import { getCurrentDateTime } from '../../util/date';
+import { ICONS_ARRAY } from '../../util/service';
 
 /**
 |--------------------------------------------------

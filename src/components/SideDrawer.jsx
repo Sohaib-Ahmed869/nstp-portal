@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { TrashIcon } from '@heroicons/react/24/outline';
-import DeleteConfirmationModal from './DeleteConfirmationModal';
+import DeleteConfirmationModal from './modals/DeleteConfirmationModal';
 import { AdminService } from '../services';
 import showToast from '../util/toast';
 import { useParams } from 'react-router-dom';

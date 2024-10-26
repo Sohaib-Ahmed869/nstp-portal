@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import FloatingLabelInput from './FloatingLabelInput';
+import FloatingLabelInput from '../FloatingLabelInput';
 
 const AddEditRoomModal = ({ isEditMode, newRoom, setNewRoom, roomTypes, errors, setErrors, modalLoading, handleSubmit, resetForm }) => {
     const handleInputChange = (e) => {

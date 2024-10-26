@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import NSTPLoader from "../../components/NSTPLoader";
-import EmployeeProfileModal from "../../components/EmployeeProfileModal";
+import EmployeeProfileModal from "../../components/modals/EmployeeProfileModal";
 import {
   UserPlusIcon,
   ChevronUpIcon,
@@ -17,7 +17,7 @@ import {
 } from "@heroicons/react/24/outline";
 import FloatingLabelInput from "../../components/FloatingLabelInput";
 import TenantService from "../../services/TenantService";
-import EditEmployeeProfileModal from "../../components/EditEmployeeProfileModal";
+import EditEmployeeProfileModal from "../../components/modals/EditEmployeeProfileModal";
 import showToast from "../../util/toast";
 
 const Employees = () => {

@@ -15,7 +15,7 @@ import MeetingRoomBookingTable from "../../components/MeetingRoomBookingTable";
 import { TenantService } from "../../services";
 import { formatDate } from '../../util/date';
 import showToast from "../../util/toast";
-import CreateNewBookingModal from "../../components/CreateNewBookingModal";
+import CreateNewBookingModal from "../../components/modals/CreateNewBookingModal";
 
 export const MeetingRoomBooking = () => {
   const [events, setEvents] = useState([

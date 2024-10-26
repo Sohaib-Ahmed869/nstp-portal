@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { TenantService, ReceptionistService } from '../services';
 import showToast from '../util/toast';
 import { AuthContext } from '../context/AuthContext';
-import CreateNewBookingModal from './CreateNewBookingModal';
+import CreateNewBookingModal from './modals/CreateNewBookingModal';
 
 
 const MeetingRoomBookingTable = ({ meetingRoomSchedule, dummyRole, dashboardComponent = false, setMeetingRoomSchedule }) => {

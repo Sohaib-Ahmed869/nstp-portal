@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import FloatingLabelInput from "./FloatingLabelInput";
-import TenantService from "../services/TenantService";
+import FloatingLabelInput from "../FloatingLabelInput";
+import TenantService from "../../services/TenantService";
 
 const EditEmployeeProfileModal = ({
   employeeProfileSelected,

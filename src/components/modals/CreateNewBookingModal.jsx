@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import showToast from '../util/toast';
+import showToast from '../../util/toast';
 
-import { TenantService } from '../services';
+import { TenantService } from '../../services';
 const CreateNewBookingModal = ({ roomOptions: initialRoomOptions }) => {
     const [modalLoading, setModalLoading] = useState(false);
     const [roomOptions, setRoomOptions] = useState(initialRoomOptions || []);

@@ -12,8 +12,8 @@ import NSTPLoader from '../../components/NSTPLoader';
 import ReactApexChart from 'react-apexcharts';
 import NewsFeed from '../../components/NewsFeed';
 import EmployeeStats from '../../components/EmployeeStats';
-import ComplaintModal from '../../components/ComplaintModal';
-import EmployeeProfileModal from '../../components/EmployeeProfileModal';
+import ComplaintModal from '../../components/modals/ComplaintModal';
+import EmployeeProfileModal from '../../components/modals/EmployeeProfileModal';
 import { TenantService } from '../../services';
 import { formatDate } from '../../util/date';
 
@@ -354,7 +354,7 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          
+
         </div>
       </div>
     </Sidebar>
