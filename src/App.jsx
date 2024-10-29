@@ -1,6 +1,9 @@
-import { useState, useContext } from 'react';
+import {  useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import './index.css';
+
+//scroll to top on page changes
+import ScrollToTop from './components/ScrollToTop.jsx';
 
 // Pages
 import LoginPage from './pages/LoginPage.jsx';
@@ -63,6 +66,7 @@ const ProtectedRoute = ({ allowedRoles, redirectPath = '/unauthorized' }) => {
 function App() {
   return (
     <Router>
+      <ScrollToTop /> 
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LoginPage />} />
