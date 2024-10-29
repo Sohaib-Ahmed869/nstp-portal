@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useContext, useRef } from 'react';
+import React, { useEffect, useState, useContext, } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { UserGroupIcon, ChatBubbleOvalLeftEllipsisIcon, MagnifyingGlassIcon, LockClosedIcon, EyeIcon, EyeSlashIcon, BriefcaseIcon, ChevronDownIcon, ChevronUpIcon, TrashIcon, ShieldExclamationIcon, CalendarIcon, DocumentCheckIcon, CalendarDateRangeIcon, ChatBubbleLeftRightIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon, ArrowDownTrayIcon, PresentationChartLineIcon, CurrencyDollarIcon, DocumentIcon, ArrowUpTrayIcon, CheckBadgeIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { UserGroupIcon, MagnifyingGlassIcon, BriefcaseIcon, ShieldExclamationIcon, CalendarIcon, CalendarDateRangeIcon, UserIcon, EnvelopeIcon, PhoneIcon, UserCircleIcon, PresentationChartLineIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import ReactApexChart from 'react-apexcharts';
 
 /* Components */
@@ -8,44 +8,30 @@ import EmployeeStats from '../components/EmployeeStats';
 import Sidebar from '../components/Sidebar';
 import ComparativeChart from '../components/ComparativeChart';
 import NSTPLoader from '../components/NSTPLoader';
+import ActionsDropdown from '../components/ActionsDropdown';
 import SideDrawer from '../components/SideDrawer';
+
+/*Modals */
+import AddStickyNoteModal from '../components/modals/company-profile/AddStickyNoteModal';
+import ChangePasswordModal from '../components/modals/company-profile/ChangePasswordModal';
+import ClearanceFormModal from '../components/modals/company-profile/ClearanceFormModal';
+import DeleteConfirmationModal from '../components/modals/DeleteConfirmationModal';
 import EmployeeProfileModal from '../components/modals/EmployeeProfileModal';
-import FloatingLabelInput from '../components/FloatingLabelInput';
+import RequestEvaluationModal from '../components/modals/company-profile/RequestEvaluationModal';
+import TerminateEmployeeModal from '../components/modals/company-profile/TerminateEmployeeModal';
+import UploadLogoModal from '../components/modals/company-profile/UploadLogoModal';
 
 /* Services and context */
 import { AdminService, TenantService } from '../services';
 import { TowerContext } from '../context/TowerContext'
 
 /* Utils */
-import { formatDate } from '../util/date';
+import { formatDate, calculateDuration } from '../util/date';
 import showToast from '../util/toast';
 import { getPieChartOptions } from '../util/charts';
-import DeleteConfirmationModal from '../components/modals/DeleteConfirmationModal';
-
-import { saveAs } from 'file-saver';
 
 /* Constants */
-const MAX_CHAR_COUNT = 400; // max characters for notes
 const CONTRACT_DURATION_THRESHOLD = 90; // after 90% of contract duration, the radial progress will become red
-
-const calculateDuration = (startDate, endDate) => {
-  let years = endDate.getFullYear() - startDate.getFullYear();
-  let months = endDate.getMonth() - startDate.getMonth();
-  let days = endDate.getDate() - startDate.getDate();
-
-  if (days < 0) {
-    months -= 1;
-    days += new Date(endDate.getFullYear(), endDate.getMonth(), 0).getDate();
-  }
-
-  if (months < 0) {
-    years -= 1;
-    months += 12;
-  }
-
-  return `${years} years, ${months} months, and ${days} days`;
-};
-
 
 /**
 |--------------------------------------------------
@@ -56,52 +42,12 @@ const calculateDuration = (startDate, endDate) => {
 
 const Company = ({ role }) => {
   const { companyId } = useParams();
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [deadline, setDeadline] = useState(null);
   const { tower } = useContext(TowerContext);
+
+  /* States */
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: ''
-  });
-  const [passwordVisibility, setPasswordVisibility] = useState({
-    currentPassword: false,
-    newPassword: false,
-    confirmPassword: false
-  });
   const [notesLoading, setNotesLoading] = useState(false);
-  const togglePasswordVisibility = (field) => {
-    setPasswordVisibility((prevVisibility) => ({
-      ...prevVisibility,
-      [field]: !prevVisibility[field]
-    }));
-  };
-
-  const terminateEmployee = async (employeeId) => {
-    // add loading state
-    console.log(`Terminating employee with ID: ${employeeId}`);
-    try {
-      const response = await AdminService.terminateEmployee(employeeId);
-      if (response.error) {
-        console.error("Error terminating employee:", response);
-        showToast(false, response.error.message);
-        return;
-      }
-      showToast(true, "Employee terminated successfully.");
-
-      // remove employee from the list
-
-    } catch (error) {
-      console.error("Error terminating employee:", error);
-      showToast(false, "An error occurred while terminating employee.");
-    } finally {
-      // remove loading state
-    }
-    // API CALL to terminate
-  };
-
-
   const [companyData, setCompanyData] = useState({ //DONT remove this dummmy state, loading issues otherwise
     name: "Tech Innovators",
     type: "Startup",
@@ -136,36 +82,6 @@ const Company = ({ role }) => {
         date: "2022-10-10",
         note: "This is a note from admin1",
       },
-      {
-        id: "2",
-        adminName: "Admin2",
-        date: "2022-10-11",
-        note: "This is a note from admin2",
-      },
-      {
-        id: "3",
-        adminName: "Admin3",
-        date: "2022-10-12",
-        note: "This is a note from admin3",
-      },
-      {
-        id: "4",
-        adminName: "Admin4",
-        date: "2022-10-13",
-        note: "This is a note from admin4",
-      },
-      {
-        id: "5",
-        adminName: "Admin5",
-        date: "2022-10-14",
-        note: "This is a note from admin5",
-      },
-      {
-        id: "6",
-        adminName: "Admin6",
-        date: "2022-10-15",
-        note: "This is a note from admin6",
-      }
     ],
     employees: [
       {
@@ -184,7 +100,6 @@ const Company = ({ role }) => {
         "contract_duration": "",
         "status_employment": true,
         "is_nustian": true,
-        "__v": 0,
         "etags": 1,
         "card_num": 0,
         "card": {
@@ -194,174 +109,27 @@ const Company = ({ role }) => {
           "is_issued": true,
           "is_requested": false,
           "is_returned": false,
-          "__v": 0,
           "card_number": 0,
           "date_issued": "2024-09-09T16:48:50.533Z"
         }
       },
-      {
-        "_id": "66df2a84c84208453e73701a",
-        "tenant_id": "66d97748124403bf36e695e8",
-        "tenant_name": "Hexlertech",
-        "email": "musaharoon.2003@gmail.com",
-        "name": "Musa Haroon Satti",
-        "photo": "https://randomuser.me/api/portraits/men/10.jpg",
-        "designation": "Full Stack Developer",
-        "cnic": "6110166894528",
-        "dob": "2024-09-05",
-        "address": "F/10-1 Street 11 House 29",
-        "date_joining": "2024-10-04",
-        "employee_type": "Contract",
-        "contract_duration": "6 Months",
-        "status_employment": true,
-        "is_nustian": false,
-        "__v": 0,
-        "etags": 1,
-        "card": {
-          "_id": "66df2a84c84208453e73701b",
-          "tenant_id": "66d97748124403bf36e695e8",
-          "employee_id": "66df2a84c84208453e73701a",
-          "is_issued": false,
-          "is_requested": true,
-          "is_returned": false,
-          "__v": 0,
-          "date_requested": "2024-09-09T17:06:10.755Z"
-        }
-      },
-      {
-        "_id": "123f2a84c84208453e73701a",
-        "tenant_id": "66d91238124403bf36e695e8",
-        "tenant_name": "Hexlertech",
-        "email": "haadiya@gmail.com",
-        "name": "Haadiya Sajid",
-        "photo": "https://randomuser.me/api/portraits/women/2.jpg",
-        "designation": "Full Stack Developer",
-        "cnic": "6110112394528",
-        "dob": "2024-09-05",
-        "address": "F/10-1 Street 11 House 29",
-        "date_joining": "2024-10-04",
-        "employee_type": "Contract",
-        "contract_duration": "6 Months",
-        "status_employment": true,
-        "is_nustian": false,
-        "__v": 0,
-        "etags": 1,
-        "card": {
-          "_id": "66df2a84c84208453e73701b",
-          "tenant_id": "66d97748124403bf36e695e8",
-          "employee_id": "66df2a84c84208453e73701a",
-          "is_issued": false,
-          "is_requested": true,
-          "is_returned": false,
-          "__v": 0,
-          "date_requested": "2024-09-09T17:06:10.755Z"
-        }
-      }
     ]
   });
   const [error, setError] = useState(null);
-  const [noteContent, setNoteContent] = useState('');
-  const [charCount, setCharCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [modalLoading, setModalLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    applicantName: '',
-    applicantDesignation: '',
-    applicantCnic: '',
-    officeNumber: '',
-    vacatingDate: '',
-    reasonForLeaving: ''
-  });
-
   const [stickyNotes, setStickyNotes] = useState([]);
 
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
+  /* Derived states */
   const filteredEmployees = companyData.employees.filter(employee =>
     employee.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     employee.designation.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const downloadLogo = async () => {
-    try {
-      saveAs(companyData.logo, `${companyData.username}_logo.png`);
 
-      showToast(true, "Company logo downloaded");
-    } catch (error) {
-      console.error('Download error:', error);
-      showToast(false, "Failed to download logo");
-    }
-  };
-
-  const actions = role == "admin" ? [
-    {
-      text: 'Add Note',
-      icon: DocumentIcon,
-      onClick: () => {
-        document.getElementById('add-note-modal').showModal();
-      }
-    },
-    companyData.logo ? {
-      text: 'Download Logo',
-      icon: ArrowDownTrayIcon,
-      onClick: () => {
-        downloadLogo();
-      },
-    } : null,
-    companyData.logo ? {
-      text: 'Delete Logo',
-      icon: TrashIcon,
-      onClick: () => {
-        deleteCompanyLogo();
-      }
-    } : null,
-    !(companyData.logo && companyData.logo != null) ? {
-      text: 'Upload Logo',
-      icon: ArrowUpTrayIcon,
-      onClick: () => {
-        document.getElementById('upload-logo-modal').showModal();
-      }
-    } : null,
-    {
-      text: 'Request Evaluation',
-      icon: ChatBubbleLeftRightIcon,
-      onClick: () => {
-        document.getElementById('evaluation-feedback-modal').showModal();
-      },
-    },
-  ].filter(Boolean) : [
-    {
-      text: 'Request Clearance',
-      icon: DocumentCheckIcon,
-      onClick: () => {
-        document.getElementById('tenure-end-modal').showModal();
-      },
-    },
-    {
-      text: 'Change Password',
-      icon: LockClosedIcon,
-      onClick: () => {
-        document.getElementById('change-password-modal').showModal();
-      },
-    },
-  ];
-
-  //states for uploading logo
-  const [logoToUpload, setLogoToUpload] = useState(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const fileInputRef = useRef(null);
-  //dropdwown
-  const [dropdownOpen, setDropdownOpen] = useState({});
-
-  //password handling
-  const handlePasswordInputChange = (e) => {
-    const { name, value } = e.target;
-    setPasswordData((prevData) => ({
-      ...prevData,
-      [name]: value
-    }));
+  /* Functions */
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
   };
 
   const confirmDeleteCompanyLogo = async () => {
@@ -410,102 +178,6 @@ const Company = ({ role }) => {
     }
   }
 
-  const deleteCompanyLogo = () => {
-    document.getElementById('delete-logo-modal').showModal();
-  }
-
-  const changePassword = async (e) => {
-    e.preventDefault();
-    console.log(passwordData);
-    // check empty fields and if new password matches confirm password
-    if (passwordData.currentPassword.trim() === '' || passwordData.newPassword.trim() === '' || passwordData.confirmPassword.trim() === '') {
-      showToast(false, "All fields are required.");
-      return;
-    }
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showToast(false, "New password and confirm password do not match.");
-      return;
-    }
-    if (passwordData.newPassword.length < 8) {
-      showToast(false, "Password must be at least 8 characters long.");
-      return;
-    }
-    if (passwordData.newPassword === passwordData.currentPassword) {
-      showToast(false, "New password must be different from current password.");
-      return;
-    }
-    //api call here to change 
-    setModalLoading(true);
-
-    try {
-      const response = await TenantService.updatePassword(passwordData.currentPassword, passwordData.newPassword);
-      if (response.error) {
-        console.error("Error changing password:", response.error);
-        showToast(false, response.error);
-        return;
-      }
-
-      console.log("Password changed successfully:", response.message);
-      showToast(true, response.message);
-    } catch (error) {
-      console.error("Error changing password:", error);
-      showToast(false, "An error occurred while changing password.");
-    } finally {
-      // Clear the fields
-      setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-      });
-      setPasswordVisibility({
-        currentPassword: false,
-        newPassword: false,
-        confirmPassword: false
-      });
-      // Close the modal
-      document.getElementById('change-password-modal').close();
-      setModalLoading(false);
-    }
-
-    // // Clear the fields
-    // setPasswordData({
-    //   currentPassword: '',
-    //   newPassword: '',
-    //   confirmPassword: ''
-    // });
-    // // Close the modal
-    // document.getElementById('change-password-modal').close();
-    // showToast(true, "Password changed successfully.");
-    // setModalLoading(false);
-  };
-  const handleCancelPassword = () => {
-    // Clear the fields
-    setPasswordData({
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: ''
-    });
-    setPasswordVisibility({
-      currentPassword: false,
-      newPassword: false,
-      confirmPassword: false
-    })
-    // Close the modal
-    document.getElementById('change-password-modal').close();
-  };
-  const toggleDropdown = (id) => {
-    setDropdownOpen((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-  const toggleIfOpen = (id) => {
-    setDropdownOpen((prev) => ({
-      ...prev,
-      [id]: false,
-    }));
-  };
-
   const fetchAdminNotes = async () => {
     try {
       const response = await AdminService.getTenantNotes(tower.id, companyId);
@@ -539,6 +211,7 @@ const Company = ({ role }) => {
     }
   };
 
+  /* Effects */
   useEffect(() => {
     const fetchCompanyData = async () => {
       try {
@@ -718,441 +391,29 @@ const Company = ({ role }) => {
     fetchCompanyData();
   }, [companyId]);
 
-  const submitClearanceForm = async () => {
-    setModalLoading(true);
-
-    try {
-      const response = await TenantService.initiateClearanceForm(formData);
-      console.log("Response:", response);
-      if (response.error) {
-        console.error("Error submitting clearance form:", response.error);
-        showToast(false, response.error);
-        return;
-      }
-      console.log("Clearance form submitted successfully:", response.data.clearance);
-      showToast(true, response.message);
-    } catch (error) {
-      console.error("Error submitting clearance form:", error);
-      showToast(false, "An error occurred while submitting clearance form.");
-    } finally {
-      setModalLoading(false);
-      document.getElementById('tenure-end-modal').close();
-    }
-  };
-
-  //handle change for clearnace form
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value
-    }));
-  };
-
-  const sendFeedback = async () => {
-    setModalLoading(true);
-    // const deadline = new Date("2024-10-10T09:00:00.000Z");
-    console.log("Deadline:", deadline);
-    //deadline gona be in the format, 11:59 of the same date
-    try {
-      const response = await AdminService.requestEvaluation(companyId, deadline + "T23:59:00.000Z");
-      if (response.error) {
-        console.error("Error requesting evaluation:", response.error);
-        showToast(false, response.error);
-        return;
-      }
-      console.log("Evaluation requested successfully:", response.message);
-      showToast(true, response.message);
-
-    } catch (error) {
-      console.error("Error sending feedback:", error);
-      showToast(false, "An error occurred while sending feedback.");
-    } finally {
-      setModalLoading(false);
-      document.getElementById('evaluation-feedback-modal').close();
-    }
-  }
-
-  const handleStickyNoteInputChange = (e) => {
-    const value = e.target.value;
-    if (value.length <= MAX_CHAR_COUNT) {
-      setNoteContent(value);
-      setCharCount(value.length);
-      adjustTextareaHeight(e.target);
-    }
-  };
-
-  const adjustTextareaHeight = (textarea) => {
-    textarea.style.height = 'auto'; // Reset the height
-    textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to the scroll height
-  };
-
-  const postNote = async () => {
-    if (noteContent.trim() === '') {
-      showToast(false, "Note cannot be empty.");
-      return;
-    }
-    setModalLoading(true);
-    //api call to post note
-    console.log("Posting note:", noteContent);
-
-    try {
-      const response = await AdminService.addTenantNote(companyId, noteContent);
-      if (response.error) {
-        console.error("Error posting note:", response.error);
-        showToast(false, response.error);
-        return;
-      }
-      console.log("Note posted successfully:", response.data.note);
-      showToast(true, response.message);
-      // fetchAdminNotes();
-
-    } catch (error) {
-      console.error("Error posting note:", error);
-      showToast(false, "An error occurred while posting note.");
-    } finally {
-      // Clear the fields
-      setNoteContent('');
-      setCharCount(0);
-      // Close the modal
-      document.getElementById('add-note-modal').close();
-      setModalLoading(false);
-    }
-  }
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    const maxSizeInMB = 2; // 2 MB
-    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
-
-    if (file && file.size > maxSizeInBytes) {
-      setErrorMessage(`File size is above ${maxSizeInMB} MB. Please select a smaller file.`);
-      setLogoToUpload(null);
-    } else {
-      setErrorMessage('');
-      setLogoToUpload(file);
-    }
-  };
-
-  const uploadCompanyLogo = async () => {
-    if (!logoToUpload) {
-      showToast(false, "Please select a file to upload.");
-      return;
-    }
-
-    setModalLoading(true);
-    const formData = new FormData();
-    formData.append('logo', logoToUpload);
-    formData.append('tenantId', companyId);
-
-    try {
-      const response = await AdminService.uploadTenantLogo(formData);
-      if (response.error) {
-        console.log(response.error)
-        showToast(false, response.error);
-        return;
-      }
-
-      console.log("Logo uploaded successfully:", response.message);
-      console.log(response.data.imageUrl)
-
-      setCompanyData((prevData) => ({
-        ...prevData,
-        logo: response.data.imageUrl
-      }));
-
-      document.getElementById('upload-logo-modal').close();
-      showToast(true, response.message);
-
-    } catch (error) {
-      console.error("Error uploading logo:", error);
-      showToast(false, "An error occurred while uploading logo.");
-    } finally {
-      setModalLoading(false);
-    }
-  };
-
   return (
     <Sidebar>
       {loading && <NSTPLoader />}
       {error && <div className="alert alert-error">An error occurred while fetching company data.</div>}
 
       {/** DIALOGS */}
-      {/* Terminate Confirmation Modal */}
-      <dialog id="terminate-modal" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Terminate Employee</h3>
-          <p className="py-4">Are you sure you want to terminate the employee, {selectedEmployee?.name}?</p>
-          <div className="modal-action">
-            <button className="btn" onClick={() => document.getElementById('terminate-modal').close()}>Cancel</button>
-            <button
-              className="btn btn-error text-base-100"
-              onClick={() => {
-                terminateEmployee(selectedEmployee._id);
-                document.getElementById('terminate-modal').close();
-              }}
-            >
-              Confirm Termination
-            </button>
-          </div>
-        </div>
-      </dialog>
+      {/* Terminate Employee Confirmation Modal */}
+      <TerminateEmployeeModal selectedEmployee={selectedEmployee} />
 
-      {/*end tenure confirmation modal */}
-      <dialog id="tenure-end-modal" className="modal">
-        <div className="modal-box min-w-3xl max-w-3xl">
-          <h3 className="font-bold text-lg mb-3">Clearance Form</h3>
-          <form className='grid grid-cols-2 gap-3'>
-            <FloatingLabelInput
-              name="applicantName"
-              type="text"
-              id="applicantName"
-              label="Applicant Name"
-              value={formData.applicantName}
-              onChange={handleInputChange}
-            />
-            <FloatingLabelInput
-              name="applicantDesignation"
-              type="text"
-              id="applicantDesignation"
-              label="Applicant Designation"
-              value={formData.applicantDesignation}
-              onChange={handleInputChange}
-            />
-            <FloatingLabelInput
-              name="applicantCnic"
-              type="text"
-              id="applicantCnic"
-              label="Applicant CNIC"
-              value={formData.applicantCnic}
-              onChange={handleInputChange}
-            />
-            <FloatingLabelInput
-              name="officeNumber"
-              type="text"
-              id="officeNumber"
-              label="Office Number"
-              value={formData.officeNumber}
-              onChange={handleInputChange}
-            />
-            <FloatingLabelInput
-              name="vacatingDate"
-              type="date"
-              id="vacatingDate"
-              label="Date for Vacating Office"
-              value={formData.vacatingDate}
-              onChange={handleInputChange}
-            />
-            <div className="col-span-2">
-              <FloatingLabelInput
-                name="reasonForLeaving"
-                type="textarea"
-                id="reasonForLeaving"
-                label="Reason for Leaving"
-                value={formData.reasonForLeaving}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div role="alert" className="col-span-2 alert bg-yellow-300 bg-opacity-40 text-yellow-900">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 shrink-0 stroke-current"
-                fill="none"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              <span>Warning: This is a serious action. Proceed with caution!</span>
-            </div>
-          </form>
-          <div className="modal-action">
-            <button className="btn" onClick={() => document.getElementById('tenure-end-modal').close()}>Cancel</button>
-            <button
-              className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}
-              onClick={(e) => {
-                e.preventDefault();
-                submitClearanceForm();
-              }}
-            >
-              {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}
-            </button>
-          </div>
-        </div>
-      </dialog>
+      {/*tenure end (clearance form) modal */}
+      <ClearanceFormModal />
 
-      <dialog id="upload-logo-modal" className="modal">
-        <div className="modal-box">
-          <div className="flex flex-col gap-5">
-            <h3 className="font-bold text-lg flex items-center">
-              <ArrowUpTrayIcon className="size-8 text-primary mr-2" />
-              Upload Company Logo
-            </h3>
-            <input
-              type="file"
-              accept="image/*"
-              className="file-input file-input-bordered"
-              id="logo-upload"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-            />
-            {errorMessage && <p className="text-red-900 bg-red-300 p-3 rounded-xl flex gap-2 items-center"> <ExclamationTriangleIcon className="size-5" /> {errorMessage}</p>}
-            {logoToUpload && !errorMessage && (<p className="text-lime-900 bg-lime-200 p-3 rounded-xl flex gap-2 items-center"> <CheckBadgeIcon className="size-5" /> File selected is under 2MB.</p>)}
-          </div>
-          <div className="modal-action">
-            <button
-              className="btn"
-              onClick={() => {
-                setLogoToUpload(null);
-                setErrorMessage('');
-                if (fileInputRef.current) {
-                  fileInputRef.current.value = ''; // Reset the file input value
-                }
-                document.getElementById('upload-logo-modal').close();
-              }}
-            >
-              Cancel
-            </button>
-
-            <button className={`btn btn-primary ${(errorMessage || modalLoading) && "btn-disabled"}`} onClick={uploadCompanyLogo}>
-              {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Upload"}
-            </button>
-          </div>
-        </div>
-      </dialog>
+      {/** upload logo modal */}
+      <UploadLogoModal setCompanyData={setCompanyData} />
 
       {/* add sticky note modal */}
-      <dialog id="add-note-modal" className="modal bg-opacity-0">
-        <div className="modal-box bg-opacity-0 shadow-none">
-          <h3 className="font-bold text-lg"></h3>
-          <div className="rounded-2xl shadow-lg bg-yellow-100 border-t-[10px] border-yellow-300 border-opacity-60">
-            <textarea
-              rows={5}
-              placeholder="Type your note here..."
-              className="my-2 textarea focus:outline-none focus:border-0 focus:ring-0 bg-opacity-0 w-full resize-none"
-              value={noteContent}
-              onChange={handleStickyNoteInputChange}
-              onInput={(e) => adjustTextareaHeight(e.target)}
-            />
-          </div>
-
-          <div className="modal-action mt-3 justify-between">
-            <p className="text-right text-sm text-white ml-1 mt-1">{charCount}/{MAX_CHAR_COUNT}</p>
-            <div className="flex gap-2">
-              <button className="btn hover:bg-white shadow-lg" onClick={() => { setNoteContent(''); setCharCount(0); document.getElementById('add-note-modal').close() }}>Cancel</button>
-              <button className={`btn btn-primary bg-light-primary hover:bg-light-primary shadow-lg ${(modalLoading || charCount <= 0) && "btn-disabled"}`}
-                onClick={postNote}
-              >
-                {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Post Note"}
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </dialog>
+      <AddStickyNoteModal />
 
       {/* Feedback modal with rejection date*/}
-      <dialog id="evaluation-feedback-modal" className="modal">
-        <div className="modal-box">
-          <div className="flex items-center gap-2 mb-3">
-            <ChatBubbleOvalLeftEllipsisIcon className="size-8 text-primary" />
-            <h3 className="font-bold text-xl">Request Evaluation/Feedback</h3>
-          </div>
-          <p className="pb-4">Please enter deadline date and press confirm. The deadline will be 23:59 of the entered date.</p>
-          <div className="flex gap-2 my-3 items-center">
-            <p className="text-base font-bold">Deadline</p>
-            <input type="date" placeholder='Deadline' className="input input-bordered w-full" value={deadline} onChange={(e) => setDeadline(e.target.value)} />
-          </div>
-
-          <div className="modal-action">
-            <button className="btn" onClick={() => document.getElementById('evaluation-feedback-modal').close()}>Cancel</button>
-            <button className={`btn btn-primary ${modalLoading && "btn-disabled"}`} onClick={sendFeedback}>
-              {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Confirm"}
-            </button>
-          </div>
-        </div>
-      </dialog>
+      <RequestEvaluationModal />
 
       {/** Change password modal */}
-      <dialog id="change-password-modal" className="modal">
-        <form method="dialog" className="modal-box" onSubmit={changePassword}>
-          <div className="flex items-center">
-            <LockClosedIcon className="size-8 mr-2 text-primary" />
-            <h3 className="font-bold text-lg">Change Password</h3>
-          </div>
-          <p>When your account is first created, your initial password is <strong>nstptenant</strong> </p>
-          <div className="py-4">
-            <div className="relative mb-4">
-              <input
-                type={passwordVisibility.currentPassword ? 'text' : 'password'}
-                name="currentPassword"
-                placeholder="Current Password"
-                value={passwordData.currentPassword}
-                onChange={handlePasswordInputChange}
-                className="input input-bordered w-full"
-              />
-              <button
-                type="button"
-                onClick={() => togglePasswordVisibility('currentPassword')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
-              >
-                {passwordVisibility.currentPassword ? (
-                  <EyeSlashIcon className="h-5 w-5" />
-                ) : (
-                  <EyeIcon className="h-5 w-5" />
-                )}
-              </button>
-            </div>
-            <div className="relative mb-4">
-              <input
-                type={passwordVisibility.newPassword ? 'text' : 'password'}
-                name="newPassword"
-                placeholder="New Password"
-                value={passwordData.newPassword}
-                onChange={handlePasswordInputChange}
-                className="input input-bordered w-full"
-              />
-              <button
-                type="button"
-                onClick={() => togglePasswordVisibility('newPassword')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
-              >
-                {passwordVisibility.newPassword ? (
-                  <EyeSlashIcon className="h-5 w-5" />
-                ) : (
-                  <EyeIcon className="h-5 w-5" />
-                )}
-              </button>
-            </div>
-            <div className="relative mb-4">
-              <input
-                type={passwordVisibility.confirmPassword ? 'text' : 'password'}
-                name="confirmPassword"
-                placeholder="Confirm New Password"
-                value={passwordData.confirmPassword}
-                onChange={handlePasswordInputChange}
-                className="input input-bordered w-full"
-              />
-              <button
-                type="button"
-                onClick={() => togglePasswordVisibility('confirmPassword')}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
-              >
-                {passwordVisibility.confirmPassword ? (
-                  <EyeSlashIcon className="h-5 w-5" />
-                ) : (
-                  <EyeIcon className="h-5 w-5" />
-                )}
-              </button>
-            </div>
-          </div>
-          <div className="modal-action">
-            <button type="button" className="btn" onClick={handleCancelPassword}>Cancel</button>
-            <button type="submit" className={`btn btn-primary text-base-100 ${modalLoading && "btn-disabled"}`}> {modalLoading && <span className="loading loading-spinner"></span>} {modalLoading ? "Please wait..." : "Submit"}</button>
-          </div>
-        </form>
-      </dialog>
+      <ChangePasswordModal role={role} companyData={companyData} />
 
       {/* View Profile Modal */}
       <EmployeeProfileModal employeeProfileSelected={selectedEmployee} />
@@ -1214,6 +475,7 @@ const Company = ({ role }) => {
 
             {/** ACTIONS dropdwon on right */}
             <div className=' order-1 lg:order-2 flex-1 flex lg:flex-col gap-3 justify-end lg:justify-normal lg:mb-0 mb-5 lg:items-end'>
+              {/** Button to fetch sticky notes for admins */}
               {role == "admin" &&
                 (
                   <>
@@ -1234,39 +496,9 @@ const Company = ({ role }) => {
                   </>
                 )
               }
-              <div className="relative">
-                <button
-                  className="btn text-base-100 btn-primary"
-                  onClick={() => toggleDropdown('actions')}
-                >
-                  Actions
-                  {dropdownOpen['actions'] ? (
-                    <ChevronUpIcon className="h-5 w-5" />
-                  ) : (
-                    <ChevronDownIcon className="h-5 w-5" />
-                  )}
-                </button>
-                {dropdownOpen['actions'] && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                    <ul className="py-1">
-                      {actions.map((action, index) => (
-                        <li key={index}>
-                          <button
-                            className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                            onClick={() => {
-                              action.onClick();
-                              toggleDropdown('actions');
-                            }}
-                          >
-                            <action.icon className="h-5 w-5 mr-2" />
-                            {action.text}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
+
+              {/** Actions dropdown */}
+              <ActionsDropdown />
             </div>
           </div>
 

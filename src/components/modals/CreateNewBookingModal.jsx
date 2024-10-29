@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react'
 import showToast from '../../util/toast';
 
 import { TenantService } from '../../services';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 const CreateNewBookingModal = ({ roomOptions: initialRoomOptions }) => {
     const [modalLoading, setModalLoading] = useState(false);
     const [roomOptions, setRoomOptions] = useState(initialRoomOptions || []);
-
+    const [errorMessage, setErrorMessage] = useState('');
+    const today = new Date();
+    const minDate = today.toISOString().split('T')[0];
+    const minTime = today.toTimeString().split(' ')[0].slice(0, 5); // Format as HH:MM
 
     useEffect(() => {
         if (initialRoomOptions !== undefined) {
@@ -20,9 +24,65 @@ const CreateNewBookingModal = ({ roomOptions: initialRoomOptions }) => {
         roomId: "",
     });
 
+    const validateDateTime = (date, time) => {
+        if (!date || !time) return true; // Skip validation if either is empty
+        const selectedDateTime = new Date(`${date}T${time}`);
+        return selectedDateTime > new Date();
+    };
+
+    const validateEndTime = (startTime, endTime) => {
+        if (!startTime || !endTime) return true; // Skip validation if either is empty
+        return endTime > startTime;
+    };
 
     const handleNewBookingChange = (e) => {
-        setNewBooking({ ...newBooking, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        let updatedBooking = { ...newBooking };
+        let error = '';
+
+        switch (name) {
+            case 'date':
+                const selectedDate = new Date(value);
+                if (selectedDate < today && selectedDate.toDateString() !== today.toDateString()) {
+                    error = 'The booking date must not be in the past.';
+                } else {
+                    updatedBooking.date = value;
+                    // Validate times if they exist
+                    if (updatedBooking.startTime && !validateDateTime(value, updatedBooking.startTime)) {
+                        error = 'The start time must be after the current time.';
+                        updatedBooking.startTime = '';
+                        updatedBooking.endTime = '';
+                    }
+                }
+                break;
+
+            case 'startTime':
+                if (!validateDateTime(updatedBooking.date, value)) {
+                    error = 'The start time must be after the current time.';
+                } else {
+                    updatedBooking.startTime = value;
+                    // Clear end time if it's before start time
+                    if (updatedBooking.endTime && !validateEndTime(value, updatedBooking.endTime)) {
+                        error = 'The end time must be after the start time.';
+                        updatedBooking.endTime = '';
+                    }
+                }
+                break;
+
+            case 'endTime':
+                if (!validateEndTime(updatedBooking.startTime, value)) {
+                    error = 'The end time must be after the start time.';
+                } else {
+                    updatedBooking.endTime = value;
+                }
+                break;
+
+            default:
+                updatedBooking[name] = value;
+        }
+
+        setErrorMessage(error);
+        setNewBooking(updatedBooking);
     };
 
     const submitNewBooking = async () => {
@@ -43,13 +103,11 @@ const CreateNewBookingModal = ({ roomOptions: initialRoomOptions }) => {
             setNewBooking({ date: '', startTime: '', endTime: '', roomId: '' });
             document.getElementById('new_booking_modal').close();
 
-
         } catch (error) {
             console.log("Error submitting new booking: ", error);
         } finally {
             setModalLoading(false);
         }
-
     };
 
     useEffect(() => {
@@ -73,12 +131,9 @@ const CreateNewBookingModal = ({ roomOptions: initialRoomOptions }) => {
                     console.error("Error fetching rooms: ", error);
                 }
             }
-
         }
         fetchData();
-
     }, []);
-
 
     return (
         <dialog
@@ -98,6 +153,7 @@ const CreateNewBookingModal = ({ roomOptions: initialRoomOptions }) => {
                             value={newBooking.date}
                             onChange={handleNewBookingChange}
                             className="input input-bordered w-full"
+                            min={minDate}
                         />
                     </div>
                     <div className="form-control w-full">
@@ -110,6 +166,7 @@ const CreateNewBookingModal = ({ roomOptions: initialRoomOptions }) => {
                             value={newBooking.startTime}
                             onChange={handleNewBookingChange}
                             className="input input-bordered w-full"
+                            min={newBooking.date === minDate ? minTime : undefined}
                         />
                     </div>
                     <div className="form-control w-full">
@@ -122,8 +179,10 @@ const CreateNewBookingModal = ({ roomOptions: initialRoomOptions }) => {
                             value={newBooking.endTime}
                             onChange={handleNewBookingChange}
                             className="input input-bordered w-full"
+                            min={newBooking.startTime || undefined}
                         />
                     </div>
+
                     <div className="form-control w-full">
                         <label className="label">
                             <span className="label-text">Room</span>
@@ -142,18 +201,22 @@ const CreateNewBookingModal = ({ roomOptions: initialRoomOptions }) => {
                             ))}
                         </select>
                     </div>
+                    {errorMessage && <p className="text-red-700 rounded-lg p-3 mt-3 flex gap-2 items-center bg-red-100"> <ExclamationTriangleIcon className="size-5" /> {errorMessage}</p>}
                 </div>
                 <div className="modal-action">
                     <button
                         className="btn"
-                        onClick={() =>
+                        onClick={() => {
+                            //clear fields
+                            setNewBooking({ date: '', startTime: '', endTime: '', roomId: '' });
+                            setErrorMessage('');
                             document.getElementById("new_booking_modal").close()
-                        }
+                        }}
                     >
-                        Close
+                        Cancel
                     </button>
                     <button
-                        className={`btn btn-primary ${modalLoading && "btn-disabled"}`}
+                        className={`btn btn-primary ${(errorMessage || modalLoading) && "btn-disabled"}`}
                         onClick={submitNewBooking}
                     >
                         {modalLoading && (
