@@ -13,10 +13,10 @@ const NSTPLoader = ({ display }) => {
       const randomMessage = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
       setMessage(randomMessage);
     }
-  }, []);
+  }, [display]);
 
   return (
-    <div className="loader-container w-full min-h-screen overflow-hidden overflow-y-hidden overflow-x-hidden  flex flex-col items-center justify-center">
+    <div className=" fixed inset-0 lg:left-20 flex flex-col items-center justify-center bg-base-100 z-50">
       <img src={NSTPLogo} alt="NSTP Logo" className="w-20 h-20 animate-jump animate-infinite animate-duration-[1500ms] animate-delay-0 animate-ease-linear" />
       <p className="text-lg font-sm mt-3 text-primary ml-2">{message}</p>
     </div>
