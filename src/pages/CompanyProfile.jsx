@@ -869,19 +869,6 @@ const Company = ({ role }) => {
     } finally {
       setModalLoading(false);
     }
-
-    // Perform the upload logic here API CALLLSs
-
-    // setTimeout(() => {
-    //   showToast(true, "Successfully Uploaded Logo");
-    //   setModalLoading(false);
-    //   document.getElementById('upload-logo-modal').close();
-    //   setLogoToUpload(null);
-    //   setCompanyData((prevData) => ({
-    //     ...prevData,
-    //     logo: URL.createObjectURL(logoToUpload)
-    //   }));
-    // }, 2000);
   };
 
   return (

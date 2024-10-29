@@ -305,7 +305,7 @@ const AdminHome = () => {
           {/* Second row */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-7 my-6">
             <div className="md: col-span-4 lg:order-1 md:order-2 max-md:order-2">
-              <NewsFeed />
+              <NewsFeed numNewsItems={4} />
             </div>
             <div className="md: col-span-3 lg:order-2 md:order-1 max-md:order-1">
               <div className="md:col-span-3 mb-3 card p-5 flex flex-col">
@@ -318,48 +318,43 @@ const AdminHome = () => {
                   </div>
                 </div>
 
-                  <div className="grid grid-cols-2 rounded-2xl overflow-clip" >
-                    <div className="bg-orange-100 p-5 flex flex-row justify-between text-red-900 dark:text-orange-300 dark:bg-orange-200 dark:bg-opacity-25">
-                      <div className="flex flex-col items-start">
-                        <p className="font-bold text-2xl">{companyStats.hatch8}</p>
-                        <p className="text-sm">{ `Hatch 8 startup${companyStats.hatch8 > 1 ? 's' : ''}`}</p>
-                      </div>
-                      <img src={hatch8icon} alt="hatch8" className="w-10" />
+                <div className="grid grid-cols-2 rounded-2xl overflow-clip" >
+                  <div className="bg-orange-100 p-5 flex flex-row justify-between text-red-900 dark:text-orange-300 dark:bg-orange-200 dark:bg-opacity-25">
+                    <div className="flex flex-col items-start">
+                      <p className="font-bold text-2xl">{companyStats.hatch8}</p>
+                      <p className="text-sm">{`Hatch 8 startup${companyStats.hatch8 > 1 ? 's' : ''}`}</p>
                     </div>
-                    <div className="bg-lime-100 p-5 flex flex-row justify-between  text-green-900 dark:text-lime-100 dark:bg-lime-800 dark:bg-opacity-25 ">
-                      <RocketLaunchIcon className="h-10 w-10 text-green-900 dark:text-lime-200" />
-                      <div className="flex flex-col items-end">
-                        <p className="font-bold text-2xl">{companyStats.startups}</p>
-                        <p className="text-sm">{ `Startup${companyStats.startups > 1 ? 's' : ''}`}</p>
-                      </div>
-                    </div>
-                    <div className="bg-emerald-100 p-5 flex flex-row justify-between text-emerald-900 dark:text-emerald-300 dark:bg-emerald-200 dark:bg-opacity-25">
-                    
-                      <div className="flex flex-col items-start">
-                        <p className="font-bold text-2xl">{companyStats.companies}</p>
-                        <p className="text-sm">{ `Compan${companyStats.companies > 1 ? 'ies' : 'y'}`}</p>
-                      </div>
-                      <PresentationChartBarIcon className="h-10 w-10 text-emerald-900 dark:text-emerald-200" />
-                    </div>
-                    <div className="bg-cyan-100 p-5 flex flex-row justify-between text-cyan-900 dark:text-cyan-300 dark:bg-cyan-200 dark:bg-opacity-25">
-                    <img src={cube8icon} alt="hatch8" className="w-10" />
-                      <div className="flex flex-col items-end">
-                        <p className="font-bold text-2xl">{companyStats.cube8}</p>
-                        <p className="text-sm">{ `Cube 8 Startup${companyStats.cube8 > 1 ? 's' : ''}`}</p>
-                      </div>
-                     
+                    <img src={hatch8icon} alt="hatch8" className="w-10" />
+                  </div>
+                  <div className="bg-lime-100 p-5 flex flex-row justify-between  text-green-900 dark:text-lime-100 dark:bg-lime-800 dark:bg-opacity-25 ">
+                    <RocketLaunchIcon className="h-10 w-10 text-green-900 dark:text-lime-200" />
+                    <div className="flex flex-col items-end">
+                      <p className="font-bold text-2xl">{companyStats.startups}</p>
+                      <p className="text-sm">{`Startup${companyStats.startups > 1 ? 's' : ''}`}</p>
                     </div>
                   </div>
+                  <div className="bg-emerald-100 p-5 flex flex-row justify-between text-emerald-900 dark:text-emerald-300 dark:bg-emerald-200 dark:bg-opacity-25">
 
-
+                    <div className="flex flex-col items-start">
+                      <p className="font-bold text-2xl">{companyStats.companies}</p>
+                      <p className="text-sm">{`Compan${companyStats.companies > 1 ? 'ies' : 'y'}`}</p>
+                    </div>
+                    <PresentationChartBarIcon className="h-10 w-10 text-emerald-900 dark:text-emerald-200" />
+                  </div>
+                  <div className="bg-cyan-100 p-5 flex flex-row justify-between text-cyan-900 dark:text-cyan-300 dark:bg-cyan-200 dark:bg-opacity-25">
+                    <img src={cube8icon} alt="hatch8" className="w-10" />
+                    <div className="flex flex-col items-end">
+                      <p className="font-bold text-2xl">{companyStats.cube8}</p>
+                      <p className="text-sm">{`Cube 8 Startup${companyStats.cube8 > 1 ? 's' : ''}`}</p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="md:col-span-3 card p-5">
                 <ComparativeChart title={"E-Tags"} comparisonData={eTags} link={"etags"} />
               </div>
-
             </div>
-
           </div>
         </>}
       </div>

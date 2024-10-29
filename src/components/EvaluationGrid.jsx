@@ -1,5 +1,11 @@
 import { BuildingOffice2Icon, ChartBarIcon, DocumentTextIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
 
+/**
+|--------------------------------------------------
+| For displaying the results of evaluationForm filled by tenant
+|--------------------------------------------------
+*/
+
 const EvaluationGrid = ({ evaluation }) => {
     const fieldMappings = {
         // Economic Performance
