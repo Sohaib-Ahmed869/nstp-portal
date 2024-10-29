@@ -3,10 +3,11 @@ import { TowerContext } from '../../context/TowerContext';
 import { AuthContext } from '../../context/AuthContext';
 import Sidebar from '../../components/Sidebar'
 import ThemeControl from '../../components/ThemeControl'
-import { QuestionMarkCircleIcon, BellAlertIcon, IdentificationIcon, ArchiveBoxArrowDownIcon, ArrowPathRoundedSquareIcon, UsersIcon, PlusCircleIcon, UserGroupIcon, RocketLaunchIcon, BuildingOffice2Icon, ArrowTrendingUpIcon, ClockIcon } from '@heroicons/react/24/outline'
+import { QuestionMarkCircleIcon, BellAlertIcon, IdentificationIcon, ArchiveBoxArrowDownIcon, ArrowPathRoundedSquareIcon, UsersIcon, PlusCircleIcon, UserGroupIcon, RocketLaunchIcon, BuildingOffice2Icon, ArrowTrendingUpIcon, ClockIcon, PresentationChartBarIcon } from '@heroicons/react/24/outline'
 import ComparativeChart from '../../components/ComparativeChart'
 import { Link } from 'react-router-dom'
 import hatch8icon from '../../assets/hatch8.png'
+import cube8icon from '../../assets/cube8.png'
 import NewsFeed from '../../components/NewsFeed'
 import NSTPLoader from '../../components/NSTPLoader'
 import showToast from '../../util/toast';
@@ -130,6 +131,8 @@ const AdminHome = () => {
           total: Object.values(dashboard.companyCategories).reduce((acc, val) => acc + val, 0),
           hatch8: dashboard.companyCategories["Hatch 8"],
           startups: dashboard.companyCategories["Startup"],
+          cube8: dashboard.companyCategories["Cube 8"],
+          companies: dashboard.companyCategories["Company"],
         });
 
         setETags({
@@ -315,23 +318,38 @@ const AdminHome = () => {
                   </div>
                 </div>
 
-                <div className="flex rounded-2xl overflow-clip" >
-                  <div className="bg-orange-300 p-5 flex flex-row justify-between w-1/2 text-red-900 dark:text-orange-300 dark:bg-orange-500 dark:bg-opacity-25">
-                    <div className="flex flex-col items-start">
-                      <p className="font-bold text-2xl">{companyStats.hatch8}</p>
-                      <p className="text-sm">Hatch 8 Companies</p>
+                  <div className="grid grid-cols-2 rounded-2xl overflow-clip" >
+                    <div className="bg-orange-100 p-5 flex flex-row justify-between text-red-900 dark:text-orange-300 dark:bg-orange-200 dark:bg-opacity-25">
+                      <div className="flex flex-col items-start">
+                        <p className="font-bold text-2xl">{companyStats.hatch8}</p>
+                        <p className="text-sm">{ `Hatch 8 startup${companyStats.hatch8 > 1 ? 's' : ''}`}</p>
+                      </div>
+                      <img src={hatch8icon} alt="hatch8" className="w-10" />
                     </div>
-                    <img src={hatch8icon} alt="hatch8" className="w-12" />
-                  </div>
-                  <div className="bg-lime-100 p-5 flex flex-row justify-between w-1/2 text-green-900 dark:text-lime-100 dark:bg-lime-800 dark:bg-opacity-25 ">
-                    <RocketLaunchIcon className="h-10 w-10 text-green-900 dark:text-lime-200" />
-                    <div className="flex flex-col items-end">
-                      <p className="font-bold text-2xl">{companyStats.startups}</p>
-                      <p className="text-sm">Startups</p>
+                    <div className="bg-lime-100 p-5 flex flex-row justify-between  text-green-900 dark:text-lime-100 dark:bg-lime-800 dark:bg-opacity-25 ">
+                      <RocketLaunchIcon className="h-10 w-10 text-green-900 dark:text-lime-200" />
+                      <div className="flex flex-col items-end">
+                        <p className="font-bold text-2xl">{companyStats.startups}</p>
+                        <p className="text-sm">{ `Startup${companyStats.startups > 1 ? 's' : ''}`}</p>
+                      </div>
                     </div>
-
+                    <div className="bg-emerald-100 p-5 flex flex-row justify-between text-emerald-900 dark:text-emerald-300 dark:bg-emerald-200 dark:bg-opacity-25">
+                    
+                      <div className="flex flex-col items-start">
+                        <p className="font-bold text-2xl">{companyStats.companies}</p>
+                        <p className="text-sm">{ `Compan${companyStats.companies > 1 ? 'ies' : 'y'}`}</p>
+                      </div>
+                      <PresentationChartBarIcon className="h-10 w-10 text-emerald-900 dark:text-emerald-200" />
+                    </div>
+                    <div className="bg-cyan-100 p-5 flex flex-row justify-between text-cyan-900 dark:text-cyan-300 dark:bg-cyan-200 dark:bg-opacity-25">
+                    <img src={cube8icon} alt="hatch8" className="w-10" />
+                      <div className="flex flex-col items-end">
+                        <p className="font-bold text-2xl">{companyStats.cube8}</p>
+                        <p className="text-sm">{ `Cube 8 Startup${companyStats.cube8 > 1 ? 's' : ''}`}</p>
+                      </div>
+                     
+                    </div>
                   </div>
-                </div>
 
 
               </div>

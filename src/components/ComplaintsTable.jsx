@@ -231,8 +231,7 @@ const ComplaintsTable = ({ title, icon: Icon, complaintType, complaints, sortFie
                                 </th>
                             )}
                             <th>Description</th>
-                            <th onClick={() => handleSortChange("isResolved")}>Resolved {sortField === "isResolved" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
-
+                            <th onClick={() => handleSortChange("isResolved")}>Status {sortField === "isResolved" ? (sortOrder === "asc" ? "▲" : "▼") : ""}</th>
                             <th>Actions</th>
                         </tr>
                     </thead>

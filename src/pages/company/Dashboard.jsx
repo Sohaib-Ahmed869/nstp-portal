@@ -177,6 +177,89 @@ const Dashboard = () => {
         <hr className="my-5 text-gray-200"></hr>
 
         {/* First row */}
+        <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
+          {/** News feed */}
+          <div className="col-span-1 lg:col-span-3">
+            <NewsFeed />
+          </div>
+
+          {/* Oldest Complaints section */}
+          <div className="flex flex-col gap-4 col-span-1 lg:col-span-4 min-h-full">
+            <div className="card p-5 h-full">
+              {/* Header with title and buttons */}
+              <div className="flex lg:flex-row flex-col lg:items-center justify-between mb-2">
+                <h1 className="text-2xl font-bold">Pending Complaints</h1>
+                <div className="flex gap-2  mt-3 lg:mt-0 ">
+                  <button className=' btn btn-primary btn-outline hover:text-white text-white btn-md' onClick={() => document.getElementById('complaint_modal').showModal()}>
+                    <PaperAirplaneIcon className="h-5 w-5" />
+                    Send Complaint
+                  </button>
+                  <Link to="complaints" className=' btn btn-primary text-white btn-md'>
+                    <TableCellsIcon className="h-5 w-5" />
+                    View All
+                  </Link>
+                </div>
+              </div>
+              {/** Table content */}
+              <div className="overflow-scroll scrollbar-hide">
+                <table className="table w-full my-3">
+                  <tbody>
+                    <tr className="bg-base-200">
+                      <th>Date</th>
+                      <th>Subject/Type</th>
+                      <th>Urgency</th>
+                      <th>Status</th>
+                      <th>Days Pending</th>
+                    </tr>
+
+                    {recentComplaints.map((complaint, index) => (
+                      <tr key={complaint.id} className="group">
+                        <td className="">{complaint.date}</td>
+                        <td className="">{complaint.serviceType}</td>
+                        <td className="">
+                          <div className={`badge text-base-100 ${complaint.urgency === 1 ? "badge-primary" : complaint.urgency === 2 ? "badge-secondary" : "badge-error"} flex items-center py-3`} >
+                            {complaint.urgency === 1 ? "Low" : complaint.urgency === 2 ? "Med" : "High"}
+                          </div>
+                        </td>
+                        <td className="">{complaint.isResolved ? "Resolved" : "Pending"}</td>
+                        <td className="">{complaint.daysPending}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+       
+        {/* Second row */}
+        <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
+          {/* Meeting room schedule table */}
+          <div className="col-span-4 card p-5 my-3">
+            <MeetingRoomBookingTable
+              meetingRoomSchedule={meetingRoomSchedule.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)}
+              dashboardComponent={true}
+            />
+          </div>
+
+          {/* Charts of e-tags and gate passes */}
+          <div className="col-span-3 my-3 flex flex-col gap-4">
+            <div className="card p-5">
+              <ComparativeChart title="Parking E-tags" comparisonData={eTags} />
+            </div>
+
+            <div className="card p-5">
+              <ComparativeChart
+                title="Gate Passes"
+                comparisonData={gatePasses}
+                link={"gate-passes"}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Third row */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-7">
           {/* Employee and intern stats cards  */}
           <div className="md:col-span-3 flex flex-col gap-4">
@@ -274,88 +357,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Second row */}
-        <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
-          {/* Meeting room schedule table */}
-          <div className="col-span-4 card p-5 my-3">
-            <MeetingRoomBookingTable
-              meetingRoomSchedule={meetingRoomSchedule.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)}
-              dashboardComponent={true}
-            />
-          </div>
-
-          {/* Charts of e-tags and gate passes */}
-          <div className="col-span-3 my-3 flex flex-col gap-4">
-            <div className="card p-5">
-              <ComparativeChart title="Parking E-tags" comparisonData={eTags} />
-            </div>
-
-            <div className="card p-5">
-              <ComparativeChart
-                title="Gate Passes"
-                comparisonData={gatePasses}
-                link={"gate-passes"}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Third row */}
-        <div className="mt-2 lg:mt-5 grid grid-cols-1 gap-6 lg:grid-cols-7">
-          {/** News feed */}
-          <div className="col-span-1 lg:col-span-3">
-            <NewsFeed />
-          </div>
-
-          {/* Oldest Complaints section */}
-          <div className="flex flex-col gap-4 col-span-1 lg:col-span-4 min-h-full">
-            <div className="card p-5 h-full">
-              {/* Header with title and buttons */}
-              <div className="flex lg:flex-row flex-col lg:items-center justify-between mb-2">
-                <h1 className="text-2xl font-bold">Pending Complaints</h1>
-                <div className="flex gap-2  mt-3 lg:mt-0 ">
-                  <button className=' btn btn-primary btn-outline hover:text-white text-white btn-md' onClick={() => document.getElementById('complaint_modal').showModal()}>
-                    <PaperAirplaneIcon className="h-5 w-5" />
-                    Send Complaint
-                  </button>
-                  <Link to="complaints" className=' btn btn-primary text-white btn-md'>
-                    <TableCellsIcon className="h-5 w-5" />
-                    View All
-                  </Link>
-                </div>
-              </div>
-              {/** Table content */}
-              <div className="overflow-scroll scrollbar-hide">
-                <table className="table w-full my-3">
-                  <tbody>
-                    <tr className="bg-base-200">
-                      <th>Date</th>
-                      <th>Subject/Type</th>
-                      <th>Urgency</th>
-                      <th>Status</th>
-                      <th>Days Pending</th>
-                    </tr>
-
-                    {recentComplaints.map((complaint, index) => (
-                      <tr key={complaint.id} className="group">
-                        <td className="">{complaint.date}</td>
-                        <td className="">{complaint.serviceType}</td>
-                        <td className="">
-                          <div className={`badge text-base-100 ${complaint.urgency === 1 ? "badge-primary" : complaint.urgency === 2 ? "badge-secondary" : "badge-error"} flex items-center py-3`} >
-                            {complaint.urgency === 1 ? "Low" : complaint.urgency === 2 ? "Med" : "High"}
-                          </div>
-                        </td>
-                        <td className="">{complaint.isResolved ? "Resolved" : "Pending"}</td>
-                        <td className="">{complaint.daysPending}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-        </div>
       </div>
     </Sidebar>
   );

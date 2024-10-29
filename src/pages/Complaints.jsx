@@ -9,7 +9,7 @@ import { TowerContext } from '../context/TowerContext'
 import { formatDate } from '../util/date'
 /**
 |--------------------------------------------------
-| generic page for both admins and receptionists
+| generic page for both admins and receptionists (tenant page is separate )
 | displays complaints based on role (general for admin, services for receptionist)
 | for tenant complaints page go to src/pages/company/Complaints.jsx
 |--------------------------------------------------
@@ -123,11 +123,16 @@ export const Complaints = ({ role }) => {
                 const dateA = new Date(a.date);
                 const dateB = new Date(b.date);
                 return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-            } else if (sortField === "subject" || sortField === "serviceType" || sortField === "tenantName") {
-                const fieldA = a[sortField].toLowerCase();
-                const fieldB = b[sortField].toLowerCase();
+            } else if (sortField === "subject" || sortField === "serviceType") {
+                const fieldA = a[sortField]? a[sortField].toLowerCase() : a;
+                const fieldB = b[sortField]? b[sortField].toLowerCase() : b;
                 return sortOrder === "asc" ? fieldA.localeCompare(fieldB) : fieldB.localeCompare(fieldA);
-            } else if (sortField === "urgency" || sortField === "isResolved") {
+            } else if (sortField === "tenantName") {
+                const fieldA = a["tenantName"].registration.organizationName.toLowerCase();
+                const fieldB = b["tenantName"].registration.organizationName.toLowerCase();
+                return sortOrder === "asc" ? fieldA.localeCompare(fieldB) : fieldB.localeCompare(fieldA);
+            }
+            else if (sortField === "urgency" || sortField === "isResolved") {
                 return sortOrder === "asc" ? a[sortField] - b[sortField] : b[sortField] - a[sortField];
             }
             return 0;
