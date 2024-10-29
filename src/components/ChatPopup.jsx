@@ -143,7 +143,7 @@ const ChatPopup = ({ onClose, complaintType, complaintSelectedForChat, setCompla
     }
 
     return (
-        <div className="fixed bottom-0 right-5 w-full h-full lg:w-96 lg:h-[35rem] z-50 bg-white shadow-lg rounded-lg flex flex-col">
+        <div className="fixed bottom-0 right-5 w-full h-full lg:w-96 lg:h-[35rem] z-50 bg-base-100 shadow-lg rounded-lg flex flex-col">
             {/* Header */}
             <div className="flex flex-col border-b border-base-200">
                 <div className="flex justify-between items-center p-4">

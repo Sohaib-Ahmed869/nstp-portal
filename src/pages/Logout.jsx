@@ -15,18 +15,20 @@ const Logout = () => {
     async function logoutUser() {
       try {
         const response = await AuthService.logout();
-        console.log("🚀 ~ logoutUser ~ response", response);
+        setTimeout(() => {
+          console.log("🚀 ~ logoutUser ~ response", response);
         if (response.error) {
           console.error(response.error);
         }
         logout();
         showToast(true, response.message);
         navigate('/');
+        setLoading(false);
+        }, 1000)
       } catch (error) {
         console.error(error);
-      } finally {
         setLoading(false);
-      }
+      } 
     }
 
     logoutUser();

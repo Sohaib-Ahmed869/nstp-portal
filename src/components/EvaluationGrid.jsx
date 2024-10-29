@@ -61,7 +61,7 @@ const EvaluationGrid = ({ evaluation }) => {
     const getFieldDisplayName = (key) => fieldMappings[key] || key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
     return (
-        <div className="grid grid-cols-1 gap-6 p-6 bg-white rounded-lg shadow-md">
+        <div className="grid grid-cols-1 gap-6 p-6 bg-base-100 rounded-lg shadow-md">
             <div className="flex items-center gap-2 bg-primary bg-opacity-20 p-6 rounded-lg">
                 <ChartBarIcon className="size-8 text-secondary" />
                 <h2 className="text-xl font-bold text-secondary">Economic Performance</h2>

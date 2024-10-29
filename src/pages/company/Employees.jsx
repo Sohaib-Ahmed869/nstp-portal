@@ -694,12 +694,12 @@ const Employees = () => {
                       {dropdownOpen[row._id] && (
                         <div
                           ref={(el) => (dropdownRefs.current[row._id] = el)}
-                          className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                          className="absolute right-0 mt-2 w-48 bg-base-100 border border-gray-200 rounded-lg shadow-lg z-50"
                         >
                           <ul className="py-1">
                             <li>
                               <button
-                                className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                className="flex px-4 py-2 text-sm  hover:bg-gray-100 w-full text-left"
                                 onClick={() => {
                                   setEmployeeProfileSelected(row);
                                   document
@@ -714,7 +714,7 @@ const Employees = () => {
                             </li>
                             <li>
                               <button
-                                className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                className="flex px-4 py-2 text-sm  hover:bg-gray-100 w-full text-left"
                                 onClick={() => {
                                   document
                                     .getElementById("etag_request_modal")
@@ -747,7 +747,7 @@ const Employees = () => {
                             {row.card_num == undefined && (
                               <li>
                                 <button
-                                  className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  className="flex px-4 py-2 text-sm  hover:bg-gray-100 w-full text-left"
                                   onClick={() => {
                                     document
                                       .getElementById("card_request_modal")
@@ -764,7 +764,7 @@ const Employees = () => {
                             {row.status_employment && (
                               <li>
                                 <button
-                                  className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  className="flex px-4 py-2 text-sm  hover:bg-gray-100 w-full text-left"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     document

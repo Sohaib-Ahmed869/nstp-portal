@@ -150,7 +150,7 @@ const Clearance = () => {
                     {sortedRequests.map((request) => (
                         <div
                             key={request.id}
-                            className="bg-white rounded-lg shadow-md ring-1 ring-base-200 p-5 mb-5"
+                            className="bg-base-100 rounded-lg shadow-md ring-1 ring-base-200 p-5 mb-5"
                         >
                             <div className="flex md:flex-row flex-col md:justify-between md:items-center">
                                 <div>

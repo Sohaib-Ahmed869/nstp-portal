@@ -113,7 +113,7 @@ const Blogs = () => {
                 <hr className="my-5 text-gray-200"></hr>
                 <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 2xl:gap-10 gap-4 lg:gap-16">
                     {blogsList.map(blog => (
-                        <div key={blog.id} className="card bg-white shadow-md rounded-lg overflow-visible">
+                        <div key={blog.id} className="card bg-base-100 shadow-md rounded-lg overflow-visible">
                             <img src={blog.content.find(item => item.type === 'image').content} alt="Blog Thumbnail" className="w-full h-48 object-cover rounded-t-lg " />
                             <div className="p-4  overflow-visible">
                                 <div className="flex justify-between items-center overflow-visible">

@@ -117,12 +117,12 @@ const ActionsDropdown = ({companyData}) => {
                 </button>
                 
                 {dropdownOpen['actions'] && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                  <div className="absolute right-0 mt-2 w-48 bg-base-100 border border-base-200 rounded-lg shadow-lg z-10">
                     <ul className="py-1">
                       {actions.map((action, index) => (
                         <li key={index}>
                           <button
-                            className="flex px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                            className="flex px-4 py-2 text-sm  hover:bg-base-100 w-full text-left"
                             onClick={() => {
                               action.onClick();
                               toggleDropdown('actions');

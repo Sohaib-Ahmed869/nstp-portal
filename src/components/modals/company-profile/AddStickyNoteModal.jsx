@@ -77,7 +77,7 @@ const AddStickyNoteModal = () => {
                 <div className="modal-action mt-3 justify-between">
                     <p className="text-right text-sm text-white ml-1 mt-1">{charCount}/{MAX_CHAR_COUNT}</p>
                     <div className="flex gap-2">
-                        <button className="btn hover:bg-white shadow-lg" onClick={() => { setNoteContent(''); setCharCount(0); document.getElementById('add-note-modal').close() }}>Cancel</button>
+                        <button className="btn hover:bg-base-100 shadow-lg" onClick={() => { setNoteContent(''); setCharCount(0); document.getElementById('add-note-modal').close() }}>Cancel</button>
                         <button className={`btn btn-primary bg-light-primary hover:bg-light-primary shadow-lg ${(modalLoading || charCount <= 0) && "btn-disabled"}`}
                             onClick={postNote}
                         >
