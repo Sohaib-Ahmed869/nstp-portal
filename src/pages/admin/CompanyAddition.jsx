@@ -65,33 +65,33 @@ const CompanyAddition = () => {
 
   const handleChange = (section, field, value, index = null) => {
     if (index !== null) {
-        console.log(`Changing ${section}[${index}].${field} to ${value}`);
+      console.log(`Changing ${section}[${index}].${field} to ${value}`);
     } else {
-        console.log(`Changing ${section}.${field} to ${value}`);
+      console.log(`Changing ${section}.${field} to ${value}`);
     }
 
     if (index !== null) {
-        setFormData((prevState) => {
-            const updatedArray = [...prevState[section]];
-            updatedArray[index] = {
-                ...updatedArray[index],
-                [field]: value,
-            };
-            return {
-                ...prevState,
-                [section]: updatedArray,
-            };
-        });
+      setFormData((prevState) => {
+        const updatedArray = [...prevState[section]];
+        updatedArray[index] = {
+          ...updatedArray[index],
+          [field]: value,
+        };
+        return {
+          ...prevState,
+          [section]: updatedArray,
+        };
+      });
     } else {
-        setFormData((prevState) => ({
-            ...prevState,
-            [section]: {
-                ...prevState[section],
-                [field]: value,
-            },
-        }));
+      setFormData((prevState) => ({
+        ...prevState,
+        [section]: {
+          ...prevState[section],
+          [field]: value,
+        },
+      }));
     }
-};
+  };
   const handleFileChange = (section, field, file) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -105,101 +105,101 @@ const CompanyAddition = () => {
   const renderFields = (section, fields, index = null) => {
     const data = index !== null ? formData[section][index] : formData[section];
     if (!data) {
-        console.error(`Section ${section} does not exist in formData`);
-        return null;
+      console.error(`Section ${section} does not exist in formData`);
+      return null;
     }
 
     return fields.map(({ name, type, labelName, longText }) => (
-        <div
-            key={name}
-            className={`col-span-1 ${longText || type == "radio" ? "col-span-2" : ""
-                } max-sm:col-span-1`}
-        >
-            {type === "boolean" ? (
-                <div className="">
-                    <label className="flex items-center justify-start gap-2 cursor-pointer">
-                        <input
-                            type="checkbox"
-                            name={name}
-                            id={`floating_${name}`}
-                            checked={data[name]}
-                            onChange={(e) =>
-                                handleChange(section, name, e.target.checked, index)
-                            }
-                            className="checkbox checkbox-primary"
-                        />
-                        <span className="label-text">
-                            {labelName && labelName !== ""
-                                ? labelName
-                                : name
-                                    .replace(/([A-Z])/g, " $1")
-                                    .replace(/^./, (str) => str.toUpperCase())}
-                        </span>
-                    </label>
+      <div
+        key={name}
+        className={`col-span-1 ${longText || type == "radio" ? "col-span-2" : ""
+          } max-sm:col-span-1`}
+      >
+        {type === "boolean" ? (
+          <div className="">
+            <label className="flex items-center justify-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                name={name}
+                id={`floating_${name}`}
+                checked={data[name]}
+                onChange={(e) =>
+                  handleChange(section, name, e.target.checked, index)
+                }
+                className="checkbox checkbox-primary"
+              />
+              <span className="label-text">
+                {labelName && labelName !== ""
+                  ? labelName
+                  : name
+                    .replace(/([A-Z])/g, " $1")
+                    .replace(/^./, (str) => str.toUpperCase())}
+              </span>
+            </label>
+          </div>
+        ) : type === "radio" ? ( //theres only one radio group on the page, in that case labelName will be a string with comma separated values including the  possible categories of the industry
+          <div className="flex flex-row flex-wrap gap-2">
+            {labelName &&
+              labelName.split(", ").map((category, idx) => (
+                <div key={idx} className="form-control">
+                  <label className="label cursor-pointer">
+                    <input
+                      type="radio"
+                      name={name}
+                      value={category}
+                      checked={data[name] === category}
+                      onChange={(e) =>
+                        handleChange(section, name, category, index)
+                      }
+                      className="radio checked:bg-primary mr-2"
+                    />
+                    <span className="label-text">{category}</span>
+                  </label>
                 </div>
-            ) : type === "radio" ? ( //theres only one radio group on the page, in that case labelName will be a string with comma separated values including the  possible categories of the industry
-                <div className="flex flex-row flex-wrap gap-2">
-                    {labelName &&
-                        labelName.split(", ").map((category, idx) => (
-                            <div key={idx} className="form-control">
-                                <label className="label cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name={name}
-                                        value={category}
-                                        checked={data[name] === category}
-                                        onChange={(e) =>
-                                            handleChange(section, name, category, index)
-                                        }
-                                        className="radio checked:bg-primary mr-2"
-                                    />
-                                    <span className="label-text">{category}</span>
-                                </label>
-                            </div>
-                        ))}
-                </div>
-            ) : name === "category" && section === "registration" ? (
-                <div className="form-control">
-                  <p className="text-sm mb-3 max-md:mt-5"> {labelName && labelName !== ""
-                                ? labelName
-                                : name
-                                    .replace(/([A-Z])/g, " $1")
-                                    .replace(/^./, (str) => str.toUpperCase())} </p>
-                   
-                    <select
-                        name={name}
-                        id={`floating_${name}`}
-                        value={data[name]}
-                        onChange={(e) => handleChange(section, name, e.target.value, index)}
-                        className="select select-bordered"
-                    >
-                        <option value="" disabled>Select a category</option>
-                        {COMPANY_CATEGORIES.map((category, idx) => (
-                            <option key={idx} value={category}>
-                                {category}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-            ) : (
-                <FloatingLabelInput
-                    name={name}
-                    id={`floating_${name}`}
-                    label={
-                        labelName && labelName !== ""
-                            ? labelName
-                            : name
-                                .replace(/([A-Z])/g, " $1")
-                                .replace(/^./, (str) => str.toUpperCase())
-                    }
-                    type={type}
-                    value={data[name]}
-                    onChange={(e) => handleChange(section, name, e.target.value, index)}
-                />
-            )}
-        </div>
+              ))}
+          </div>
+        ) : name === "category" && section === "registration" ? (
+          <div className="form-control">
+            <p className="text-sm mb-3 max-md:mt-5"> {labelName && labelName !== ""
+              ? labelName
+              : name
+                .replace(/([A-Z])/g, " $1")
+                .replace(/^./, (str) => str.toUpperCase())} </p>
+
+            <select
+              name={name}
+              id={`floating_${name}`}
+              value={data[name]}
+              onChange={(e) => handleChange(section, name, e.target.value, index)}
+              className="select select-bordered"
+            >
+              <option value="" disabled>Select a category</option>
+              {COMPANY_CATEGORIES.map((category, idx) => (
+                <option key={idx} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <FloatingLabelInput
+            name={name}
+            id={`floating_${name}`}
+            label={
+              labelName && labelName !== ""
+                ? labelName
+                : name
+                  .replace(/([A-Z])/g, " $1")
+                  .replace(/^./, (str) => str.toUpperCase())
+            }
+            type={type}
+            value={data[name]}
+            onChange={(e) => handleChange(section, name, e.target.value, index)}
+          />
+        )}
+      </div>
     ));
-};
+  };
 
   const formatKey = (key) => {
     return key

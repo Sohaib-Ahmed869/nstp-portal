@@ -26,6 +26,12 @@ export const formatDate = (dateString) => {
     }
 };
 
+export const formatTime = (date) => {
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
 export const getCurrentDateTime = () => {
     const date = new Date();
     const formattedDate = date.toLocaleDateString('en-US', {
