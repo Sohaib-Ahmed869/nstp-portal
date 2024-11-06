@@ -50,6 +50,7 @@ import {AuthContext} from './context/AuthContext';
 import Blogs from './pages/admin/Blogs.jsx';
 import Blog from './pages/admin/Blog.jsx';
 import CreateBlog from './pages/admin/CreateBlog.jsx';
+import Billing from './pages/company/Billing.jsx';
 
 //Protected Route
 const ProtectedRoute = ({ allowedRoles, redirectPath = '/unauthorized' }) => {
@@ -113,6 +114,7 @@ function App() {
             <Route path="gate-passes" element={<GatePasses role="tenant" />} />
             <Route path="lost-and-found" element={<LostAndFound role="tenant" />} />
             <Route path="occurences" element={<Occurences role="tenant" />} />
+            <Route path="billing" element={<Billing  />} />
             <Route path="complaints" element={<CompanyComplaints />} />
           </Route>
         </Route>

@@ -40,7 +40,7 @@ const CONTRACT_DURATION_THRESHOLD = 90; // after 90% of contract duration, the r
 |--------------------------------------------------
 */
 
-const Company = ({ role }) => {
+const PageData = ({ role }) => {
   const { companyId } = useParams();
   const { tower } = useContext(TowerContext);
 
@@ -392,7 +392,7 @@ const Company = ({ role }) => {
   }, [companyId]);
 
   return (
-    <Sidebar>
+    <>
       {loading && <NSTPLoader />}
       {error && <div className="alert alert-error">An error occurred while fetching company data.</div>}
 
@@ -731,8 +731,17 @@ const Company = ({ role }) => {
           </div>
         </div>
       </SideDrawer>
-    </Sidebar>
+    </>
   );
 };
+
+const Company = ({role, isTenantDashboard=false}) => {
+  return (
+    isTenantDashboard ? <PageData role={role} /> : 
+    <Sidebar>
+      <PageData role={role} />
+    </Sidebar>
+  )
+}
 
 export default Company;

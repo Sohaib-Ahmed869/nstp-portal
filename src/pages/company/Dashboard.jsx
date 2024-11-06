@@ -55,7 +55,7 @@ const Dashboard = () => {
             >
                 {dashboardType === 'main' && <MainDashboard loading={loading} setLoading={setLoading} />}
                 {dashboardType === 'billing' && <BillingDashboard loading={loading} setLoading={setLoading} />}
-                {/* {dashboardType === 'company' && <Company loading={loading} setLoading={setLoading} />} */}
+                {dashboardType === 'company' && <Company role={"tenant"} isTenantDashboard={true} />}
             </div>
 
         </Sidebar>

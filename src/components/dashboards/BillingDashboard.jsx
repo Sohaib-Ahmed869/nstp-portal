@@ -54,6 +54,7 @@ const BillingDashboard = () => {
     stroke: {
       curve: 'smooth',
     },
+    colors: ['#87b37a',]
   };
 
   const chartSeries = [
@@ -70,6 +71,8 @@ const BillingDashboard = () => {
       type: 'pie',
     },
     labels: filteredSummaries.map(item => item.category),
+    colors: ['#87b37a', '#4c6663', '#2a1e5c', '#4175a6', '#9ce37d'], // Added colors
+
   };
   const pieChartSeries = filteredSummaries.map(item => item.amount);
 
@@ -121,7 +124,7 @@ const BillingDashboard = () => {
                     <td>{item.date}</td>
                     <td>{item.paidDate}</td>
                     <td>
-                      <span className={`badge text-base-100 p-3 gap-1 ${item.status === 'Paid' ? 'badge-success' : 'badge-accent'}`}>
+                      <span className={`badge text-base-100 p-3 gap-1 ${item.status === 'Paid' ? 'badge-success' : 'badge-accent text-white'}`}>
                       {item.status === 'Paid' ? <CheckIcon className="h-5 w-5" /> : <ClockIcon className="h-5 w-5" />}
                         {item.status }
                       </span>

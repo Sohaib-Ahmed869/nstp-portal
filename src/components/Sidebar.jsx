@@ -67,7 +67,7 @@ const Sidebar = ({ children }) => {
     ],
     tenant: [
       { icon: <HomeIcon />, text: "Dashboard", url: "/" },
-      { icon: <RocketLaunchIcon />, text: "Profile", url: "/profile" },
+      // { icon: <RocketLaunchIcon />, text: "Profile", url: "/profile" },
       { icon: <UserGroupIcon />, text: "Employees", url: "/employees" },
       { icon: <CalendarDaysIcon />, text: "Bookings", url: "/bookings" },
       { icon: <TicketIcon />, text: "Gate Passes", url: "/gate-passes" },
@@ -113,7 +113,7 @@ const Sidebar = ({ children }) => {
   return (
     <div className="min-h-[100vh] bg-base-200 bg-opacity-20">
       {/* Sidebar for screens medium and above */}
-      <div className="flex h-full max-sm:hidden">
+      <div className="flex h-full max-sm:hidden ">
         {/* Overlay */}
         {isExpanded && (
           <div
