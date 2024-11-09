@@ -3,7 +3,7 @@ import { TowerContext } from '../../context/TowerContext';
 import { AuthContext } from '../../context/AuthContext';
 import Sidebar from '../../components/Sidebar'
 import ThemeControl from '../../components/ThemeControl'
-import { QuestionMarkCircleIcon, BellAlertIcon, IdentificationIcon, ArchiveBoxArrowDownIcon, ArrowPathRoundedSquareIcon, UsersIcon, PlusCircleIcon, UserGroupIcon, RocketLaunchIcon, BuildingOffice2Icon, ArrowTrendingUpIcon, ClockIcon, PresentationChartBarIcon } from '@heroicons/react/24/outline'
+import { QuestionMarkCircleIcon, BellAlertIcon, IdentificationIcon, ArchiveBoxArrowDownIcon, ArrowPathRoundedSquareIcon, UsersIcon, PlusCircleIcon, UserGroupIcon, RocketLaunchIcon, BuildingOffice2Icon, ArrowTrendingUpIcon, ClockIcon, PresentationChartBarIcon, BanknotesIcon } from '@heroicons/react/24/outline'
 import ComparativeChart from '../../components/ComparativeChart'
 import { Link } from 'react-router-dom'
 import hatch8icon from '../../assets/hatch8.png'
@@ -474,10 +474,16 @@ const AdminHome = () => {
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-6 my-6">
             <div className="md:col-span-2 card p-5">
+              <Link to="billing" className="btn btn-primary btn-md max-sm:btn-sm max-w-max text-white">
+                <BanknotesIcon className="size-6"></BanknotesIcon> View Billing
+              </Link>
               <BillingAmountBarChart billingHistory={billingHistory} />
 
             </div>
             <div className="md:col-span-2 card p-5">
+            <Link to="billing" className="btn btn-primary btn-md max-sm:btn-sm max-w-max text-white">
+                <BanknotesIcon className="size-6"></BanknotesIcon> View Billing
+              </Link>
               <BillingStatusPieChart billingHistory={billingHistory} />
               </div>
 
