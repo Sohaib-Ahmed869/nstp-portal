@@ -429,11 +429,11 @@ const PageData = ({ role }) => {
 
       {/** END DIALOGS */}
 
-      {/** Side drawer for sticky notes */}
+      {/** Side drawer for sticky notes, admin only */}
       <SideDrawer drawerContent={stickyNotes} setDrawerContent={setStickyNotes}  >
 
         {/** MAIN CONTENT */}
-        <div className={`bg-base-100 rounded-md shadow-md p-5 lg:p-10 mt-10 ${loading && "hidden"}`}>
+        <div className={`bg-base-100 rounded-md p-5 lg:p-10 ${loading && "hidden"} ${role=="admin" && " mt-10 shadow-md"}`}>
 
           {/** First row, company info and actions */}
           <div className="flex lg:flex-row flex-col ">

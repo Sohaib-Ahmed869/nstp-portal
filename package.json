@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
+    "@react-pdf/renderer": "^4.0.0",
     "apexcharts": "^3.53.0",
     "axios": "^1.7.7",
     "daisyui": "^4.12.10",
+    "date-fns": "^4.1.0",
     "file-saver": "^2.0.5",
     "flowbite": "^2.5.1",
     "moment": "^2.30.1",
