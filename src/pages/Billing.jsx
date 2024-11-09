@@ -98,7 +98,7 @@ const Billing = () => {
             id: 3,
             date: '2023-08-01',
             dueDate: '2023-08-05',
-            companyName: 'HexlerTech',
+            companyName: 'InnoCafe',
             name: 'Monthly Bill (August)',
             paidDate: '-', // Not paid yet
             status: 'Overdue',
@@ -205,7 +205,7 @@ const Billing = () => {
 
         if (bill.status === 'Paid') {
             return (
-                <span className="text-sm justify-end flex gap-1 text-gray-500">
+                <span className="text-sm lg:justify-end flex gap-1 text-gray-500">
                     <CheckBadgeIcon className="size-5" />
                     Paid on: {bill.paidDate}
                 </span>
@@ -213,7 +213,7 @@ const Billing = () => {
         } else if (today.getTime() < dueDate.getTime()) {
             const daysRemaining = calculateDaysDifference(today, dueDate);
             return (
-                <span className="text-sm justify-end flex gap-1 text-gray-500">
+                <span className="text-sm lg:justify-end flex gap-1 text-gray-500">
                     <ClockIcon className="size-5" />
                     Due in {daysRemaining} day{daysRemaining !== 1 ? 's' : ''}
                 </span>
@@ -221,7 +221,7 @@ const Billing = () => {
         } else {
             const daysOverdue = calculateDaysDifference(dueDate, today);
             return (
-                <span className="text-sm flex gap-1 text-red-600 font-bold  items-center justify-end">
+                <span className="text-sm flex gap-1 text-red-600 font-bold  items-center lg:justify-end">
                     <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
                     Overdue by {daysOverdue} day{daysOverdue !== 1 ? 's' : ''}
                 </span>
@@ -274,7 +274,7 @@ const Billing = () => {
                                 <div className="relative w-full md:max-w-xs mr-2">
                                     <input
                                         type="text"
-                                        placeholder="Search..."
+                                        placeholder={role=="tenant"? "Search..." : "Search by name or company"}
                                         value={searchQuery}
                                         onChange={handleSearchChange}
                                         className="input input-bordered w-full pl-10"
@@ -357,10 +357,10 @@ const Billing = () => {
                                     </div>
 
                                     {/* Right box */}
-                                    <div className=" mt-4 lg:mt-0 text-end ">
+                                    <div className=" mt-4 lg:mt-0 lg:text-end max-lg:w-full ">
                                         <div className="mb-2 flex flex-col gap-2">
-                                            <span className="text-sm text-secondary flex gap-1 justify-end"> <ArrowTrendingUpIcon className="size-5" /> Generated on: {selectedBill.date}</span>
-                                            <span className="text-sm text-gray-500 justify-end flex gap-1">  <CalendarDateRangeIcon className="size-5" /> Due on: {selectedBill.dueDate}</span>
+                                            <span className="text-sm text-secondary flex gap-1 lg:justify-end"> <ArrowTrendingUpIcon className="size-5" /> Generated on: {selectedBill.date}</span>
+                                            <span className="text-sm text-gray-500 lg:justify-end flex gap-1">  <CalendarDateRangeIcon className="size-5" /> Due on: {selectedBill.dueDate}</span>
                                         </div>
                                         {/* Display payment info based on bill status */}
                                         {getPaymentInfo(selectedBill)}
