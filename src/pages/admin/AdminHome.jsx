@@ -13,6 +13,7 @@ import NSTPLoader from '../../components/NSTPLoader'
 import showToast from '../../util/toast';
 import { AdminService } from '../../services';
 import { formatMTTR } from '../../util/date';
+import { BillingAmountBarChart, BillingStatusPieChart } from '../../util/billing-charts';
 
 const AdminHome = () => {
   const [loading, setLoading] = useState(true)
@@ -39,8 +40,121 @@ const AdminHome = () => {
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
     { name: "HexlerTech", category: "Tech", employees: 23, totalRevenue: 2333 },
-
   ])
+  const [billingHistory, setBillingHistory] = useState([
+    {
+        id: 1,
+        date: '2023-06-01',
+        dueDate: '2023-06-05',
+        name: 'Monthly Bill (June)',
+        paidDate: '2023-06-05',
+        companyName: 'HexlerTech',
+        status: 'Paid',
+        amount: 10000,
+        breakDown: [
+            {
+                category: 'Rent',
+                subCategory: [
+                    { name: 'Standard Rent', amount: 5000 },
+                    { name: 'Extras', amount: 500 },
+                ],
+            },
+            { category: 'Security Deposit', amount: 2000 },
+            {
+                category: 'Meeting Room Bookings',
+                subCategory: [
+                    { name: 'Conference Room, 24-06-2023', amount: 400 },
+                    { name: 'Auditorium, 23-06-2023', amount: 4000 },
+                ],
+            },
+            {
+                category: 'Parking', subCategory: [
+                    { name: 'Parking Space 1', amount: 400 },
+                    { name: 'Parking Space 2', amount: 200 },
+                ]
+            },
+            {
+                category: 'Services',
+                subCategory: [
+                    { name: 'Cleaning', amount: 200 },
+                    { name: 'WiFi Service', amount: 200 },
+                ],
+            },
+        ],
+    },
+    {
+        id: 2,
+        date: '2023-07-01',
+        dueDate: '2024-12-12',
+        name: 'Monthly Bill (July)',
+        paidDate: '-',
+        companyName: 'HexlerTech',
+        status: 'Pending',
+        amount: 10500,
+        breakDown: [
+            {
+                category: 'Rent',
+                subCategory: [
+                    { name: 'Standard Rent', amount: 5000 },
+                    { name: 'Extras', amount: 500 },
+                ],
+            },
+            {
+                category: 'Meeting Room Bookings',
+                subCategory: [
+                    { name: 'Seminar Hall, 15-07-2023', amount: 800 },
+                ],
+            },
+            {
+                category: 'Services',
+                subCategory: [
+                    { name: 'Cleaning', amount: 200 },
+                    { name: 'Security', amount: 500 },
+                    { name: 'WiFi Service', amount: 200 },
+                ],
+            },
+        ],
+    },
+    {
+        id: 3,
+        date: '2023-08-01',
+        dueDate: '2023-08-05',
+        companyName: 'InnoCafe',
+        name: 'Monthly Bill (August)',
+        paidDate: '-', // Not paid yet
+        status: 'Overdue',
+        amount: 9800,
+        breakDown: [
+            {
+                category: 'Rent',
+                subCategory: [
+                    { name: 'Standard Rent', amount: 5000 },
+                ],
+            },
+            {
+                category: 'Meeting Room Bookings',
+                subCategory: [
+                    { name: 'Conference Room, 05-08-2023', amount: 500 },
+                ],
+            },
+            { category: 'Services', amount: 300 }, // No subCategory here
+            {
+                category: 'Parking', subCategory: [
+                    { name: 'Parking Space 1', amount: 400 },
+                    { name: 'Parking Space 2', amount: 200 },
+                ]
+            },
+            {
+                category: 'Rebate',
+                subCategory: [
+                    { name: 'Early Payment Discount', amount: -500 },
+                ],
+            },
+        ],
+    },
+
+]);
+
   const [companyStats, setCompanyStats] = useState({
     total: 233,
     hatch8: 123,
@@ -304,10 +418,10 @@ const AdminHome = () => {
 
           {/* Second row */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-7 my-6">
-            <div className="md: col-span-4 lg:order-1 md:order-2 max-md:order-2">
+            <div className="md:col-span-4 lg:order-1 md:order-2 max-md:order-2">
               <NewsFeed numNewsItems={4} />
             </div>
-            <div className="md: col-span-3 lg:order-2 md:order-1 max-md:order-1">
+            <div className="md:col-span-3 lg:order-2 md:order-1 max-md:order-1">
               <div className="md:col-span-3 mb-3 card p-5 flex flex-col">
                 <div className="flex flex-row justify-between">
                   <div>
@@ -356,6 +470,18 @@ const AdminHome = () => {
               </div>
             </div>
           </div>
+
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-6 my-6">
+            <div className="md:col-span-2 card p-5">
+              <BillingAmountBarChart billingHistory={billingHistory} />
+
+            </div>
+            <div className="md:col-span-2 card p-5">
+              <BillingStatusPieChart billingHistory={billingHistory} />
+              </div>
+
+            </div>
         </>}
       </div>
     </Sidebar>
