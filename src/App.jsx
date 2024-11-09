@@ -17,6 +17,9 @@ import Companies from './pages/admin/Companies.jsx';
 import CardRequests from './pages/CardRequests.jsx';
 import Services from './pages/admin/Services.jsx';
 import MeetingRooms from './pages/admin/MeetingRooms.jsx';
+import Blogs from './pages/admin/Blogs.jsx';
+import Blog from './pages/admin/Blog.jsx';
+import CreateBlog from './pages/admin/CreateBlog.jsx';
 import { MeetingRoomBooking as AdminMeetingRoomBooking } from './pages/admin/MeetingRoomBooking.jsx';
 import Performance from './pages/admin/Performance.jsx';
 
@@ -44,13 +47,10 @@ import ApproveOffice from './pages/admin/ApproveOffice.jsx';
 import Logout from './pages/Logout.jsx';
 import Etags from './pages/Etags.jsx';
 import Unauthorized from './pages/Unauthorized.jsx';
+import Billing from './pages/Billing.jsx';
 
 //Context
 import {AuthContext} from './context/AuthContext';
-import Blogs from './pages/admin/Blogs.jsx';
-import Blog from './pages/admin/Blog.jsx';
-import CreateBlog from './pages/admin/CreateBlog.jsx';
-import Billing from './pages/company/Billing.jsx';
 
 //Protected Route
 const ProtectedRoute = ({ allowedRoles, redirectPath = '/unauthorized' }) => {
@@ -80,6 +80,7 @@ function App() {
             <Route index element={<AdminHome />} />
             <Route path="add-company" element={<CompanyAddition />} />
             <Route path="companies" element={<Companies />} />
+            <Route path="billing" element={<Billing />} />
             <Route path="companies/:companyId" element={<Company role="admin" />} />
             <Route path="etags" element={<Etags />} />
             <Route path="work-permits" element={<WorkPermit role="admin" />} />

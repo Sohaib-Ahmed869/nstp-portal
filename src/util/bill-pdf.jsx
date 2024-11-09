@@ -152,6 +152,7 @@ const BillPDF = ({ bill, overdueDetails, downloadTimestamp }) => (
           <View style={styles.logoContainer}>
             <Image src={NSTPLogo} style={styles.logo} />
           </View>
+          <Text style={styles.title}>{bill.companyName}</Text>
           <Text style={styles.title}>Invoice</Text>
           <Text style={styles.subtitle}>#{bill.id}</Text>
         </View>

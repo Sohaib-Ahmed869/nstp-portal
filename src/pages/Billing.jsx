@@ -1,12 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react'
-import Sidebar from '../../components/Sidebar'
-import NSTPLoader from '../../components/NSTPLoader';
-import { ChevronDownIcon, CalendarIcon, CheckCircleIcon, ClockIcon, PrinterIcon, AdjustmentsHorizontalIcon, ArrowLeftIcon, MagnifyingGlassIcon, CursorArrowRippleIcon, ExclamationTriangleIcon, ArrowDownTrayIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
-import { generatePDF, printPDF } from '../../util/bill-pdf';
-import { calculateDaysDifference } from '../../util/date';
+import Sidebar from '../components/Sidebar'
+import NSTPLoader from '../components/NSTPLoader';
+import { ChevronDownIcon, CalendarIcon, CheckCircleIcon, ClockIcon, PrinterIcon, AdjustmentsHorizontalIcon, ArrowLeftIcon, MagnifyingGlassIcon, CursorArrowRippleIcon, ExclamationTriangleIcon, ArrowDownTrayIcon, ClipboardDocumentListIcon, UserGroupIcon, ArrowTrendingUpIcon, CalendarDateRangeIcon, CheckBadgeIcon } from '@heroicons/react/24/outline';
+import { generatePDF, printPDF } from '../util/bill-pdf';
+import { calculateDaysDifference } from '../util/date';
+import { AuthContext } from '../context/AuthContext';
+
 const PENALTY_RATE = 100; // Penalty rate per day for overdue bills
 
 const Billing = () => {
+
+    const { role } = useContext(AuthContext);
+
+    /**
+    | States and controlled states
+    */
     const [loading, setLoading] = useState(false);
     const [openCategories, setOpenCategories] = useState({});
     const [searchQuery, setSearchQuery] = useState('');
@@ -19,6 +27,7 @@ const Billing = () => {
             dueDate: '2023-06-05',
             name: 'Monthly Bill (June)',
             paidDate: '2023-06-05',
+            companyName: 'HexlerTech',
             status: 'Paid',
             amount: 10000,
             breakDown: [
@@ -58,6 +67,7 @@ const Billing = () => {
             dueDate: '2024-12-12',
             name: 'Monthly Bill (July)',
             paidDate: '-',
+            companyName: 'HexlerTech',
             status: 'Pending',
             amount: 10500,
             breakDown: [
@@ -88,6 +98,7 @@ const Billing = () => {
             id: 3,
             date: '2023-08-01',
             dueDate: '2023-08-05',
+            companyName: 'HexlerTech',
             name: 'Monthly Bill (August)',
             paidDate: '-', // Not paid yet
             status: 'Overdue',
@@ -133,7 +144,7 @@ const Billing = () => {
     };
 
     const filteredBills = billingHistory
-        .filter((bill) => bill.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        .filter((bill) => (bill.name.toLowerCase().includes(searchQuery.toLowerCase()) || bill.companyName.toLowerCase().includes(searchQuery.toLowerCase())))
         .filter((bill) => {
             switch (filterOption) {
                 case 'Under100000':
@@ -165,6 +176,10 @@ const Billing = () => {
             }
         });
 
+    /**
+    | Effects
+    */
+
     useEffect(() => {
         if (selectedBill && !filteredBills.some(bill => bill.id === selectedBill.id)) {
             setSelectedBill(null);
@@ -179,6 +194,10 @@ const Billing = () => {
         }, 10);
     }, []);
 
+
+    /**
+    | Helper Functions
+    */
     // Helper function to get payment information based on bill status
     const getPaymentInfo = (bill) => {
         const today = new Date();
@@ -186,21 +205,23 @@ const Billing = () => {
 
         if (bill.status === 'Paid') {
             return (
-                <span className="text-sm text-gray-500">
+                <span className="text-sm justify-end flex gap-1 text-gray-500">
+                    <CheckBadgeIcon className="size-5" />
                     Paid on: {bill.paidDate}
                 </span>
             );
         } else if (today.getTime() < dueDate.getTime()) {
             const daysRemaining = calculateDaysDifference(today, dueDate);
             return (
-                <span className="text-sm text-gray-500">
+                <span className="text-sm justify-end flex gap-1 text-gray-500">
+                    <ClockIcon className="size-5" />
                     Due in {daysRemaining} day{daysRemaining !== 1 ? 's' : ''}
                 </span>
             );
         } else {
             const daysOverdue = calculateDaysDifference(dueDate, today);
             return (
-                <span className="text-sm text-red-600 font-bold flex items-center justify-end">
+                <span className="text-sm flex gap-1 text-red-600 font-bold  items-center justify-end">
                     <ExclamationTriangleIcon className="h-4 w-4 mr-1" />
                     Overdue by {daysOverdue} day{daysOverdue !== 1 ? 's' : ''}
                 </span>
@@ -235,7 +256,7 @@ const Billing = () => {
             <div className={`bg-base-100 md:px-10 mt-5 lg:mt-10 md:py-6 ring-1 ring-gray-200 rounded-lg ${loading && "hidden"}`}>
                 <div className="p-5 border-b border-gray-200">
                     <div className="flex items-center justify-between">
-                        <h1 className="text-2xl font-semibold">Your Billing History</h1>
+                        <h1 className="text-2xl font-semibold"> {role == "admin" ? "Tenants" : "Your"} Billing History</h1>
                         <button className="btn btn-primary text-base-100 flex gap-3 items-center">
                             <ChevronDownIcon className="h-5 w-5" />
                             Actions
@@ -249,6 +270,7 @@ const Billing = () => {
                         <div className="p-4">
                             {/* Search and Filter Inputs */}
                             <div className="flex flex-col gap-2 border-b pb-3 mb-5">
+                                {/* Search */}
                                 <div className="relative w-full md:max-w-xs mr-2">
                                     <input
                                         type="text"
@@ -259,6 +281,7 @@ const Billing = () => {
                                     />
                                     <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
                                 </div>
+                                {/* Filter */}
                                 <div className="w-auto flex items-center justify-end">
                                     <AdjustmentsHorizontalIcon className="size-8 text-gray-400 mr-3" />
                                     <select
@@ -284,7 +307,7 @@ const Billing = () => {
                                 <div
                                     key={bill.id}
                                     onClick={() => { setSelectedBill(bill); setOpenCategories({}) }}
-                                    className={`p-4 rounded-lg mb-3 cursor-pointer transition-all ${selectedBill?.id === bill.id ? selectedBill.status === "Paid" ? 'bg-primary/10 ring-1 ring-primary hover:bg-primary/20' : selectedBill.status === "Pending" ? 'bg-accent/5 hover:bg-accent/10 ring-1 ring-accent' : 'bg-error/10 hover:bg-error/20 ring-1 ring-error' : 'bg-base-100 ring-1 ring-base-200 hover:bg-base-200/20'
+                                    className={`p-4 rounded-lg mb-3 cursor-pointer transition-all ${selectedBill?.id === bill.id ? selectedBill.status === "Paid" ? 'bg-primary/10 ring-1 ring-primary hover:bg-primary/20' : selectedBill.status === "Pending" ? 'bg-accent/5 hover:bg-accent/10 ring-1 ring-accent' : 'bg-error/10 hover:bg-error/15 ring-1 ring-error' : 'bg-base-100 ring-1 ring-base-200 hover:bg-base-200/20'
                                         }`}
                                 >
                                     <div className="flex justify-between items-start">
@@ -294,10 +317,15 @@ const Billing = () => {
                                                 <CalendarIcon className="h-4 w-4 mr-1" />
                                                 {bill.date}
                                             </div>
+                                            {role == "admin" && <div className="flex items-center text-sm text-gray-500 mt-1">
+                                                <UserGroupIcon className="h-4 w-4 mr-1" />
+                                                {bill.companyName}
+
+                                            </div>}
                                         </div>
                                         <div className={`flex items-center ${getStatusColor(bill.status)}`}>
                                             {bill.status === 'Paid' ?
-                                                <CheckCircleIcon className="h-5 w-5" /> :
+                                                <CheckBadgeIcon className="h-5 w-5" /> :
                                                 bill.status === "Pending" ?
                                                     <ClockIcon className="h-5 w-5" /> :
                                                     <ExclamationTriangleIcon className="h-5 w-5" />
@@ -320,18 +348,19 @@ const Billing = () => {
                                 <div className="mb-10 flex flex-col justify-between lg:flex-row items-start lg:items-center mt-3">
                                     {/* Left box */}
                                     <div className="">
+                                        {role == "admin" && <h3 className="text-xl font-bold mb-2">{selectedBill.companyName}</h3>}
                                         <h2 className="text-3xl font-semibold mb-2">{selectedBill.name}</h2>
                                         <span className={`badge text-base-100 p-3 flex gap-2 ${selectedBill.status === 'Paid' ? 'badge-success' : selectedBill.status == "Pending" ? 'badge-accent' : 'badge-error'}`}>
-                                            {selectedBill.status === "Paid" ? <CheckCircleIcon className="size-4" /> : selectedBill.status === "Pending" ? <ClockIcon className="size-4" /> : <ExclamationTriangleIcon className="size-4" />}
+                                            {selectedBill.status === "Paid" ? <CheckBadgeIcon className="size-5" /> : selectedBill.status === "Pending" ? <ClockIcon className="size-5" /> : <ExclamationTriangleIcon className="size-5" />}
                                             {selectedBill.status}
                                         </span>
                                     </div>
 
                                     {/* Right box */}
                                     <div className=" mt-4 lg:mt-0 text-end ">
-                                        <div className="mb-2 flex flex-col gap-3">
-                                            <span className="text-sm text-secondary ">Generated on: {selectedBill.date}</span>
-                                            <span className="text-sm text-gray-500 ">Due on: {selectedBill.dueDate}</span>
+                                        <div className="mb-2 flex flex-col gap-2">
+                                            <span className="text-sm text-secondary flex gap-1 justify-end"> <ArrowTrendingUpIcon className="size-5" /> Generated on: {selectedBill.date}</span>
+                                            <span className="text-sm text-gray-500 justify-end flex gap-1">  <CalendarDateRangeIcon className="size-5" /> Due on: {selectedBill.dueDate}</span>
                                         </div>
                                         {/* Display payment info based on bill status */}
                                         {getPaymentInfo(selectedBill)}
@@ -428,7 +457,7 @@ const Billing = () => {
                                     </button>
 
                                     {
-                                        selectedBill.status != 'Paid' && (
+                                        (selectedBill.status != 'Paid' && role == "tenant") && (
                                             <button className="btn btn-primary text-base-100">
                                                 <CursorArrowRippleIcon className="h-5 w-5 animate-ping animate-infinite animate-duration-1000 animate-delay-0 animate-ease-in animate-alternate-reverse animate-fill-forwards" />
                                                 Pay Now
