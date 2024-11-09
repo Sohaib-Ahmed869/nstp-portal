@@ -2,6 +2,8 @@ import { pdf } from '@react-pdf/renderer';
 import { Document, Page, View, Text, StyleSheet, Image } from '@react-pdf/renderer';
 import { format } from 'date-fns';
 import NSTPLogo from '../assets/nstplogocolored.png';
+import ReactDOM from 'react-dom';
+import showToast from './toast';
 
 // Create styles for PDF
 const styles = StyleSheet.create({
@@ -276,9 +278,54 @@ export const generatePDF = async (bill) => {
 
     // Cleanup
     URL.revokeObjectURL(url);
+    showToast(true, 'PDF downloaded successfully');
   } catch (error) {
     console.error('Error generating PDF:', error);
-    // Handle error (you might want to show a notification to the user)
-  }
+    showToast(false, 'Error generating PDF');}
+    finally{
+    }
 };
 
+
+// Function to print the PDF
+export const printPDF = async (bill) => {
+  try {
+    console.log("got bill: " , bill);
+    // Calculate overdue details if applicable
+    const overdueDetails = bill.status === 'Overdue'
+      ? {
+          overdueDays: calculateDaysDifference(new Date(bill.dueDate), new Date()),
+          PENALTY_RATE: 100, // Define your penalty rate
+          penalty: calculateDaysDifference(new Date(bill.dueDate), new Date()) * 100
+        }
+      : null;
+
+    const downloadTimestamp = new Date().toISOString();
+
+    // Generate PDF blob
+    const blob = await pdf(
+      <BillPDF
+        bill={bill}
+        overdueDetails={overdueDetails}
+        downloadTimestamp={downloadTimestamp}
+      />
+    ).toBlob();
+
+    // Create a blob URL
+    const blobUrl = URL.createObjectURL(blob);
+
+    // Open the PDF in a new window or tab
+    const newWindow = window.open(blobUrl, '_blank');
+
+    // Wait for the new window to load the PDF, then trigger print
+    newWindow.onload = () => {
+      newWindow.focus();
+      newWindow.print();
+    };
+    
+  } catch (error) {
+    console.error('Error generating PDF for print:', error);
+    showToast(false, 'Error generating PDF for print');
+  } finally{
+  }
+};

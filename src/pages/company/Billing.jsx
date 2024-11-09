@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import Sidebar from '../../components/Sidebar'
 import NSTPLoader from '../../components/NSTPLoader';
 import { ChevronDownIcon, CalendarIcon, CheckCircleIcon, ClockIcon, PrinterIcon, ArrowLeftIcon, CursorArrowRippleIcon, ExclamationTriangleIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { generatePDF } from '../../util/bill-pdf';
+import { generatePDF, printPDF } from '../../util/bill-pdf';
 
 const PENALTY_RATE = 100; // Penalty rate per day for overdue bills
 
@@ -426,7 +426,7 @@ const Billing = () => {
 
                                 {/* Action buttons for the bill */}
                                 <div className="flex w-full justify-end gap-2 mt-7">
-                                    <button className="btn btn-outline btn-primary">
+                                    <button className="btn btn-outline btn-primary" onClick={ () => printPDF(selectedBill) } >
                                         <PrinterIcon className="h-5 w-5" />
                                         Print Bill
                                     </button>
