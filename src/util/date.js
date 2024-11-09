@@ -73,7 +73,7 @@ export const formatMTTR = (minutes) => {
 };
 
 
-/** calculate duration between two dates */
+/** calculate duration between two dates (dynamically returns string for days, + months, years if applicable) */
 export const calculateDuration = (startDate, endDate) => {
     let years = endDate.getFullYear() - startDate.getFullYear();
     let months = endDate.getMonth() - startDate.getMonth();
@@ -90,4 +90,13 @@ export const calculateDuration = (startDate, endDate) => {
     }
 
     return `${years} years, ${months} months, and ${days} days`;
+};
+
+
+ // Helper function to calculate the difference in days between two dates for bill (number of days only)
+ export const calculateDaysDifference = (startDate, endDate) => {
+    const oneDay = 24 * 60 * 60 * 1000; // Milliseconds in one day
+    const diffTime = endDate - startDate;
+    const diffDays = Math.ceil(diffTime / oneDay);
+    return diffDays;
 };

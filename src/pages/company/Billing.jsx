@@ -1,25 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react'
 import Sidebar from '../../components/Sidebar'
 import NSTPLoader from '../../components/NSTPLoader';
-import { ChevronDownIcon, CalendarIcon, CheckCircleIcon, ClockIcon, PrinterIcon, ArrowLeftIcon, CursorArrowRippleIcon, ExclamationTriangleIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, CalendarIcon, CheckCircleIcon, ClockIcon, PrinterIcon, AdjustmentsHorizontalIcon, ArrowLeftIcon, MagnifyingGlassIcon, CursorArrowRippleIcon, ExclamationTriangleIcon, ArrowDownTrayIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import { generatePDF, printPDF } from '../../util/bill-pdf';
-
+import { calculateDaysDifference } from '../../util/date';
 const PENALTY_RATE = 100; // Penalty rate per day for overdue bills
 
 const Billing = () => {
     const [loading, setLoading] = useState(false);
     const [openCategories, setOpenCategories] = useState({});
-
-    useEffect(() => {
-        setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-            // Set the first bill as default selected
-            setSelectedBill(billingHistory[0]);
-        }, 10);
-    }, []);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filterOption, setFilterOption] = useState('All');
     const [selectedBill, setSelectedBill] = useState(null);
-
     const [billingHistory, setBillingHistory] = useState([
         {
             id: 1,
@@ -128,99 +120,64 @@ const Billing = () => {
                 },
             ],
         },
-        {
-            id: 4,
-            date: '2023-09-01',
-            dueDate: '2023-09-05',
-            name: 'Monthly Bill (September)',
-            paidDate: '2023-09-05',
-            status: 'Paid',
-            amount: 11000,
-            breakDown: [
-                {
-                    category: 'Rent',
-                    subCategory: [
-                        { name: 'Standard Rent', amount: 5200 },
-                        { name: 'Extra Office Space', amount: 800 },
-                    ],
-                },
-                { category: 'Security Deposit', amount: 2000 },
-                {
-                    category: 'Services',
-                    subCategory: [
-                        { name: 'Cleaning', amount: 200 },
-                        { name: 'Cafeteria', amount: 500 },
-                        { name: 'WiFi Service', amount: 300 },
-                    ],
-                },
-                {
-                    category: 'Maintenance',
-                    amount: 1000, // No subCategory
-                },
-                {
-                    category: 'Parking', subCategory: [
-                        { name: 'Parking Space 1', amount: 400 },
-                        { name: 'Parking Space 2', amount: 200 },
-                    ]
-                },
-                {
-                    category: 'Rebate', amount: -500
-                },
 
-
-            ],
-        },
-        {
-            id: 5,
-            date: '2023-09-01',
-            dueDate: '2023-09-05',
-            name: 'Monthly Bill (July)',
-            paidDate: '2023-09-05',
-            status: 'Paid',
-            amount: 11000,
-            breakDown: [
-                {
-                    category: 'Rent',
-                    subCategory: [
-                        { name: 'Standard Rent', amount: 5200 },
-                        { name: 'Extra Office Space', amount: 800 },
-                    ],
-                },
-                { category: 'Security Deposit', amount: 2000 },
-                {
-                    category: 'Services',
-                    subCategory: [
-                        { name: 'Cleaning', amount: 200 },
-                        { name: 'Cafeteria', amount: 500 },
-                        { name: 'WiFi Service', amount: 300 },
-                    ],
-                },
-                {
-                    category: 'Maintenance',
-                    amount: 1000, // No subCategory
-                },
-                {
-                    category: 'Parking', subCategory: [
-                        { name: 'Parking Space 1', amount: 400 },
-                        { name: 'Parking Space 2', amount: 200 },
-                    ]
-                },
-                {
-                    category: 'Rebate', amount: -500
-                },
-
-
-            ],
-        },
     ]);
 
-    // Helper function to calculate the difference in days between two dates
-    const calculateDaysDifference = (startDate, endDate) => {
-        const oneDay = 24 * 60 * 60 * 1000; // Milliseconds in one day
-        const diffTime = endDate - startDate;
-        const diffDays = Math.ceil(diffTime / oneDay);
-        return diffDays;
+    // Handler functions
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
     };
+
+    const handleFilterChange = (e) => {
+        setFilterOption(e.target.value);
+    };
+
+    const filteredBills = billingHistory
+        .filter((bill) => bill.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        .filter((bill) => {
+            switch (filterOption) {
+                case 'Under100000':
+                    return bill.amount < 100000;
+                case 'Over100000':
+                    return bill.amount >= 100000;
+                case 'Paid':
+                    return bill.status === 'Paid';
+                case 'Pending':
+                    return bill.status === 'Pending';
+                case 'Overdue':
+                    return bill.status === 'Overdue';
+                default:
+                    return true;
+            }
+        })
+        .sort((a, b) => {
+            switch (filterOption) {
+                case 'AmountLowHigh':
+                    return a.amount - b.amount;
+                case 'AmountHighLow':
+                    return b.amount - a.amount;
+                case 'DateOldNew':
+                    return new Date(a.date) - new Date(b.date);
+                case 'DateNewOld':
+                    return new Date(b.date) - new Date(a.date);
+                default:
+                    return 0;
+            }
+        });
+
+    useEffect(() => {
+        if (selectedBill && !filteredBills.some(bill => bill.id === selectedBill.id)) {
+            setSelectedBill(null);
+        }
+    }, [filteredBills, selectedBill]);
+    useEffect(() => {
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            // Set the first bill as default selected
+            setSelectedBill(billingHistory.length > 0 ? billingHistory[0] : null);
+        }, 10);
+    }, []);
 
     // Helper function to get payment information based on bill status
     const getPaymentInfo = (bill) => {
@@ -278,7 +235,7 @@ const Billing = () => {
             <div className={`bg-base-100 md:px-10 mt-5 lg:mt-10 md:py-6 ring-1 ring-gray-200 rounded-lg ${loading && "hidden"}`}>
                 <div className="p-5 border-b border-gray-200">
                     <div className="flex items-center justify-between">
-                        <h1 className="text-2xl font-semibold">Billing History</h1>
+                        <h1 className="text-2xl font-semibold">Your Billing History</h1>
                         <button className="btn btn-primary text-base-100 flex gap-3 items-center">
                             <ChevronDownIcon className="h-5 w-5" />
                             Actions
@@ -288,13 +245,46 @@ const Billing = () => {
 
                 <div className="flex flex-col md:flex-row min-h-[600px]">
                     {/* Bill Selection Sidebar */}
-                    <div className="w-full md:w-80 border-r border-gray-200 max-h-full overflow-y-auto">
+                    <div className="w-full md:w-80 md:max-h-[50rem] max-h-96 p-4 md:p-0 border-b-4 md:border-b-0 scrollbar-hide overflow-y-auto border-r border-gray-200 ">
                         <div className="p-4">
-                            {billingHistory.map((bill) => (
+                            {/* Search and Filter Inputs */}
+                            <div className="flex flex-col gap-2 border-b pb-3 mb-5">
+                                <div className="relative w-full md:max-w-xs mr-2">
+                                    <input
+                                        type="text"
+                                        placeholder="Search..."
+                                        value={searchQuery}
+                                        onChange={handleSearchChange}
+                                        className="input input-bordered w-full pl-10"
+                                    />
+                                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
+                                </div>
+                                <div className="w-auto flex items-center justify-end">
+                                    <AdjustmentsHorizontalIcon className="size-8 text-gray-400 mr-3" />
+                                    <select
+                                        value={filterOption}
+                                        onChange={handleFilterChange}
+                                        className="select select-bordered w-full md:max-w-xs"
+                                    >
+                                        <option value="All">All</option>
+                                        <option value="AmountLowHigh">Amount: Low to High</option>
+                                        <option value="AmountHighLow">Amount: High to Low</option>
+                                        <option value="DateOldNew">Date: Old to New</option>
+                                        <option value="DateNewOld">Date: New to Old</option>
+                                        <option value="Under100000">Amount Under 100,000</option>
+                                        <option value="Over100000">Amount Over 100,000</option>
+                                        <option value="Paid">Paid</option>
+                                        <option value="Pending">Pending</option>
+                                        <option value="Overdue">Overdue</option>
+                                    </select>
+                                </div>
+                            </div>
+                            {/* Display filtered and sorted bills */}
+                            {filteredBills.map((bill) => (
                                 <div
                                     key={bill.id}
                                     onClick={() => { setSelectedBill(bill); setOpenCategories({}) }}
-                                    className={`p-4 rounded-lg mb-3 cursor-pointer transition-all   ${selectedBill?.id === bill.id ? selectedBill.status == "Paid" ? 'bg-primary/10 ring-1 ring-primary hover:bg-primary/20' : selectedBill.status == "Pending" ? 'bg-accent/5 hover:bg-accent/10 ring-1 ring-accent' : 'bg-error/10 hover:bg-error/20 ring-1 ring-error' : 'bg-base-100 ring-1 ring-base-200 hover:bg-base-200/20'
+                                    className={`p-4 rounded-lg mb-3 cursor-pointer transition-all ${selectedBill?.id === bill.id ? selectedBill.status === "Paid" ? 'bg-primary/10 ring-1 ring-primary hover:bg-primary/20' : selectedBill.status === "Pending" ? 'bg-accent/5 hover:bg-accent/10 ring-1 ring-accent' : 'bg-error/10 hover:bg-error/20 ring-1 ring-error' : 'bg-base-100 ring-1 ring-base-200 hover:bg-base-200/20'
                                         }`}
                                 >
                                     <div className="flex justify-between items-start">
@@ -309,8 +299,7 @@ const Billing = () => {
                                             {bill.status === 'Paid' ?
                                                 <CheckCircleIcon className="h-5 w-5" /> :
                                                 bill.status === "Pending" ?
-                                                    <ClockIcon className="h-5 w-5" />
-                                                    :
+                                                    <ClockIcon className="h-5 w-5" /> :
                                                     <ExclamationTriangleIcon className="h-5 w-5" />
                                             }
                                         </div>
@@ -325,7 +314,7 @@ const Billing = () => {
 
                     {/* Bill Details Section with Fixed Collapse */}
                     <div className="flex-1 p-6 lg:p-10 lg:px-14">
-                        {selectedBill && (
+                        {selectedBill ? (
                             <div>
                                 {/* Title of bill, status, and payment info */}
                                 <div className="mb-10 flex flex-col justify-between lg:flex-row items-start lg:items-center mt-3">
@@ -426,7 +415,7 @@ const Billing = () => {
 
                                 {/* Action buttons for the bill */}
                                 <div className="flex w-full justify-end gap-2 mt-7">
-                                    <button className="btn btn-outline btn-primary" onClick={ () => printPDF(selectedBill) } >
+                                    <button className="btn btn-outline btn-primary" onClick={() => printPDF(selectedBill)} >
                                         <PrinterIcon className="h-5 w-5" />
                                         Print Bill
                                     </button>
@@ -447,6 +436,11 @@ const Billing = () => {
                                         )
                                     }
                                 </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center text-xl  text-gray-400 mt-20">
+                                <ClipboardDocumentListIcon className="size-20" />
+                                Select a bill to view.
                             </div>
                         )}
                     </div>
